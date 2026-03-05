@@ -8,9 +8,9 @@ export const ROLE_LEVELS = ["Entry", "Mid", "Senior", "Leadership"] as const;
 export type GenerateInputs = {
   resumeText: string;
   jobDescription: string;
-  country: "USA" | "Canada" | "UK";
-  roleLevel: string;
-  customRoleLevel: string;
+  country?: "USA" | "Canada" | "UK";
+  roleLevel?: string;
+  customRoleLevel?: string;
 };
 
 type ResumeFormProps = {
@@ -23,6 +23,7 @@ type ResumeFormProps = {
   lastRoleLevel: string;
   onReoptimizeSummary: () => void;
   isReoptimizingSummary: boolean;
+  isLoggedIn: boolean;
 };
 
 const inputClass =
@@ -39,8 +40,9 @@ export function ResumeForm({
   lastRoleLevel,
   onReoptimizeSummary,
   isReoptimizingSummary,
+  isLoggedIn,
 }: ResumeFormProps) {
-  const { register, handleSubmit, watch } = useForm<GenerateInputs>({
+  const { register, handleSubmit } = useForm<GenerateInputs>({
     defaultValues: {
       resumeText: "",
       jobDescription: "",
@@ -52,8 +54,8 @@ export function ResumeForm({
 
   const onSubmit = (data: GenerateInputs) => {
     onGenerate({
-      ...data,
-      roleLevel: data.customRoleLevel?.trim() || data.roleLevel || "Mid",
+      resumeText: data.resumeText,
+      jobDescription: data.jobDescription,
     });
   };
 
@@ -82,7 +84,7 @@ export function ResumeForm({
   };
 
   return (
-    <div className="relative bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <div className="relative bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
       {isGenerating && (
         <div className="absolute inset-0 bg-white/70 z-10 flex flex-col items-center justify-center gap-3 rounded-2xl">
           <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin" />
@@ -102,8 +104,8 @@ export function ResumeForm({
             <label className={labelClass}>Paste your resume</label>
             <textarea
               {...register("resumeText", { required: true })}
-              rows={5}
-              className={inputClass}
+              rows={4}
+              className={inputClass + " sm:min-h-[120px] min-h-[80px]"}
               placeholder="Paste your current resume text here..."
               disabled={isGenerating}
             />
@@ -119,65 +121,26 @@ export function ResumeForm({
             <label className={labelClass}>Job description</label>
             <textarea
               {...register("jobDescription", { required: true })}
-              rows={5}
-              className={inputClass}
+              rows={4}
+              className={inputClass + " sm:min-h-[120px] min-h-[80px]"}
               placeholder="Paste the job description here..."
               disabled={isGenerating}
             />
           </section>
 
-          <div className="border-t border-slate-200 pt-6" />
-
-          {/* Step 3 */}
-          <section className="space-y-4">
-            <h3 className="text-sm font-semibold tracking-tight text-slate-900 mb-4">
-              Step 3: Configure Role & Country
-            </h3>
-            <div>
-              <label className={labelClass}>Country</label>
-              <select
-                {...register("country", { required: true })}
-                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-black/20 transition"
-                disabled={isGenerating}
-              >
-                <option value="USA">USA</option>
-                <option value="Canada">Canada</option>
-                <option value="UK">UK</option>
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Role level</label>
-              <select
-                {...register("roleLevel")}
-                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-black/20 transition"
-                disabled={isGenerating}
-              >
-                {ROLE_LEVELS.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                {...register("customRoleLevel")}
-                className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-black/20 transition"
-                placeholder="Or enter your role level"
-                disabled={isGenerating}
-              />
-            </div>
-          </section>
-
           <p className="text-xs text-slate-500">
-            No login required. Instant results.
+            Resume analysis is free and does not require login. Sign in later to save optimizations and download PDFs.
           </p>
 
           <button
             type="submit"
             disabled={isGenerating}
-            className="w-full rounded-xl bg-black py-3 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-slate-800 hover:scale-[1.02] transform transition disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Generate Optimized Resume
+            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10">
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+            </span>
+            Analyze my resume free
           </button>
         </form>
 

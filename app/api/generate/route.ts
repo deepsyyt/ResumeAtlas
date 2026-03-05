@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { generateResume } from "@/app/lib/claude";
-import { checkResumeLimit, incrementResume } from "@/app/lib/usage";
+import { getSupabaseAdmin } from "@/app/lib/supabase/server";
 import type { Resume } from "@/app/types/resume";
 
 export type GenerateRequestBody = {
@@ -26,10 +26,65 @@ export async function POST(request: Request) {
       );
     }
 
-    const check = await checkResumeLimit(request);
-    if (!check.allowed) {
+    const supabase = getSupabaseAdmin();
+    const authHeader = request.headers.get("authorization");
+    const accessToken = authHeader?.replace(/Bearer\s+/i, "").trim() || null;
+
+    if (!accessToken) {
       return NextResponse.json(
-        { error: check.reason, code: check.code },
+        { error: "Login required to optimize resume." },
+        { status: 401 }
+      );
+    }
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser(accessToken);
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Login required to optimize resume." },
+        { status: 401 }
+      );
+    }
+
+    let { data: profile, error } = await supabase
+      .from("profiles")
+      .select("generation_credits, download_credits, free_preview_used")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile || error) {
+      await supabase.from("profiles").insert({
+        id: user.id,
+        email: user.email ?? null,
+        resume_credits: 0,
+        free_preview_used: false,
+        generation_credits: 0,
+        download_credits: 0,
+      });
+      profile = {
+        generation_credits: 0,
+        download_credits: 0,
+        free_preview_used: false,
+      };
+    }
+
+    const hasFreePreview = !profile.free_preview_used;
+    const generationCredits = profile.generation_credits ?? 0;
+    const downloadCredits = profile.download_credits ?? 0;
+
+    let consumeMode: "free" | "generation";
+    if (hasFreePreview) {
+      consumeMode = "free";
+    } else if (generationCredits > 0 && downloadCredits > 0) {
+      consumeMode = "generation";
+    } else {
+      return NextResponse.json(
+        {
+          error:
+            "Your optimization pack is exhausted. Buy another 25 optimizations to continue.",
+        },
         { status: 403 }
       );
     }
@@ -52,9 +107,28 @@ export async function POST(request: Request) {
       }
     }
 
-    const inc = await incrementResume(request);
     const res = NextResponse.json(result);
-    if (inc.setCookie) res.headers.set("Set-Cookie", inc.setCookie);
+
+    try {
+      if (consumeMode === "free") {
+        await supabase
+          .from("profiles")
+          .update({ free_preview_used: true })
+          .eq("id", user.id)
+          .eq("free_preview_used", false);
+      } else {
+        await supabase
+          .from("profiles")
+          .update({
+            generation_credits: generationCredits - 1,
+          })
+          .eq("id", user.id)
+          .gt("generation_credits", 0);
+      }
+    } catch {
+      // swallow credit update errors so generation still succeeds
+    }
+
     return res;
   } catch (err) {
     const message = err instanceof Error ? err.message : "Generation failed";

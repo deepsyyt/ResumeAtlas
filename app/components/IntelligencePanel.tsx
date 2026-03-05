@@ -1,177 +1,408 @@
 "use client";
 
-import type { JDMatchResult } from "@/app/lib/jdMatch";
-import type { ATSScanResult } from "@/app/lib/atsScan";
+// Intelligence panel driven by atsEngine:
+// - ATS Pass Probability
+// - Keyword coverage
+// - Semantic similarity
+// - Experience and title alignment
+// - Impact and resume quality
+
+import type { ATSAnalysisResult } from "@/app/lib/atsEngine";
 
 type IntelligencePanelProps = {
-  jdMatch: JDMatchResult | null;
-  atsResult: ATSScanResult | null;
-  evidenceGaps: string[];
+  engineResult: ATSAnalysisResult | null;
   showFullIntelligence?: boolean;
   showLocked?: boolean;
 };
 
-function BarColor(pct: number) {
-  if (pct >= 75) return "bg-emerald-500";
-  if (pct >= 50) return "bg-amber-500";
-  return "bg-red-500";
-}
-
 export function IntelligencePanel({
-  jdMatch,
-  atsResult,
-  evidenceGaps,
+  engineResult,
   showFullIntelligence = true,
   showLocked = false,
 }: IntelligencePanelProps) {
-  const hasAny = jdMatch !== null || atsResult !== null || evidenceGaps.length > 0;
+  const hasAny = !!engineResult;
 
   if (showLocked) {
     return (
-      <div className="space-y-3">
-        <div className="relative bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="relative">
           <div className="absolute inset-0 rounded-2xl bg-slate-100/90 backdrop-blur-sm z-10 flex items-center justify-center">
             <div className="text-center p-4">
-              <p className="text-sm font-medium text-slate-700">Upgrade to Pro to unlock deeper resume insights.</p>
-              <a href="/upgrade" className="mt-3 inline-block rounded-lg bg-black px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 transition">
+              <p className="text-sm font-medium text-slate-700">
+                Upgrade to unlock full Intelligence insights for your resume.
+              </p>
+              <a
+                href="/upgrade"
+                className="mt-3 inline-block rounded-full bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition"
+              >
                 Upgrade to Pro
               </a>
             </div>
           </div>
-          <h3 className="text-sm font-semibold tracking-tight text-slate-500 uppercase tracking-widest mb-4">Intelligence</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 opacity-50">
-            <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 h-24" />
-            <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 h-24" />
-            <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 h-24" />
+          <h2 className="text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase mb-4">
+            Intelligence
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 opacity-40">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 h-20" />
+            <div className="rounded-xl border border-slate-200 bg-slate-50 h-20" />
+            <div className="rounded-xl border border-slate-200 bg-slate-50 h-20" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Empty state – static sample preview that mirrors the live dashboard layout
+  if (!hasAny) {
+    return (
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <div>
+            <h2 className="text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase">
+              Intelligence
+            </h2>
+            <p className="mt-1 text-xs text-slate-500">
+              See how your resume scores across ATS-style signals before you run an analysis.
+            </p>
+          </div>
+          <span className="inline-flex items-center rounded-full bg-slate-900 text-white px-2 py-0.5 text-[10px] font-medium">
+            Demo dashboard
+          </span>
+        </div>
+
+        {/* Top: sample ATS score */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="relative flex items-center justify-center h-16 w-16 rounded-full bg-slate-100">
+              <div className="h-14 w-14 rounded-full bg-white border border-slate-200 flex items-center justify-center">
+                <span className="text-lg font-semibold text-slate-900">78%</span>
+              </div>
+            </div>
+            <div className="text-xs text-slate-600">
+              <p className="font-semibold text-slate-900">
+                Resume ATS score (Estimated)
+              </p>
+              <p className="mt-0.5 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border-emerald-200">
+                Strong Match
+              </p>
+              <p className="mt-1 text-[11px] text-slate-500">
+                Example of a resume with strong alignment to the job description across ATS
+                signals.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Metric breakdown preview */}
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Keyword coverage
+            </p>
+            <p className="mt-1 text-xl font-semibold text-slate-900">82%</p>
+            <p className="mt-1 text-xs text-slate-600">
+              Most required skills from the JD are present in the resume.
+            </p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Semantic similarity
+            </p>
+            <p className="mt-1 text-xl font-semibold text-slate-900">75%</p>
+            <p className="mt-1 text-xs text-slate-600">
+              The overall experience context closely matches the job description.
+            </p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Experience alignment
+            </p>
+            <p className="mt-1 text-xl font-semibold text-slate-900">90%</p>
+            <p className="mt-1 text-xs text-slate-600">
+              Required: <span className="font-semibold">5 yrs</span> • Example resume:{" "}
+              <span className="font-semibold">7 yrs</span>.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Title alignment
+            </p>
+            <p className="mt-1 text-xl font-semibold text-slate-900">84%</p>
+            <p className="mt-1 text-xs text-slate-600">
+              Target: <span className="font-semibold">Senior ML Engineer</span>
+            </p>
+            <p className="mt-0.5 text-[11px] text-slate-500">
+              Example titles: ML Engineer • Data Scientist.
+            </p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Impact score
+            </p>
+            <p className="mt-1 text-xl font-semibold text-slate-900">68%</p>
+            <p className="mt-1 text-xs text-slate-600">
+              Sample resume includes several quantified achievements (e.g. “improved CTR by 22%”).
+            </p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Resume quality
+            </p>
+            <p className="mt-1 text-xl font-semibold text-slate-900">72%</p>
+            <ul className="mt-1 text-[11px] text-slate-600 space-y-0.5">
+              <li>✔ Clear bullet point structure</li>
+              <li>✔ Skills and experience sections detected</li>
+              <li>⚠ A few long paragraphs can be shortened</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Keyword coverage detail preview */}
+        <div className="mt-4 rounded-xl border border-slate-200 bg-white px-3 py-3">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+            <div className="flex-1">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1">
+                Matched skills
+              </p>
+              <p className="text-xs text-emerald-700">
+                Python • machine learning • LLMs • RAG • AWS • Docker
+              </p>
+            </div>
+            <div className="flex-1">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1">
+                Missing skills (from JD)
+              </p>
+              <p className="text-xs text-red-700">
+                transformers • orchestration frameworks • experimentation platforms
+              </p>
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-slate-500">
+            Your live analysis will use your own resume and the pasted job description to compute
+            these metrics.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  // Live analysis – ATS dashboard
+  const atsScore = engineResult?.ats_score ?? 0;
+  const band = engineResult?.ats_band ?? "low";
+  const keyword = engineResult?.keyword_coverage;
+  const semantic = engineResult?.semantic_similarity;
+  const exp = engineResult?.experience_alignment;
+  const title = engineResult?.title_alignment;
+  const impact = engineResult?.impact_score;
+  const quality = engineResult?.resume_quality;
+
+  const bandLabel =
+    band === "very_strong"
+      ? "Very Strong Match"
+      : band === "strong"
+      ? "Strong Match"
+      : band === "moderate"
+      ? "Moderate Match"
+      : "Low Match";
+
+  const bandColor =
+    band === "very_strong" || band === "strong"
+      ? "text-emerald-600 bg-emerald-50 border-emerald-200"
+      : band === "moderate"
+      ? "text-amber-600 bg-amber-50 border-amber-200"
+      : "text-red-600 bg-red-50 border-red-200";
+
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+      {/* Top: ATS score */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h2 className="text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase">
+            Intelligence
+          </h2>
+          <p className="mt-1 text-sm font-semibold text-slate-800">
+            Your analysis report based on the pasted resume and job description.
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="relative flex items-center justify-center h-16 w-16 rounded-full bg-slate-100">
+            <div className="h-14 w-14 rounded-full bg-white border border-slate-200 flex items-center justify-center">
+              <span className="text-lg font-semibold text-slate-900">
+                {atsScore}%
+              </span>
+            </div>
+          </div>
+          <div className="text-xs text-slate-600">
+            <p className="font-semibold text-slate-900">Resume ATS score (Estimated)</p>
+            <p
+              className={
+                "mt-0.5 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold " +
+                bandColor
+              }
+            >
+              {bandLabel}
+            </p>
+            <p className="mt-1 text-[11px] text-slate-500">
+              This estimates how likely your resume is to pass an automated ATS screen for this role.
+            </p>
           </div>
         </div>
       </div>
-    );
-  }
 
-  if (!hasAny) {
-    return (
-      <div className="space-y-3">
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-          <h3 className="text-sm font-semibold tracking-tight text-slate-500 uppercase tracking-widest mb-4">
-            Intelligence
-          </h3>
-          <p className="text-sm text-slate-400">
-            Generate a resume to see JD match, ATS risk, and evidence gaps.
+      {/* Metric breakdown */}
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+        {/* Keyword coverage */}
+        <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            Keyword coverage
+          </p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">
+            {keyword?.score ?? 0}%
+          </p>
+          <p className="mt-1 text-xs text-slate-600">{keyword?.explanation}</p>
+        </div>
+
+        {/* Semantic similarity */}
+        <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            Semantic similarity
+          </p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">
+            {semantic?.score ?? 0}%
+          </p>
+          <p className="mt-1 text-xs text-slate-600">
+            {semantic?.explanation ||
+              "Contextual overlap between your resume and the job description."}
           </p>
         </div>
-        <p className="text-xs text-slate-400 text-center">
-          Most resumes score below 60% JD alignment.
-        </p>
-      </div>
-    );
-  }
 
-  return (
-    <div className="space-y-3">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-          <h3 className="text-sm font-semibold tracking-tight text-slate-500 uppercase tracking-widest">
-            Intelligence
-          </h3>
-          {showFullIntelligence && jdMatch !== null && (
-            <span className="text-sm font-semibold text-slate-700">
-              Competitive Readiness: {jdMatch.matchPercentage}%
+        {/* Experience alignment */}
+        <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            Experience alignment
+          </p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">
+            {exp?.score ?? 0}%
+          </p>
+          <p className="mt-1 text-xs text-slate-600">
+            Required:{" "}
+            <span className="font-semibold">
+              {exp?.required_experience ?? 0} yrs
             </span>
-          )}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Card 1 – JD Match */}
-        <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            JD Match
+            {" • "}You:{" "}
+            <span className="font-semibold">
+              {exp?.resume_experience ?? 0} yrs
+            </span>
           </p>
-          {jdMatch !== null ? (
-            <>
-              <p className="text-3xl font-bold tracking-tight text-slate-900">
-                {jdMatch.matchPercentage}%
-              </p>
-              <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all ${BarColor(jdMatch.matchPercentage)}`}
-                  style={{ width: `${Math.min(100, jdMatch.matchPercentage)}%` }}
-                />
-              </div>
-              {jdMatch.matchedKeywords.length > 0 && (
-                <p className="text-xs text-slate-600 truncate" title={jdMatch.matchedKeywords.join(", ")}>
-                  Matched: {jdMatch.matchedKeywords.slice(0, 8).join(", ")}
-                  {jdMatch.matchedKeywords.length > 8 ? "…" : ""}
-                </p>
-              )}
-              {jdMatch.missingKeywords.length > 0 && (
-                <p className="text-xs text-amber-700 truncate" title={jdMatch.missingKeywords.join(", ")}>
-                  Missing: {jdMatch.missingKeywords.slice(0, 6).join(", ")}
-                  {jdMatch.missingKeywords.length > 6 ? "…" : ""}
-                </p>
-              )}
-            </>
-          ) : (
-            <p className="text-sm text-slate-400">—</p>
-          )}
-        </div>
-
-        {/* Card 2 – ATS Risk */}
-        <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            ATS Risk
-          </p>
-          {atsResult !== null ? (
-            <>
-              <span
-                className={`inline-block text-lg font-bold px-3 py-1 rounded-lg ${
-                  atsResult.riskLevel === "High"
-                    ? "bg-red-100 text-red-800"
-                    : atsResult.riskLevel === "Medium"
-                      ? "bg-amber-100 text-amber-800"
-                      : "bg-emerald-100 text-emerald-800"
-                }`}
-              >
-                {atsResult.riskLevel}
-              </span>
-              {atsResult.issues.length > 0 && (
-                <ul className="text-xs text-slate-600 space-y-0.5 list-disc pl-4">
-                  {atsResult.issues.map((issue, i) => (
-                    <li key={i}>{issue}</li>
-                  ))}
-                </ul>
-              )}
-            </>
-          ) : (
-            <p className="text-sm text-slate-400">—</p>
-          )}
-        </div>
-
-        {showFullIntelligence && (
-        <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Evidence Gaps
-          </p>
-          {evidenceGaps.length > 0 ? (
-            <ul className="text-xs text-slate-600 space-y-1 list-disc pl-4">
-              {evidenceGaps.map((gap, i) => (
-                <li key={i}>{gap}</li>
-              ))}
-            </ul>
-          ) : (
-            <div className="flex items-center gap-2 text-emerald-700">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 font-bold text-xs">
-                ✓
-              </span>
-              <span className="text-sm font-medium">No major gaps detected</span>
-            </div>
-          )}
-        </div>
-        )}
         </div>
       </div>
-      <p className="text-xs text-slate-400 text-center">
-        Most resumes score below 60% JD alignment.
-      </p>
-    </div>
+
+      {/* Second row of metrics */}
+      <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+        {/* Title alignment */}
+        <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            Title alignment
+          </p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">
+            {title?.score ?? 0}%
+          </p>
+          <p className="mt-1 text-xs text-slate-600">
+            Target:{" "}
+            <span className="font-semibold">{title?.target_title || "N/A"}</span>
+          </p>
+          {title?.resume_titles?.length ? (
+            <p className="mt-0.5 text-[11px] text-slate-500">
+              Your titles: {title.resume_titles.join(" • ")}
+            </p>
+          ) : null}
+        </div>
+
+        {/* Impact score */}
+        <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            Impact score
+          </p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">
+            {impact?.score ?? 0}%
+          </p>
+          <p className="mt-1 text-xs text-slate-600">
+            We detected{" "}
+            <span className="font-semibold">
+              {impact?.metrics_detected ?? 0}
+            </span>{" "}
+            quantified achievements.
+          </p>
+          <p className="mt-0.5 text-[11px] text-slate-500">
+            Adding more measurable results can improve ATS ranking.
+          </p>
+        </div>
+
+        {/* Resume quality */}
+        <div className="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            Resume quality
+          </p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">
+            {quality?.score ?? 0}%
+          </p>
+          <ul className="mt-1 text-[11px] text-slate-600 space-y-0.5">
+            <li>
+              {quality?.bullet_density && quality.bullet_density > 0.4
+                ? "✔ Good bullet point usage"
+                : "⚠ Consider using more bullet points"}
+            </li>
+            <li>
+              {quality?.has_skills_section
+                ? "✔ Skills section detected"
+                : "⚠ Add a clear skills section"}
+            </li>
+            <li>
+              {quality?.has_experience_section
+                ? "✔ Experience section detected"
+                : "⚠ Add a clear experience section"}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Keyword coverage detail */}
+      <div className="mt-4 rounded-xl border border-slate-200 bg-white px-3 py-3">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+          <div className="flex-1">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1">
+              Matched skills
+            </p>
+            {keyword?.matched_skills?.length ? (
+              <p className="text-xs text-emerald-700">
+                {keyword.matched_skills.join(" • ")}
+              </p>
+            ) : (
+              <p className="text-xs text-slate-500">
+                No explicit skill matches detected yet.
+              </p>
+            )}
+          </div>
+          <div className="flex-1">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1">
+              Missing skills (from JD)
+            </p>
+            {keyword?.missing_skills?.length ? (
+              <p className="text-xs text-red-700">
+                {keyword.missing_skills.join(" • ")}
+              </p>
+            ) : (
+              <p className="text-xs text-emerald-700">
+                No major missing skills detected compared to the JD.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
+

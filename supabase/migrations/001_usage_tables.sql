@@ -13,7 +13,11 @@ create table if not exists public.profiles (
   plan text default null,
   monthly_resume_count int not null default 0,
   monthly_summary_count int not null default 0,
-  period_start timestamptz not null default now()
+  period_start timestamptz not null default now(),
+  resume_credits int not null default 0,
+  free_preview_used boolean not null default false,
+  generation_credits int not null default 0,
+  download_credits int not null default 0
 );
 
 -- RLS: no policies = anon key has no access; service_role bypasses RLS in API
