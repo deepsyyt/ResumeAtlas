@@ -1,5 +1,4 @@
 import { normalizeText } from "./jdEngine/normalize";
-import Anthropic from "@anthropic-ai/sdk";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 
