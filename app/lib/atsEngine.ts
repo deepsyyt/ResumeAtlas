@@ -293,12 +293,11 @@ function computeKeywordCoverage(
     let present = false;
     for (const token of skill.split(" ")) {
       if (token.length < 3) continue;
-      for (const r of resumeTokens) {
-        if (r.includes(token)) {
+      resumeTokens.forEach((r) => {
+        if (!present && r.includes(token)) {
           present = true;
-          break;
         }
-      }
+      });
       if (present) break;
     }
     if (present) matched.push(skill);
