@@ -82,9 +82,9 @@ function jaccardCosineSimilarity(a: string, b: string): number {
   const bTokens = new Set(tokenizeWords(b));
   if (!aTokens.size || !bTokens.size) return 0;
   let intersection = 0;
-  for (const t of aTokens) {
+  aTokens.forEach((t) => {
     if (bTokens.has(t)) intersection += 1;
-  }
+  });
   const cosine = intersection / Math.sqrt(aTokens.size * bTokens.size);
   return Math.max(0, Math.min(1, cosine));
 }
