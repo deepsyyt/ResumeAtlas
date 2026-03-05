@@ -20,10 +20,10 @@ export function Navbar() {
           </span>
         </div>
         <nav className="flex items-center gap-4 text-xs sm:text-sm">
-          <a href="/how-it-works" className="hover:underline text-white/80 hover:text-white">
+          <a href="/#how-ats-works" className="hover:underline text-white/80 hover:text-white">
             How it works
           </a>
-          <a href="/faq" className="hover:underline text-white/80 hover:text-white">
+          <a href="/#faq" className="hover:underline text-white/80 hover:text-white">
             FAQ
           </a>
         </nav>
