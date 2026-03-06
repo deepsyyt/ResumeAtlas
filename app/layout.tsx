@@ -3,9 +3,9 @@ import "./globals.css";
 import { Navbar } from "@/app/components/Navbar";
 
 export const metadata: Metadata = {
-  title: "Free ATS Resume Checker | AI Resume Analysis & Job Match – ResumeAtlas",
+  title: "Free ATS Resume Checker | ResumeAtlas",
   description:
-    "Analyze your resume with our free ATS resume checker. Get ATS compatibility score, job description match, and keyword gap analysis instantly. No login required.",
+    "Check your ATS resume score instantly. Compare your resume with any job description, detect missing skills, and improve your chances of getting shortlisted.",
 };
 
 export default function RootLayout({
@@ -15,6 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta
+          name="google-site-verification"
+          content="6hHUXSk_KNQSRBmZaIjbLOfdXNkoom0SLOLQs4KAOo4"
+        />
+      </head>
       <body className="antialiased min-h-screen bg-white text-slate-900">
         <Navbar />
         <main>{children}</main>

@@ -31,6 +31,8 @@ export async function computeJDAnalysis(
 
   return {
     jd_match,
+    matched_count,
+    total_required,
     missing,
     ats_pass_probability,
     jd_categories: jdCategories,
