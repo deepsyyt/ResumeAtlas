@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useCallback, useEffect } from "react";
 import { ResumeForm, type GenerateInputs, ROLE_LEVELS } from "@/app/components/ResumeForm";
 import { ResumePreview } from "@/app/components/ResumePreview";
@@ -394,6 +395,14 @@ export default function Home() {
           <p className="mt-3 text-xs sm:text-sm font-semibold text-emerald-700">
             100% free and unlimited. No login required. ATS-style resume checker and JD gap analyzer, not just keyword matching.
           </p>
+          <div className="mt-4 flex justify-center">
+            <a
+              href="#ats-checker-form"
+              className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-2.5 text-sm sm:text-base font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 focus-visible:ring-offset-white transition"
+            >
+              Check ATS Score Free
+            </a>
+          </div>
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto text-left">
             <div className="flex items-start gap-2 rounded-xl border border-slate-200 bg-white/60 px-3 py-2">
               <span className="mt-0.5 h-2 w-2 rounded-full bg-emerald-500" />
@@ -420,7 +429,7 @@ export default function Home() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 min-h-0">
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1" id="ats-checker-form">
             {showUpgradeScreen && <UpgradeScreen />}
             {showForm && (
               <ResumeForm
@@ -598,6 +607,71 @@ export default function Home() {
               </p>
             </div>
           </div>
+
+          <div className="mt-8 border-t border-slate-200 pt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Learn more
+            </p>
+            <ul className="mt-3 space-y-1 text-sm text-slate-700 list-disc pl-5">
+              <li>
+                <Link
+                  href="/how-ats-scans-resumes"
+                  className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  <span>↗</span>
+                  How ATS Systems Scan Resumes
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/common-resume-mistakes-fail-ats"
+                  className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  <span>↗</span>
+                  Common Resume Mistakes That Fail ATS
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/ats-keywords-data-scientist-resumes"
+                  className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  <span>↗</span>
+                  ATS Keywords for Data Scientist Resumes
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/ats-resume-checker"
+                  className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  <span>↗</span>
+                  Free ATS Resume Checker
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-slate-200 bg-white">
+        <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Why ATS Rejects Many Resumes
+          </h2>
+          <p className="mt-4 text-sm text-slate-600">
+            Many resumes fail ATS screening before a recruiter ever reads them. Common reasons
+            include missing job keywords, incompatible formatting, lack of measurable
+            achievements, and poor alignment with the job description. ATS systems prioritize
+            resumes that clearly match the required skills and experience listed in the job
+            posting.
+          </p>
+          <ul className="mt-4 space-y-2 text-sm text-slate-700 list-disc pl-5">
+            <li>Missing required keywords</li>
+            <li>Poor formatting (tables, graphics)</li>
+            <li>Generic job descriptions</li>
+            <li>Lack of measurable achievements</li>
+          </ul>
         </div>
       </section>
 
