@@ -17,6 +17,40 @@ import { scanATS, type ATSScanResult } from "@/app/lib/atsScan";
 import type { JDAnalysisResult } from "@/app/lib/jdAnalysis";
 import type { ATSAnalysisResult } from "@/app/lib/atsEngine";
 
+const homeFaqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is a good ATS resume score?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Most resumes that score above 75% ATS compatibility have strong keyword alignment with the job description and clearly labeled experience. Higher scores usually mean your skills and titles closely match what the role is asking for.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can ATS reject my resume?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Yes. If your resume is missing required skills, uses confusing formatting, or hides important keywords in images or graphics, it may never reach a recruiter. Passing ATS checks is the first step before a human can review your profile.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How can I improve my ATS score?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Mirror the language of the job description, add missing but relevant keywords, and use a clean structure with clear sections for experience, skills, and education. Tools like ResumeAtlas help you spot keyword gaps and alignment issues before you apply.",
+      },
+    },
+  ],
+} as const;
+
 const FALLBACK_ANON_USAGE: Usage = {
   type: "anon",
   generationCredits: 0,
@@ -720,6 +754,11 @@ export default function Home() {
         open={limitModalOpen}
         onClose={() => setLimitModalOpen(false)}
         message={limitModalMessage}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeFaqSchema) }}
       />
     </main>
   );

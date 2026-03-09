@@ -20,6 +20,10 @@ export default function RootLayout({
           name="google-site-verification"
           content="6hHUXSk_KNQSRBmZaIjbLOfdXNkoom0SLOLQs4KAOo4"
         />
+        <link
+          rel="canonical"
+          href="https://resumeatlas.ai-stack.dev/"
+        />
       </head>
       <body className="antialiased min-h-screen bg-white text-slate-900">
         <Navbar />
