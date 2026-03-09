@@ -26,9 +26,6 @@ export function Navbar() {
           <a href="/#faq" className="hover:underline text-white/80 hover:text-white">
             FAQ
           </a>
-          <a href="/" className="hover:underline text-white/80 hover:text-white">
-            ATS Resume Checker
-          </a>
         </nav>
       </div>
     </header>
