@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/app/components/Navbar";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Free ATS Resume Checker | ResumeAtlas",
@@ -24,6 +25,18 @@ export default function RootLayout({
           rel="canonical"
           href="https://resumeatlas.ai-stack.dev/"
         />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-64KDQ28C42"
+          strategy="afterInteractive"
+        />
+        <Script id="ga-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-64KDQ28C42');
+          `}
+        </Script>
       </head>
       <body className="antialiased min-h-screen bg-white text-slate-900">
         <Navbar />

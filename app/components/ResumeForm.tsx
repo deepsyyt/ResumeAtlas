@@ -53,6 +53,12 @@ export function ResumeForm({
   });
 
   const onSubmit = (data: GenerateInputs) => {
+    if (typeof window !== "undefined" && (window as any).gtag) {
+      (window as any).gtag("event", "analyze_resume_click", {
+        event_category: "engagement",
+        event_label: "Analyze my resume free",
+      });
+    }
     onGenerate({
       resumeText: data.resumeText,
       jobDescription: data.jobDescription,

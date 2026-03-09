@@ -214,6 +214,12 @@ export default function Home() {
       setOptRoleLevel(roleLevel);
       void logAnalysisEvent("analyze_clicked");
       try {
+        if (typeof window !== "undefined" && (window as any).gtag) {
+          (window as any).gtag("event", "ats_analyze_started", {
+            event_category: "engagement",
+            event_label: "Analyze my resume free",
+          });
+        }
         const res = await fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -245,6 +251,12 @@ export default function Home() {
         const body = data as ATSAnalysisResult;
         setEngineResult(body);
         void logAnalysisEvent("dashboard_generated");
+        if (typeof window !== "undefined" && (window as any).gtag) {
+          (window as any).gtag("event", "ats_dashboard_generated", {
+            event_category: "engagement",
+            event_label: "ATS dashboard result generated",
+          });
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : "Something went wrong");
       } finally {
@@ -672,15 +684,6 @@ export default function Home() {
                 >
                   <span>↗</span>
                   ATS Keywords for Data Scientist Resumes
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/ats-resume-checker"
-                  className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  <span>↗</span>
-                  Free ATS Resume Checker
                 </Link>
               </li>
             </ul>
