@@ -8,6 +8,8 @@ import { IntelligencePanel } from "@/app/components/IntelligencePanel";
 import { UsageBadge } from "@/app/components/UsageBadge";
 import { LimitModal } from "@/app/components/LimitModal";
 import { UpgradeScreen } from "@/app/components/UpgradeScreen";
+import { ResumeExamplesSection } from "@/app/components/ResumeExamplesSection";
+import { ATSKeywordSection } from "@/app/components/ATSKeywordSection";
 import { createClient } from "@/app/lib/supabase/client";
 import type { Resume } from "@/app/types/resume";
 import type { Usage } from "@/app/lib/usage";
@@ -428,7 +430,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col bg-white">
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-8 flex flex-col gap-8">
-        <header className="text-center mt-0 sm:mt-0 mb-8 sm:mb-10">
+        <header className="text-center mt-0 sm:mt-0 mb-1 sm:mb-2">
           <div className="flex flex-col items-center gap-2">
             <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900">
               Free ATS Resume Checker, JD Match &amp; Gap Analysis
@@ -473,6 +475,11 @@ export default function Home() {
             </div>
           </div>
         </header>
+
+        <div className="mt-0 grid grid-cols-1 md:grid-cols-2 gap-10">
+          <ResumeExamplesSection />
+          <ATSKeywordSection />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 min-h-0">
           <div className="lg:col-span-1" id="ats-checker-form">
