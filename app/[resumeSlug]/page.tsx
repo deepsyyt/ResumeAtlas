@@ -11,7 +11,7 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
   const config = RESUME_PAGES[params.resumeSlug];
   if (!config) return {};
   return {
-    title: `${config.h1} | ResumeAtlas`,
+    title: `${config.h1} (ATS-Friendly Template) | ResumeAtlas`,
     description: config.metaDescription,
   };
 }
@@ -269,6 +269,54 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
               </li>
             </ul>
           </div>
+        </section>
+
+        <section className="mt-10 border-t border-slate-200 pt-6">
+          <h2 className="text-lg font-semibold tracking-tight text-slate-900 mb-3">
+            Related Resume Guides
+          </h2>
+          <ul className="list-disc pl-5 space-y-1 text-sm">
+            <li>
+              <Link
+                href="/data-analyst-resume-example"
+                className="text-sky-700 hover:underline"
+              >
+                Data Analyst Resume Example
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/ats-keywords/data-analyst"
+                className="text-sky-700 hover:underline"
+              >
+                ATS Keywords for Data Analyst Resumes
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/resume-guides/ats-resume-format"
+                className="text-sky-700 hover:underline"
+              >
+                ATS Resume Format
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/how-to-pass-ats"
+                className="text-sky-700 hover:underline"
+              >
+                How to Pass ATS Screening
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/resume-guides/resume-skills-examples"
+                className="text-sky-700 hover:underline"
+              >
+                Resume Skills Examples
+              </Link>
+            </li>
+          </ul>
         </section>
 
         {/* FAQ */}

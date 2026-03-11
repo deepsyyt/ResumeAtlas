@@ -7,6 +7,8 @@
 // - Experience and title alignment
 // - Impact and resume quality
 
+import { FaLinkedin } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import type { ATSAnalysisResult } from "@/app/lib/atsEngine";
 
 type IntelligencePanelProps = {
@@ -80,7 +82,7 @@ export function IntelligencePanel({
             </div>
             <div className="text-xs text-slate-600">
               <p className="font-semibold text-slate-900">
-                Resume ATS score (Estimated)
+                Estimated ATS Pass Likelihood (Sample)
               </p>
               <p className="mt-0.5 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border-emerald-200">
                 Strong Match
@@ -199,6 +201,29 @@ export function IntelligencePanel({
   const impact = engineResult?.impact_score;
   const quality = engineResult?.resume_quality;
 
+  const keywordScore = keyword?.score ?? 0;
+  const semanticScore = semantic?.score ?? 0;
+  const experienceScore = exp?.score ?? 0;
+
+  const shareText = [
+    "I checked how well my resume matches a job description using ResumeAtlas.",
+    "",
+    `Estimated ATS pass likelihood: ${atsScore}%`,
+    "",
+    "Resume vs JD insights:",
+    `• Keyword coverage: ${keywordScore}%`,
+    `• Semantic match: ${semanticScore}%`,
+    `• Experience alignment: ${experienceScore}%`,
+    "",
+    "Test your resume against a job description:",
+    "https://resumeatlas.ai-stack.dev",
+  ].join("\n");
+
+  const encodedText = encodeURIComponent(shareText);
+  const linkedInShareUrl =
+    "https://www.linkedin.com/sharing/share-offsite/?url=https://resumeatlas.ai-stack.dev";
+  const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
+
   const bandLabel =
     band === "very_strong"
       ? "Very Strong Match"
@@ -236,7 +261,9 @@ export function IntelligencePanel({
             </div>
           </div>
           <div className="text-xs text-slate-600">
-            <p className="font-semibold text-slate-900">Resume ATS score (Estimated)</p>
+            <p className="font-semibold text-slate-900">
+              Estimated ATS Pass Likelihood (Resume vs Job Description)
+            </p>
             <p
               className={
                 "mt-0.5 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold " +
@@ -246,9 +273,35 @@ export function IntelligencePanel({
               {bandLabel}
             </p>
             <p className="mt-1 text-[11px] text-slate-500">
-              This estimates how likely your resume is to pass an automated ATS screen for this role.
+              This estimates how likely your resume is to pass ATS when matched against this specific
+              job description.
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Share section */}
+      <div className="mt-3">
+        <p className="text-sm text-slate-500 mb-2">Share your result</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <a
+            href={linkedInShareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg bg-[#0A66C2] px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-[#084c93] transition-colors"
+          >
+            <FaLinkedin className="h-4 w-4" aria-hidden="true" />
+            <span>Share on LinkedIn</span>
+          </a>
+          <a
+            href={twitterShareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg bg-black px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-[#222] transition-colors"
+          >
+            <FaXTwitter className="h-4 w-4" aria-hidden="true" />
+            <span>Share on X</span>
+          </a>
         </div>
       </div>
 
