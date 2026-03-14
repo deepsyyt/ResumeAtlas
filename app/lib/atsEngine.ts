@@ -458,8 +458,8 @@ function computeKeywordCoverage(
 
   const matched: string[] = [];
   const missing: string[] = [];
-
   const resumePhrases = Array.from(resumePhraseSet);
+
   for (const skill of required) {
     if (!skill) continue;
     let present = false;
