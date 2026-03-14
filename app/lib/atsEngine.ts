@@ -459,11 +459,12 @@ function computeKeywordCoverage(
   const matched: string[] = [];
   const missing: string[] = [];
 
+  const resumePhrases = Array.from(resumePhraseSet);
   for (const skill of required) {
     if (!skill) continue;
     let present = false;
-    for (const resumePhrase of resumePhraseSet) {
-      const sim = phraseSimilarity(skill, resumePhrase);
+    for (let i = 0; i < resumePhrases.length; i++) {
+      const sim = phraseSimilarity(skill, resumePhrases[i]);
       if (sim > 0.6) {
         present = true;
         break;
