@@ -83,7 +83,7 @@ export function IntelligencePanel({
     const demoImpactStyle = getImpactStyle(demoImpact);
     const demoQualityStyle = getResumeQualityStyle(demoQuality);
 
-    function DemoScoreBar({ score, hex }: { score: number; hex: string }) {
+    const DemoScoreBar = ({ score, hex }: { score: number; hex: string }) => {
       const pct = Math.max(0, Math.min(100, Math.round(score)));
       return (
         <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
@@ -93,7 +93,7 @@ export function IntelligencePanel({
           />
         </div>
       );
-    }
+    };
 
     return (
       <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
