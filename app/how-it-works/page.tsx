@@ -36,9 +36,9 @@ export default function HowItWorksPage() {
             </h2>
             <p>
               Click <strong>“Analyze my resume free”</strong>. In a few seconds, the right-hand
-              dashboard will fill with your ATS Pass Probability and six core metrics: keyword
-              coverage, semantic similarity, experience alignment, title alignment, impact score, and
-              resume quality.
+              dashboard will fill with your ATS Pass Probability and core metrics: keyword
+              coverage, semantic similarity, experience alignment, impact score, and resume
+              quality.
             </p>
             <p>
               Think of this view as a recruiter-style snapshot of how well your resume fits this

@@ -17,7 +17,7 @@ import { computeJDMatch, type JDMatchResult } from "@/app/lib/jdMatch";
 import { detectEvidenceGaps } from "@/app/lib/evidenceGap";
 import { scanATS, type ATSScanResult } from "@/app/lib/atsScan";
 import type { JDAnalysisResult } from "@/app/lib/jdAnalysis";
-import type { ATSAnalysisResult } from "@/app/lib/atsEngine";
+import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 
 const homeFaqSchema = {
   "@context": "https://schema.org",
@@ -87,7 +87,7 @@ export default function Home() {
   const [jdAnalysis, setJdAnalysis] = useState<JDAnalysisResult | null>(null);
   const [evidenceGaps, setEvidenceGaps] = useState<string[]>([]);
   const [atsResult, setAtsResult] = useState<ATSScanResult | null>(null);
-  const [engineResult, setEngineResult] = useState<ATSAnalysisResult | null>(null);
+  const [analyzeResult, setAnalyzeResult] = useState<ATSAnalyzeResult | null>(null);
   const [isReoptimizingSummary, setIsReoptimizingSummary] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -193,14 +193,13 @@ export default function Home() {
 
   const handleGenerate = useCallback(
     async (inputs: GenerateInputs) => {
-      // Start Analysis – analysis only, no optimization or login required
       setError(null);
       setIsGenerating(true);
       setJdMatchResult(null);
       setJdAnalysis(null);
       setEvidenceGaps([]);
       setAtsResult(null);
-      setEngineResult(null);
+      setAnalyzeResult(null);
       const country = inputs.country || "USA";
       const roleLevel = inputs.roleLevel || "Mid";
       const normalizedInputs: GenerateInputs = {
@@ -215,43 +214,31 @@ export default function Home() {
       setOptCountry(country);
       setOptRoleLevel(roleLevel);
       void logAnalysisEvent("analyze_clicked");
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        (window as any).gtag("event", "ats_analyze_started", {
+          event_category: "engagement",
+          event_label: "Analyze my resume free",
+        });
+      }
       try {
-        if (typeof window !== "undefined" && (window as any).gtag) {
-          (window as any).gtag("event", "ats_analyze_started", {
-            event_category: "engagement",
-            event_label: "Analyze my resume free",
-          });
-        }
         const res = await fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             resumeText: inputs.resumeText,
             jobDescription: inputs.jobDescription,
-            country,
-            roleLevel,
           }),
         });
-        let data: { error?: string } | ATSAnalysisResult;
-        try {
-          data = (await res.json()) as typeof data;
-        } catch {
-          const text = await res.text();
+        const data = (await res.json()) as ATSAnalyzeResult | { error?: string };
+        if (!res.ok) {
           setError(
-            res.ok ? "Invalid response from server" : text || `Request failed (${res.status})`
+            typeof (data as { error?: string }).error === "string"
+              ? (data as { error: string }).error
+              : "Analysis failed"
           );
           return;
         }
-        if (!res.ok) {
-          const err =
-            typeof (data as { error?: string }).error === "string"
-              ? (data as { error: string }).error
-              : "Analysis failed";
-          setError(err);
-          return;
-        }
-        const body = data as ATSAnalysisResult;
-        setEngineResult(body);
+        setAnalyzeResult(data as ATSAnalyzeResult);
         void logAnalysisEvent("dashboard_generated");
         if (typeof window !== "undefined" && (window as any).gtag) {
           (window as any).gtag("event", "ats_dashboard_generated", {
@@ -501,7 +488,7 @@ export default function Home() {
           </div>
           <div className="lg:col-span-2 flex flex-col gap-6 min-h-0">
             <IntelligencePanel
-              engineResult={engineResult}
+              analyzeResult={analyzeResult}
               showFullIntelligence={usage?.showFullIntelligence ?? false}
               showLocked={false}
             />

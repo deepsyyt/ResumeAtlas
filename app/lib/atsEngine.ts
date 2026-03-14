@@ -6,11 +6,13 @@ export type ResumeProfile = {
   skills: string[];
   job_titles: string[];
   years_experience: number;
-  projects: string[];
+  summary?: string;
+  projects: string[] | { description?: string; [key: string]: unknown }[];
   metrics: string[];
   tools: string[];
   education: string[];
   industries: string[];
+  work_experience?: { description?: string; [key: string]: unknown }[];
 };
 
 export type JDProfile = {
@@ -39,11 +41,6 @@ export type ExperienceAlignmentMetric = MetricScore & {
   resume_experience: number;
 };
 
-export type TitleAlignmentMetric = MetricScore & {
-  target_title: string;
-  resume_titles: string[];
-};
-
 export type ImpactScoreMetric = MetricScore & {
   metrics_detected: number;
   experience_lines: number;
@@ -60,7 +57,6 @@ export type ATSAnalysisResult = {
   keyword_coverage: KeywordCoverageMetric;
   semantic_similarity: MetricScore;
   experience_alignment: ExperienceAlignmentMetric;
-  title_alignment: TitleAlignmentMetric;
   impact_score: ImpactScoreMetric;
   resume_quality: ResumeQualityMetric;
   ats_score: number;
@@ -207,6 +203,10 @@ JOB DESCRIPTION:
     };
 
     const resume: ResumeProfile = {
+      summary:
+        typeof (parsed.resume_profile as any)?.summary === "string"
+          ? ((parsed.resume_profile as any).summary as string)
+          : "",
       skills: parsed.resume_profile?.skills?.filter(isString) ?? [],
       job_titles: parsed.resume_profile?.job_titles?.filter(isString) ?? [],
       years_experience:
@@ -239,6 +239,7 @@ JOB DESCRIPTION:
     // fall back to empty deterministic profiles
     return {
       resume: {
+        summary: "",
         skills: [],
         job_titles: [],
         years_experience: 0,
@@ -274,16 +275,186 @@ function isString(v: unknown): v is string {
   return typeof v === "string";
 }
 
+function normalizeForPhrase(text: string): string {
+  return text
+    .toLowerCase()
+    // keep letters, numbers, +, # and whitespace, strip other punctuation
+    .replace(/[^a-z0-9+#\s.?!]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractSkillPhrases(text: string): string[] {
+  const cleaned = text
+    .toLowerCase()
+    .replace(/[^a-z0-9+#/\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!cleaned) return [];
+
+  const phraseRegex = /\b([a-zA-Z0-9+#/]{2,}\s?){1,3}\b/g;
+  const phrases = new Set<string>();
+
+  const matches = cleaned.match(phraseRegex);
+  if (!matches) return [];
+
+  for (let phrase of matches) {
+    phrase = phrase.toLowerCase().replace(/[^a-z0-9+#/\s]/g, " ").replace(/\s+/g, " ").trim();
+    if (!phrase) continue;
+    phrases.add(phrase);
+  }
+
+  return Array.from(phrases);
+}
+
+function extractJDSkillPhrases(jd: JDProfile): string[] {
+  const phraseRegex = /\b([a-zA-Z0-9+#/]{2,}\s?){1,3}\b/g;
+  const banned = [
+    "ability",
+    "responsibility",
+    "ensure",
+    "optimize",
+    "improve",
+    "foster",
+    "collaborate",
+    "track",
+    "report",
+  ];
+
+  const seen = new Set<string>();
+
+  const addFromText = (text: string | undefined) => {
+    if (!text) return;
+    const cleaned = text
+      .toLowerCase()
+      .replace(/[^a-z0-9+#/\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!cleaned) return;
+
+    const matches = cleaned.match(phraseRegex);
+    if (!matches) return;
+
+    for (let phrase of matches) {
+      phrase = phrase.toLowerCase().replace(/[^a-z0-9+#/\s]/g, " ").replace(/\s+/g, " ").trim();
+      if (!phrase) continue;
+
+      const words = phrase.split(" ").filter(Boolean);
+      if (words.length === 0) continue;
+
+      // Rule 4: reject if more than 3 words
+      if (words.length > 3) continue;
+
+      // Rule 3: filter banned words
+      const hasBanned = banned.some((b) => phrase.includes(b));
+      if (hasBanned) continue;
+
+      // Rule 5: max 25 characters
+      if (phrase.length > 25) continue;
+
+      if (!seen.has(phrase)) {
+        seen.add(phrase);
+      }
+    }
+  };
+
+  jd.required_skills.forEach((s) => addFromText(s));
+
+  return Array.from(seen);
+}
+
+function phraseSimilarity(a: string, b: string): number {
+  const aTokens = a
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+  const bTokens = b
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (!aTokens.length || !bTokens.length) return 0;
+
+  const aFreq = new Map<string, number>();
+  const bFreq = new Map<string, number>();
+
+  for (const t of aTokens) {
+    aFreq.set(t, (aFreq.get(t) ?? 0) + 1);
+  }
+  for (const t of bTokens) {
+    bFreq.set(t, (bFreq.get(t) ?? 0) + 1);
+  }
+
+  let dot = 0;
+  let aNormSq = 0;
+  let bNormSq = 0;
+
+  aFreq.forEach((val, token) => {
+    aNormSq += val * val;
+    const bVal = bFreq.get(token);
+    if (typeof bVal === "number") {
+      dot += val * bVal;
+    }
+  });
+
+  bFreq.forEach((val) => {
+    bNormSq += val * val;
+  });
+
+  if (!aNormSq || !bNormSq) return 0;
+
+  const cosine = dot / (Math.sqrt(aNormSq) * Math.sqrt(bNormSq));
+  return Math.max(0, Math.min(1, cosine));
+}
+
 function computeKeywordCoverage(
   resume: ResumeProfile,
   jd: JDProfile
 ): KeywordCoverageMetric {
-  const resumeTokens = new Set([
-    ...resume.skills.map(normalizeText),
-    ...resume.tools.map(normalizeText),
-  ]);
+  const resumePhraseSet = new Set<string>();
+  const resumeTextParts: string[] = [];
 
-  const required = jd.required_skills.map(normalizeText).filter(Boolean);
+  if (typeof resume.summary === "string") {
+    resumeTextParts.push(resume.summary);
+  }
+
+  resumeTextParts.push(...resume.skills);
+  resumeTextParts.push(...resume.tools);
+
+  if (Array.isArray(resume.work_experience)) {
+    resume.work_experience.forEach((exp) => {
+      if (exp && typeof exp.description === "string") {
+        resumeTextParts.push(exp.description);
+      }
+    });
+  }
+
+  if (Array.isArray(resume.projects)) {
+    resume.projects.forEach((project) => {
+      if (typeof project === "string") {
+        resumeTextParts.push(project);
+      } else if (project && typeof project.description === "string") {
+        resumeTextParts.push(project.description);
+      }
+    });
+  }
+
+  const resumeText = resumeTextParts.filter(Boolean).join(" ");
+
+  extractSkillPhrases(resumeText).forEach((p) => resumePhraseSet.add(p));
+
+  // Also include structured skills and tools explicitly
+  resume.skills.forEach((s) => {
+    const norm = normalizeForPhrase(s);
+    if (norm) resumePhraseSet.add(norm);
+  });
+  resume.tools.forEach((t) => {
+    const norm = normalizeForPhrase(t);
+    if (norm) resumePhraseSet.add(norm);
+  });
+
+  const required = extractJDSkillPhrases(jd);
 
   const matched: string[] = [];
   const missing: string[] = [];
@@ -291,14 +462,12 @@ function computeKeywordCoverage(
   for (const skill of required) {
     if (!skill) continue;
     let present = false;
-    for (const token of skill.split(" ")) {
-      if (token.length < 3) continue;
-      resumeTokens.forEach((r) => {
-        if (!present && r.includes(token)) {
-          present = true;
-        }
-      });
-      if (present) break;
+    for (const resumePhrase of resumePhraseSet) {
+      const sim = phraseSimilarity(skill, resumePhrase);
+      if (sim > 0.6) {
+        present = true;
+        break;
+      }
     }
     if (present) matched.push(skill);
     else missing.push(skill);
@@ -350,35 +519,6 @@ function computeExperienceAlignment(
     required_experience: req,
     resume_experience: have,
     explanation: "Alignment between your total relevant experience and the minimum required for this role.",
-  };
-}
-
-function computeTitleAlignment(
-  resume: ResumeProfile,
-  jd: JDProfile
-): TitleAlignmentMetric {
-  const target = jd.job_title || "";
-  if (!target || !resume.job_titles.length) {
-    return {
-      score: 50,
-      target_title: target,
-      resume_titles: resume.job_titles,
-      explanation:
-        "Title alignment is estimated because either the target title or resume titles are missing.",
-    };
-  }
-  let best = 0;
-  for (const t of resume.job_titles) {
-    const sim = jaccardCosineSimilarity(target, t);
-    if (sim > best) best = sim;
-  }
-  const score = Math.round(best * 100);
-  return {
-    score,
-    target_title: target,
-    resume_titles: resume.job_titles,
-    explanation:
-      "Similarity between the target job title and the most relevant titles in your resume.",
   };
 }
 
@@ -460,15 +600,13 @@ export async function analyzeATS(
   const keyword_coverage = computeKeywordCoverage(resume, jd);
   const semantic_similarity = computeSemanticSimilarity(resumeText, jdText);
   const experience_alignment = computeExperienceAlignment(resume, jd);
-  const title_alignment = computeTitleAlignment(resume, jd);
   const impact_score = computeImpactScore(resumeText);
   const resume_quality = computeResumeQuality(resumeText);
 
   const atsScoreRaw =
     0.35 * keyword_coverage.score +
     0.2 * semantic_similarity.score +
-    0.15 * experience_alignment.score +
-    0.15 * title_alignment.score +
+    0.3 * experience_alignment.score +
     0.1 * impact_score.score +
     0.05 * resume_quality.score;
 
@@ -479,7 +617,6 @@ export async function analyzeATS(
     keyword_coverage,
     semantic_similarity,
     experience_alignment,
-    title_alignment,
     impact_score,
     resume_quality,
     ats_score,
