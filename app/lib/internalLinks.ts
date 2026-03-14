@@ -43,7 +43,9 @@ const POPULAR_EXAMPLES_PATHS = new Set(
   RESUME_EXAMPLE_LINKS.slice(0, 6).map((l) => l.path)
 );
 const ATS_GUIDES_PATHS = new Set(ATS_KEYWORD_LINKS.slice(0, 6).map((l) => l.path));
-const FEATURED_PATHS = new Set([...POPULAR_EXAMPLES_PATHS, ...ATS_GUIDES_PATHS]);
+const FEATURED_PATHS = new Set(
+  Array.from(POPULAR_EXAMPLES_PATHS).concat(Array.from(ATS_GUIDES_PATHS))
+);
 
 /** Simple deterministic hash for a string (djb2). */
 function hashString(s: string): number {
