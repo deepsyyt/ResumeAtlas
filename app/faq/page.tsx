@@ -8,7 +8,7 @@ const faqSchema = {
       acceptedAnswer: {
         "@type": "Answer",
         text:
-          "ATS Pass Probability is an estimated score from 0–100 that summarizes how likely your resume is to pass an automated applicant tracking system screen for the specific job description you pasted. It combines keyword coverage, semantic similarity, experience alignment, title alignment, impact score, and overall resume quality into one transparent metric.",
+          "ATS Pass Probability is an estimated score from 0–100 that summarizes how likely your resume is to pass an automated applicant tracking system screen for the specific job description you pasted. It combines keyword coverage, semantic similarity, experience alignment, impact score, and overall resume quality into one transparent metric.",
       },
     },
     {
@@ -35,7 +35,7 @@ const faqSchema = {
       acceptedAnswer: {
         "@type": "Answer",
         text:
-          "Experience Alignment compares your total years of relevant experience against what the job description asks for, and Title Alignment compares the target role title with the job titles in your resume. Together they indicate whether your seniority and past roles are a strong fit for the position.",
+          "Experience Alignment compares your total years of relevant experience against what the job description asks for. It indicates whether your seniority and past roles are a strong fit for the position.",
       },
     },
     {
@@ -44,7 +44,7 @@ const faqSchema = {
       acceptedAnswer: {
         "@type": "Answer",
         text:
-          "Most ATS tools only count keywords. ResumeAtlas adds a full dashboard with keyword coverage, semantic similarity, experience and title alignment, impact score, and resume quality. It explains why your score looks the way it does, highlights missing skills, and surfaces concrete, recruiter-style improvement ideas instead of just showing a black-box number.",
+          "Most ATS tools only count keywords. ResumeAtlas adds a full dashboard with keyword coverage, semantic similarity, experience alignment, impact score, and resume quality. It explains why your score looks the way it does, highlights missing skills, and surfaces concrete, recruiter-style improvement ideas instead of just showing a black-box number.",
       },
     },
     {
@@ -90,7 +90,7 @@ export default function FAQPage() {
               </p>
               <p>
                 It combines several signals from the dashboard – keyword coverage, semantic
-                similarity, experience and title alignment, impact score, and resume quality – into
+                similarity, experience alignment, impact score, and resume quality – into
                 a single number, so you can quickly see whether you are in low, moderate, strong, or
                 very strong match territory.
               </p>
@@ -158,15 +158,12 @@ export default function FAQPage() {
             <div className="mt-2 space-y-2">
               <p>
                 <strong>Experience Alignment</strong> compares your total years of relevant
-                experience to what the job description asks for, and{" "}
-                <strong>Title Alignment</strong> compares the target role title to the job titles in
-                your resume.
+                experience to what the job description asks for.
               </p>
               <p>
-                Together, they answer: “Am I senior enough for this role, and does my title
-                history look like a natural step into this position?” If these scores are low, you
-                may still apply, but you should be realistic about competition and highlight
-                stretch qualifications clearly.
+                It helps answer: “Am I senior enough for this role based on what the posting is
+                asking for?” If this score is low, you may still apply, but you should be realistic
+                about competition and highlight stretch qualifications clearly.
               </p>
             </div>
           </details>
@@ -186,9 +183,9 @@ export default function FAQPage() {
             <div className="mt-2 space-y-2">
               <p>
                 Many tools show a single ATS score without explaining how they got there.{" "}
-                <strong>ResumeAtlas</strong> breaks the score into six transparent metrics and
-                shows exactly which skills are matched or missing, how your titles align, and where
-                your bullets lack measurable impact.
+                <strong>ResumeAtlas</strong> breaks the score into transparent metrics and
+                shows exactly which skills are matched or missing and where your bullets lack
+                measurable impact.
               </p>
               <p>
                 The goal is not just to grade your resume, but to give you a recruiter-style

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
 import {
   RESUME_GUIDE_PAGES,
   type ResumeGuideSlug,
@@ -197,45 +198,10 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
         </section>
       </div>
 
-      <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-10 border-t border-slate-200 pt-6">
-        <h2 className="text-lg font-semibold tracking-tight text-slate-900 mb-3">
-          Related Resume Guides
-        </h2>
-        <ul className="list-disc pl-5 space-y-1 text-sm">
-          <li>
-            <Link
-              href="/data-analyst-resume-example"
-              className="text-sky-700 hover:underline"
-            >
-              Data Analyst Resume Example
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/ats-keywords/data-analyst"
-              className="text-sky-700 hover:underline"
-            >
-              ATS Keywords for Data Analyst Resumes
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/resume-guides/ats-resume-format"
-              className="text-sky-700 hover:underline"
-            >
-              ATS Resume Format
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/resume-guides/resume-skills-examples"
-              className="text-sky-700 hover:underline"
-            >
-              Resume Skills Examples
-            </Link>
-          </li>
-        </ul>
-      </section>
+      <RelatedResumeGuidesSection
+        currentPath={`/resume-guides/${params.slug}`}
+        className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 mb-10 border-t border-slate-200 pt-6"
+      />
 
       <script
         type="application/ld+json"
