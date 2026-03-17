@@ -171,6 +171,8 @@ JOB DESCRIPTION:
     const body = {
       model: MODEL,
       max_tokens: 1024,
+      temperature: 0,
+      top_p: 1,
       system,
       messages: [{ role: "user" as const, content: userPrompt }],
     };

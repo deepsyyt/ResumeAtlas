@@ -40,6 +40,8 @@ ${jobDescription}`;
     body: JSON.stringify({
       model: MODEL,
       max_tokens: 2048,
+      temperature: 0,
+      top_p: 1,
       system: SYSTEM,
       messages: [{ role: "user" as const, content: user }],
     }),

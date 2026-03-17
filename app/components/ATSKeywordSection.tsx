@@ -5,6 +5,16 @@ import { KEYWORD_PAGES } from "@/app/lib/seoPages";
 
 export function ATSKeywordSection() {
   const items = Object.entries(KEYWORD_PAGES).slice(0, 6);
+  const seoContentLinks = [
+    {
+      href: "/seo/data-scientist-resume-summary",
+      label: "Data Scientist resume summary examples",
+    },
+    {
+      href: "/seo/product-manager-resume-responsibilities",
+      label: "Product Manager resume responsibilities",
+    },
+  ];
 
   return (
     <section className="mt-6 text-left">
@@ -26,6 +36,23 @@ export function ATSKeywordSection() {
           </li>
         ))}
       </ul>
+      <div className="mt-3">
+        <p className="text-[11px] sm:text-xs text-slate-500">
+          After you know the right keywords, turn them into strong, ATS-ready content:
+        </p>
+        <ul className="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          {seoContentLinks.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className="text-[11px] sm:text-xs text-sky-700 hover:underline"
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }

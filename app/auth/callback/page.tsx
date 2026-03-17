@@ -11,9 +11,11 @@ function AuthCallbackContent() {
 
   useEffect(() => {
     const code = searchParams.get("code");
+    const next = searchParams.get("next");
+    const redirectTo = next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
     if (!code) {
       setStatus("error");
-      router.replace("/");
+      router.replace(redirectTo);
       return;
     }
     const supabase = createClient();
@@ -21,11 +23,11 @@ function AuthCallbackContent() {
       .exchangeCodeForSession(code)
       .then(() => {
         setStatus("done");
-        router.replace("/");
+        router.replace(redirectTo);
       })
       .catch(() => {
         setStatus("error");
-        router.replace("/");
+        router.replace(redirectTo);
       });
   }, [searchParams, router]);
 

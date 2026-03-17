@@ -30,6 +30,8 @@ export async function generateResume(input: GenerateInput): Promise<Resume> {
   const body = {
     model: MODEL,
     max_tokens: 4096,
+    temperature: 0,
+    top_p: 1,
     system,
     messages: [{ role: "user" as const, content: user }],
   };

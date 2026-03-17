@@ -169,6 +169,30 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
                   Common Resume Mistakes That Fail ATS
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/data-scientist/resume"
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  Data Scientist resume guide
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/software-engineer/resume"
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  Software Engineer resume guide
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/product-manager/resume"
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  Product Manager resume guide
+                </Link>
+              </li>
             </ul>
           </div>
         </section>

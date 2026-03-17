@@ -35,6 +35,8 @@ Rewrite the summary to be stronger for this role. Output only the new summary.`;
     body: JSON.stringify({
       model: MODEL,
       max_tokens: 1024,
+      temperature: 0,
+      top_p: 1,
       system,
       messages: [{ role: "user" as const, content: user }],
     }),

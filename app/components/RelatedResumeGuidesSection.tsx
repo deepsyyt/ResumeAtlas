@@ -4,7 +4,7 @@ import { getRelatedResumeGuides } from "@/app/lib/internalLinks";
 type Props = {
   /** Current page path (e.g. "/data-analyst-resume-example" or "/ats-keywords/data-analyst") so we exclude it from related links. */
   currentPath: string;
-  /** Number of related links to show (default 5). */
+  /** Number of related links to show (default 8 for dense semantic linking). */
   count?: number;
   /** Optional extra class for the section wrapper. */
   className?: string;
@@ -16,7 +16,7 @@ type Props = {
  */
 export function RelatedResumeGuidesSection({
   currentPath,
-  count = 5,
+  count = 8,
   className = "",
 }: Props) {
   const links = getRelatedResumeGuides(currentPath, count);

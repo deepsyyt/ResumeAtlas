@@ -21,14 +21,16 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
   const config = KEYWORD_PAGES[params.role];
   if (!config) notFound();
 
-  const resumeExampleSlug = `${params.role}-resume-example`.replace(
-    "data-scientist",
-    "data-scientist-resume-example"
-  );
+  const roleSlug = params.role;
+  const resumeExamplePath = `/${roleSlug}-resume-example`;
+  const hubPath = `/${roleSlug}/resume`;
+  const skillsSeoPath = `/seo/${roleSlug}-resume-skills`;
+  const canonicalBase = "https://resumeatlas.ai-stack.dev";
 
   const faqSchema = {
     "@context": "https://schema.org",
-    "@type": "FAQPage",
+  "@type": "FAQPage",
+  dateModified: "2026-03-17",
     mainEntity: [
       {
         "@type": "Question",
@@ -60,11 +62,41 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
     ],
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: `${config.roleName} Resume Guide`,
+        item: `${canonicalBase}${hubPath}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: config.h1,
+        item: `${canonicalBase}/ats-keywords/${roleSlug}`,
+      },
+    ],
+  } as const;
+
   return (
     <main className="min-h-screen bg-white text-slate-900">
       {/* Hero */}
       <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-18 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-10 sm:pb-12">
+          <nav className="mb-3 text-[11px] sm:text-xs text-slate-500 text-left">
+            <Link
+              href={hubPath}
+              className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
+            >
+              {config.roleName} Resume Guide
+            </Link>
+            <span className="mx-1.5 text-slate-400">/</span>
+            <span>ATS Keywords</span>
+          </nav>
+          <div className="text-center">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
             {config.h1}
           </h1>
@@ -73,12 +105,13 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
             {config.roleName.toLowerCase()} roles so your resume matches what hiring managers and
             applicant tracking systems are looking for.
           </p>
-          <Link
-            href="/"
-            className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
-          >
-            Check My Resume for ATS
-          </Link>
+            <Link
+              href="/"
+              className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
+            >
+              Check My Resume for ATS
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -94,6 +127,9 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
             : languages, frameworks, cloud providers, and responsibilities. The goal is not to
             memorize a universal list, but to understand the most common keyword categories so you
             can mirror the exact language of each posting you apply to.
+          </p>
+          <p className="mt-1 text-[11px] sm:text-xs text-slate-500">
+            Last updated: March 2026
           </p>
         </section>
 
@@ -190,10 +226,26 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
               </li>
               <li>
                 <Link
-                  href={`/${params.role}-resume-example`}
+                  href={resumeExamplePath}
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   {config.roleName} Resume Example
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={hubPath}
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {config.roleName} Resume Guide (hub)
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={skillsSeoPath}
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {config.roleName} resume skills examples
                 </Link>
               </li>
             </ul>
@@ -229,6 +281,11 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
     </main>
   );

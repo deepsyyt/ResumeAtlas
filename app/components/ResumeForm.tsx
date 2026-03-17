@@ -56,7 +56,7 @@ export function ResumeForm({
     if (typeof window !== "undefined" && (window as any).gtag) {
       (window as any).gtag("event", "analyze_resume_click", {
         event_category: "engagement",
-        event_label: "Analyze my resume free",
+        event_label: "Get ATS score free",
       });
     }
     onGenerate({
@@ -135,7 +135,7 @@ export function ResumeForm({
           </section>
 
           <p className="text-xs text-slate-500">
-            Resume analysis is free and does not require login. Sign in later to save optimizations and download PDFs.
+            Get your ATS score free—no login required. Fix your resume with AI when you&apos;re ready.
           </p>
 
           <button
@@ -146,7 +146,7 @@ export function ResumeForm({
             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10">
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
             </span>
-            Analyze my resume free
+            Get my ATS score free
           </button>
         </form>
 

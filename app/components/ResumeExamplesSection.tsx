@@ -5,6 +5,16 @@ import { RESUME_PAGES } from "@/app/lib/seoPages";
 
 export function ResumeExamplesSection() {
   const items = Object.entries(RESUME_PAGES).slice(0, 6);
+  const seoDeepDiveLinks = [
+    {
+      href: "/seo/bullet-points-data-scientist-resume",
+      label: "Data Scientist resume bullet points",
+    },
+    {
+      href: "/seo/software-engineer-resume-skills",
+      label: "Software Engineer resume skills",
+    },
+  ];
 
   return (
     <section className="mt-8 text-left">
@@ -26,6 +36,23 @@ export function ResumeExamplesSection() {
           </li>
         ))}
       </ul>
+      <div className="mt-3">
+        <p className="text-[11px] sm:text-xs text-slate-500">
+          Want more depth? Explore role-specific guides for bullet points, skills, summaries, and projects:
+        </p>
+        <ul className="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          {seoDeepDiveLinks.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className="text-[11px] sm:text-xs text-sky-700 hover:underline"
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }

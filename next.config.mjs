@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Avoid EPERM on .next when project is in OneDrive (use a separate build dir)
+  distDir: process.env.NODE_ENV === "development" ? "nextbuild" : ".next",
   async redirects() {
     return [
       {
