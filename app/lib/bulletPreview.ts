@@ -28,12 +28,12 @@ function hasActionVerb(text: string): boolean {
   const firstWord = text.trim().split(/\s+/)[0]?.toLowerCase().replace(/[^a-z]/g, "");
   if (firstWord && ACTION_VERBS.has(firstWord)) return true;
   const lower = text.toLowerCase();
-  return [...ACTION_VERBS].some((verb) => lower.includes(verb));
+  return Array.from(ACTION_VERBS).some((verb) => lower.includes(verb));
 }
 
 function hasImpactPhrase(text: string): boolean {
   const lower = text.toLowerCase();
-  return [...IMPACT_PHRASES].some((phrase) => lower.includes(phrase));
+  return Array.from(IMPACT_PHRASES).some((phrase) => lower.includes(phrase));
 }
 
 function wordCount(text: string): number {
