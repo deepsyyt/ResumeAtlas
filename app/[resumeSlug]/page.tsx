@@ -24,10 +24,12 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
   }
 
   const roleLower = config.roleName.toLowerCase();
+  const roleSlug = params.resumeSlug.replace("-resume-example", "");
 
   const faqSchema = {
     "@context": "https://schema.org",
-    "@type": "FAQPage",
+  "@type": "FAQPage",
+  dateModified: "2026-03-17",
     mainEntity: [
       {
         "@type": "Question",
@@ -58,13 +60,47 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
     ],
   };
 
-  const pairedKeywordsPath = `/ats-keywords/${roleLower.replace(" ", "-")}`;
+  const pairedKeywordsPath = `/ats-keywords/${roleSlug}`;
+  const hubPath = `/${roleSlug}/resume`;
+  const skillsSeoPath = `/seo/${roleSlug}-resume-skills`;
+  const summarySeoPath = `/seo/${roleSlug}-resume-summary`;
+  const projectsSeoPath = `/seo/${roleSlug}-resume-projects`;
+  const canonicalBase = "https://resumeatlas.ai-stack.dev";
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: `${config.roleName} Resume Guide`,
+        item: `${canonicalBase}${hubPath}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: config.h1,
+        item: `${canonicalBase}/${params.resumeSlug}`,
+      },
+    ],
+  } as const;
 
   return (
     <main className="min-h-screen bg-white text-slate-900">
       {/* Hero */}
       <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-18 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-10 sm:pb-12">
+          <nav className="mb-3 text-[11px] sm:text-xs text-slate-500 text-left">
+            <Link
+              href={hubPath}
+              className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
+            >
+              {config.roleName} Resume Guide
+            </Link>
+            <span className="mx-1.5 text-slate-400">/</span>
+            <span>Resume Example</span>
+          </nav>
+          <div className="text-center">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
             {config.h1}
           </h1>
@@ -73,12 +109,13 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
             Applicant Tracking Systems (ATS) and hiring managers—then adapt it to your own career
             story.
           </p>
-          <Link
-            href="/"
-            className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
-          >
-            Check My Resume with ResumeAtlas
-          </Link>
+            <Link
+              href="/"
+              className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
+            >
+              Check My Resume with ResumeAtlas
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -92,10 +129,47 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
             quantified impact. Use this example as a starting point, then tailor it to the specific
             job description you are targeting.
           </p>
+          <p className="mt-1 text-[11px] sm:text-xs text-slate-500">
+            Last updated: March 2026
+          </p>
+        </section>
+
+        {/* On this page */}
+        <section aria-label="On this page" className="border border-slate-200 rounded-2xl bg-slate-50/70 px-4 py-3 sm:px-5 sm:py-4">
+          <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-slate-500">
+            On this page
+          </p>
+          <ul className="mt-1.5 text-xs sm:text-sm text-slate-700 space-y-1 list-disc pl-4">
+            <li>
+              <a href="#example" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
+                Resume example
+              </a>
+            </li>
+            <li>
+              <a href="#why-it-works" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
+                Why this resume works
+              </a>
+            </li>
+            <li>
+              <a href="#keywords" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
+                ATS keywords
+              </a>
+            </li>
+            <li>
+              <a href="#tips" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
+                Improvement tips
+              </a>
+            </li>
+            <li>
+              <a href="#faq" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
+                FAQ
+              </a>
+            </li>
+          </ul>
         </section>
 
         {/* Resume example */}
-        <section>
+        <section id="example">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             {config.exampleTitle}
           </h2>
@@ -140,7 +214,7 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
         </section>
 
         {/* Why this resume works */}
-        <section>
+        <section id="why-it-works">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Why This {config.roleName} Resume Works
           </h2>
@@ -154,7 +228,7 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
         </section>
 
         {/* ATS keywords */}
-        <section>
+        <section id="keywords">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             ATS Keywords for a {config.roleName}
           </h2>
@@ -193,7 +267,7 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
         </section>
 
         {/* Tips */}
-        <section>
+        <section id="tips">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Tips to Improve Your {config.roleName} Resume
           </h2>
@@ -268,6 +342,38 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
                   ATS Keywords for {config.roleName} Resumes
                 </Link>
               </li>
+              <li>
+                <Link
+                  href={hubPath}
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {config.roleName} resume guide (hub)
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={skillsSeoPath}
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {config.roleName} resume skills examples
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={summarySeoPath}
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {config.roleName} resume summary examples
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={projectsSeoPath}
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {config.roleName} resume project ideas
+                </Link>
+              </li>
             </ul>
           </div>
         </section>
@@ -301,6 +407,11 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
     </main>
   );

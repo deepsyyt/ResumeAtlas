@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useCallback, useEffect } from "react";
 import { ResumeForm, type GenerateInputs, ROLE_LEVELS } from "@/app/components/ResumeForm";
 import { ResumePreview } from "@/app/components/ResumePreview";
 import { IntelligencePanel } from "@/app/components/IntelligencePanel";
 import { UsageBadge } from "@/app/components/UsageBadge";
 import { LimitModal } from "@/app/components/LimitModal";
+import { ResumeOptimizerModal } from "@/app/components/ResumeOptimizerModal";
 import { UpgradeScreen } from "@/app/components/UpgradeScreen";
 import { ResumeExamplesSection } from "@/app/components/ResumeExamplesSection";
 import { ATSKeywordSection } from "@/app/components/ATSKeywordSection";
@@ -74,10 +76,14 @@ async function fetchUsage(accessToken: string | null): Promise<Usage> {
   }
 }
 
+const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
+
 export default function Home() {
+  const router = useRouter();
   const [usage, setUsage] = useState<Usage | null>(null);
   const [limitModalOpen, setLimitModalOpen] = useState(false);
   const [limitModalMessage, setLimitModalMessage] = useState("");
+  const [optimizerModalOpen, setOptimizerModalOpen] = useState(false);
   const [resume, setResume] = useState<Resume | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -91,6 +97,7 @@ export default function Home() {
   const [isReoptimizingSummary, setIsReoptimizingSummary] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isLaunchingOptimize, setIsLaunchingOptimize] = useState(false);
   const [lastInputs, setLastInputs] = useState<GenerateInputs | null>(null);
   const [optCountry, setOptCountry] = useState<"USA" | "Canada" | "UK">("USA");
   const [optRoleLevel, setOptRoleLevel] = useState<string>("Mid");
@@ -217,7 +224,7 @@ export default function Home() {
       if (typeof window !== "undefined" && (window as any).gtag) {
         (window as any).gtag("event", "ats_analyze_started", {
           event_category: "engagement",
-          event_label: "Analyze my resume free",
+          event_label: "Get ATS score free",
         });
       }
       try {
@@ -423,19 +430,19 @@ export default function Home() {
               Free ATS Resume Checker, JD Match &amp; Gap Analysis
             </h1>
             <p className="text-xs sm:text-sm text-slate-600">
-              AI powered ATS resume checker that compares your resume with a job description and identifies missing skills, keyword gaps, and ATS compatibility issues.
+              See your ATS score, find missing keywords, and fix your resume so it passes. Compare with any job description and fix gaps in one click.
             </p>
             <UsageBadge usage={usage} />
           </div>
           <p className="mt-3 text-xs sm:text-sm font-semibold text-emerald-700">
-            100% free and unlimited. No login required. ATS-style resume checker and JD gap analyzer, not just keyword matching.
+            Score is 100% free. See what&apos;s wrong, then fix your resume with AI when you&apos;re ready.
           </p>
           <div className="mt-4 flex justify-center">
             <a
               href="#ats-checker-form"
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-2.5 text-sm sm:text-base font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 focus-visible:ring-offset-white transition"
             >
-              Check ATS Score Free
+              Get My ATS Score Free
             </a>
           </div>
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto text-left">
@@ -468,6 +475,41 @@ export default function Home() {
           <ATSKeywordSection />
         </div>
 
+        <section className="mt-2 sm:mt-4 border border-slate-200 rounded-2xl bg-slate-50/70 px-4 py-4 sm:px-5 sm:py-5">
+          <h2 className="text-sm sm:text-base font-semibold tracking-tight text-slate-900">
+            Popular Resume Guides
+          </h2>
+          <p className="mt-1 text-xs sm:text-sm text-slate-600">
+            Deep-dive guides for competitive roles, covering examples, skills, keywords, and ATS tips.
+          </p>
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs sm:text-sm">
+            <Link
+              href="/data-scientist/resume"
+              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
+              Data Scientist resume guide
+            </Link>
+            <Link
+              href="/software-engineer/resume"
+              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
+              Software Engineer resume guide
+            </Link>
+            <Link
+              href="/product-manager/resume"
+              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
+              Product Manager resume guide
+            </Link>
+            <Link
+              href="/data-analyst/resume"
+              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
+              Data Analyst resume guide
+            </Link>
+          </div>
+        </section>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 min-h-0">
           <div className="lg:col-span-1" id="ats-checker-form">
             {showUpgradeScreen && <UpgradeScreen />}
@@ -491,30 +533,96 @@ export default function Home() {
               analyzeResult={analyzeResult}
               showFullIntelligence={usage?.showFullIntelligence ?? false}
               showLocked={false}
+              onOpenOptimizer={
+                analyzeResult && lastInputs
+                  ? () => setOptimizerModalOpen(true)
+                  : undefined
+              }
+              resumeText={lastInputs?.resumeText ?? ""}
+              jobDescription={lastJD ?? ""}
             />
-            <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-3">
-              <div className="flex items-center gap-2">
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-white text-xs font-semibold">
-                  🚀
-                </span>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                    Coming soon
-                  </p>
-                  <h3 className="text-sm sm:text-base font-semibold tracking-tight text-slate-900">
-                    AI resume optimization for this exact job
-                  </h3>
-                </div>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-600">
-                You will soon be able to auto‑rewrite your resume for this role, boost your Resume ATS
-                score, and download a tailored version in one click.
-              </p>
-              <p className="text-xs sm:text-sm font-semibold text-emerald-700">
-                Get your ATS score above 85%.
-              </p>
-              <EmailWaitlistForm />
-            </section>
+            <ResumeOptimizerModal
+              open={optimizerModalOpen}
+              onClose={() => setOptimizerModalOpen(false)}
+              resumeText={lastInputs?.resumeText ?? ""}
+              jobDescription={lastJD ?? ""}
+              atsScore={analyzeResult?.ats_score ?? 0}
+              missingSkills={analyzeResult?.missing_skills ?? []}
+              keywordCoverage={analyzeResult?.keyword_coverage ?? 0}
+              isLoggedIn={isLoggedIn}
+              isOptimizing={isLaunchingOptimize}
+              onOptimize={async () => {
+                if (!lastInputs || !analyzeResult || isLaunchingOptimize) return;
+                setIsLaunchingOptimize(true);
+                let parsedResume = null;
+                if (typeof window !== "undefined") {
+                  try {
+                    const res = await fetch("/api/parse-resume", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ resumeText: lastInputs.resumeText }),
+                    });
+                    if (res.ok) {
+                      const data = (await res.json()) as {
+                        resume?: unknown;
+                      };
+                      if (data && typeof data === "object" && "resume" in data) {
+                        parsedResume = (data as { resume: unknown }).resume;
+                      }
+                    }
+                  } catch {
+                    // best-effort; fall back to raw text only
+                  }
+                }
+                if (typeof window !== "undefined") {
+                  try {
+                    window.sessionStorage.setItem(
+                      OPTIMIZE_INPUT_KEY,
+                      JSON.stringify({
+                        resumeText: lastInputs.resumeText,
+                        jobDescription: lastJD ?? "",
+                        analyzeResult,
+                        parsedResume,
+                      })
+                    );
+                  } catch {
+                    // ignore
+                  }
+                }
+                const supabase = createClient();
+                try {
+                  const { data: { session } } = await supabase.auth.getSession();
+                  if (!session) {
+                    setOptimizerModalOpen(false);
+                    await supabase.auth.signInWithOAuth({
+                      provider: "google",
+                      options: {
+                        redirectTo: `${window.location.origin}/auth/callback?next=/optimize`,
+                      },
+                    });
+                    return;
+                  }
+                  try {
+                    await fetch("/api/optimize-event", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${session.access_token}`,
+                      },
+                      body: JSON.stringify({
+                        ats_score_before: analyzeResult.ats_score,
+                      }),
+                    });
+                  } catch {
+                    // best-effort; still navigate
+                  }
+                  setOptimizerModalOpen(false);
+                  router.push("/optimize");
+                } finally {
+                  setIsLaunchingOptimize(false);
+                }
+              }}
+            />
             {lastInputs && (jdMatchResult || atsResult || evidenceGaps.length > 0) && (
               <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-4">
                 <h3 className="text-sm font-semibold tracking-tight text-slate-900">
@@ -554,16 +662,14 @@ export default function Home() {
                     </select>
                   </div>
                   <div className="flex-none">
-                    {isLoggedIn && (
-                      <button
-                        type="button"
-                        onClick={handleOptimize}
-                        disabled={isGenerating}
-                        className="w-full md:w-auto rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
-                      >
-                        Improve resume & generate optimized version
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={handleOptimize}
+                      disabled={isGenerating}
+                      className="w-full md:w-auto rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
+                    >
+                      Improve resume & generate optimized version
+                    </button>
                   </div>
                 </div>
               </section>

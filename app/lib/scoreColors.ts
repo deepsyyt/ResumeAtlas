@@ -45,10 +45,10 @@ export function getATSBadgeLabel(score: number): string {
 /** ATS verdict box: short message for the user. */
 export function getATSVerdictMessage(score: number): string {
   const s = Math.max(0, Math.min(100, Math.round(score)));
-  if (s >= 85) return "Your resume has a strong chance of passing ATS systems when applying for this role.";
-  if (s >= 70) return "Your resume has a moderate chance of passing ATS. Consider adding a few more aligned keywords and impact metrics.";
-  if (s >= 50) return "Your resume may struggle with ATS. Focus on adding missing keywords and quantified achievements.";
-  return "Your resume is at high risk of ATS rejection. Prioritize keyword alignment and measurable impact.";
+  if (s > 88) return "Your resume is strong but adding missing keywords and improving bullet impact could increase your ATS score.";
+  if (s >= 85) return "Your resume is strong but can still be optimized.";
+  if (s >= 70) return "Your resume has moderate ATS match.";
+  return "Your resume may struggle to pass ATS.";
 }
 
 /** ATS score ring: 85+ Green, 70–84 Yellow, 50–69 Orange, <50 Red. */

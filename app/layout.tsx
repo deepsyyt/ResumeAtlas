@@ -4,9 +4,9 @@ import { Navbar } from "@/app/components/Navbar";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "Free ATS Resume Checker | ResumeAtlas",
+  title: "Free ATS Score | Fix Your Resume for This Job | ResumeAtlas",
   description:
-    "Check your ATS resume score instantly. Compare your resume with any job description, detect missing skills, and improve your chances of getting shortlisted.",
+    "Get your ATS score free. See missing keywords and fix your resume for this job. Compare with any job description and get shortlisted.",
 };
 
 export default function RootLayout({

@@ -32,11 +32,11 @@ export default function HowItWorksPage() {
 
           <div className="space-y-3 text-sm text-slate-700">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Step 2: Run a free analysis
+              Step 2: See your score & fix your resume
             </h2>
             <p>
-              Click <strong>“Analyze my resume free”</strong>. In a few seconds, the right-hand
-              dashboard will fill with your ATS Pass Probability and core metrics: keyword
+              Click <strong>“Get my ATS score free”</strong>. In a few seconds, the right-hand
+              dashboard will fill with your ATS score and fix suggestions: keyword
               coverage, semantic similarity, experience alignment, impact score, and resume
               quality.
             </p>
@@ -61,6 +61,23 @@ export default function HowItWorksPage() {
               Use the <strong>Missing skills</strong> line and the impact score as a practical to‑do
               list for rewrites: add honest, specific bullets that cover those skills and quantify
               your results where possible.
+            </p>
+            <p>
+              If you want examples to copy the structure from, start with{" "}
+              <a
+                href="/seo/bullet-points-data-scientist-resume"
+                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                Data Scientist resume bullet points
+              </a>{" "}
+              or{" "}
+              <a
+                href="/seo/software-engineer-resume-skills"
+                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                Software Engineer resume skills
+              </a>
+              , then adapt the patterns to your own experience and role.
             </p>
           </div>
 

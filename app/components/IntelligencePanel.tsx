@@ -3,8 +3,7 @@
 // Intelligence panel driven by /api/analyze LLM result.
 // Uses universal score colors, progress bars, verdict box, and improvement tips.
 
-import { FaLinkedin } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import React from "react";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import {
   getScoreStyle,
@@ -19,16 +18,54 @@ import {
   getResumeQualityStyle,
 } from "@/app/lib/scoreColors";
 
+/** Bold missing skills (from JD) and numbers/metrics (18%, 2x, 3+) in "After" text. */
+function highlightImprovementsInText(text: string, keywords: string[]): React.ReactNode {
+  const escapedKeywords = (keywords ?? [])
+    .filter((k) => k.trim().length > 0)
+    .sort((a, b) => b.length - a.length)
+    .map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  // Match whole phrases/words (word boundaries) so we bold missing skills clearly; also match metrics
+  const combined =
+    escapedKeywords.length > 0
+      ? new RegExp(
+          `(\\b(?:${escapedKeywords.join("|")})\\b|\\d+%|\\d+x|\\d+\\+?)`,
+          "gi"
+        )
+      : /(\d+%|\d+x|\d+\+?)/gi;
+  const parts = text.split(combined);
+  return (
+    <>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? (
+          <strong key={i} className="font-semibold text-slate-900">
+            {part}
+          </strong>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
+}
+
 type IntelligencePanelProps = {
   analyzeResult: ATSAnalyzeResult | null;
   showFullIntelligence?: boolean;
   showLocked?: boolean;
+  /** When provided, shows optimizer CTA and bullet preview. */
+  onOpenOptimizer?: () => void;
+  /** For bullet preview: before/after sample. When provided with jobDescription, fetches preview. */
+  resumeText?: string;
+  jobDescription?: string;
 };
 
 export function IntelligencePanel({
   analyzeResult,
   showFullIntelligence = true,
   showLocked = false,
+  onOpenOptimizer,
+  resumeText = "",
+  jobDescription = "",
 }: IntelligencePanelProps) {
   const hasAny = !!analyzeResult;
 
@@ -163,7 +200,7 @@ export function IntelligencePanel({
         </div>
 
         <p className="mt-2.5 text-[11px] text-slate-500">
-          Paste your resume and a job description, then click Analyze to see your live results.
+          Paste your resume and job description, then see your score and fix your resume.
         </p>
 
         {/* Supporting metrics – compact cards */}
@@ -315,7 +352,7 @@ export function IntelligencePanel({
         </div>
 
         <p className="mt-3 text-xs text-slate-500">
-          Your live analysis will use your own resume and the pasted job description to compute these metrics.
+          Your score and fix suggestions use your resume and the job description you pasted.
         </p>
       </section>
     );
@@ -330,28 +367,11 @@ export function IntelligencePanel({
   const resumeYearsExperience = analyzeResult?.resume_years_experience ?? 0;
   const impactScore = analyzeResult?.impact_score ?? 0;
   const qualityScore = analyzeResult?.resume_quality ?? 0;
-  const summary = analyzeResult?.summary ?? "";
   const matchedSkills = analyzeResult?.matched_skills ?? [];
   const missingSkills = analyzeResult?.missing_skills ?? [];
-
-  const shareText = [
-    "I checked how well my resume matches a job description using ResumeAtlas.",
-    "",
-    `Estimated ATS pass likelihood: ${atsScore}%`,
-    "",
-    "Resume vs JD insights:",
-    `• Keyword coverage: ${keywordScore}%`,
-    `• Semantic match: ${semanticScore}%`,
-    `• Experience alignment: ${experienceScore}%`,
-    "",
-    "Test your resume against a job description:",
-    "https://resumeatlas.ai-stack.dev",
-  ].join("\n");
-
-  const encodedText = encodeURIComponent(shareText);
-  const linkedInShareUrl =
-    "https://www.linkedin.com/sharing/share-offsite/?url=https://resumeatlas.ai-stack.dev";
-  const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
+  const missingRequired = analyzeResult?.missing_skills_required ?? [];
+  const missingPreferred = analyzeResult?.missing_skills_preferred ?? [];
+  const hasRequiredPreferred = missingRequired.length > 0 || missingPreferred.length > 0;
 
   const atsStyle = getScoreStyle(atsScore);
   const atsRingHex = getATSRingHex(atsScore);
@@ -369,7 +389,11 @@ export function IntelligencePanel({
 
   const improvementTips: string[] = [];
   if (missingSkills.length > 0) {
-    improvementTips.push(`Add ${missingSkills.length} missing keyword${missingSkills.length === 1 ? "" : "s"} to your resume`);
+    improvementTips.push(
+      hasRequiredPreferred && missingRequired.length > 0
+        ? `Add ${missingRequired.length} Required skills (from JD) automatically with AI optimization`
+        : `Add ${missingSkills.length} missing keywords automatically with AI optimization`
+    );
   }
   if (impactScore < 70) {
     improvementTips.push("Add measurable impact metrics (%, $, growth) to your bullets");
@@ -440,11 +464,11 @@ export function IntelligencePanel({
             Intelligence
           </h2>
           <p className="text-xs text-slate-600 truncate sm:truncate-none">
-            Your analysis for the pasted resume and job description.
+            Your score and fix suggestions for this resume and job.
           </p>
         </div>
         <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-500/50 bg-emerald-50 text-emerald-700 px-4 py-1.5 text-sm font-medium">
-          Your analysis result
+          Your result — fix below
         </span>
       </div>
 
@@ -478,7 +502,7 @@ export function IntelligencePanel({
         </div>
       </div>
 
-      {/* ATS Verdict – compact */}
+      {/* ATS Verdict – compact (analysis only) */}
       <div
         className="mt-3 flex items-start gap-2.5 rounded-lg border px-3 py-2.5"
         style={{ backgroundColor: atsStyle.bgHex, borderColor: atsStyle.hex }}
@@ -498,40 +522,84 @@ export function IntelligencePanel({
         </div>
       </div>
 
-      {/* Share */}
-      <div className="mt-3">
-        <p className="text-sm text-slate-500 mb-2">Share your result</p>
-        <div className="flex flex-wrap items-center gap-3">
-          <a
-            href={linkedInShareUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg bg-[#0A66C2] px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-[#084c93] transition-colors"
-          >
-            <FaLinkedin className="h-4 w-4" aria-hidden="true" />
-            <span>Share on LinkedIn</span>
-          </a>
-          <a
-            href={twitterShareUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg bg-black px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-[#222] transition-colors"
-          >
-            <FaXTwitter className="h-4 w-4" aria-hidden="true" />
-            <span>Share on X</span>
-          </a>
-        </div>
-      </div>
+      {/* Single optimization card – header (problem + opportunity), two-column preview, centered CTA */}
+      {onOpenOptimizer && (() => {
+        const potentialNum = atsScore < 90 ? 90 : 95;
+        const potentialLabel = atsScore < 90 ? "90+" : "95+";
+        const delta = Math.max(0, potentialNum - atsScore);
+        const bulletPreview = analyzeResult?.bullet_preview ?? null;
+        const bulletPreviewSkip = analyzeResult?.bullet_preview_skip;
+        const showPreview = bulletPreview || bulletPreviewSkip === "already_strong";
+        return (
+          <div className="mt-4 rounded-xl border border-slate-200 bg-white px-2.5 py-2.5 shadow-sm">
+            {/* Top row: headline + keywords + score (left) | CTA button (right) */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">
+                  ⚡ Improve this resume for this job
+                </h3>
+                {missingSkills.length > 0 && (
+                  <p className="text-xs text-slate-600 mt-0.5">
+                    {hasRequiredPreferred && missingRequired.length > 0
+                      ? `Add ${missingRequired.length} Required skill${missingRequired.length === 1 ? "" : "s"} (from JD) to improve your resume`
+                      : `Add ${missingSkills.length} mandatory skill${missingSkills.length === 1 ? "" : "s"} to improve your resume`}
+                  </p>
+                )}
+                <div className="mt-1 flex items-baseline gap-2">
+                  <span className="text-lg font-bold text-slate-700">{atsScore}%</span>
+                  <span className="text-slate-300" aria-hidden>→</span>
+                  <span className="text-lg font-bold text-emerald-600">{potentialLabel}</span>
+                  {delta > 0 && (
+                    <span className="text-xs font-semibold text-emerald-600 ml-0.5">
+                      +{delta} ATS score improvement possible
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col items-center sm:items-end gap-1">
+                <button
+                  type="button"
+                  onClick={onOpenOptimizer}
+                  className="w-full sm:w-auto sm:shrink-0 inline-flex items-center justify-center rounded-lg bg-slate-900 py-2.5 px-4 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[200px] sm:min-w-[220px]"
+                >
+                  Optimize Resume For This Job
+                </button>
+                <p className="text-[10px] text-slate-500 text-center sm:text-right">
+                  AI will rewrite with missing keywords and stronger bullets.
+                </p>
+              </div>
+            </div>
 
-      {/* Summary */}
-      {summary && (
-        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1">
-            Summary
-          </p>
-          <p className="text-sm text-slate-700">{summary}</p>
-        </div>
-      )}
+            {/* Before | After – clear separation, comfortable padding */}
+            {showPreview && (
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
+                    Before
+                  </p>
+                  <div className="text-xs text-slate-600 leading-relaxed line-clamp-3 max-h-[3.5rem] overflow-hidden">
+                    {bulletPreviewSkip === "already_strong"
+                      ? "Strong achievements already."
+                      : bulletPreview ? bulletPreview.before : null}
+                  </div>
+                </div>
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2.5">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 mb-1.5">
+                    After
+                  </p>
+                  <div className="text-xs text-slate-800 leading-relaxed line-clamp-3 max-h-[3.5rem] overflow-hidden">
+                    {bulletPreviewSkip === "already_strong"
+                      ? "Keyword alignment & ATS formatting."
+                      : bulletPreview
+                        ? highlightImprovementsInText(bulletPreview.after, missingSkills)
+                        : null}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Supporting metrics – compact cards */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -614,12 +682,57 @@ export function IntelligencePanel({
         )}
       </div>
 
-      {/* Missing skills – red chips */}
+      {/* Missing skills – Required vs Preferred when classified, else single list */}
       <div className="mt-3 rounded-xl border border-slate-200 px-3 py-3">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
           Missing skills (from JD)
         </p>
-        {missingSkills.length ? (
+        {!missingSkills.length ? (
+          <p className="text-xs text-slate-600" style={{ color: "#16A34A" }}>
+            No major missing skills detected compared to the JD.
+          </p>
+        ) : hasRequiredPreferred ? (
+          <div className="space-y-3">
+            {missingRequired.length > 0 && (
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-red-700 mb-1.5">
+                  Required
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {missingRequired.map((skill) => (
+                    <span
+                      key={skill}
+                      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
+                      style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#EF4444]" aria-hidden />
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {missingPreferred.length > 0 && (
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-700 mb-1.5">
+                  Preferred
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {missingPreferred.map((skill) => (
+                    <span
+                      key={skill}
+                      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
+                      style={{ backgroundColor: "#FFFBEB", color: "#D97706" }}
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#D97706]" aria-hidden />
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
           <div className="flex flex-wrap gap-2">
             {missingSkills.map((skill) => (
               <span
@@ -632,24 +745,33 @@ export function IntelligencePanel({
               </span>
             ))}
           </div>
-        ) : (
-          <p className="text-xs text-slate-600" style={{ color: "#16A34A" }}>
-            No major missing skills detected compared to the JD.
-          </p>
         )}
       </div>
 
       {/* Improvement tips */}
       {improvementTips.length > 0 && (
         <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-800 mb-2">
-            Improve your ATS score
-          </p>
-          <ul className="list-disc list-inside space-y-1 text-sm text-amber-900">
-            {improvementTips.map((tip, i) => (
-              <li key={i}>{tip}</li>
-            ))}
-          </ul>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-800 mb-2">
+                Fix your resume
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-sm text-amber-900">
+                {improvementTips.map((tip, i) => (
+                  <li key={i}>{tip}</li>
+                ))}
+              </ul>
+            </div>
+            {onOpenOptimizer && (
+              <button
+                type="button"
+                onClick={onOpenOptimizer}
+                className="sm:shrink-0 w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-slate-900 py-2.5 px-4 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[200px]"
+              >
+                Optimize Resume For This Job
+              </button>
+            )}
+          </div>
         </div>
       )}
     </section>

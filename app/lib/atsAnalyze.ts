@@ -2,6 +2,11 @@
  * Result shape returned by the /api/analyze LLM-based ATS analysis.
  * Dashboard UI binds directly to this JSON.
  */
+export type BulletPreview = {
+  before: string;
+  after: string;
+};
+
 export type ATSAnalyzeResult = {
   ats_score: number;
   keyword_coverage: number;
@@ -15,7 +20,15 @@ export type ATSAnalyzeResult = {
   resume_quality: number;
   matched_skills: string[];
   missing_skills: string[];
+  /** Missing skills the JD lists as required/must-have. When set, UI shows Required vs Preferred. */
+  missing_skills_required?: string[];
+  /** Missing skills the JD lists as preferred/nice-to-have. When set, UI shows Required vs Preferred. */
+  missing_skills_preferred?: string[];
   summary: string;
+  /** Optional before/after bullet preview for conversion. Null if skipped (no bullets or already strong). */
+  bullet_preview?: BulletPreview | null;
+  /** When bullet_preview is null: "already_strong" | "no_bullets" so UI can show the right message. */
+  bullet_preview_skip?: "already_strong" | "no_bullets";
 };
 
 export function atsBandFromScore(score: number): "low" | "moderate" | "strong" | "very_strong" {
@@ -42,6 +55,13 @@ export function isATSAnalyzeResult(obj: unknown): obj is ATSAnalyzeResult {
     typeof o.resume_quality === "number" &&
     Array.isArray(o.matched_skills) &&
     Array.isArray(o.missing_skills) &&
-    typeof o.summary === "string"
+    (o.missing_skills_required === undefined || Array.isArray(o.missing_skills_required)) &&
+    (o.missing_skills_preferred === undefined || Array.isArray(o.missing_skills_preferred)) &&
+    typeof o.summary === "string" &&
+    (o.bullet_preview === undefined ||
+      o.bullet_preview === null ||
+      (typeof o.bullet_preview === "object" &&
+        typeof (o.bullet_preview as BulletPreview).before === "string" &&
+        typeof (o.bullet_preview as BulletPreview).after === "string"))
   );
 }
