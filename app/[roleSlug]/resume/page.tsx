@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import type { RoleSlug } from "@/app/lib/seoPages";
 
 type PageParams = {
-  role: RoleSlug;
+  roleSlug: RoleSlug;
 };
 
 const ROLE_NAMES: Record<RoleSlug, string> = {
@@ -21,7 +21,7 @@ const ROLE_NAMES: Record<RoleSlug, string> = {
 };
 
 export function generateMetadata({ params }: { params: PageParams }): Metadata {
-  const roleName = ROLE_NAMES[params.role];
+  const roleName = ROLE_NAMES[params.roleSlug];
   if (!roleName) return {};
 
   return {
@@ -31,10 +31,10 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
 }
 
 export default function RoleResumeHubPage({ params }: { params: PageParams }) {
-  const roleName = ROLE_NAMES[params.role];
+  const roleName = ROLE_NAMES[params.roleSlug];
   if (!roleName) notFound();
 
-  const role = params.role;
+  const role = params.roleSlug;
   const roleLower = roleName.toLowerCase();
 
   const resumeExamplePath = `/${role}-resume-example`;

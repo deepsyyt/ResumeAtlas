@@ -5,11 +5,11 @@ import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuides
 import { RESUME_PAGES, type ResumeSlug } from "@/app/lib/seoPages";
 
 type PageParams = {
-  resumeSlug: ResumeSlug;
+  roleSlug: ResumeSlug;
 };
 
 export function generateMetadata({ params }: { params: PageParams }): Metadata {
-  const config = RESUME_PAGES[params.resumeSlug];
+  const config = RESUME_PAGES[params.roleSlug];
   if (!config) return {};
   return {
     title: `${config.h1} (ATS-Friendly Template) | ResumeAtlas`,
@@ -18,18 +18,18 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
 }
 
 export default function ResumeExamplePage({ params }: { params: PageParams }) {
-  const config = RESUME_PAGES[params.resumeSlug];
+  const config = RESUME_PAGES[params.roleSlug];
   if (!config) {
     notFound();
   }
 
   const roleLower = config.roleName.toLowerCase();
-  const roleSlug = params.resumeSlug.replace("-resume-example", "");
+  const roleSlug = params.roleSlug.replace("-resume-example", "");
 
   const faqSchema = {
     "@context": "https://schema.org",
-  "@type": "FAQPage",
-  dateModified: "2026-03-17",
+    "@type": "FAQPage",
+    dateModified: "2026-03-17",
     mainEntity: [
       {
         "@type": "Question",
@@ -80,7 +80,7 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
         "@type": "ListItem",
         position: 2,
         name: config.h1,
-        item: `${canonicalBase}/${params.resumeSlug}`,
+        item: `${canonicalBase}/${roleSlug}-resume-example`,
       },
     ],
   } as const;
@@ -101,14 +101,14 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
             <span>Resume Example</span>
           </nav>
           <div className="text-center">
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
-            {config.h1}
-          </h1>
-          <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-            See a real‑world {config.roleName.toLowerCase()} resume example that is structured for
-            Applicant Tracking Systems (ATS) and hiring managers—then adapt it to your own career
-            story.
-          </p>
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
+              {config.h1}
+            </h1>
+            <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+              See a real‑world {config.roleName.toLowerCase()} resume example that is structured for
+              Applicant Tracking Systems (ATS) and hiring managers—then adapt it to your own career
+              story.
+            </p>
             <Link
               href="/"
               className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
@@ -135,33 +135,51 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
         </section>
 
         {/* On this page */}
-        <section aria-label="On this page" className="border border-slate-200 rounded-2xl bg-slate-50/70 px-4 py-3 sm:px-5 sm:py-4">
+        <section
+          aria-label="On this page"
+          className="border border-slate-200 rounded-2xl bg-slate-50/70 px-4 py-3 sm:px-5 sm:py-4"
+        >
           <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-slate-500">
             On this page
           </p>
           <ul className="mt-1.5 text-xs sm:text-sm text-slate-700 space-y-1 list-disc pl-4">
             <li>
-              <a href="#example" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
+              <a
+                href="#example"
+                className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
+              >
                 Resume example
               </a>
             </li>
             <li>
-              <a href="#why-it-works" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
+              <a
+                href="#why-it-works"
+                className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
+              >
                 Why this resume works
               </a>
             </li>
             <li>
-              <a href="#keywords" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
+              <a
+                href="#keywords"
+                className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
+              >
                 ATS keywords
               </a>
             </li>
             <li>
-              <a href="#tips" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
+              <a
+                href="#tips"
+                className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
+              >
                 Improvement tips
               </a>
             </li>
             <li>
-              <a href="#faq" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
+              <a
+                href="#faq"
+                className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
+              >
                 FAQ
               </a>
             </li>
@@ -185,9 +203,7 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
               <p>{config.summary}</p>
             </div>
             <div className="pt-3 space-y-2">
-              <h3 className="text-sm font-semibold tracking-tight text-slate-900">
-                Skills
-              </h3>
+              <h3 className="text-sm font-semibold tracking-tight text-slate-900">Skills</h3>
               <p className="text-slate-700">
                 React • TypeScript • Next.js • HTML • CSS • Accessibility • REST APIs • SQL •
                 Testing
@@ -204,9 +220,7 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
               </ul>
             </div>
             <div className="pt-3 space-y-1">
-              <h3 className="text-sm font-semibold tracking-tight text-slate-900">
-                Education
-              </h3>
+              <h3 className="text-sm font-semibold tracking-tight text-slate-900">Education</h3>
               <p>B.S. in Computer Science</p>
               <p className="text-slate-600">University of Example</p>
             </div>
@@ -378,7 +392,10 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
           </div>
         </section>
 
-        <RelatedResumeGuidesSection currentPath={`/${params.resumeSlug}`} className="mt-10 border-t border-slate-200 pt-6" />
+        <RelatedResumeGuidesSection
+          currentPath={`/${roleSlug}-resume-example`}
+          className="mt-10 border-t border-slate-200 pt-6"
+        />
 
         {/* FAQ */}
         <section id="faq">
