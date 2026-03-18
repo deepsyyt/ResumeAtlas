@@ -17,6 +17,7 @@ import { detectEvidenceGaps } from "@/app/lib/evidenceGap";
 import { scanATS, type ATSScanResult } from "@/app/lib/atsScan";
 import type { JDAnalysisResult } from "@/app/lib/jdAnalysis";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
+import { useRef } from "react";
 
 const homeFaqSchema = {
   "@context": "https://schema.org",
@@ -74,6 +75,15 @@ async function fetchUsage(accessToken: string | null): Promise<Usage> {
 }
 
 const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
+const ANALYZER_STATE_KEY = "resumeatlas_analyzer_state_v1";
+
+type AnalyzerStoredState = {
+  lastInputs: GenerateInputs;
+  lastJD: string;
+  lastRoleLevel: string;
+  analyzeResult: ATSAnalyzeResult;
+  savedAt: number;
+};
 
 export default function Home() {
   const router = useRouter();
@@ -99,6 +109,7 @@ export default function Home() {
   const [optCountry, setOptCountry] = useState<"USA" | "Canada" | "UK">("USA");
   const [optRoleLevel, setOptRoleLevel] = useState<string>("Mid");
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const openedOptimizerFromQueryRef = useRef(false);
 
   const refreshUsage = useCallback(async () => {
     const supabase = createClient();
@@ -127,10 +138,45 @@ export default function Home() {
         window.sessionStorage.setItem("session_id", sid);
       }
       setSessionId(sid);
+
+      // Restore analyzer state after hard reload / OAuth round-trip.
+      // Prefer sessionStorage (tab-scoped), fall back to localStorage (more durable).
+      try {
+        const raw =
+          window.sessionStorage.getItem(ANALYZER_STATE_KEY) ||
+          window.localStorage.getItem(ANALYZER_STATE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as Partial<AnalyzerStoredState>;
+          const li = parsed.lastInputs as GenerateInputs | undefined;
+          const ajd = typeof parsed.lastJD === "string" ? parsed.lastJD : undefined;
+          const arl = typeof parsed.lastRoleLevel === "string" ? parsed.lastRoleLevel : undefined;
+          const ar = parsed.analyzeResult as ATSAnalyzeResult | undefined;
+          if (li?.resumeText && li?.jobDescription && ajd && ar?.ats_score !== undefined) {
+            setLastInputs(li);
+            setLastJD(ajd);
+            if (arl) setLastRoleLevel(arl);
+            setAnalyzeResult(ar);
+          }
+        }
+      } catch {
+        // ignore restore failures
+      }
     }
 
     return () => subscription.unsubscribe();
   }, [refreshUsage]);
+
+  useEffect(() => {
+    if (openedOptimizerFromQueryRef.current) return;
+    if (typeof window === "undefined") return;
+    const open = new URLSearchParams(window.location.search).get("openOptimizer");
+    if (open !== "1") return;
+    if (!analyzeResult || !lastInputs) return;
+    openedOptimizerFromQueryRef.current = true;
+    setOptimizerModalOpen(true);
+    // Clean the URL so refresh doesn't re-open the modal.
+    router.replace("/");
+  }, [analyzeResult, lastInputs, router]);
 
   const logAnalysisEvent = useCallback(
     async (eventType: string) => {
@@ -243,6 +289,25 @@ export default function Home() {
           return;
         }
         setAnalyzeResult(data as ATSAnalyzeResult);
+        if (typeof window !== "undefined") {
+          const toStore: AnalyzerStoredState = {
+            lastInputs: normalizedInputs,
+            lastJD: inputs.jobDescription,
+            lastRoleLevel: roleLevel,
+            analyzeResult: data as ATSAnalyzeResult,
+            savedAt: Date.now(),
+          };
+          try {
+            window.sessionStorage.setItem(ANALYZER_STATE_KEY, JSON.stringify(toStore));
+          } catch {
+            // ignore
+          }
+          try {
+            window.localStorage.setItem(ANALYZER_STATE_KEY, JSON.stringify(toStore));
+          } catch {
+            // ignore
+          }
+        }
         void logAnalysisEvent("dashboard_generated");
         if (typeof window !== "undefined" && (window as any).gtag) {
           (window as any).gtag("event", "ats_dashboard_generated", {
@@ -634,15 +699,14 @@ export default function Home() {
                 }
                 if (typeof window !== "undefined") {
                   try {
-                    window.sessionStorage.setItem(
-                      OPTIMIZE_INPUT_KEY,
-                      JSON.stringify({
-                        resumeText: lastInputs.resumeText,
-                        jobDescription: lastJD ?? "",
-                        analyzeResult,
-                        parsedResume,
-                      })
-                    );
+                    const payload = JSON.stringify({
+                      resumeText: lastInputs.resumeText,
+                      jobDescription: lastJD ?? "",
+                      analyzeResult,
+                      parsedResume,
+                    });
+                    window.sessionStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
+                    window.localStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
                   } catch {
                     // ignore
                   }
@@ -655,7 +719,7 @@ export default function Home() {
                     await supabase.auth.signInWithOAuth({
                       provider: "google",
                       options: {
-                        redirectTo: `${window.location.origin}/auth/callback?next=/optimize`,
+                        redirectTo: `${window.location.origin}/auth/callback?next=/?openOptimizer=1`,
                       },
                     });
                     return;
