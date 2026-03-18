@@ -6,12 +6,9 @@ import { useState, useCallback, useEffect } from "react";
 import { ResumeForm, type GenerateInputs, ROLE_LEVELS } from "@/app/components/ResumeForm";
 import { ResumePreview } from "@/app/components/ResumePreview";
 import { IntelligencePanel } from "@/app/components/IntelligencePanel";
-import { UsageBadge } from "@/app/components/UsageBadge";
 import { LimitModal } from "@/app/components/LimitModal";
 import { ResumeOptimizerModal } from "@/app/components/ResumeOptimizerModal";
 import { UpgradeScreen } from "@/app/components/UpgradeScreen";
-import { ResumeExamplesSection } from "@/app/components/ResumeExamplesSection";
-import { ATSKeywordSection } from "@/app/components/ATSKeywordSection";
 import { createClient } from "@/app/lib/supabase/client";
 import type { Resume } from "@/app/types/resume";
 import type { Usage } from "@/app/lib/usage";
@@ -423,21 +420,20 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-col bg-white">
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-8 flex flex-col gap-8">
-        <header className="text-center mt-0 sm:mt-0 mb-1 sm:mb-2">
-          <div className="flex flex-col items-center gap-2">
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col gap-8">
+        <header className="text-center mt-0 sm:mt-0 mb-0">
+          <div className="flex flex-col items-center gap-1.5">
             <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900">
               Free ATS Resume Checker, JD Match &amp; Gap Analysis
             </h1>
             <p className="text-xs sm:text-sm text-slate-600">
               See your ATS score, find missing keywords, and fix your resume so it passes. Compare with any job description and fix gaps in one click.
             </p>
-            <UsageBadge usage={usage} />
           </div>
-          <p className="mt-3 text-xs sm:text-sm font-semibold text-emerald-700">
+          <p className="mt-2 text-xs sm:text-sm font-semibold text-emerald-700">
             Score is 100% free. See what&apos;s wrong, then fix your resume with AI when you&apos;re ready.
           </p>
-          <div className="mt-4 flex justify-center">
+          <div className="mt-3 flex justify-center">
             <a
               href="#ats-checker-form"
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-2.5 text-sm sm:text-base font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 focus-visible:ring-offset-white transition"
@@ -445,24 +441,24 @@ export default function Home() {
               Get My ATS Score Free
             </a>
           </div>
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto text-left">
-            <div className="flex items-start gap-2 rounded-xl border border-slate-200 bg-white/60 px-3 py-2">
-              <span className="mt-0.5 h-2 w-2 rounded-full bg-emerald-500" />
-              <p className="text-xs text-slate-600">
+          <div className="mt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-1.5 max-w-3xl mx-auto text-left">
+            <div className="flex items-start gap-1.5 rounded-xl border border-slate-200 bg-white/60 px-2.5 py-1">
+              <span className="mt-[3px] h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <p className="text-[11px] leading-snug text-slate-600">
                 <span className="font-semibold text-slate-800">Used by 2,000+ job seekers</span>{" "}
                 preparing for competitive roles.
               </p>
             </div>
-            <div className="flex items-start gap-2 rounded-xl border border-slate-200 bg-white/60 px-3 py-2">
-              <span className="mt-0.5 h-2 w-2 rounded-full bg-emerald-500" />
-              <p className="text-xs text-slate-600">
+            <div className="flex items-start gap-1.5 rounded-xl border border-slate-200 bg-white/60 px-2.5 py-1">
+              <span className="mt-[3px] h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <p className="text-[11px] leading-snug text-slate-600">
                 <span className="font-semibold text-slate-800">Optimized for real ATS systems</span>{" "}
                 and recruiter-style screening.
               </p>
             </div>
-            <div className="flex items-start gap-2 rounded-xl border border-slate-200 bg-white/60 px-3 py-2">
-              <span className="mt-0.5 h-2 w-2 rounded-full bg-emerald-500" />
-              <p className="text-xs text-slate-600">
+            <div className="flex items-start gap-1.5 rounded-xl border border-slate-200 bg-white/60 px-2.5 py-1">
+              <span className="mt-[3px] h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <p className="text-[11px] leading-snug text-slate-600">
                 <span className="font-semibold text-slate-800">Built for FAANG, Fortune 500 & startups</span>{" "}
                 across US, UK, and Canada.
               </p>
@@ -470,47 +466,109 @@ export default function Home() {
           </div>
         </header>
 
-        <div className="mt-0 grid grid-cols-1 md:grid-cols-2 gap-10">
-          <ResumeExamplesSection />
-          <ATSKeywordSection />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1.5 items-start">
+          <div>
+            <h2 className="text-base font-semibold text-slate-900">
+              Resume Examples
+            </h2>
+            <p className="text-sm text-slate-500 mt-0.5">
+              See ATS-friendly resume examples for top roles.
+            </p>
+            <ul className="mt-1 space-y-1 text-sm">
+              <li>
+                <Link href="/data-scientist-resume-example" className="text-sky-700 hover:underline">
+                  Data Scientist
+                </Link>
+              </li>
+              <li>
+                <Link href="/software-engineer-resume-example" className="text-sky-700 hover:underline">
+                  Software Engineer
+                </Link>
+              </li>
+              <li>
+                <Link href="/product-manager-resume-example" className="text-sky-700 hover:underline">
+                  Product Manager
+                </Link>
+              </li>
+            </ul>
+            <a
+              href="/resume-examples"
+              className="inline-block mt-0.5 text-sm font-medium text-sky-700 hover:underline"
+            >
+              View all resume examples →
+            </a>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold text-slate-900">
+              ATS Keyword Guides
+            </h2>
+            <p className="text-sm text-slate-500 mt-0.5">
+              Learn which skills, tools, and concepts ATS expect to see.
+            </p>
+            <ul className="mt-1 space-y-1 text-sm">
+              <li>
+                <Link href="/ats-keywords/data-scientist" className="text-sky-700 hover:underline">
+                  Data Scientist
+                </Link>
+              </li>
+              <li>
+                <Link href="/ats-keywords/software-engineer" className="text-sky-700 hover:underline">
+                  Software Engineer
+                </Link>
+              </li>
+              <li>
+                <Link href="/ats-keywords/product-manager" className="text-sky-700 hover:underline">
+                  Product Manager
+                </Link>
+              </li>
+            </ul>
+            <a
+              href="/ats-keywords"
+              className="inline-block mt-0.5 text-sm font-medium text-sky-700 hover:underline"
+            >
+              View all ATS keyword guides →
+            </a>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold text-slate-900">
+              Resume Guides
+            </h2>
+            <p className="text-sm text-slate-500 mt-0.5">
+              Learn how to write each section in an ATS-friendly way.
+            </p>
+            <ul className="mt-1 space-y-1 text-sm">
+              <li>
+                <Link href="/resume-guides/resume-skills-examples" className="text-sky-700 hover:underline">
+                  Resume Skills Examples
+                </Link>
+              </li>
+              <li>
+                <Link href="/resume-guides/resume-summary-examples" className="text-sky-700 hover:underline">
+                  Resume Summary Examples
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/resume-guides/resume-work-experience-examples"
+                  className="text-sky-700 hover:underline"
+                >
+                  Resume Work Experience Examples
+                </Link>
+              </li>
+            </ul>
+            <a
+              href="/resume-guides"
+              className="inline-block mt-0.5 text-sm font-medium text-sky-700 hover:underline"
+            >
+              View all resume guides →
+            </a>
+          </div>
         </div>
 
-        <section className="mt-2 sm:mt-4 border border-slate-200 rounded-2xl bg-slate-50/70 px-4 py-4 sm:px-5 sm:py-5">
-          <h2 className="text-sm sm:text-base font-semibold tracking-tight text-slate-900">
-            Popular Resume Guides
-          </h2>
-          <p className="mt-1 text-xs sm:text-sm text-slate-600">
-            Deep-dive guides for competitive roles, covering examples, skills, keywords, and ATS tips.
-          </p>
-          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs sm:text-sm">
-            <Link
-              href="/data-scientist/resume"
-              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-            >
-              Data Scientist resume guide
-            </Link>
-            <Link
-              href="/software-engineer/resume"
-              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-            >
-              Software Engineer resume guide
-            </Link>
-            <Link
-              href="/product-manager/resume"
-              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-            >
-              Product Manager resume guide
-            </Link>
-            <Link
-              href="/data-analyst/resume"
-              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-            >
-              Data Analyst resume guide
-            </Link>
-          </div>
-        </section>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 min-h-0">
+        <div className="mt-0.5 border-t border-slate-200 pt-1">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 min-h-0">
           <div className="lg:col-span-1" id="ats-checker-form">
             {showUpgradeScreen && <UpgradeScreen />}
             {showForm && (
@@ -700,6 +758,7 @@ export default function Home() {
               </div>
             )}
           </div>
+        </div>
         </div>
       </div>
 
