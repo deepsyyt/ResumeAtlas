@@ -47,7 +47,9 @@ export default function OptimizePage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
-      const raw = window.sessionStorage.getItem(OPTIMIZE_INPUT_KEY);
+      const raw =
+        window.sessionStorage.getItem(OPTIMIZE_INPUT_KEY) ||
+        window.localStorage.getItem(OPTIMIZE_INPUT_KEY);
       if (!raw) {
         setInput(null);
         setLoading(false);
@@ -75,7 +77,9 @@ export default function OptimizePage() {
     // 1) Try to reuse a cached optimization result to avoid extra LLM calls.
     if (typeof window !== "undefined") {
       try {
-        const cachedRaw = window.sessionStorage.getItem(OPTIMIZE_RESULT_KEY);
+        const cachedRaw =
+          window.sessionStorage.getItem(OPTIMIZE_RESULT_KEY) ||
+          window.localStorage.getItem(OPTIMIZE_RESULT_KEY);
         if (cachedRaw) {
           const cached = JSON.parse(cachedRaw) as OptimizeResult & { resumeText?: string; jobDescription?: string };
           // Basic sanity check: ensure cached result corresponds to this resumeText + jobDescription.
@@ -119,14 +123,13 @@ export default function OptimizePage() {
           setDisplayResume(data.optimizedResume);
           if (typeof window !== "undefined") {
             try {
-              window.sessionStorage.setItem(
-                OPTIMIZE_RESULT_KEY,
-                JSON.stringify({
-                  ...data,
-                  resumeText: input.resumeText,
-                  jobDescription: input.jobDescription,
-                })
-              );
+              const payload = JSON.stringify({
+                ...data,
+                resumeText: input.resumeText,
+                jobDescription: input.jobDescription,
+              });
+              window.sessionStorage.setItem(OPTIMIZE_RESULT_KEY, payload);
+              window.localStorage.setItem(OPTIMIZE_RESULT_KEY, payload);
             } catch {
               // best-effort; ignore cache failures
             }
