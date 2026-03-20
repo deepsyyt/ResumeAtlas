@@ -1,25 +1,14 @@
 import { NextResponse } from "next/server";
-import { createHash } from "crypto";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import { isATSAnalyzeResult } from "@/app/lib/atsAnalyze";
+import { repairSkillListsAgainstResume } from "@/app/lib/skillResumeEvidence";
 import {
-  extractBullets,
-  getWeakestBullet,
-  isStrongBullet,
-} from "@/app/lib/bulletPreview";
+  clipToWordLimit,
+  JOB_DESCRIPTION_MAX_WORDS,
+  RESUME_TEXT_MAX_WORDS,
+} from "@/app/lib/inputWordLimits";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
-
-const BULLET_REWRITE_PROMPT = `You are a resume optimization assistant. Rewrite the given resume bullet to be stronger for ATS systems.
-
-Rules:
-- Start with a strong action verb (e.g. Developed, Led, Implemented).
-- Include measurable impact if possible (%, numbers, scale).
-- Include exactly one of the provided missing skills in the rewritten bullet when it fits naturally (e.g. a tool, platform, or method). This shows the candidate can address the gap.
-- Never introduce tools or platforms that are not mentioned in either the resume or the job description. If the missing skill is a platform or tool not already present in the resume, incorporate it only in a realistic way that suggests familiarity but does not fabricate past usage.
-- Keep a realistic, professional tone.
-- Maximum 30 words.
-- Output ONLY the rewritten bullet. No quotes, no preamble, no explanation.`;
 
 const SYSTEM_PROMPT = `You are an ATS resume analysis engine. Your task is to evaluate how well a resume matches a job description using ATS-style signals that work across any industry or company job description format (domain-agnostic).
 
@@ -58,6 +47,11 @@ Resume scanning rules:
 - Examples:
   - If the JD skill is "A/B testing" and the resume mentions "A/B tests", "AB testing", or "split testing experiments" in any bullet, this MUST be treated as matched.
   - If the JD skill is "experimentation" and the resume mentions "designed and ran A/B tests to optimize conversion rate", you MUST treat "experimentation" as matched because the bullet clearly describes experimentation work.
+  - If the JD skill is "recommendation systems" and the resume says "Recommendation & Personalization Projects", "recommendation and personalization", or "Led Recommendation & Personalization" in a project title or bullet, you MUST treat "recommendation systems" as matched.
+  - Treat "A/b", "a/b", and "A/B" as the same for A/B testing; do not require a dedicated Skills section.
+
+Self-check before output:
+- Re-read the full resume (including "Project 1:", case studies, and headings). If any phrase in matched_skills or missing_skills appears anywhere in that text under a clear variation, move it to matched_skills and remove it from missing_skills, missing_skills_required, and missing_skills_preferred.
 
 Section classification rules:
 - Use robust, section-aware rules so required vs preferred skills are classified consistently across any JD format.
@@ -103,32 +97,6 @@ Output format (no other keys):
   "summary": "string"
 }`;
 
-const ANALYZE_CACHE_VERSION = "v2-ats-prompt-2026-03-17";
-
-/** Normalize string for stable cache key: same logical content => same hash. */
-function normalizeForCacheKey(s: string): string {
-  return s
-    .replace(/\r\n?/g, "\n")
-    .replace(/\n{2,}/g, "\n")
-    .trim();
-}
-
-/** SHA-256 hash of (cache version + prompt + resume + JD) so same logical inputs reuse results, but prompt changes invalidate old cache. */
-function hashInput(resumeText: string, jobDescription: string): string {
-  const combined =
-    ANALYZE_CACHE_VERSION +
-    "\nSYSTEM_PROMPT:\n" +
-    SYSTEM_PROMPT +
-    "\nRESUME:\n" +
-    normalizeForCacheKey(resumeText) +
-    "\n---\nJD:\n" +
-    normalizeForCacheKey(jobDescription);
-  return createHash("sha256").update(combined, "utf8").digest("hex");
-}
-
-/** In-memory cache: hash(resume+jd) -> ATSAnalyzeResult. Same resume+jd returns cached result. */
-const analysisCache = new Map<string, ATSAnalyzeResult>();
-
 function extractJson(raw: string): string {
   const mdMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
   const str = mdMatch ? mdMatch[1].trim() : raw;
@@ -146,8 +114,8 @@ export type AnalyzeRequestBody = {
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as AnalyzeRequestBody;
-    const resumeText = body?.resumeText;
-    const jobDescription = body?.jobDescription;
+    let resumeText = body?.resumeText;
+    let jobDescription = body?.jobDescription;
 
     if (typeof resumeText !== "string" || typeof jobDescription !== "string") {
       return NextResponse.json(
@@ -156,36 +124,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const key = hashInput(resumeText, jobDescription);
-    const cached = analysisCache.get(key);
-    if (cached) {
-    console.log("[analyze] cache hit for key", key);
-      // Return a deep clone so the cache is never mutated and client gets exact cached metrics
-      // (including missing_skills, missing_skills_required, missing_skills_preferred).
-      const out: ATSAnalyzeResult = {
-        ...cached,
-        required_years_experience: cached.required_years_experience ?? null,
-        resume_years_experience: cached.resume_years_experience ?? 0,
-        matched_skills: [...(cached.matched_skills ?? [])],
-        missing_skills: [...(cached.missing_skills ?? [])],
-        missing_skills_required: cached.missing_skills_required
-          ? [...cached.missing_skills_required]
-          : undefined,
-        missing_skills_preferred: cached.missing_skills_preferred
-          ? [...cached.missing_skills_preferred]
-          : undefined,
-        bullet_preview: cached.bullet_preview
-          ? {
-              before: cached.bullet_preview.before,
-              after: cached.bullet_preview.after,
-            }
-          : cached.bullet_preview ?? null,
-        bullet_preview_skip: cached.bullet_preview_skip,
-      };
-      return NextResponse.json(out);
-    }
-
-    console.log("[analyze] cache miss for key", key);
+    resumeText = clipToWordLimit(resumeText, RESUME_TEXT_MAX_WORDS);
+    jobDescription = clipToWordLimit(jobDescription, JOB_DESCRIPTION_MAX_WORDS);
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     const model =
@@ -279,74 +219,39 @@ ${jobDescription}`;
     const missingPreferred = Array.isArray((result as Record<string, unknown>).missing_skills_preferred)
       ? ((result as Record<string, unknown>).missing_skills_preferred as string[])
       : [];
+
+    const matchedIn = Array.isArray(result.matched_skills) ? result.matched_skills : [];
+    const repaired = repairSkillListsAgainstResume(
+      resumeText,
+      matchedIn,
+      missingSkills,
+      missingRequired,
+      missingPreferred,
+      typeof result.keyword_coverage === "number" ? result.keyword_coverage : undefined
+    );
+    const missingSkillsAfter = repaired.missing_skills;
+    const missingRequiredAfter = repaired.missing_skills_required ?? [];
+    const missingPreferredAfter = repaired.missing_skills_preferred ?? [];
+
     const normalized: ATSAnalyzeResult = {
       ats_score: Math.max(0, Math.min(100, Math.round(result.ats_score))),
-      keyword_coverage: Math.max(0, Math.min(100, Math.round(result.keyword_coverage))),
+      keyword_coverage: repaired.keyword_coverage,
       semantic_similarity: Math.max(0, Math.min(100, Math.round(result.semantic_similarity))),
       experience_alignment: Math.max(0, Math.min(100, Math.round(result.experience_alignment))),
       required_years_experience: requiredYears,
       resume_years_experience: resumeYears,
       impact_score: Math.max(0, Math.min(100, Math.round(result.impact_score))),
       resume_quality: Math.max(0, Math.min(100, Math.round(result.resume_quality))),
-      matched_skills: Array.isArray(result.matched_skills) ? result.matched_skills : [],
-      missing_skills: missingSkills,
-      missing_skills_required: missingRequired.length > 0 || missingPreferred.length > 0 ? missingRequired : undefined,
-      missing_skills_preferred: missingPreferred.length > 0 ? missingPreferred : undefined,
+      matched_skills: repaired.matched_skills,
+      missing_skills: missingSkillsAfter,
+      missing_skills_required:
+        missingRequiredAfter.length > 0 || missingPreferredAfter.length > 0
+          ? missingRequiredAfter
+          : undefined,
+      missing_skills_preferred: missingPreferredAfter.length > 0 ? missingPreferredAfter : undefined,
       summary: typeof result.summary === "string" ? result.summary : "",
     };
 
-    // Generate bullet preview in same request (1 API call for client)
-    const bullets = extractBullets(resumeText);
-    const beforeBullet = getWeakestBullet(bullets);
-    if (!beforeBullet?.trim()) {
-      normalized.bullet_preview_skip = "no_bullets";
-    } else if (isStrongBullet(beforeBullet)) {
-      normalized.bullet_preview_skip = "already_strong";
-    } else {
-      try {
-        const skillsForRewrite = missingRequired.length > 0 ? missingRequired : missingSkills;
-        const keywordHint =
-          skillsForRewrite.length > 0
-            ? `MISSING SKILLS (include exactly one of these in the rewritten bullet where it fits naturally): ${skillsForRewrite.slice(0, 10).join(", ")}.`
-            : "";
-        const bulletUserContent = `JOB DESCRIPTION (for context):
-${jobDescription.slice(0, 1500)}
-
-${keywordHint}
-
-BULLET TO REWRITE:
-${beforeBullet}
-
-Output only the rewritten bullet, nothing else.`;
-        const bulletRes = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": apiKey,
-            "anthropic-version": "2023-06-01",
-          },
-          body: JSON.stringify({
-            model,
-            max_tokens: 120,
-            temperature: 0,
-            top_p: 1,
-            system: BULLET_REWRITE_PROMPT,
-            messages: [{ role: "user" as const, content: bulletUserContent }],
-          }),
-        });
-        if (bulletRes.ok) {
-          const bulletData = (await bulletRes.json()) as { content?: unknown };
-          const bulletContent = Array.isArray(bulletData.content) ? bulletData.content : [];
-          const rawAfter = (bulletContent.find((c: { type?: string; text?: string }) => c?.type === "text") as { text?: string } | undefined)?.text?.trim() ?? "";
-          const after = rawAfter.replace(/^["']|["']$/g, "").trim() || beforeBullet;
-          normalized.bullet_preview = { before: beforeBullet, after };
-        }
-      } catch (e) {
-        console.warn("[analyze] bullet preview failed", e);
-      }
-    }
-
-    analysisCache.set(key, normalized);
     return NextResponse.json(normalized);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Analysis failed";

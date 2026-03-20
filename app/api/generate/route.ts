@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { generateResume } from "@/app/lib/claude";
 import { getSupabaseAdmin } from "@/app/lib/supabase/server";
 import type { Resume } from "@/app/types/resume";
+import {
+  clipToWordLimit,
+  JOB_DESCRIPTION_MAX_WORDS,
+  RESUME_TEXT_MAX_WORDS,
+} from "@/app/lib/inputWordLimits";
 
 export type GenerateRequestBody = {
   resumeText: string;
@@ -13,7 +18,9 @@ export type GenerateRequestBody = {
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as GenerateRequestBody;
-    const { resumeText, jobDescription, country, roleLevel } = body;
+    const { country, roleLevel } = body;
+    let resumeText = body.resumeText;
+    let jobDescription = body.jobDescription;
 
     if (
       typeof resumeText !== "string" ||
@@ -25,6 +32,9 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    resumeText = clipToWordLimit(resumeText, RESUME_TEXT_MAX_WORDS);
+    jobDescription = clipToWordLimit(jobDescription, JOB_DESCRIPTION_MAX_WORDS);
 
     const supabase = getSupabaseAdmin();
     const authHeader = request.headers.get("authorization");
