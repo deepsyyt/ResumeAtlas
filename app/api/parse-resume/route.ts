@@ -1,27 +1,19 @@
 import { NextResponse } from "next/server";
 import { parseResumeToJSON } from "@/app/lib/resumeParser";
+import type {
+  ResumeDocument,
+  ResumeExperience,
+  ResumeProject,
+} from "@/app/lib/resumeDocument";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 
-export type StructuredExperience = {
-  company: string;
-  role: string;
-  dates: string;
-  bullets: string[];
-};
-
-export type StructuredResume = {
-  name?: string;
-  title?: string;
-  contact?: string;
-  summary?: string;
-  skills?: string[];
-  experience: StructuredExperience[];
-  education?: string[];
-  tools?: string[];
-  certifications?: string[];
-  awards?: string[];
-};
+/** @deprecated Use `ResumeProject` from `@/app/lib/resumeDocument` */
+export type StructuredProject = ResumeProject;
+/** @deprecated Use `ResumeExperience` from `@/app/lib/resumeDocument` */
+export type StructuredExperience = ResumeExperience;
+/** Canonical resume JSON; alias for {@link ResumeDocument}. */
+export type StructuredResume = ResumeDocument;
 
 export type ParseResumeRequestBody = {
   resumeText: string;
@@ -40,6 +32,7 @@ Rules:
 - For each experience entry, keep company, role, and dates exactly as written.
 - Bullets should be short achievement statements, without leading bullet characters.
 - If any field is not present, omit it or return an empty array instead of guessing.
+- IMPORTANT: When a role lists work under headings like "Project 1:", "Project 2:", or "Project: Name", do NOT flatten them into one bullet list. Use the "projects" array: each item has "title" (the full heading line as written) and "bullets" (achievements under that project only). Lines before the first project heading stay in top-level "bullets".
 
 Return ONLY valid JSON with this exact shape (no markdown, no explanations):
 {
@@ -53,7 +46,8 @@ Return ONLY valid JSON with this exact shape (no markdown, no explanations):
       "company": "string",
       "role": "string",
       "dates": "string",
-      "bullets": ["string"]
+      "bullets": ["string"],
+      "projects": [ { "title": "string", "bullets": ["string"] } ]
     }
   ],
   "education": ["string"],
@@ -78,30 +72,113 @@ function coerceArray(value: unknown): string[] {
     .filter((v) => v.length > 0);
 }
 
-function coerceExperience(value: unknown): StructuredExperience[] {
+function coerceProjects(value: unknown): ResumeProject[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const out: ResumeProject[] = [];
+  for (const item of value) {
+    if (!item || typeof item !== "object") continue;
+    const rec = item as Record<string, unknown>;
+    const title = typeof rec.title === "string" ? rec.title.trim() : "";
+    const bullets = coerceArray(rec.bullets);
+    if (!title || bullets.length === 0) continue;
+    out.push({ title, bullets });
+  }
+  return out.length > 0 ? out : undefined;
+}
+
+const PROJECT_HEADING_RE = /^(project\s*\d*\s*:\s*|project\s*:\s*)/i;
+
+function splitBulletsIntoProjects(bullets: string[]): {
+  topBullets: string[];
+  projects: ResumeProject[];
+} {
+  let hasProjectLine = false;
+  for (const b of bullets) {
+    if (PROJECT_HEADING_RE.test(String(b ?? "").trim())) {
+      hasProjectLine = true;
+      break;
+    }
+  }
+  if (!hasProjectLine) {
+    return { topBullets: [...bullets], projects: [] };
+  }
+
+  const topBullets: string[] = [];
+  const projects: ResumeProject[] = [];
+  let current: ResumeProject | null = null;
+
+  for (const line of bullets) {
+    const t = String(line ?? "").trim();
+    if (!t) continue;
+    if (PROJECT_HEADING_RE.test(t)) {
+      if (current && current.bullets.length > 0) {
+        projects.push(current);
+      } else if (current && current.bullets.length === 0) {
+        topBullets.push(current.title);
+      }
+      current = { title: t, bullets: [] };
+    } else if (current) {
+      current.bullets.push(t);
+    } else {
+      topBullets.push(t);
+    }
+  }
+  if (current) {
+    if (current.bullets.length > 0) projects.push(current);
+    else topBullets.push(current.title);
+  }
+
+  return { topBullets, projects };
+}
+
+function coerceExperience(value: unknown): ResumeExperience[] {
   if (!Array.isArray(value)) return [];
-  const out: StructuredExperience[] = [];
+  const out: ResumeExperience[] = [];
   for (const item of value) {
     if (!item || typeof item !== "object") continue;
     const rec = item as Record<string, unknown>;
     const company = typeof rec.company === "string" ? rec.company.trim() : "";
     const role = typeof rec.role === "string" ? rec.role.trim() : "";
     const dates = typeof rec.dates === "string" ? rec.dates.trim() : "";
-    const bullets = coerceArray(rec.bullets);
+    let bullets = coerceArray(rec.bullets);
+    let projects = coerceProjects(rec.projects);
     if (!company || !role || !dates) continue;
-    out.push({ company, role, dates, bullets });
+
+    if ((!projects || projects.length === 0) && bullets.length > 0) {
+      const split = splitBulletsIntoProjects(bullets);
+      if (split.projects.length > 0) {
+        bullets = split.topBullets;
+        projects = split.projects;
+      }
+    }
+
+    if (bullets.length === 0 && (!projects || projects.length === 0)) continue;
+    const entry: ResumeExperience = { company, role, dates, bullets };
+    if (projects && projects.length > 0) entry.projects = projects;
+    out.push(entry);
   }
   return out;
 }
 
-function buildFallbackStructured(resumeText: string): StructuredResume {
+function buildFallbackStructured(resumeText: string): ResumeDocument {
   const parsed = parseResumeToJSON(resumeText);
-  const experience: StructuredExperience[] = parsed.experience.map((exp) => ({
-    company: exp.company?.trim() || "",
-    role: exp.role?.trim() || "",
-    dates: exp.dates?.trim() || "",
-    bullets: exp.bullets ?? [],
-  })).filter((exp) => exp.company && exp.role);
+  const experience: ResumeExperience[] = parsed.experience.map((exp) => {
+    const bullets = exp.bullets ?? [];
+    const split = splitBulletsIntoProjects(bullets);
+    const entry: ResumeExperience = {
+      company: exp.company?.trim() || "",
+      role: exp.role?.trim() || "",
+      dates: exp.dates?.trim() || "",
+      bullets: split.topBullets,
+    };
+    if (split.projects.length > 0) entry.projects = split.projects;
+    return entry;
+  }).filter(
+    (exp) =>
+      exp.company &&
+      exp.role &&
+      (exp.bullets.length > 0 || (exp.projects && exp.projects.length > 0))
+  );
 
   return {
     name: parsed.headerLines[0] || "",
@@ -199,7 +276,7 @@ Return ONLY the JSON object described in the system prompt.`;
       return NextResponse.json({ resume: fallback } satisfies ParseResumeResponse);
     }
 
-    const resume: StructuredResume = {
+    const resume: ResumeDocument = {
       name:
         typeof obj.name === "string" && obj.name.trim().length > 0
           ? obj.name.trim()

@@ -106,7 +106,7 @@ export default function UpgradePage() {
           Upgrade to Pro
         </h1>
         <p className="mt-2 text-slate-600">
-          25 resume generations and 25 summary re-optimizations per month. Full Intelligence Panel.
+          25 resume generations per month. Full Intelligence Panel.
         </p>
 
         {!user ? (

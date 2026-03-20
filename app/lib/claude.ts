@@ -101,6 +101,10 @@ function parseJsonResponse(text: string): Resume | null {
         name: typeof basics.name === "string" ? basics.name : "",
         title: typeof basics.title === "string" ? basics.title : "",
         summary: typeof basics.summary === "string" ? basics.summary : "",
+        contact:
+          typeof basics.contact === "string" && basics.contact.trim()
+            ? basics.contact
+            : undefined,
       },
       experience: experience.map((exp) => {
         const e = exp && typeof exp === "object" ? (exp as Record<string, unknown>) : {};

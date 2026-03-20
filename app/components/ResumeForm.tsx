@@ -1,7 +1,13 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import type { Resume } from "@/app/types/resume";
+import {
+  countWords,
+  clipToWordLimit,
+  JOB_DESCRIPTION_MAX_WORDS,
+  RESUME_TEXT_MAX_WORDS,
+} from "@/app/lib/inputWordLimits";
 
 export const ROLE_LEVELS = ["Entry", "Mid", "Senior", "Leadership"] as const;
 
@@ -19,10 +25,6 @@ type ResumeFormProps = {
   onGenerate: (inputs: GenerateInputs) => void;
   isGenerating: boolean;
   error: string | null;
-  lastJD: string | null;
-  lastRoleLevel: string;
-  onReoptimizeSummary: () => void;
-  isReoptimizingSummary: boolean;
   isLoggedIn: boolean;
 };
 
@@ -36,13 +38,9 @@ export function ResumeForm({
   onGenerate,
   isGenerating,
   error,
-  lastJD,
-  lastRoleLevel,
-  onReoptimizeSummary,
-  isReoptimizingSummary,
   isLoggedIn,
 }: ResumeFormProps) {
-  const { register, handleSubmit } = useForm<GenerateInputs>({
+  const { register, handleSubmit, control } = useForm<GenerateInputs>({
     defaultValues: {
       resumeText: "",
       jobDescription: "",
@@ -108,12 +106,40 @@ export function ResumeForm({
               Step 1: Provide Your Resume
             </h3>
             <label className={labelClass}>Paste your resume</label>
-            <textarea
-              {...register("resumeText", { required: true })}
-              rows={4}
-              className={inputClass + " sm:min-h-[120px] min-h-[80px]"}
-              placeholder="Paste your current resume text here..."
-              disabled={isGenerating}
+            <Controller
+              name="resumeText"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => {
+                const wc = countWords(field.value);
+                return (
+                  <>
+                    <textarea
+                      {...field}
+                      rows={4}
+                      className={inputClass + " sm:min-h-[120px] min-h-[80px]"}
+                      placeholder="Paste your current resume text here..."
+                      disabled={isGenerating}
+                      onChange={(e) => {
+                        field.onChange(
+                          clipToWordLimit(e.target.value, RESUME_TEXT_MAX_WORDS)
+                        );
+                      }}
+                    />
+                    <p
+                      className={
+                        "mt-1.5 text-xs tabular-nums " +
+                        (wc >= RESUME_TEXT_MAX_WORDS
+                          ? "text-amber-700 font-medium"
+                          : "text-slate-500")
+                      }
+                    >
+                      {wc.toLocaleString()} / {RESUME_TEXT_MAX_WORDS.toLocaleString()}{" "}
+                      words
+                    </p>
+                  </>
+                );
+              }}
             />
           </section>
 
@@ -125,17 +151,46 @@ export function ResumeForm({
               Step 2: Paste Job Description
             </h3>
             <label className={labelClass}>Job description</label>
-            <textarea
-              {...register("jobDescription", { required: true })}
-              rows={4}
-              className={inputClass + " sm:min-h-[120px] min-h-[80px]"}
-              placeholder="Paste the job description here..."
-              disabled={isGenerating}
+            <Controller
+              name="jobDescription"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => {
+                const wc = countWords(field.value);
+                return (
+                  <>
+                    <textarea
+                      {...field}
+                      rows={4}
+                      className={inputClass + " sm:min-h-[120px] min-h-[80px]"}
+                      placeholder="Paste the job description here..."
+                      disabled={isGenerating}
+                      onChange={(e) => {
+                        field.onChange(
+                          clipToWordLimit(e.target.value, JOB_DESCRIPTION_MAX_WORDS)
+                        );
+                      }}
+                    />
+                    <p
+                      className={
+                        "mt-1.5 text-xs tabular-nums " +
+                        (wc >= JOB_DESCRIPTION_MAX_WORDS
+                          ? "text-amber-700 font-medium"
+                          : "text-slate-500")
+                      }
+                    >
+                      {wc.toLocaleString()} / {JOB_DESCRIPTION_MAX_WORDS.toLocaleString()}{" "}
+                      words
+                    </p>
+                  </>
+                );
+              }}
             />
           </section>
 
           <p className="text-xs text-slate-500">
-            Get your ATS score free—no login required. Fix your resume with AI when you&apos;re ready.
+            Get your ATS score free. No login required. Fix your resume with AI when you&apos;re
+            ready.
           </p>
 
           <button
@@ -172,16 +227,6 @@ export function ResumeForm({
                 rows={4}
                 className={inputClass + " min-h-[80px]"}
               />
-              {lastJD && (
-                <button
-                  type="button"
-                  onClick={onReoptimizeSummary}
-                  disabled={isReoptimizingSummary}
-                  className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-200 transition disabled:opacity-50"
-                >
-                  {isReoptimizingSummary ? "Re-optimizing…" : "Re-optimize for this JD"}
-                </button>
-              )}
             </section>
 
             {resume.experience.map((exp, i) => (

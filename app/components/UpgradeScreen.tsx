@@ -5,7 +5,7 @@ export function UpgradeScreen() {
     <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
       <h3 className="text-lg font-semibold text-slate-900">Upgrade to Pro</h3>
       <p className="mt-2 text-sm text-slate-600">
-        You're signed in. Upgrade to Pro to generate and re-optimize resumes.
+        You&apos;re signed in. Upgrade to Pro to generate tailored resumes.
       </p>
       <a
         href="/upgrade"

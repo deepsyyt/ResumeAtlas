@@ -42,13 +42,45 @@ export function getATSBadgeLabel(score: number): string {
   return "Poor";
 }
 
-/** ATS verdict box: short message for the user. */
-export function getATSVerdictMessage(score: number): string {
+/**
+ * Two-line verdict (same shape for every band):
+ * 1) Headline: honest standing + urgency where needed.
+ * 2) Subline: names the Optimize CTA and a concrete outcome (no vague “below”).
+ */
+export type ATSVerdictLines = { headline: string; subline: string };
+
+export function getATSVerdictLines(score: number): ATSVerdictLines {
   const s = Math.max(0, Math.min(100, Math.round(score)));
-  if (s > 88) return "Your resume is strong but adding missing keywords and improving bullet impact could increase your ATS score.";
-  if (s >= 85) return "Your resume is strong but can still be optimized.";
-  if (s >= 70) return "Your resume has moderate ATS match.";
-  return "Your resume may struggle to pass ATS.";
+  const cta = "Optimize Resume For This Job";
+
+  if (s >= 88) {
+    return {
+      headline: "You’re a top-tier match on paper.",
+      subline: `Competition is tight at this level. Wording still decides who gets screened in. ${cta} tightens bullets and keywords for this exact posting.`,
+    };
+  }
+  if (s >= 85) {
+    return {
+      headline: "Strong match. You’re in the running.",
+      subline: `Tiny ATS gaps still cost interviews. ${cta} aligns every line to this job description before you apply.`,
+    };
+  }
+  if (s >= 70) {
+    return {
+      headline: "Close, but the fit may not read clearly to ATS yet.",
+      subline: `The missing keywords and weaker bullets in this analysis are what filter you out first. ${cta} fixes them for this role in one pass.`,
+    };
+  }
+  if (s >= 50) {
+    return {
+      headline: "This posting and your resume are telling different stories.",
+      subline: `Without a targeted pass, you risk never reaching a human reader. ${cta} rebuilds your resume around this job’s language.`,
+    };
+  }
+  return {
+    headline: "High risk of auto-rejection for this posting as written.",
+    subline: `You need a focused rewrite, not a quick edit. ${cta} reframes your experience so ATS and recruiters see a credible match.`,
+  };
 }
 
 /** ATS score ring: 85+ Green, 70–84 Yellow, 50–69 Orange, <50 Red. */

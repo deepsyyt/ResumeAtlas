@@ -8,7 +8,7 @@ import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import {
   getScoreStyle,
   getATSBadgeLabel,
-  getATSVerdictMessage,
+  getATSVerdictLines,
   getATSRingHex,
   getKeywordCoverageStyle,
   getKeywordCoverageLabel,
@@ -17,6 +17,17 @@ import {
   getImpactStyle,
   getResumeQualityStyle,
 } from "@/app/lib/scoreColors";
+
+/**
+ * Illustrative before/after only (not from the user’s resume). Shown next to the optimize CTA.
+ * Highlights in “After” use this JD’s missing skills when they appear in the sample line.
+ */
+const OPTIMIZER_STATIC_BULLET_PREVIEW = {
+  before:
+    "developing innovative machine learning solutions, managing complex data pipelines, and leading cross-functional initiatives.",
+  after:
+    "Developed innovative machine learning solutions to enhance customer analytics, driving data-driven decision-making and improving customer experience at scale.",
+} as const;
 
 /** Bold missing skills (from JD) and numbers/metrics (18%, 2x, 3+) in "After" text. */
 function highlightImprovementsInText(text: string, keywords: string[]): React.ReactNode {
@@ -52,9 +63,8 @@ type IntelligencePanelProps = {
   analyzeResult: ATSAnalyzeResult | null;
   showFullIntelligence?: boolean;
   showLocked?: boolean;
-  /** When provided, shows optimizer CTA and bullet preview. */
+  /** When provided, shows optimizer CTA and static before/after sample. */
   onOpenOptimizer?: () => void;
-  /** For bullet preview: before/after sample. When provided with jobDescription, fetches preview. */
   resumeText?: string;
   jobDescription?: string;
 };
@@ -119,6 +129,7 @@ export function IntelligencePanel({
     const demoExpStyle = getExperienceAlignmentStyle(demoRequiredYears, demoResumeYears, demoExp);
     const demoImpactStyle = getImpactStyle(demoImpact);
     const demoQualityStyle = getResumeQualityStyle(demoQuality);
+    const demoVerdict = getATSVerdictLines(demoAts);
 
     const DemoScoreBar = ({ score, hex }: { score: number; hex: string }) => {
       const pct = Math.max(0, Math.min(100, Math.round(score)));
@@ -179,7 +190,7 @@ export function IntelligencePanel({
           </div>
         </div>
 
-        {/* ATS Verdict – compact */}
+        {/* Verdict: confidence + upside (conversion) */}
         <div
           className="mt-3 flex items-start gap-2.5 rounded-lg border px-3 py-2.5"
           style={{ backgroundColor: demoAtsStyle.bgHex, borderColor: demoAtsStyle.hex }}
@@ -190,12 +201,9 @@ export function IntelligencePanel({
             aria-hidden
           />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-              ATS Verdict
-            </p>
-            <p className="mt-0.5 text-xs text-slate-800">
-              {getATSVerdictMessage(demoAts)}
-            </p>
+            <p className="text-[10px] font-semibold text-slate-600">Quick takeaway</p>
+            <p className="mt-1 text-xs font-semibold text-slate-900 leading-snug">{demoVerdict.headline}</p>
+            <p className="mt-0.5 text-xs text-slate-700 leading-snug">{demoVerdict.subline}</p>
           </div>
         </div>
 
@@ -375,6 +383,7 @@ export function IntelligencePanel({
 
   const atsStyle = getScoreStyle(atsScore);
   const atsRingHex = getATSRingHex(atsScore);
+  const atsVerdict = getATSVerdictLines(atsScore);
   const keywordStyle = getKeywordCoverageStyle(keywordScore);
   const semanticStyle = getSemanticStyle(semanticScore);
   const expAlignment = getExperienceAlignmentStyle(
@@ -502,7 +511,7 @@ export function IntelligencePanel({
         </div>
       </div>
 
-      {/* ATS Verdict – compact (analysis only) */}
+      {/* Verdict: confidence + upside (analysis only) */}
       <div
         className="mt-3 flex items-start gap-2.5 rounded-lg border px-3 py-2.5"
         style={{ backgroundColor: atsStyle.bgHex, borderColor: atsStyle.hex }}
@@ -513,12 +522,9 @@ export function IntelligencePanel({
           aria-hidden
         />
         <div className="min-w-0">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-            ATS Verdict
-          </p>
-          <p className="mt-0.5 text-xs text-slate-800">
-            {getATSVerdictMessage(atsScore)}
-          </p>
+          <p className="text-[10px] font-semibold text-slate-600">Quick takeaway</p>
+          <p className="mt-1 text-xs font-semibold text-slate-900 leading-snug">{atsVerdict.headline}</p>
+          <p className="mt-0.5 text-xs text-slate-700 leading-snug">{atsVerdict.subline}</p>
         </div>
       </div>
 
@@ -527,9 +533,6 @@ export function IntelligencePanel({
         const potentialNum = atsScore < 90 ? 90 : 95;
         const potentialLabel = atsScore < 90 ? "90+" : "95+";
         const delta = Math.max(0, potentialNum - atsScore);
-        const bulletPreview = analyzeResult?.bullet_preview ?? null;
-        const bulletPreviewSkip = analyzeResult?.bullet_preview_skip;
-        const showPreview = bulletPreview || bulletPreviewSkip === "already_strong";
         return (
           <div className="mt-4 rounded-xl border border-slate-200 bg-white px-2.5 py-2.5 shadow-sm">
             {/* Top row: headline + keywords + score (left) | CTA button (right) */}
@@ -565,22 +568,20 @@ export function IntelligencePanel({
                   Optimize Resume For This Job
                 </button>
                 <p className="text-[10px] text-slate-500 text-center sm:text-right">
-                  AI will rewrite with missing keywords and stronger bullets.
+                  Adds missing keywords and strengthens bullets for this job.
                 </p>
               </div>
             </div>
 
-            {/* Before | After – clear separation, comfortable padding */}
-            {showPreview && (
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Before | After – static example (same for all users; not from their resume) */}
+            <div className="mt-3 space-y-1.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
                     Before
                   </p>
                   <div className="text-xs text-slate-600 leading-relaxed line-clamp-3 max-h-[3.5rem] overflow-hidden">
-                    {bulletPreviewSkip === "already_strong"
-                      ? "Strong achievements already."
-                      : bulletPreview ? bulletPreview.before : null}
+                    {OPTIMIZER_STATIC_BULLET_PREVIEW.before}
                   </div>
                 </div>
                 <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2.5">
@@ -588,15 +589,17 @@ export function IntelligencePanel({
                     After
                   </p>
                   <div className="text-xs text-slate-800 leading-relaxed line-clamp-3 max-h-[3.5rem] overflow-hidden">
-                    {bulletPreviewSkip === "already_strong"
-                      ? "Keyword alignment & ATS formatting."
-                      : bulletPreview
-                        ? highlightImprovementsInText(bulletPreview.after, missingSkills)
-                        : null}
+                    {highlightImprovementsInText(
+                      OPTIMIZER_STATIC_BULLET_PREVIEW.after,
+                      missingSkills
+                    )}
                   </div>
                 </div>
               </div>
-            )}
+              <p className="text-[10px] text-slate-400">
+                Example only — your optimized resume uses your real bullets and this job’s keywords.
+              </p>
+            </div>
           </div>
         );
       })()}

@@ -76,6 +76,11 @@ async function fetchUsage(accessToken: string | null): Promise<Usage> {
 
 const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
 const ANALYZER_STATE_KEY = "resumeatlas_analyzer_state_v1";
+/** Tab-scoped snapshot so analysis survives Google OAuth → `/?openOptimizer=1` (independent of PERSIST_ANALYZER_STATE). */
+const POST_OAUTH_ANALYZER_KEY = "resumeatlas_post_oauth_analyze_v1";
+
+/** Set to `true` to restore/save analysis across refresh and OAuth return. Off while testing. */
+const PERSIST_ANALYZER_STATE = false;
 
 type AnalyzerStoredState = {
   lastInputs: GenerateInputs;
@@ -84,6 +89,15 @@ type AnalyzerStoredState = {
   analyzeResult: ATSAnalyzeResult;
   savedAt: number;
 };
+
+function writePostOauthAnalyzerSnapshot(state: AnalyzerStoredState) {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(POST_OAUTH_ANALYZER_KEY, JSON.stringify(state));
+  } catch {
+    // ignore quota / private mode
+  }
+}
 
 export default function Home() {
   const router = useRouter();
@@ -101,15 +115,20 @@ export default function Home() {
   const [evidenceGaps, setEvidenceGaps] = useState<string[]>([]);
   const [atsResult, setAtsResult] = useState<ATSScanResult | null>(null);
   const [analyzeResult, setAnalyzeResult] = useState<ATSAnalyzeResult | null>(null);
-  const [isReoptimizingSummary, setIsReoptimizingSummary] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLaunchingOptimize, setIsLaunchingOptimize] = useState(false);
+  const [isStartingGoogleAuth, setIsStartingGoogleAuth] = useState(false);
   const [lastInputs, setLastInputs] = useState<GenerateInputs | null>(null);
   const [optCountry, setOptCountry] = useState<"USA" | "Canada" | "UK">("USA");
   const [optRoleLevel, setOptRoleLevel] = useState<string>("Mid");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const openedOptimizerFromQueryRef = useRef(false);
+
+  /** Logged-in-only path sets this; if session disappears, avoid "optimizing" UI while logged out. */
+  useEffect(() => {
+    if (!isLoggedIn && isLaunchingOptimize) setIsLaunchingOptimize(false);
+  }, [isLoggedIn, isLaunchingOptimize]);
 
   const refreshUsage = useCallback(async () => {
     const supabase = createClient();
@@ -139,28 +158,71 @@ export default function Home() {
       }
       setSessionId(sid);
 
-      // Restore analyzer state after hard reload / OAuth round-trip.
-      // Prefer sessionStorage (tab-scoped), fall back to localStorage (more durable).
-      try {
-        const raw =
-          window.sessionStorage.getItem(ANALYZER_STATE_KEY) ||
-          window.localStorage.getItem(ANALYZER_STATE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw) as Partial<AnalyzerStoredState>;
-          const li = parsed.lastInputs as GenerateInputs | undefined;
-          const ajd = typeof parsed.lastJD === "string" ? parsed.lastJD : undefined;
-          const arl = typeof parsed.lastRoleLevel === "string" ? parsed.lastRoleLevel : undefined;
-          const ar = parsed.analyzeResult as ATSAnalyzeResult | undefined;
-          if (li?.resumeText && li?.jobDescription && ajd && ar?.ats_score !== undefined) {
-            setLastInputs(li);
-            setLastJD(ajd);
-            if (arl) setLastRoleLevel(arl);
-            setAnalyzeResult(ar);
+      const openOptimizerReturn =
+        new URLSearchParams(window.location.search).get("openOptimizer") === "1";
+      if (openOptimizerReturn) {
+        try {
+          const raw = window.sessionStorage.getItem(POST_OAUTH_ANALYZER_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw) as Partial<AnalyzerStoredState>;
+            const li = parsed.lastInputs as GenerateInputs | undefined;
+            const ajd = typeof parsed.lastJD === "string" ? parsed.lastJD : undefined;
+            const arl = typeof parsed.lastRoleLevel === "string" ? parsed.lastRoleLevel : undefined;
+            const ar = parsed.analyzeResult as ATSAnalyzeResult | undefined;
+            if (li?.resumeText && li?.jobDescription && ajd && ar?.ats_score !== undefined) {
+              setLastInputs(li);
+              setLastJD(ajd);
+              if (arl) setLastRoleLevel(arl);
+              setAnalyzeResult(ar);
+              if (li.country) setOptCountry(li.country);
+              if (li.roleLevel) setOptRoleLevel(li.roleLevel);
+            }
+            window.sessionStorage.removeItem(POST_OAUTH_ANALYZER_KEY);
           }
+        } catch {
+          // ignore
         }
-      } catch {
-        // ignore restore failures
+      } else {
+        try {
+          window.sessionStorage.removeItem(POST_OAUTH_ANALYZER_KEY);
+        } catch {
+          // ignore
+        }
       }
+
+      if (!PERSIST_ANALYZER_STATE) {
+        try {
+          window.sessionStorage.removeItem(ANALYZER_STATE_KEY);
+          window.localStorage.removeItem(ANALYZER_STATE_KEY);
+        } catch {
+          // ignore
+        }
+      } else {
+        // Restore analyzer state after hard reload / OAuth round-trip.
+        // Prefer sessionStorage (tab-scoped), fall back to localStorage (more durable).
+        try {
+          const raw =
+            window.sessionStorage.getItem(ANALYZER_STATE_KEY) ||
+            window.localStorage.getItem(ANALYZER_STATE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw) as Partial<AnalyzerStoredState>;
+            const li = parsed.lastInputs as GenerateInputs | undefined;
+            const ajd = typeof parsed.lastJD === "string" ? parsed.lastJD : undefined;
+            const arl = typeof parsed.lastRoleLevel === "string" ? parsed.lastRoleLevel : undefined;
+            const ar = parsed.analyzeResult as ATSAnalyzeResult | undefined;
+            if (li?.resumeText && li?.jobDescription && ajd && ar?.ats_score !== undefined) {
+              setLastInputs(li);
+              setLastJD(ajd);
+              if (arl) setLastRoleLevel(arl);
+              setAnalyzeResult(ar);
+            }
+          }
+        } catch {
+          // ignore restore failures
+        }
+      }
+
+      // No longer clear optimize artifacts here; they are used to restore state.
     }
 
     return () => subscription.unsubscribe();
@@ -279,7 +341,18 @@ export default function Home() {
             jobDescription: inputs.jobDescription,
           }),
         });
-        const data = (await res.json()) as ATSAnalyzeResult | { error?: string };
+        const raw = await res.text();
+        let data: ATSAnalyzeResult | { error?: string };
+        try {
+          data = JSON.parse(raw) as typeof data;
+        } catch {
+          setError(
+            res.ok
+              ? "Analysis returned an invalid response. Check the dev server console or try again."
+              : `Analysis failed (${res.status}). If you see this after a deploy, confirm API routes built successfully.`
+          );
+          return;
+        }
         if (!res.ok) {
           setError(
             typeof (data as { error?: string }).error === "string"
@@ -289,7 +362,7 @@ export default function Home() {
           return;
         }
         setAnalyzeResult(data as ATSAnalyzeResult);
-        if (typeof window !== "undefined") {
+        if (typeof window !== "undefined" && PERSIST_ANALYZER_STATE) {
           const toStore: AnalyzerStoredState = {
             lastInputs: normalizedInputs,
             lastJD: inputs.jobDescription,
@@ -398,36 +471,6 @@ export default function Home() {
       if (jdAnalysis) setEvidenceGaps(detectEvidenceGaps(jdAnalysis, next));
     }
   }, [lastJD, jdAnalysis]);
-
-  const handleReoptimizeSummary = useCallback(async () => {
-    if (!resume?.basics?.summary || !lastJD) return;
-    setIsReoptimizingSummary(true);
-    try {
-      const headers = await getAuthHeaders();
-      const res = await fetch("/api/reoptimize-summary", {
-        method: "POST",
-        credentials: "include",
-        headers,
-        body: JSON.stringify({
-          summary: resume.basics.summary,
-          jobDescription: lastJD,
-          roleLevel: lastRoleLevel,
-        }),
-      });
-      const data = (await res.json()) as { summary?: string; error?: string; code?: string };
-      if (res.ok && typeof data.summary === "string") {
-        setResume({
-          ...resume,
-          basics: { ...resume.basics, summary: data.summary },
-        });
-        await refreshUsage();
-      } else if (!res.ok && data.error) {
-        setError(data.error);
-      }
-    } finally {
-      setIsReoptimizingSummary(false);
-    }
-  }, [resume, lastJD, lastRoleLevel, getAuthHeaders, refreshUsage]);
 
   const handleDownload = useCallback(async () => {
     if (!resume) return;
@@ -643,10 +686,6 @@ export default function Home() {
                 onGenerate={handleGenerate}
                 isGenerating={isGenerating}
                 error={error}
-                lastJD={lastJD}
-                lastRoleLevel={lastRoleLevel}
-                onReoptimizeSummary={handleReoptimizeSummary}
-                isReoptimizingSummary={isReoptimizingSummary}
                 isLoggedIn={isLoggedIn}
               />
             )}
@@ -674,56 +713,99 @@ export default function Home() {
               keywordCoverage={analyzeResult?.keyword_coverage ?? 0}
               isLoggedIn={isLoggedIn}
               isOptimizing={isLaunchingOptimize}
+              isStartingGoogleAuth={isStartingGoogleAuth}
               onOptimize={async () => {
-                if (!lastInputs || !analyzeResult || isLaunchingOptimize) return;
-                setIsLaunchingOptimize(true);
-                let parsedResume = null;
-                if (typeof window !== "undefined") {
-                  try {
-                    const res = await fetch("/api/parse-resume", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ resumeText: lastInputs.resumeText }),
-                    });
-                    if (res.ok) {
-                      const data = (await res.json()) as {
-                        resume?: unknown;
-                      };
-                      if (data && typeof data === "object" && "resume" in data) {
-                        parsedResume = (data as { resume: unknown }).resume;
-                      }
-                    }
-                  } catch {
-                    // best-effort; fall back to raw text only
-                  }
-                }
-                if (typeof window !== "undefined") {
-                  try {
-                    const payload = JSON.stringify({
-                      resumeText: lastInputs.resumeText,
-                      jobDescription: lastJD ?? "",
-                      analyzeResult,
-                      parsedResume,
-                    });
-                    window.sessionStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
-                    window.localStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
-                  } catch {
-                    // ignore
-                  }
+                if (
+                  !lastInputs ||
+                  !analyzeResult ||
+                  isLaunchingOptimize ||
+                  isStartingGoogleAuth
+                ) {
+                  return;
                 }
                 const supabase = createClient();
+                let oauthRedirectPending = false;
+                const redirectTo = `${window.location.origin}/auth/callback?next=/?openOptimizer=1`;
+
+                const startGoogleOAuth = async () => {
+                  const { error } = await supabase.auth.signInWithOAuth({
+                    provider: "google",
+                    options: { redirectTo },
+                  });
+                  if (error) throw error;
+                  oauthRedirectPending = true;
+                };
+
+                const snapshotForOAuth: AnalyzerStoredState = {
+                  lastInputs,
+                  lastJD: lastJD ?? lastInputs.jobDescription,
+                  lastRoleLevel,
+                  analyzeResult,
+                  savedAt: Date.now(),
+                };
+
                 try {
-                  const { data: { session } } = await supabase.auth.getSession();
-                  if (!session) {
-                    setOptimizerModalOpen(false);
-                    await supabase.auth.signInWithOAuth({
-                      provider: "google",
-                      options: {
-                        redirectTo: `${window.location.origin}/auth/callback?next=/?openOptimizer=1`,
-                      },
-                    });
+                  // Logged-out users: skip getSession — go straight to Supabase for the OAuth URL
+                  // (saves a round trip; the slow part is still Supabase → Google redirect).
+                  if (!isLoggedIn) {
+                    setIsStartingGoogleAuth(true);
+                    writePostOauthAnalyzerSnapshot(snapshotForOAuth);
+                    await startGoogleOAuth();
                     return;
                   }
+
+                  setIsLaunchingOptimize(true);
+                  const {
+                    data: { session },
+                  } = await supabase.auth.getSession();
+                  if (!session) {
+                    setIsLaunchingOptimize(false);
+                    setIsStartingGoogleAuth(true);
+                    writePostOauthAnalyzerSnapshot(snapshotForOAuth);
+                    await startGoogleOAuth();
+                    return;
+                  }
+
+                  const resumeText = lastInputs.resumeText;
+                  const jobDescription = lastJD ?? "";
+                  let parsedResume = null;
+                  if (typeof window !== "undefined") {
+                    try {
+                      const res = await fetch("/api/parse-resume", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ resumeText: lastInputs.resumeText }),
+                      });
+                      if (res.ok) {
+                        const data = (await res.json()) as {
+                          resume?: unknown;
+                        };
+                        if (data && typeof data === "object" && "resume" in data) {
+                          parsedResume = (data as { resume: unknown }).resume;
+                        }
+                      }
+                    } catch {
+                      // best-effort; fall back to raw text only
+                    }
+                  }
+                  if (typeof window !== "undefined") {
+                    try {
+                      const payload = JSON.stringify({
+                        resumeText,
+                        jobDescription,
+                        analyzeResult,
+                        parsedResume,
+                      });
+                      // Back-compat (older /optimize reads)
+                      window.sessionStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
+                      window.localStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
+                      window.sessionStorage.removeItem("resumeatlas_optimize_done");
+                      window.sessionStorage.removeItem("resumeatlas_optimize_cache");
+                    } catch {
+                      // ignore
+                    }
+                  }
+
                   try {
                     await fetch("/api/optimize-event", {
                       method: "POST",
@@ -740,8 +822,14 @@ export default function Home() {
                   }
                   setOptimizerModalOpen(false);
                   router.push("/optimize");
+                } catch (e) {
+                  setError(e instanceof Error ? e.message : "Sign-in failed");
+                  setOptimizerModalOpen(true);
                 } finally {
-                  setIsLaunchingOptimize(false);
+                  if (!oauthRedirectPending) {
+                    setIsLaunchingOptimize(false);
+                    setIsStartingGoogleAuth(false);
+                  }
                 }
               }}
             />

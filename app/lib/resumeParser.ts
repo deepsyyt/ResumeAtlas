@@ -3,6 +3,8 @@ export type ParsedExperience = {
   role?: string;
   dates?: string;
   bullets: string[];
+  /** Optional project-style groupings preserved from structured parse / optimizer. */
+  projects?: { title: string; bullets: string[] }[];
 };
 
 export type ParsedEducation = {
