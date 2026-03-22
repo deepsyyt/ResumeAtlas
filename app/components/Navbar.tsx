@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  alignSupabaseOAuthAuthorizeUrl,
+  buildAuthCallbackRedirectTo,
+} from "@/app/lib/auth/redirect";
 import { createClient } from "@/app/lib/supabase/client";
 
 type UserProfile = {
@@ -11,6 +15,7 @@ type UserProfile = {
 export function Navbar() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [googleAuthStarting, setGoogleAuthStarting] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -74,6 +79,27 @@ export function Navbar() {
       await supabase.auth.signOut();
     } finally {
       if (typeof window !== "undefined") window.location.href = "/";
+    }
+  };
+
+  const handleSignInWithGoogle = async () => {
+    const supabase = createClient();
+    setGoogleAuthStarting(true);
+    try {
+      const redirectTo = buildAuthCallbackRedirectTo("/");
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.assign(
+          alignSupabaseOAuthAuthorizeUrl(data.url, redirectTo)
+        );
+      }
+    } catch (e) {
+      console.error("Google sign-in failed", e);
+      setGoogleAuthStarting(false);
     }
   };
 
@@ -171,12 +197,14 @@ export function Navbar() {
               )}
             </div>
           ) : (
-            <a
-              href="/upgrade"
-              className="inline-flex items-center rounded-full bg-white text-black px-3 py-1 text-[11px] font-semibold hover:bg-slate-100"
+            <button
+              type="button"
+              onClick={() => void handleSignInWithGoogle()}
+              disabled={googleAuthStarting}
+              className="inline-flex items-center rounded-full bg-white text-black px-3 py-1 text-[11px] font-semibold hover:bg-slate-100 disabled:opacity-60"
             >
-              Sign in with Google
-            </a>
+              {googleAuthStarting ? "Redirecting…" : "Sign in with Google"}
+            </button>
           )}
         </nav>
       </div>

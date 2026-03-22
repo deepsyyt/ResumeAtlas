@@ -12,6 +12,12 @@ type StructuredResumeProps = {
   highlightedBullets?: string[];
   /** Bullet texts where JD keywords were newly added. */
   keywordBullets?: string[];
+  /** Entirely new bullets added during optimization (not rewrites of prior lines). */
+  newBullets?: string[];
+  /** On optimized preview: emphasize JD keywords + numeric metrics in the professional summary. */
+  highlightOptimizedSummary?: boolean;
+  /** When using highlightOptimizedSummary, show the “Job-aligned” chip only if true (e.g. API summaryOptimized). */
+  showJdAlignedSummaryBadge?: boolean;
   editable?: boolean;
   onUpdateSummary?: (value: string) => void;
   onUpdateSkills?: (value: string[]) => void;
@@ -117,6 +123,7 @@ type ExperienceBulletRowProps = {
   highlightedSet: Set<string>;
   keywordSet: Set<string>;
   quantifiedSet: Set<string>;
+  newBulletSet: Set<string>;
   highlightKeywords?: string[];
 };
 
@@ -131,6 +138,7 @@ function ExperienceBulletRow({
   highlightedSet,
   keywordSet,
   quantifiedSet,
+  newBulletSet,
   highlightKeywords,
 }: ExperienceBulletRowProps) {
   const key = normalizeBulletKey(text);
@@ -138,16 +146,18 @@ function ExperienceBulletRow({
   const ctx =
     projectIndex === undefined ? undefined : { projectIndex };
 
-  const isRewritten = highlightedSet.has(key);
+  const isNewBullet = newBulletSet.has(key);
+  const isRewritten = !isNewBullet && highlightedSet.has(key);
   const isKeyword = keywordSet.has(key);
   const isQuantified = quantifiedSet.has(key);
-  const hasCallout = isRewritten || isKeyword || isQuantified;
+  const hasCallout = isNewBullet || isRewritten || isKeyword || isQuantified;
 
   const calloutClass = [
     hasCallout ? "rounded-md px-2 py-1.5 print:bg-transparent print:px-0 print:py-0 print:ring-0 print:border-l-0" : "py-0.5",
+    isNewBullet ? "bg-amber-50/90 ring-1 ring-amber-200 border-l-2 border-amber-600" : "",
     isRewritten ? "bg-violet-50 ring-1 ring-violet-200 border-l-2 border-violet-500" : "",
-    isKeyword ? "bg-sky-100 ring-1 ring-sky-300 border-l-2 border-sky-500" : "",
-    isQuantified ? "bg-emerald-50/80 ring-1 ring-emerald-200 border-l-2 border-emerald-500" : "",
+    !isNewBullet && isKeyword ? "bg-sky-100 ring-1 ring-sky-300 border-l-2 border-sky-500" : "",
+    !isNewBullet && isQuantified ? "bg-emerald-50/80 ring-1 ring-emerald-200 border-l-2 border-emerald-500" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -184,6 +194,11 @@ function ExperienceBulletRow({
           ).map((node, k) => <React.Fragment key={k}>{node}</React.Fragment>)
         )}
         <span className="ml-2 inline-flex flex-wrap gap-1 align-middle print:hidden">
+          {isNewBullet && (
+            <span className="inline-flex rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+              new
+            </span>
+          )}
           {isRewritten && (
             <span className="inline-flex rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-800">
               rewritten
@@ -211,6 +226,9 @@ export function StructuredResume({
   quantifiedBullets,
   highlightedBullets,
   keywordBullets,
+  newBullets,
+  highlightOptimizedSummary = false,
+  showJdAlignedSummaryBadge = false,
   editable = false,
   onUpdateSummary,
   onUpdateSkills,
@@ -237,6 +255,10 @@ export function StructuredResume({
   const quantifiedSet = React.useMemo(
     () => new Set((quantifiedBullets ?? []).map((b) => normalizeBulletKey(String(b ?? "")))),
     [quantifiedBullets]
+  );
+  const newBulletSet = React.useMemo(
+    () => new Set((newBullets ?? []).map((b) => normalizeBulletKey(String(b ?? "")))),
+    [newBullets]
   );
   const [editing, setEditing] = React.useState({
     header: false,
@@ -335,9 +357,16 @@ export function StructuredResume({
       {summary && (
         <section className="border-t border-slate-100 pt-4 mt-4">
           <div className="mb-1.5 flex items-center justify-between gap-2">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-              Professional Summary
-            </h2>
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+                Professional Summary
+              </h2>
+              {highlightOptimizedSummary && showJdAlignedSummaryBadge ? (
+                <span className="print:hidden inline-flex rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-indigo-900 ring-1 ring-indigo-200">
+                  Summary optimized
+                </span>
+              ) : null}
+            </div>
             {editable && (
               <button
                 type="button"
@@ -358,10 +387,20 @@ export function StructuredResume({
               rows={4}
             />
           ) : (
-            <p className="text-sm leading-relaxed text-slate-700">
-              {highlightKeywordsOnly(summary, highlightKeywords).map((node, i) => (
-                <React.Fragment key={i}>{node}</React.Fragment>
-              ))}
+            <p
+              className={`text-sm leading-relaxed text-slate-700 ${
+                highlightOptimizedSummary
+                  ? "rounded-md border border-indigo-200 bg-indigo-50/60 px-2 py-1.5 print:border-0 print:bg-transparent print:px-0 print:py-0"
+                  : ""
+              }`}
+            >
+              {highlightOptimizedSummary ? (
+                highlightMetrics(highlightKeywordsOnly(summary, highlightKeywords))
+              ) : (
+                highlightKeywordsOnly(summary, highlightKeywords).map((node, i) => (
+                  <React.Fragment key={i}>{node}</React.Fragment>
+                ))
+              )}
             </p>
           )}
         </section>
@@ -500,6 +539,7 @@ export function StructuredResume({
                           highlightedSet={highlightedSet}
                           keywordSet={keywordSet}
                           quantifiedSet={quantifiedSet}
+                          newBulletSet={newBulletSet}
                           highlightKeywords={highlightKeywords}
                         />
                       ))}
@@ -530,6 +570,7 @@ export function StructuredResume({
                             highlightedSet={highlightedSet}
                             keywordSet={keywordSet}
                             quantifiedSet={quantifiedSet}
+                            newBulletSet={newBulletSet}
                             highlightKeywords={highlightKeywords}
                           />
                         ))}

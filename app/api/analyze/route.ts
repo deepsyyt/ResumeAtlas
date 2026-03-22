@@ -7,6 +7,11 @@ import {
   JOB_DESCRIPTION_MAX_WORDS,
   RESUME_TEXT_MAX_WORDS,
 } from "@/app/lib/inputWordLimits";
+import {
+  assertAnalysisQuotaOrThrow,
+  recordSuccessfulAnalysis,
+  type QuotaExceededPayload,
+} from "@/app/lib/quota";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 
@@ -65,13 +70,15 @@ Evaluate the following metrics (each 0-100):
 1. ats_score – overall probability the resume passes ATS
 2. keyword_coverage – must be calculated as: round((number of matched_skills ÷ total JD skills) × 100). Total JD skills = count of distinct skill phrases you extracted from the JD. If there are zero JD skills, set keyword_coverage to 100.
 3. semantic_similarity – how closely the experience matches the role context
-4. experience_alignment – compare required years vs resume years (0-100). If the JD does not specify years of experience, set experience_alignment to 80 (neutral) and set required_years_experience to null.
+4. experience_alignment – compare required years vs resume years (0-100). If the JD does not specify years of experience, set experience_alignment to 80 (neutral) and set required_years_experience and required_years_experience_max to null.
 5. impact_score – based on quantified achievements (%, $, growth, etc.)
 6. resume_quality – structure, bullet points, clarity
 
 For experience alignment you MUST also output:
-- required_years_experience: number or null. Extract the minimum years of experience required from the job description (e.g. "5+ years" -> 5, "3-7 years" -> 3). If the JD does not mention years of experience at all, use null.
+- required_years_experience: number or null. Lower bound from the JD. Examples: "5+ years" or "at least 5 years" -> 5. For an explicit range "10-15 years" or "10 to 15 years of experience" -> 10. If the JD does not mention years of experience at all, use null.
+- required_years_experience_max: number or null. Upper bound ONLY when the JD states a clear range (e.g. "10-15 years" -> 15, "3 to 7 years" -> 7). For a minimum only ("5+", "minimum 8 years", no upper cap), use null. If required_years_experience is null, this MUST be null.
 - resume_years_experience: number. Estimate total relevant years of experience from the resume (based on job dates and roles). Use a number (e.g. 7), not a range.
+- For experience_alignment scoring with a range: treat resume years within [required_years_experience, required_years_experience_max] as a strong match; below the range lower the score appropriately; above the max can remain high (candidate exceeds the stated range).
 
 Also extract:
 - matched_skills: array of skill phrases from the JD that appear in the resume (with direct textual evidence as above)
@@ -87,6 +94,7 @@ Output format (no other keys):
   "semantic_similarity": number,
   "experience_alignment": number,
   "required_years_experience": number or null,
+  "required_years_experience_max": number or null,
   "resume_years_experience": number,
   "impact_score": number,
   "resume_quality": number,
@@ -112,6 +120,9 @@ export type AnalyzeRequestBody = {
 };
 
 export async function POST(request: Request) {
+  let actor: Awaited<ReturnType<typeof assertAnalysisQuotaOrThrow>>["actor"] | null = null;
+  let quotaStatusBefore: Awaited<ReturnType<typeof assertAnalysisQuotaOrThrow>>["status"] | null = null;
+
   try {
     const body = (await request.json()) as AnalyzeRequestBody;
     let resumeText = body?.resumeText;
@@ -126,6 +137,18 @@ export async function POST(request: Request) {
 
     resumeText = clipToWordLimit(resumeText, RESUME_TEXT_MAX_WORDS);
     jobDescription = clipToWordLimit(jobDescription, JOB_DESCRIPTION_MAX_WORDS);
+
+    try {
+      const resolved = await assertAnalysisQuotaOrThrow(request);
+      actor = resolved.actor;
+      quotaStatusBefore = resolved.status;
+    } catch (quotaErr) {
+      const payload = (quotaErr as Error & { quotaPayload?: QuotaExceededPayload }).quotaPayload;
+      if (payload) {
+        return NextResponse.json({ error: payload }, { status: 429 });
+      }
+      throw quotaErr;
+    }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     const model =
@@ -207,6 +230,21 @@ ${jobDescription}`;
       typeof result.required_years_experience !== "number"
         ? null
         : Math.max(0, Math.round(result.required_years_experience));
+    const rawMax = (result as Record<string, unknown>).required_years_experience_max;
+    let requiredYearsMax: number | null =
+      requiredYears === null ||
+      rawMax === null ||
+      rawMax === undefined ||
+      typeof rawMax !== "number"
+        ? null
+        : Math.max(0, Math.round(rawMax));
+    if (
+      requiredYears !== null &&
+      requiredYearsMax !== null &&
+      requiredYearsMax < requiredYears
+    ) {
+      requiredYearsMax = null;
+    }
     const resumeYears =
       typeof result.resume_years_experience === "number"
         ? Math.max(0, Math.round(result.resume_years_experience))
@@ -239,6 +277,7 @@ ${jobDescription}`;
       semantic_similarity: Math.max(0, Math.min(100, Math.round(result.semantic_similarity))),
       experience_alignment: Math.max(0, Math.min(100, Math.round(result.experience_alignment))),
       required_years_experience: requiredYears,
+      required_years_experience_max: requiredYearsMax,
       resume_years_experience: resumeYears,
       impact_score: Math.max(0, Math.min(100, Math.round(result.impact_score))),
       resume_quality: Math.max(0, Math.min(100, Math.round(result.resume_quality))),
@@ -252,7 +291,37 @@ ${jobDescription}`;
       summary: typeof result.summary === "string" ? result.summary : "",
     };
 
-    return NextResponse.json(normalized);
+    let usageRecorded = false;
+    if (actor) {
+      try {
+        await recordSuccessfulAnalysis(actor, resumeText, jobDescription);
+        usageRecorded = true;
+      } catch (recErr) {
+        console.error("[analyze] usage record failed (analysis still returned)", recErr);
+      }
+    }
+
+    const quotaAfter =
+      quotaStatusBefore && usageRecorded
+        ? {
+            remaining: Math.max(0, quotaStatusBefore.remaining - 1),
+            used: quotaStatusBefore.used + 1,
+            limit: quotaStatusBefore.limit,
+            scope: quotaStatusBefore.scope,
+          }
+        : quotaStatusBefore
+          ? {
+              remaining: quotaStatusBefore.remaining,
+              used: quotaStatusBefore.used,
+              limit: quotaStatusBefore.limit,
+              scope: quotaStatusBefore.scope,
+            }
+          : undefined;
+
+    return NextResponse.json({
+      ...normalized,
+      ...(quotaAfter && { quota: quotaAfter }),
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Analysis failed";
     const detail = err instanceof Error ? err.stack : String(err);

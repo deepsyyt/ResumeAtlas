@@ -7,14 +7,13 @@ import { createClient } from "@/app/lib/supabase/client";
 function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<"exchanging" | "done" | "error">("exchanging");
+  const [status, setStatus] = useState<"exchanging" | "done">("exchanging");
 
   useEffect(() => {
     const code = searchParams.get("code");
     const next = searchParams.get("next");
     const redirectTo = next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
     if (!code) {
-      setStatus("error");
       router.replace(redirectTo);
       return;
     }
@@ -26,7 +25,6 @@ function AuthCallbackContent() {
         router.replace(redirectTo);
       })
       .catch(() => {
-        setStatus("error");
         router.replace(redirectTo);
       });
   }, [searchParams, router]);
@@ -36,7 +34,6 @@ function AuthCallbackContent() {
       <p className="text-slate-600">
         {status === "exchanging" && "Signing you in..."}
         {status === "done" && "Redirecting..."}
-        {status === "error" && "Something went wrong. Taking you back."}
       </p>
     </div>
   );

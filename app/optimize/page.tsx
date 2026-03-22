@@ -13,9 +13,19 @@ import {
 import { createClient } from "@/app/lib/supabase/client";
 import type { Resume } from "@/app/types/resume";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
+import { sameResumeAndJob } from "@/app/lib/resumeJobFingerprint";
 
 const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
 const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
+
+type OptimizeCacheV1 = {
+  result: OptimizeResult;
+  editableResume: ResumeDocument | null;
+  resumeText?: string;
+  jobDescription?: string;
+  /** When set, cache must only hydrate for the same signed-in user (shared-device safety). */
+  cachedForUserId?: string;
+};
 
 type OptimizeInput = {
   resumeText: string;
@@ -32,7 +42,9 @@ type OptimizeResult = {
   matchedStrengthScore?: number;
   addedKeywords: string[];
   bulletImprovements: number;
+  bulletsAdded?: number;
   quantifiedAchievements: number;
+  summaryOptimized?: boolean;
   optimizedStructuredResume?: ResumeDocument;
   quantifiedBullets?: string[];
   bulletChanges?: {
@@ -64,6 +76,7 @@ export default function OptimizePage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     let cancelled = false;
+    const abortController = new AbortController();
 
     (async () => {
       try {
@@ -96,42 +109,72 @@ export default function OptimizePage() {
 
         if (!cancelled) setInput(parsed);
 
-        const cacheRaw = window.sessionStorage.getItem(OPTIMIZE_CACHE_KEY);
-        if (cacheRaw) {
+        const supabase = createClient();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const uid = session?.user?.id ?? null;
+
+        const restoreFromCachePayload = (cache: OptimizeCacheV1): boolean => {
+          if (!cache?.result?.optimizedResume) return false;
+          if (cache.cachedForUserId && uid && cache.cachedForUserId !== uid) return false;
+          if (!sameResumeAndJob(cache, parsed)) return false;
+          setResult(cache.result);
+          setEditableResume(cache.editableResume ?? resumeFromOptimizeResult(cache.result));
+          window.sessionStorage.setItem("resumeatlas_optimize_done", "1");
+          setHydrating(false);
+          return true;
+        };
+
+        const tryRestoreFromStorage = (cacheRaw: string | null): boolean => {
+          if (!cacheRaw) return false;
           try {
-            const cache = JSON.parse(cacheRaw) as {
-              result: OptimizeResult;
-              editableResume: ResumeDocument | null;
-              resumeText?: string;
-              jobDescription?: string;
-            };
-            const sameJob =
-              cache.resumeText === parsed.resumeText &&
-              cache.jobDescription === parsed.jobDescription;
-            if (cache?.result?.optimizedResume && sameJob && !cancelled) {
-              setResult(cache.result);
-              setEditableResume(
-                cache.editableResume ?? resumeFromOptimizeResult(cache.result)
-              );
-              window.sessionStorage.setItem("resumeatlas_optimize_done", "1");
-              setHydrating(false);
-              return;
-            }
-            if (!sameJob) {
-              window.sessionStorage.removeItem(OPTIMIZE_CACHE_KEY);
-            }
+            const cache = JSON.parse(cacheRaw) as OptimizeCacheV1;
+            return restoreFromCachePayload(cache);
           } catch {
-            window.sessionStorage.removeItem(OPTIMIZE_CACHE_KEY);
+            return false;
           }
+        };
+
+        if (
+          tryRestoreFromStorage(window.sessionStorage.getItem(OPTIMIZE_CACHE_KEY)) ||
+          tryRestoreFromStorage(window.localStorage.getItem(OPTIMIZE_CACHE_KEY))
+        ) {
+          if (!cancelled) setHydrating(false);
+          return;
         }
+
+        try {
+          const staleSession = window.sessionStorage.getItem(OPTIMIZE_CACHE_KEY);
+          const staleLocal = window.localStorage.getItem(OPTIMIZE_CACHE_KEY);
+          if (staleSession) {
+            const c = JSON.parse(staleSession) as OptimizeCacheV1;
+            if (!sameResumeAndJob(c, parsed)) window.sessionStorage.removeItem(OPTIMIZE_CACHE_KEY);
+          }
+          if (staleLocal) {
+            const c = JSON.parse(staleLocal) as OptimizeCacheV1;
+            if (!sameResumeAndJob(c, parsed)) window.localStorage.removeItem(OPTIMIZE_CACHE_KEY);
+          }
+        } catch {
+          window.sessionStorage.removeItem(OPTIMIZE_CACHE_KEY);
+          window.localStorage.removeItem(OPTIMIZE_CACHE_KEY);
+        }
+
+        if (cancelled) return;
 
         setHydrating(false);
         setOptimizeInFlight(true);
         setError(null);
 
+        const headers: HeadersInit = { "Content-Type": "application/json" };
+        if (session?.access_token) {
+          headers["Authorization"] = `Bearer ${session.access_token}`;
+        }
+
         const res = await fetch("/api/optimize", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
+          signal: abortController.signal,
           body: JSON.stringify({
             resumeText: parsed.resumeText,
             jobDescription: parsed.jobDescription,
@@ -140,6 +183,17 @@ export default function OptimizePage() {
           }),
         });
 
+        if (res.status === 401) {
+          throw new Error("Sign in to run optimization. Return to the home page and open the credit modal.");
+        }
+        if (res.status === 403) {
+          const errBody = (await res.json().catch(() => ({}))) as { error?: string; code?: string };
+          throw new Error(
+            typeof errBody.error === "string"
+              ? errBody.error
+              : "No optimization credits. Buy credits on the home page to continue."
+          );
+        }
         if (!res.ok) throw new Error("Optimization failed");
         const data = (await res.json()) as OptimizeResult;
 
@@ -148,21 +202,27 @@ export default function OptimizePage() {
           setResult(data);
           setEditableResume(nextEditable);
           window.sessionStorage.setItem("resumeatlas_optimize_done", "1");
+          const cachePayload: OptimizeCacheV1 = {
+            result: data,
+            editableResume: nextEditable,
+            resumeText: parsed.resumeText,
+            jobDescription: parsed.jobDescription,
+            cachedForUserId: uid ?? undefined,
+          };
+          const serialized = JSON.stringify(cachePayload);
           try {
-            window.sessionStorage.setItem(
-              OPTIMIZE_CACHE_KEY,
-              JSON.stringify({
-                result: data,
-                editableResume: nextEditable,
-                resumeText: parsed.resumeText,
-                jobDescription: parsed.jobDescription,
-              })
-            );
+            window.sessionStorage.setItem(OPTIMIZE_CACHE_KEY, serialized);
           } catch {
             // quota / private mode
           }
+          try {
+            window.localStorage.setItem(OPTIMIZE_CACHE_KEY, serialized);
+          } catch {
+            // quota — session cache still helps for same-tab reload
+          }
         }
       } catch (e) {
+        if (cancelled || (e instanceof Error && e.name === "AbortError")) return;
         if (!cancelled) {
           setError(e instanceof Error ? e.message : "Something went wrong");
         }
@@ -176,24 +236,36 @@ export default function OptimizePage() {
 
     return () => {
       cancelled = true;
+      abortController.abort();
     };
   }, [resumeFromOptimizeResult]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !result || !input) return;
-    try {
-      window.sessionStorage.setItem(
-        OPTIMIZE_CACHE_KEY,
-        JSON.stringify({
-          result,
-          editableResume,
-          resumeText: input.resumeText,
-          jobDescription: input.jobDescription,
-        })
-      );
-    } catch {
-      // ignore
-    }
+    void (async () => {
+      const {
+        data: { session },
+      } = await createClient().auth.getSession();
+      const uid = session?.user?.id;
+      const payload: OptimizeCacheV1 = {
+        result,
+        editableResume,
+        resumeText: input.resumeText,
+        jobDescription: input.jobDescription,
+        cachedForUserId: uid,
+      };
+      const serialized = JSON.stringify(payload);
+      try {
+        window.sessionStorage.setItem(OPTIMIZE_CACHE_KEY, serialized);
+      } catch {
+        // ignore
+      }
+      try {
+        window.localStorage.setItem(OPTIMIZE_CACHE_KEY, serialized);
+      } catch {
+        // ignore
+      }
+    })();
   }, [result, editableResume, input]);
 
   const handleDownloadPdf = useCallback(async () => {
@@ -278,17 +350,7 @@ export default function OptimizePage() {
     URL.revokeObjectURL(url);
   }, [editableResume, result?.optimizedResume, toPlainText]);
 
-  if (hydrating) {
-    return (
-      <div className="min-h-screen bg-slate-50 px-4 py-12">
-        <div className="mx-auto max-w-4xl text-center">
-          <p className="text-sm text-slate-600">Loading…</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (optimizeInFlight && !result) {
+  if (!result && !error && (hydrating || optimizeInFlight)) {
     return (
       <div className="min-h-screen bg-slate-50 px-4 py-12">
         <div className="mx-auto max-w-4xl text-center">
@@ -341,6 +403,13 @@ export default function OptimizePage() {
   const highlightedBullets = bulletChanges
     .filter((c) => c.original.trim().length > 0 && c.improved !== c.original)
     .map((c) => c.improved);
+  const newBullets = bulletChanges
+    .filter((c) => c.original.trim().length === 0 && c.improved.trim().length > 0)
+    .map((c) => c.improved);
+  const bulletsAddedCount =
+    typeof result.bulletsAdded === "number"
+      ? result.bulletsAdded
+      : newBullets.length;
   const keywordBulletsFromChanges = bulletChanges
     .filter((c) => c.addedKeywords.length > 0)
     .map((c) => c.improved);
@@ -410,6 +479,8 @@ export default function OptimizePage() {
               quantifiedBullets={quantifiedBullets}
               highlightedBullets={highlightedBullets}
               keywordBullets={keywordBullets}
+              newBullets={newBullets}
+              highlightOptimizedSummary
               editable
               onUpdateResumeMeta={(patch) =>
                 setEditableResume((prev) => (prev ? { ...prev, ...patch } : prev))
@@ -504,7 +575,9 @@ export default function OptimizePage() {
             <ResumeOptimizationPanel
               addedKeywords={showKeywords}
               bulletImprovements={result.bulletImprovements}
+              bulletsAdded={bulletsAddedCount}
               quantifiedAchievements={result.quantifiedAchievements}
+              summaryOptimized={result.summaryOptimized === true}
               scoreBefore={input.analyzeResult.ats_score}
               scoreAfter={result.scoreAfter}
               roleAlignmentScore={result.roleAlignmentScore}

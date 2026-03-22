@@ -7,8 +7,12 @@ import { ResumeForm, type GenerateInputs, ROLE_LEVELS } from "@/app/components/R
 import { ResumePreview } from "@/app/components/ResumePreview";
 import { IntelligencePanel } from "@/app/components/IntelligencePanel";
 import { LimitModal } from "@/app/components/LimitModal";
-import { ResumeOptimizerModal } from "@/app/components/ResumeOptimizerModal";
-import { UpgradeScreen } from "@/app/components/UpgradeScreen";
+import { CreditPackModal } from "@/app/components/CreditPackModal";
+import type { CreditPackageId } from "@/app/lib/billing/packages";
+import {
+  alignSupabaseOAuthAuthorizeUrl,
+  buildAuthCallbackRedirectTo,
+} from "@/app/lib/auth/redirect";
 import { createClient } from "@/app/lib/supabase/client";
 import type { Resume } from "@/app/types/resume";
 import type { Usage } from "@/app/lib/usage";
@@ -17,6 +21,8 @@ import { detectEvidenceGaps } from "@/app/lib/evidenceGap";
 import { scanATS, type ATSScanResult } from "@/app/lib/atsScan";
 import type { JDAnalysisResult } from "@/app/lib/jdAnalysis";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
+import type { AnalysisQuotaStatus } from "@/app/lib/quota";
+import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
 import { useRef } from "react";
 
 const homeFaqSchema = {
@@ -55,9 +61,10 @@ const homeFaqSchema = {
 
 const FALLBACK_ANON_USAGE: Usage = {
   type: "anon",
-  generationCredits: 0,
-  downloadCredits: 0,
-  freePreviewUsed: false,
+  creditsRemaining: 0,
+  creditsReserved: 0,
+  creditsPurchased: 0,
+  creditsConsumed: 0,
   showFullIntelligence: true,
 };
 
@@ -74,7 +81,23 @@ async function fetchUsage(accessToken: string | null): Promise<Usage> {
   }
 }
 
+async function fetchAnalysisQuota(
+  accessToken: string | null
+): Promise<AnalysisQuotaStatus | null> {
+  const headers: HeadersInit = {};
+  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+  const res = await fetch("/api/analysis-quota", { credentials: "include", headers });
+  if (!res.ok) return null;
+  try {
+    const q = await res.json();
+    return q && typeof q.remaining === "number" ? q : null;
+  } catch {
+    return null;
+  }
+}
+
 const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
+const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
 const ANALYZER_STATE_KEY = "resumeatlas_analyzer_state_v1";
 /** Tab-scoped snapshot so analysis survives Google OAuth → `/?openOptimizer=1` (independent of PERSIST_ANALYZER_STATE). */
 const POST_OAUTH_ANALYZER_KEY = "resumeatlas_post_oauth_analyze_v1";
@@ -102,9 +125,12 @@ function writePostOauthAnalyzerSnapshot(state: AnalyzerStoredState) {
 export default function Home() {
   const router = useRouter();
   const [usage, setUsage] = useState<Usage | null>(null);
+  const [analysisQuota, setAnalysisQuota] = useState<AnalysisQuotaStatus | null>(null);
   const [limitModalOpen, setLimitModalOpen] = useState(false);
   const [limitModalMessage, setLimitModalMessage] = useState("");
-  const [optimizerModalOpen, setOptimizerModalOpen] = useState(false);
+  const [limitModalQuotaScope, setLimitModalQuotaScope] = useState<LimitModalQuotaScope>(null);
+  const [creditModalOpen, setCreditModalOpen] = useState(false);
+  const [autoCheckoutPackageId, setAutoCheckoutPackageId] = useState<CreditPackageId | null>(null);
   const [resume, setResume] = useState<Resume | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -125,6 +151,16 @@ export default function Home() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const openedOptimizerFromQueryRef = useRef(false);
 
+  /** Supabase can send PKCE `code` to Site URL root (`/?code=`) instead of `/auth/callback`. */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const path = window.location.pathname;
+    if (path !== "/" && path !== "") return;
+    const sp = new URLSearchParams(window.location.search);
+    if (!sp.get("code")) return;
+    window.location.replace(`${window.location.origin}/auth/callback?${sp.toString()}`);
+  }, []);
+
   /** Logged-in-only path sets this; if session disappears, avoid "optimizing" UI while logged out. */
   useEffect(() => {
     if (!isLoggedIn && isLaunchingOptimize) setIsLaunchingOptimize(false);
@@ -137,8 +173,9 @@ export default function Home() {
     } = await supabase.auth.getSession();
     const token = session?.access_token ?? null;
     setIsLoggedIn(!!token);
-    const u = await fetchUsage(token);
+    const [u, q] = await Promise.all([fetchUsage(token), fetchAnalysisQuota(token)]);
     setUsage(u);
+    setAnalysisQuota(q);
   }, []);
 
   useEffect(() => {
@@ -235,10 +272,22 @@ export default function Home() {
     if (open !== "1") return;
     if (!analyzeResult || !lastInputs) return;
     openedOptimizerFromQueryRef.current = true;
-    setOptimizerModalOpen(true);
+    setCreditModalOpen(true);
     // Clean the URL so refresh doesn't re-open the modal.
     router.replace("/");
   }, [analyzeResult, lastInputs, router]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("billingCheckout") !== "1") return;
+    const raw = window.sessionStorage.getItem("resumeatlas_pending_package_id");
+    if (raw === "starter" || raw === "jobseeker" || raw === "power") {
+      setAutoCheckoutPackageId(raw);
+      setCreditModalOpen(true);
+    }
+    router.replace("/", { scroll: false });
+  }, [router]);
 
   const logAnalysisEvent = useCallback(
     async (eventType: string) => {
@@ -263,36 +312,6 @@ export default function Home() {
       }
     },
     [sessionId]
-  );
-
-  const runAnalytics = useCallback(
-    async (resumeData: Resume, jobDescription: string, showFullIntelligence: boolean) => {
-      setJdMatchResult(computeJDMatch(jobDescription, resumeData));
-      setAtsResult(scanATS(resumeData));
-      if (!showFullIntelligence) {
-        setJdAnalysis(null);
-        setEvidenceGaps([]);
-        return;
-      }
-      try {
-        const res = await fetch("/api/analyze-jd", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ jobDescription }),
-        });
-        const raw = (await res.json()) as JDAnalysisResult | { error?: string };
-        if (res.ok && raw && !("error" in raw)) {
-          const analysis = raw as JDAnalysisResult;
-          setJdAnalysis(analysis);
-          setEvidenceGaps(detectEvidenceGaps(analysis, resumeData));
-        } else {
-          setEvidenceGaps([]);
-        }
-      } catch {
-        setEvidenceGaps([]);
-      }
-    },
-    []
   );
 
   const getAuthHeaders = useCallback(async () => {
@@ -333,16 +352,18 @@ export default function Home() {
         });
       }
       try {
+        const headers = await getAuthHeaders();
         const res = await fetch("/api/analyze", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          headers: { ...headers, "Content-Type": "application/json" },
           body: JSON.stringify({
             resumeText: inputs.resumeText,
             jobDescription: inputs.jobDescription,
           }),
         });
         const raw = await res.text();
-        let data: ATSAnalyzeResult | { error?: string };
+        let data: ATSAnalyzeResult | { error?: string | { code?: string; message?: string; quota?: AnalysisQuotaStatus } };
         try {
           data = JSON.parse(raw) as typeof data;
         } catch {
@@ -354,6 +375,21 @@ export default function Home() {
           return;
         }
         if (!res.ok) {
+          if (res.status === 429) {
+            const err = (data as { error?: { code?: string; message?: string; quota?: AnalysisQuotaStatus } })?.error;
+            const quotaErr =
+              typeof err === "object" && err && "code" in err && err.code === "ANALYSIS_QUOTA_EXCEEDED";
+            if (quotaErr && typeof err === "object" && "quota" in err && err.quota) {
+              const q = err.quota as AnalysisQuotaStatus;
+              setLimitModalQuotaScope(q.scope);
+              setLimitModalMessage(
+                typeof err.message === "string" ? err.message : "You've used your free ATS scans for now."
+              );
+              setLimitModalOpen(true);
+              setAnalysisQuota(q);
+              return;
+            }
+          }
           setError(
             typeof (data as { error?: string }).error === "string"
               ? (data as { error: string }).error
@@ -361,7 +397,17 @@ export default function Home() {
           );
           return;
         }
-        setAnalyzeResult(data as ATSAnalyzeResult);
+        const result = data as ATSAnalyzeResult & { quota?: Partial<AnalysisQuotaStatus> };
+        setAnalyzeResult(result);
+        if (result.quota && typeof result.quota.remaining === "number") {
+          setAnalysisQuota({
+            allowed: result.quota.remaining > 0,
+            remaining: result.quota.remaining,
+            used: result.quota.used ?? 0,
+            limit: result.quota.limit ?? 0,
+            scope: (result.quota.scope as AnalysisQuotaStatus["scope"]) ?? "anonymous",
+          });
+        }
         if (typeof window !== "undefined" && PERSIST_ANALYZER_STATE) {
           const toStore: AnalyzerStoredState = {
             lastInputs: normalizedInputs,
@@ -394,73 +440,151 @@ export default function Home() {
         setIsGenerating(false);
       }
     },
-    [logAnalysisEvent]
+    [logAnalysisEvent, getAuthHeaders]
   );
 
-  const handleOptimize = useCallback(
-    async () => {
-      if (!lastInputs) return;
-      if (!isLoggedIn) {
-        if (typeof window !== "undefined") {
-          window.location.href = "/upgrade";
-        }
-        return;
-      }
-      setError(null);
-      setIsGenerating(true);
-      try {
-        const headers = await getAuthHeaders();
-        const res = await fetch("/api/generate", {
-          method: "POST",
-          credentials: "include",
-          headers,
-          body: JSON.stringify({
-            resumeText: lastInputs.resumeText,
-            jobDescription: lastInputs.jobDescription,
-            country: optCountry,
-            roleLevel: optRoleLevel || "Mid",
-          }),
-        });
-        let data: { error?: string; code?: string } | Resume;
-        try {
-          data = (await res.json()) as typeof data;
-        } catch {
-          const text = await res.text();
-          setError(
-            res.ok ? "Invalid response from server" : text || `Request failed (${res.status})`
-          );
-          return;
-        }
-        if (!res.ok) {
-          const err =
-            typeof (data as { error?: string }).error === "string"
-              ? (data as { error: string; code?: string }).error
-              : "Generation failed";
-          const code = (data as { code?: string }).code;
-          setError(err);
-          if (res.status === 403 && (code === "LIMIT_REACHED" || code === "UPGRADE_REQUIRED")) {
-            setLimitModalMessage((data as { error?: string }).error ?? err);
-            setLimitModalOpen(true);
-          }
-          return;
-        }
-        const resumeData = data as Resume;
-        setResume(resumeData);
-        setLastJD(lastInputs.jobDescription);
-        setLastRoleLevel(optRoleLevel || "Mid");
-        await runAnalytics(
-          resumeData,
-          lastInputs.jobDescription,
-          usage?.showFullIntelligence ?? true
+  const handleStartGoogleAuthForQuota = useCallback(async () => {
+    const supabase = createClient();
+    setIsStartingGoogleAuth(true);
+    setError(null);
+    try {
+      const redirectTo = buildAuthCallbackRedirectTo("/");
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo },
+      });
+      if (error) throw error;
+      // Some environments rely on explicit navigation; @supabase/ssr usually redirects automatically.
+      if (data?.url) {
+        window.location.assign(
+          alignSupabaseOAuthAuthorizeUrl(data.url, redirectTo)
         );
-        await refreshUsage();
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Sign-in failed");
+      setIsStartingGoogleAuth(false);
+    }
+  }, []);
+
+  const launchOptimizerFlow = useCallback(async () => {
+    if (!lastInputs || !analyzeResult) return;
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      setCreditModalOpen(true);
+      return;
+    }
+    setError(null);
+    setIsLaunchingOptimize(true);
+    try {
+      const resumeText = lastInputs.resumeText;
+      const jobDescription = lastJD ?? lastInputs.jobDescription;
+      let parsedResume: unknown = null;
+      if (typeof window !== "undefined") {
+        try {
+          const res = await fetch("/api/parse-resume", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ resumeText: lastInputs.resumeText }),
+          });
+          if (res.ok) {
+            const data = (await res.json()) as { resume?: unknown };
+            if (data && typeof data === "object" && "resume" in data) {
+              parsedResume = data.resume;
+            }
+          }
+        } catch {
+          // best-effort; fall back to raw text only
+        }
+      }
+      if (typeof window !== "undefined") {
+        try {
+          const payload = JSON.stringify({
+            resumeText,
+            jobDescription,
+            analyzeResult,
+            parsedResume,
+          });
+          window.sessionStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
+          window.localStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
+          window.sessionStorage.removeItem("resumeatlas_optimize_done");
+          window.sessionStorage.removeItem(OPTIMIZE_CACHE_KEY);
+          window.localStorage.removeItem(OPTIMIZE_CACHE_KEY);
+        } catch {
+          // ignore
+        }
+      }
+      void fetch("/api/optimize-event", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ ats_score_before: analyzeResult.ats_score }),
+      }).catch(() => {
+        /* analytics only */
+      });
+      setCreditModalOpen(false);
+      void refreshUsage();
+      router.push("/optimize");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not start optimization");
+    } finally {
+      setIsLaunchingOptimize(false);
+    }
+  }, [lastInputs, analyzeResult, lastJD, router, refreshUsage]);
+
+  const handleStep2OptimizeClick = useCallback(() => {
+    if (!lastInputs || !analyzeResult) return;
+    if (!isLoggedIn || (usage?.creditsRemaining ?? 0) < 1) {
+      setCreditModalOpen(true);
+      return;
+    }
+    void launchOptimizerFlow();
+  }, [lastInputs, analyzeResult, isLoggedIn, usage?.creditsRemaining, launchOptimizerFlow]);
+
+  const onCreditModalStartOptimize = useCallback(() => {
+    return launchOptimizerFlow();
+  }, [launchOptimizerFlow]);
+
+  const handleStartGoogleAuthForPackage = useCallback(
+    async (packageId: CreditPackageId) => {
+      if (!lastInputs || !analyzeResult) return;
+      const supabase = createClient();
+      setIsStartingGoogleAuth(true);
+      setError(null);
+      try {
+        if (typeof window !== "undefined") {
+          window.sessionStorage.setItem("resumeatlas_pending_package_id", packageId);
+          writePostOauthAnalyzerSnapshot({
+            lastInputs,
+            lastJD: lastJD ?? lastInputs.jobDescription,
+            lastRoleLevel,
+            analyzeResult,
+            savedAt: Date.now(),
+          });
+        }
+        const redirectTo = buildAuthCallbackRedirectTo(
+          "/?openOptimizer=1&billingCheckout=1"
+        );
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo },
+        });
+        if (error) throw error;
+        if (data?.url) {
+          window.location.assign(
+            alignSupabaseOAuthAuthorizeUrl(data.url, redirectTo)
+          );
+        }
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Something went wrong");
-      } finally {
-        setIsGenerating(false);
+        setError(e instanceof Error ? e.message : "Sign-in failed");
+        setIsStartingGoogleAuth(false);
       }
     },
-    [getAuthHeaders, lastInputs, isLoggedIn, refreshUsage, runAnalytics, usage?.showFullIntelligence]
+    [lastInputs, lastJD, lastRoleLevel, analyzeResult]
   );
 
   const handleResumeChange = useCallback((next: Resume) => {
@@ -487,10 +611,9 @@ export default function Home() {
         const data = (await res.json().catch(() => null)) as {
           error?: string;
         } | null;
-        if (res.status === 403 || res.status === 401) {
-          setLimitModalMessage(
-            data?.error || "Download requires credits. Unlock 25 Resume Credits for $19 (one-time)."
-          );
+        if (res.status === 401) {
+          setLimitModalQuotaScope(null);
+          setLimitModalMessage(data?.error || "Sign in to download your resume PDF.");
           setLimitModalOpen(true);
         } else {
           setError(
@@ -517,14 +640,7 @@ export default function Home() {
     }
   }, [getAuthHeaders, resume]);
 
-  const showUpgradeScreen = false;
   const showForm = true;
-
-  const showPreviewBanner =
-    isLoggedIn &&
-    usage?.freePreviewUsed &&
-    (usage?.downloadCredits ?? 0) === 0 &&
-    !!resume;
 
   return (
     <main className="min-h-screen flex flex-col bg-white">
@@ -678,7 +794,6 @@ export default function Home() {
         <div className="mt-0.5 border-t border-slate-200 pt-1">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 min-h-0">
           <div className="lg:col-span-1" id="ats-checker-form">
-            {showUpgradeScreen && <UpgradeScreen />}
             {showForm && (
               <ResumeForm
                 resume={resume}
@@ -687,6 +802,7 @@ export default function Home() {
                 isGenerating={isGenerating}
                 error={error}
                 isLoggedIn={isLoggedIn}
+                analysisQuota={analysisQuota}
               />
             )}
           </div>
@@ -696,142 +812,26 @@ export default function Home() {
               showFullIntelligence={usage?.showFullIntelligence ?? false}
               showLocked={false}
               onOpenOptimizer={
-                analyzeResult && lastInputs
-                  ? () => setOptimizerModalOpen(true)
-                  : undefined
+                analyzeResult && lastInputs ? () => setCreditModalOpen(true) : undefined
               }
               resumeText={lastInputs?.resumeText ?? ""}
               jobDescription={lastJD ?? ""}
             />
-            <ResumeOptimizerModal
-              open={optimizerModalOpen}
-              onClose={() => setOptimizerModalOpen(false)}
-              resumeText={lastInputs?.resumeText ?? ""}
-              jobDescription={lastJD ?? ""}
-              atsScore={analyzeResult?.ats_score ?? 0}
-              missingSkills={analyzeResult?.missing_skills ?? []}
-              keywordCoverage={analyzeResult?.keyword_coverage ?? 0}
-              isLoggedIn={isLoggedIn}
-              isOptimizing={isLaunchingOptimize}
-              isStartingGoogleAuth={isStartingGoogleAuth}
-              onOptimize={async () => {
-                if (
-                  !lastInputs ||
-                  !analyzeResult ||
-                  isLaunchingOptimize ||
-                  isStartingGoogleAuth
-                ) {
-                  return;
-                }
-                const supabase = createClient();
-                let oauthRedirectPending = false;
-                const redirectTo = `${window.location.origin}/auth/callback?next=/?openOptimizer=1`;
-
-                const startGoogleOAuth = async () => {
-                  const { error } = await supabase.auth.signInWithOAuth({
-                    provider: "google",
-                    options: { redirectTo },
-                  });
-                  if (error) throw error;
-                  oauthRedirectPending = true;
-                };
-
-                const snapshotForOAuth: AnalyzerStoredState = {
-                  lastInputs,
-                  lastJD: lastJD ?? lastInputs.jobDescription,
-                  lastRoleLevel,
-                  analyzeResult,
-                  savedAt: Date.now(),
-                };
-
-                try {
-                  // Logged-out users: skip getSession — go straight to Supabase for the OAuth URL
-                  // (saves a round trip; the slow part is still Supabase → Google redirect).
-                  if (!isLoggedIn) {
-                    setIsStartingGoogleAuth(true);
-                    writePostOauthAnalyzerSnapshot(snapshotForOAuth);
-                    await startGoogleOAuth();
-                    return;
-                  }
-
-                  setIsLaunchingOptimize(true);
-                  const {
-                    data: { session },
-                  } = await supabase.auth.getSession();
-                  if (!session) {
-                    setIsLaunchingOptimize(false);
-                    setIsStartingGoogleAuth(true);
-                    writePostOauthAnalyzerSnapshot(snapshotForOAuth);
-                    await startGoogleOAuth();
-                    return;
-                  }
-
-                  const resumeText = lastInputs.resumeText;
-                  const jobDescription = lastJD ?? "";
-                  let parsedResume = null;
-                  if (typeof window !== "undefined") {
-                    try {
-                      const res = await fetch("/api/parse-resume", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ resumeText: lastInputs.resumeText }),
-                      });
-                      if (res.ok) {
-                        const data = (await res.json()) as {
-                          resume?: unknown;
-                        };
-                        if (data && typeof data === "object" && "resume" in data) {
-                          parsedResume = (data as { resume: unknown }).resume;
-                        }
-                      }
-                    } catch {
-                      // best-effort; fall back to raw text only
-                    }
-                  }
-                  if (typeof window !== "undefined") {
-                    try {
-                      const payload = JSON.stringify({
-                        resumeText,
-                        jobDescription,
-                        analyzeResult,
-                        parsedResume,
-                      });
-                      // Back-compat (older /optimize reads)
-                      window.sessionStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
-                      window.localStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
-                      window.sessionStorage.removeItem("resumeatlas_optimize_done");
-                      window.sessionStorage.removeItem("resumeatlas_optimize_cache");
-                    } catch {
-                      // ignore
-                    }
-                  }
-
-                  try {
-                    await fetch("/api/optimize-event", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${session.access_token}`,
-                      },
-                      body: JSON.stringify({
-                        ats_score_before: analyzeResult.ats_score,
-                      }),
-                    });
-                  } catch {
-                    // best-effort; still navigate
-                  }
-                  setOptimizerModalOpen(false);
-                  router.push("/optimize");
-                } catch (e) {
-                  setError(e instanceof Error ? e.message : "Sign-in failed");
-                  setOptimizerModalOpen(true);
-                } finally {
-                  if (!oauthRedirectPending) {
-                    setIsLaunchingOptimize(false);
-                    setIsStartingGoogleAuth(false);
-                  }
-                }
+            <CreditPackModal
+              open={creditModalOpen}
+              onClose={() => {
+                setCreditModalOpen(false);
+                setAutoCheckoutPackageId(null);
               }}
+              isLoggedIn={isLoggedIn}
+              creditsRemaining={usage?.creditsRemaining ?? 0}
+              onStartOptimization={onCreditModalStartOptimize}
+              onRefreshBalance={refreshUsage}
+              onStartGoogleAuthForPackage={handleStartGoogleAuthForPackage}
+              isStartingGoogleAuth={isStartingGoogleAuth}
+              isBusy={isLaunchingOptimize}
+              autoCheckoutPackageId={autoCheckoutPackageId}
+              onConsumedAutoCheckoutPackage={() => setAutoCheckoutPackageId(null)}
             />
             {lastInputs && (jdMatchResult || atsResult || evidenceGaps.length > 0) && (
               <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-4">
@@ -874,11 +874,11 @@ export default function Home() {
                   <div className="flex-none">
                     <button
                       type="button"
-                      onClick={handleOptimize}
-                      disabled={isGenerating}
+                      onClick={handleStep2OptimizeClick}
+                      disabled={isGenerating || isLaunchingOptimize}
                       className="w-full md:w-auto rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
                     >
-                      Improve resume & generate optimized version
+                      Optimize resume for this job
                     </button>
                   </div>
                 </div>
@@ -899,11 +899,6 @@ export default function Home() {
                     {isDownloading ? "Preparing PDF…" : "Download PDF"}
                   </button>
                 </div>
-                {showPreviewBanner && (
-                    <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-800">
-                      Preview mode: Download requires credits.
-                    </div>
-                )}
                 <div className="flex-1 min-h-0">
                   <ResumePreview resume={resume} />
                 </div>
@@ -1066,8 +1061,14 @@ export default function Home() {
 
       <LimitModal
         open={limitModalOpen}
-        onClose={() => setLimitModalOpen(false)}
+        onClose={() => {
+          setLimitModalOpen(false);
+          setLimitModalQuotaScope(null);
+        }}
         message={limitModalMessage}
+        quotaScope={limitModalQuotaScope}
+        onSignInClick={limitModalQuotaScope === "anonymous" ? handleStartGoogleAuthForQuota : undefined}
+        isSigningIn={isStartingGoogleAuth}
       />
       <script
         type="application/ld+json"

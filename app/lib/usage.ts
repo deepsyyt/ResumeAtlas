@@ -4,9 +4,11 @@ export type UsageType = "anon" | "member";
 
 export type Usage = {
   type: UsageType;
-  generationCredits: number;
-  downloadCredits: number;
-  freePreviewUsed: boolean;
+  /** Available optimization credits (not held in reserve). */
+  creditsRemaining: number;
+  creditsReserved: number;
+  creditsPurchased: number;
+  creditsConsumed: number;
   showFullIntelligence: boolean;
 };
 
@@ -19,9 +21,10 @@ export async function getUsage(
   if (!accessToken) {
     return {
       type: "anon",
-      generationCredits: 0,
-      downloadCredits: 0,
-      freePreviewUsed: false,
+      creditsRemaining: 0,
+      creditsReserved: 0,
+      creditsPurchased: 0,
+      creditsConsumed: 0,
       showFullIntelligence: true,
     };
   }
@@ -33,40 +36,28 @@ export async function getUsage(
   if (!user) {
     return {
       type: "anon",
-      generationCredits: 0,
-      downloadCredits: 0,
-      freePreviewUsed: false,
+      creditsRemaining: 0,
+      creditsReserved: 0,
+      creditsPurchased: 0,
+      creditsConsumed: 0,
       showFullIntelligence: true,
     };
   }
 
-  let { data: profile, error } = await supabase
-    .from("profiles")
-    .select("generation_credits, download_credits, free_preview_used")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile || error) {
-    await supabase.from("profiles").insert({
-      id: user.id,
-      email: user.email ?? null,
-      resume_credits: 0,
-      free_preview_used: false,
-      generation_credits: 0,
-      download_credits: 0,
-    });
-    profile = {
-      generation_credits: 0,
-      download_credits: 0,
-      free_preview_used: false,
-    };
-  }
+  const { data: wallet } = await supabase
+    .from("credit_wallets")
+    .select(
+      "credits_remaining, credits_reserved, credits_purchased_total, credits_consumed_total"
+    )
+    .eq("user_id", user.id)
+    .maybeSingle();
 
   return {
     type: "member",
-    generationCredits: profile.generation_credits ?? 0,
-    downloadCredits: profile.download_credits ?? 0,
-    freePreviewUsed: profile.free_preview_used ?? false,
+    creditsRemaining: wallet?.credits_remaining ?? 0,
+    creditsReserved: wallet?.credits_reserved ?? 0,
+    creditsPurchased: wallet?.credits_purchased_total ?? 0,
+    creditsConsumed: wallet?.credits_consumed_total ?? 0,
     showFullIntelligence: true,
   };
 }

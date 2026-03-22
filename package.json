@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "db:migrate": "node scripts/run-migrations.mjs",
+    "db:verify": "node scripts/verify-db-tables.mjs",
     "dev": "next dev",
-    "dev:clean": "node -e \"try{require('fs').rmSync('.next',{recursive:true,force:true});}catch(e){}\" && next dev",
+    "clean:next": "node -e \"const fs=require('fs');for(const d of['.next','nextbuild']){try{fs.rmSync(d,{recursive:true,force:true});}catch(e){}}\"",
+    "dev:clean": "npm run clean:next && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -29,7 +32,9 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
+    "pg": "^8.20.0",
     "postcss": "^8",
+    "postgres": "^3.4.8",
     "tailwindcss": "^3.4.14",
     "typescript": "^5"
   }
