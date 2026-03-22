@@ -14,6 +14,10 @@ export type ATSAnalyzeResult = {
   experience_alignment: number;
   /** Years of experience required by the job description; null if not specified in the JD. */
   required_years_experience: number | null;
+  /**
+   * When the JD states a range (e.g. 10–15 years), upper bound; null for a minimum only ("5+ years") or unspecified.
+   */
+  required_years_experience_max?: number | null;
   /** Years of experience reflected in the resume (inferred from roles and dates). */
   resume_years_experience: number;
   impact_score: number;
@@ -43,6 +47,10 @@ export function isATSAnalyzeResult(obj: unknown): obj is ATSAnalyzeResult {
   const o = obj as Record<string, unknown>;
   const requiredYearsOk =
     o.required_years_experience === null || typeof o.required_years_experience === "number";
+  const requiredMaxOk =
+    o.required_years_experience_max === undefined ||
+    o.required_years_experience_max === null ||
+    typeof o.required_years_experience_max === "number";
   const resumeYearsOk = typeof o.resume_years_experience === "number";
   return (
     typeof o.ats_score === "number" &&
@@ -50,6 +58,7 @@ export function isATSAnalyzeResult(obj: unknown): obj is ATSAnalyzeResult {
     typeof o.semantic_similarity === "number" &&
     typeof o.experience_alignment === "number" &&
     requiredYearsOk &&
+    requiredMaxOk &&
     resumeYearsOk &&
     typeof o.impact_score === "number" &&
     typeof o.resume_quality === "number" &&

@@ -120,6 +120,7 @@ export type ExperienceCondition = "above" | "exact" | "slightly_below" | "far_be
 
 export function getExperienceAlignmentStyle(
   requiredYears: number | null,
+  requiredYearsMax: number | null,
   resumeYears: number,
   alignmentScore: number
 ): { condition: ExperienceCondition; style: ScoreStyle } {
@@ -129,6 +130,29 @@ export function getExperienceAlignmentStyle(
     if (s >= 70) return { condition: "exact", style: { band: "moderate", ...BANDS.moderate, label: "Not specified in JD" } };
     return { condition: "exact", style: { band: "poor", ...BANDS.poor, label: "Not specified in JD" } };
   }
+
+  const max =
+    requiredYearsMax !== null &&
+    typeof requiredYearsMax === "number" &&
+    requiredYearsMax >= requiredYears
+      ? requiredYearsMax
+      : null;
+
+  if (max !== null) {
+    if (resumeYears >= requiredYears && resumeYears <= max) {
+      return { condition: "exact", style: { band: "strong", ...BANDS.strong, label: "Meets requirement" } };
+    }
+    if (resumeYears > max) {
+      return {
+        condition: "above",
+        style: { band: "strong", ...BANDS.strong, label: "Above stated range" },
+      };
+    }
+    if (s > 85) return { condition: "slightly_below", style: { band: "strong", ...BANDS.strong, label: "Close to requirement" } };
+    if (s >= 70) return { condition: "slightly_below", style: { band: "moderate", ...BANDS.moderate, label: "Slightly below" } };
+    return { condition: "far_below", style: { band: "poor", ...BANDS.poor, label: "Below required range" } };
+  }
+
   const diff = resumeYears - requiredYears;
   if (diff > 0) {
     return { condition: "above", style: { band: "strong", ...BANDS.strong, label: "Above requirement" } };

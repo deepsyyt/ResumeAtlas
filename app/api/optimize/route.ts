@@ -1,4 +1,9 @@
 import { NextResponse } from "next/server";
+import { getBearerUser } from "@/app/lib/billing/requestUser";
+import {
+  finalizeOptimizationCredit,
+  reserveOptimizationCredit,
+} from "@/app/lib/billing/creditsServer";
 import {
   clipToWordLimit,
   JOB_DESCRIPTION_MAX_WORDS,
@@ -20,6 +25,7 @@ export type OptimizeRequestBody = {
     matched_skills?: string[];
     keyword_coverage?: number;
     impact_score?: number;
+    semantic_similarity?: number;
   };
   /** Structured resume parsed on the client via /api/parse-resume. */
   structuredResume?: ResumeDocument;
@@ -37,8 +43,13 @@ export type OptimizeResponse = {
   roleAlignmentScore?: number;
   matchedStrengthScore?: number;
   addedKeywords: string[];
+  /** Existing bullets rewritten (not net-new lines). */
   bulletImprovements: number;
+  /** Entirely new bullets appended during optimization. */
+  bulletsAdded: number;
   quantifiedAchievements: number;
+  /** True when the professional summary text changed vs the pre-optimization snapshot (JD-aligned rewrite). */
+  summaryOptimized: boolean;
   /** Optimized structured resume (bullets rewritten, structure preserved). */
   optimizedStructuredResume?: ResumeDocument;
   /** Bullet texts where new quantification (numbers) was added. */
@@ -83,18 +94,184 @@ export type OptimizeResponse = {
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 
+/**
+ * Trade quality vs Anthropic token spend for /api/optimize (env: OPTIMIZE_DEPTH).
+ * - economy: fewer rewrites, smaller max_tokens; skips full experience recompose when there are no keyword gaps (summary still gets a JD-aligned pass)
+ * - balanced (default): moderate depth
+ * - quality: deepest passes / highest cost
+ */
+type OptimizeDepthTier = "economy" | "balanced" | "quality";
+
+type OptimizeLlmBudget = {
+  maxTargetSkills: number;
+  expansionSkillCap: number;
+  expandMaxTokens: number;
+  expandJdChars: number;
+  intentMaxTokens: number;
+  intentJdChars: number;
+  recomposeMaxTokens: number;
+  recomposeJdChars: number;
+  skipRecomposeWhenNoGap: boolean;
+  noGapRewriteMin: number;
+  noGapRewriteMax: number;
+  gapRewriteAbsoluteCap: number;
+  semanticExtraRewrites: number;
+  quantCapExplicit: number;
+  quantFracExplicit: number;
+  quantCapNoGap: number;
+  quantFracNoGap: number;
+  bulletRewriteMaxTokens: number;
+  generateBulletMaxTokens: number;
+  generateJdChars: number;
+  coverageBoostMax: number;
+  maxRequiredNewBullets: number;
+  validateCoverageMaxTokens: number;
+  resumeAnchorChars: number;
+};
+
+const OPTIMIZE_BUDGET_BY_TIER: Record<OptimizeDepthTier, OptimizeLlmBudget> = {
+  economy: {
+    maxTargetSkills: 8,
+    expansionSkillCap: 12,
+    expandMaxTokens: 360,
+    expandJdChars: 2400,
+    intentMaxTokens: 360,
+    intentJdChars: 2400,
+    recomposeMaxTokens: 900,
+    recomposeJdChars: 3800,
+    skipRecomposeWhenNoGap: true,
+    noGapRewriteMin: 2,
+    noGapRewriteMax: 4,
+    gapRewriteAbsoluteCap: 6,
+    semanticExtraRewrites: 0,
+    quantCapExplicit: 2,
+    quantFracExplicit: 0.28,
+    quantCapNoGap: 2,
+    quantFracNoGap: 0.3,
+    bulletRewriteMaxTokens: 96,
+    generateBulletMaxTokens: 100,
+    generateJdChars: 900,
+    coverageBoostMax: 2,
+    maxRequiredNewBullets: 2,
+    validateCoverageMaxTokens: 450,
+    resumeAnchorChars: 2000,
+  },
+  balanced: {
+    maxTargetSkills: 10,
+    expansionSkillCap: 16,
+    expandMaxTokens: 480,
+    expandJdChars: 3200,
+    intentMaxTokens: 480,
+    intentJdChars: 3200,
+    recomposeMaxTokens: 1200,
+    recomposeJdChars: 5000,
+    skipRecomposeWhenNoGap: false,
+    noGapRewriteMin: 2,
+    noGapRewriteMax: 6,
+    gapRewriteAbsoluteCap: 8,
+    semanticExtraRewrites: 1,
+    quantCapExplicit: 3,
+    quantFracExplicit: 0.3,
+    quantCapNoGap: 3,
+    quantFracNoGap: 0.38,
+    bulletRewriteMaxTokens: 108,
+    generateBulletMaxTokens: 110,
+    generateJdChars: 1200,
+    coverageBoostMax: 3,
+    maxRequiredNewBullets: 3,
+    validateCoverageMaxTokens: 520,
+    resumeAnchorChars: 2600,
+  },
+  quality: {
+    maxTargetSkills: 12,
+    expansionSkillCap: 20,
+    expandMaxTokens: 600,
+    expandJdChars: 5000,
+    intentMaxTokens: 600,
+    intentJdChars: 5000,
+    recomposeMaxTokens: 2000,
+    recomposeJdChars: 8000,
+    skipRecomposeWhenNoGap: false,
+    noGapRewriteMin: 3,
+    noGapRewriteMax: 10,
+    gapRewriteAbsoluteCap: 12,
+    semanticExtraRewrites: 2,
+    quantCapExplicit: 3,
+    quantFracExplicit: 0.32,
+    quantCapNoGap: 5,
+    quantFracNoGap: 0.5,
+    bulletRewriteMaxTokens: 120,
+    generateBulletMaxTokens: 120,
+    generateJdChars: 1400,
+    coverageBoostMax: 4,
+    maxRequiredNewBullets: 4,
+    validateCoverageMaxTokens: 600,
+    resumeAnchorChars: 3500,
+  },
+};
+
+function resolveOptimizeDepth(): OptimizeDepthTier {
+  const v = (process.env.OPTIMIZE_DEPTH || "balanced").toLowerCase().trim();
+  if (v === "economy" || v === "quality") return v;
+  return "balanced";
+}
+
+function getOptimizeLlmBudget(): OptimizeLlmBudget {
+  return OPTIMIZE_BUDGET_BY_TIER[resolveOptimizeDepth()];
+}
+
 type ExpandedSkillMap = Record<string, string[]>;
 
-/** Weak bullet detector: short, no numbers, or missing strong action verb. */
+const STRONG_VERB_RE =
+  /^(Developed|Led|Built|Designed|Implemented|Created|Optimized|Drove|Owned|Delivered|Established|Scaled|Improved|Reduced|Increased|Spearheaded|Architected|Automated|Streamlined|Collaborated|Directed|Executed|Launched|Transformed|Accelerated|Negotiated|Analyzed|Defined|Operationalized)/i;
+
+/** Weak / polish-worthy bullet: short, generic opening, weak verb, or long without metrics. */
 function isWeakBullet(bullet: string): boolean {
   if (!bullet?.trim()) return false;
   const trimmed = bullet.trim();
-  const tooShort = trimmed.length < 90;
+  const tooShort = trimmed.length < 88;
   const noNumber = !/\d/.test(trimmed);
-  const noStrongVerb = !/^(Developed|Led|Built|Designed|Implemented|Created|Optimized)/i.test(
-    trimmed
-  );
-  return tooShort || noNumber || noStrongVerb;
+  const genericOpen =
+    /^(responsible for|worked on|helped with|assisted|supported|involved in|participated in|duties included|tasked with|handled various)\b/i.test(
+      trimmed
+    );
+  const noStrongVerb = !STRONG_VERB_RE.test(trimmed);
+  const longFlabby = trimmed.length > 195 && noNumber;
+  return tooShort || genericOpen || longFlabby || (noNumber && noStrongVerb);
+}
+
+function dedupeSkillsPreserveOrder(skills: string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const s of skills) {
+    const t = String(s ?? "").trim();
+    if (!t) continue;
+    const k = t.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(t);
+  }
+  return out;
+}
+
+/** When the analyzer reports no missing skills, still need JD anchors for paid optimization. */
+function extractJdAnchorPhrases(jobDescription: string, max: number): string[] {
+  const text = String(jobDescription ?? "").replace(/\s+/g, " ").trim();
+  if (!text) return [];
+  const parts = text.split(/[,;•]|\s+and\s+/gi);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (let raw of parts) {
+    raw = raw.replace(/^[\s\-–—]+|[\s\-–—]+$/g, "").trim();
+    if (raw.length < 8 || raw.length > 70) continue;
+    if (/^\d|years?\s+of|minimum|preferred|required\b/i.test(raw)) continue;
+    const k = raw.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(raw);
+    if (out.length >= max) break;
+  }
+  return out.slice(0, max);
 }
 
 type BulletWithContext = {
@@ -150,6 +327,14 @@ type RecomposedExperience = {
   summary: string;
   experience: RecomposedExperienceCompany[];
 };
+
+function normalizeSummaryForCompare(raw: string | undefined): string {
+  return String(raw ?? "")
+    .replace(/\r?\n+/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim()
+    .toLowerCase();
+}
 
 type IntentCluster = {
   name: string;
@@ -346,7 +531,8 @@ async function expandSkillsSemantically(
   jobDescription: string,
   targetSkills: string[],
   apiKey: string | undefined,
-  model: string
+  model: string,
+  llm: Pick<OptimizeLlmBudget, "expandMaxTokens" | "expandJdChars">
 ): Promise<ExpandedSkillMap> {
   if (!apiKey || targetSkills.length === 0) return {};
 
@@ -375,8 +561,9 @@ OUTPUT STRICT JSON:
   "kpi tracking": ["performance metrics", "dashboard monitoring"]
 }`;
 
+  const jd = jobDescription.slice(0, llm.expandJdChars);
   const userPrompt = `JOB DESCRIPTION:
-${jobDescription}
+${jd}
 
 SKILLS:
 ${targetSkills.join(", ")}`;
@@ -390,7 +577,7 @@ ${targetSkills.join(", ")}`;
     },
     body: JSON.stringify({
       model,
-      max_tokens: 600,
+      max_tokens: llm.expandMaxTokens,
       temperature: 0.2,
       top_p: 1,
       system: systemPrompt,
@@ -475,7 +662,8 @@ async function mapSkillsToIntents(
   jobDescription: string,
   targetSkills: string[],
   apiKey: string | undefined,
-  model: string
+  model: string,
+  llm: Pick<OptimizeLlmBudget, "intentMaxTokens" | "intentJdChars">
 ): Promise<IntentCluster[]> {
   if (!targetSkills.length) return [];
   if (!apiKey) return fallbackIntentClustering(jobDescription, targetSkills);
@@ -497,8 +685,9 @@ OUTPUT STRICT JSON:
   ]
 }`;
 
+  const jd = jobDescription.slice(0, llm.intentJdChars);
   const userPrompt = `JOB DESCRIPTION:
-${jobDescription}
+${jd}
 
 TARGET SKILLS:
 ${targetSkills.join(", ")}
@@ -516,7 +705,7 @@ Cluster the target skills into intent clusters that best match the job descripti
       },
       body: JSON.stringify({
         model,
-        max_tokens: 600,
+        max_tokens: llm.intentMaxTokens,
         temperature: 0.2,
         top_p: 1,
         system: SYSTEM,
@@ -658,6 +847,11 @@ Rewrite the summary to:
 - Emphasize business impact, decision-making, and domain alignment over tools.
 - Sound confident and targeted, not like a generic AI-generated summary.
 
+WHEN THE USER ALREADY MATCHES KEYWORDS (NO MISSING-SKILLS LIST):
+- The prior scan may show 100% keyword match but weak role storytelling. Still perform meaningful bullet work: professional, human phrasing; stronger verbs; JD-aligned vocabulary where truthful; add plausible quantification on several bullets when scale or impact can be inferred (ranges OK).
+- Do not stack every improvement on the same bullet: some bullets gain metrics, others gain clarity or domain phrasing.
+- Never fabricate employers, job titles, tools, or certifications the resume does not support.
+
 OUTPUT FORMAT (STRICT JSON):
 
 {
@@ -671,28 +865,151 @@ OUTPUT FORMAT (STRICT JSON):
   ]
 }`;
 
+const SUMMARY_ONLY_SYSTEM = `You rewrite ONLY the candidate's professional summary for a specific job. Output STRICT JSON with a single key "summary" (string). No markdown, no other keys.
+
+Rules:
+- Clearly state the job domain and focus in the FIRST sentence (mandatory).
+- Avoid generic "AI/ML" or vague role labels unless the JD centers on them.
+- Naturally weave in 2–3 high-value concepts from the job (tools, domains, outcomes) only when supported by the resume — never invent employers, credentials, or tools.
+- Emphasize impact, scope, and alignment with THIS posting over buzzwords.
+- 3–5 sentences, confident and human; not robotic keyword stuffing.
+- If the resume has no summary, write one from the structured resume (experience, skills, title) that fits the JD honestly.
+- Where plausible, include 1–2 numeric signals (years of experience, team size, scale, % improvement) only when inferable from the resume; otherwise use non-numeric impact language. Do not fabricate precise metrics.`;
+
+async function rewriteSummaryOnlyForJd(
+  structuredResume: ResumeDocument,
+  jobDescription: string,
+  targetSkills: string[],
+  requiredSkills: string[],
+  matchedSkills: string[],
+  jdChars: number,
+  apiKey: string,
+  model: string
+): Promise<string | null> {
+  const jd = jobDescription.slice(0, jdChars);
+  const gapBlock =
+    targetSkills.length > 0
+      ? `JD ALIGNMENT TARGETS (use naturally where truthful):\n${targetSkills.join(", ")}\n${
+          requiredSkills.length > 0
+            ? `\nSTRICT REQUIRED PHRASES (only if honestly supported by resume):\n${requiredSkills.join(", ")}\n`
+            : ""
+        }`
+      : requiredSkills.length > 0
+        ? `STRICT REQUIRED PHRASES (only if honestly supported by resume):\n${requiredSkills.join(", ")}\n`
+        : "";
+  const current = (structuredResume.summary ?? "").trim();
+  const userPrompt = `JOB DESCRIPTION:
+${jd}
+
+${gapBlock}MATCHED STRENGTHS (elevate where true):
+${matchedSkills.join(", ")}
+
+CURRENT SUMMARY (may be empty — if empty, derive from resume body):
+${current || "(none)"}
+
+STRUCTURED RESUME (for facts only):
+${JSON.stringify(
+    {
+      name: structuredResume.name,
+      title: structuredResume.title,
+      skills: structuredResume.skills,
+      experience: structuredResume.experience?.map((e) => ({
+        role: e.role,
+        company: e.company,
+        bullets: (e.bullets ?? []).slice(0, 4),
+      })),
+    },
+    null,
+    2
+  )}
+
+Return JSON: {"summary":"..."}`;
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 720,
+      temperature: 0.35,
+      top_p: 1,
+      system: SUMMARY_ONLY_SYSTEM,
+      messages: [{ role: "user" as const, content: userPrompt }],
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    console.error("[optimize] summary-only rewrite error", response.status, text.slice(0, 200));
+    return null;
+  }
+
+  const data = (await response.json().catch(() => null)) as
+    | { content?: { type: string; text?: string }[] }
+    | null;
+  const raw = data?.content?.[0]?.text ?? "";
+
+  try {
+    const str = raw.trim();
+    const start = str.indexOf("{");
+    const end = str.lastIndexOf("}");
+    if (start === -1 || end === -1 || end <= start) return null;
+    const jsonSlice = str.slice(start, end + 1);
+    const parsed = JSON.parse(jsonSlice) as { summary?: string };
+    const s = typeof parsed.summary === "string" ? parsed.summary.trim() : "";
+    return s.length > 0 ? s : null;
+  } catch (e) {
+    console.error("[optimize] summary-only parse failed", e);
+    return null;
+  }
+}
+
 async function recomposeExperience(
   structuredResume: ResumeDocument,
   jobDescription: string,
   targetSkills: string[],
   requiredSkills: string[],
   matchedSkills: string[],
+  explicitSkillGaps: boolean,
+  llm: Pick<
+    OptimizeLlmBudget,
+    "recomposeMaxTokens" | "recomposeJdChars" | "skipRecomposeWhenNoGap"
+  >,
   apiKey: string | undefined,
   model: string
 ): Promise<RecomposedExperience | null> {
   if (!apiKey || targetSkills.length === 0) return null;
+  if (llm.skipRecomposeWhenNoGap && !explicitSkillGaps) {
+    const summaryOnly = await rewriteSummaryOnlyForJd(
+      structuredResume,
+      jobDescription,
+      targetSkills,
+      requiredSkills,
+      matchedSkills,
+      llm.recomposeJdChars,
+      apiKey,
+      model
+    );
+    if (!summaryOnly) return null;
+    return { summary: summaryOnly, experience: [] };
+  }
+
+  const jd = jobDescription.slice(0, llm.recomposeJdChars);
+  const gapBlock = explicitSkillGaps
+    ? `MISSING / GAP SKILLS (honest coverage; verbatim where required):\n${targetSkills.join(", ")}\n\nREQUIRED MISSING (strict):\n${requiredSkills.join(", ")}`
+    : `KEYWORD STATUS: Prior scan found no missing skills — optimize for role fit, clarity, and impact anyway.\nJD ALIGNMENT TARGETS (use this language naturally; do not claim new tools):\n${targetSkills.join(", ")}`;
 
   const userPrompt = `JOB DESCRIPTION:
-${jobDescription}
+${jd}
 
-MATCHED SKILLS (strengths):
+${gapBlock}
+
+MATCHED SKILLS (strengths to preserve and elevate):
 ${matchedSkills.join(", ")}
-
-MISSING SKILLS:
-${targetSkills.join(", ")}
-
-REQUIRED MISSING SKILLS (must be covered in experience bullets):
-${requiredSkills.join(", ")}
 
 STRUCTURED RESUME:
 ${JSON.stringify(structuredResume, null, 2)}`;
@@ -706,7 +1023,7 @@ ${JSON.stringify(structuredResume, null, 2)}`;
     },
     body: JSON.stringify({
       model,
-      max_tokens: 2000,
+      max_tokens: llm.recomposeMaxTokens,
       temperature: 0.4,
       top_p: 1,
       system: RECOMPOSE_SYSTEM_PROMPT,
@@ -744,7 +1061,23 @@ function mergeRecomposed(
   original: ResumeDocument,
   recomposed: RecomposedExperience | null
 ): ResumeDocument {
-  if (!recomposed || !Array.isArray(recomposed.experience)) return original;
+  if (!recomposed) return original;
+
+  const expIn = recomposed.experience;
+  const hasExperienceLayer = Array.isArray(expIn) && expIn.length > 0;
+  const nextSummary =
+    typeof recomposed.summary === "string" && recomposed.summary.trim().length > 0
+      ? recomposed.summary.trim()
+      : null;
+
+  if (!hasExperienceLayer) {
+    if (nextSummary) {
+      return { ...original, summary: nextSummary };
+    }
+    return original;
+  }
+
+  if (!Array.isArray(expIn)) return original;
 
   const newExperience = original.experience.map((exp) => {
     if (!exp.company) return exp;
@@ -789,10 +1122,7 @@ function mergeRecomposed(
 
   return {
     ...original,
-    summary:
-      typeof recomposed.summary === "string" && recomposed.summary.trim().length > 0
-        ? recomposed.summary.trim()
-        : original.summary,
+    summary: nextSummary ?? original.summary,
     experience: newExperience,
   };
 }
@@ -803,12 +1133,14 @@ async function rewriteBullet(
   apiKey: string,
   model: string,
   forceQuantified: boolean,
-  globalStyle: GlobalStyle
+  globalStyle: GlobalStyle,
+  maxOutputTokens: number
 ): Promise<string> {
   const systemPrompt = `You are improving a resume bullet for ATS optimization.
 
 You MUST:
 - Keep the original meaning.
+- Write like a strong human resume: natural rhythm, not robotic keyword stacking. Keywords should feel earned in context.
 - Start with a strong action verb.
 - Action verb diversity:
   - Prefer a different opening verb than nearby bullets in the same role.
@@ -829,6 +1161,7 @@ You MUST:
   - Specifically avoid these starting words for this rewrite: ${globalStyle.avoidWords.join(", ") || "none"}
 
 If the original bullet already has strong impact, improve clarity instead.
+If every keyword already appears literally, still tighten wording, leadership tone, and outcome (do not return the same sentence unless it is already best-in-class).
 
 Return ONLY the improved bullet. No quotes, no explanation.`;
 
@@ -849,7 +1182,7 @@ QUANTIFY=${forceQuantified ? "true" : "false"}`;
     },
     body: JSON.stringify({
       model,
-      max_tokens: 120,
+      max_tokens: maxOutputTokens,
       temperature: 0,
       top_p: 1,
       system: systemPrompt,
@@ -877,7 +1210,8 @@ async function generateAlignedBullet(
   jobDescription: string,
   skill: string,
   apiKey: string,
-  model: string
+  model: string,
+  llm: Pick<OptimizeLlmBudget, "generateBulletMaxTokens" | "generateJdChars">
 ): Promise<string | null> {
   const systemPrompt = `You write one realistic resume bullet aligned to a candidate's existing role.
 
@@ -894,7 +1228,7 @@ Rules:
   const userPrompt = `ROLE: ${role || "Unknown role"}
 COMPANY: ${company || "Unknown company"}
 JOB DESCRIPTION CONTEXT:
-${jobDescription.slice(0, 1400)}
+${jobDescription.slice(0, llm.generateJdChars)}
 
 Write one aligned bullet containing: ${skill}`;
 
@@ -907,7 +1241,7 @@ Write one aligned bullet containing: ${skill}`;
     },
     body: JSON.stringify({
       model,
-      max_tokens: 120,
+      max_tokens: llm.generateBulletMaxTokens,
       temperature: 0,
       top_p: 1,
       system: systemPrompt,
@@ -931,6 +1265,47 @@ function tokenSet(text: string): Set<string> {
       .map((t) => t.trim())
       .filter((t) => t.length >= 3)
   );
+}
+
+/** Count bullet text changes (e.g. after recomposition) when bulletChangeMap missed them. */
+function diffResumeBulletTexts(
+  before: ResumeDocument,
+  after: ResumeDocument
+): { changedBullets: number; newMetrics: number } {
+  let changedBullets = 0;
+  let newMetrics = 0;
+
+  const walk = (blobsBefore: string[] | undefined, blobsAfter: string[] | undefined) => {
+    const b = blobsBefore ?? [];
+    const a = blobsAfter ?? [];
+    const n = Math.max(b.length, a.length);
+    for (let i = 0; i < n; i++) {
+      const o = normalizeInlineText(b[i] ?? "");
+      const nv = normalizeInlineText(a[i] ?? "");
+      if (!o && !nv) continue;
+      if (o !== nv) {
+        changedBullets++;
+        if (hasImpactMetric(nv) && !hasImpactMetric(o)) newMetrics++;
+      }
+    }
+  };
+
+  const exB = before.experience ?? [];
+  const exA = after.experience ?? [];
+  const len = Math.max(exB.length, exA.length);
+  for (let i = 0; i < len; i++) {
+    const eb = exB[i];
+    const ea = exA[i];
+    walk(eb?.bullets, ea?.bullets);
+    const projB = eb?.projects ?? [];
+    const projA = ea?.projects ?? [];
+    const plen = Math.max(projB.length, projA.length);
+    for (let j = 0; j < plen; j++) {
+      walk(projB[j]?.bullets, projA[j]?.bullets);
+    }
+  }
+
+  return { changedBullets, newMetrics };
 }
 
 function isSimilar(bullet: string, existing: string[]): boolean {
@@ -1020,8 +1395,9 @@ async function validateResumeCoverage(args: {
   requiredSkills: string[];
   apiKey: string | undefined;
   model: string;
+  maxOutputTokens: number;
 }): Promise<ValidationResult> {
-  const { resumeText, requiredSkills, apiKey, model } = args;
+  const { resumeText, requiredSkills, apiKey, model, maxOutputTokens } = args;
   if (!apiKey || requiredSkills.length === 0) return { status: "NO_CHANGES" };
 
   const normalizeForLiteralMatch = (s: string) =>
@@ -1090,7 +1466,7 @@ OR
     },
     body: JSON.stringify({
       model,
-      max_tokens: 600,
+      max_tokens: maxOutputTokens,
       temperature: 0,
       top_p: 1,
       system,
@@ -1110,6 +1486,8 @@ OR
 }
 
 export async function POST(request: Request) {
+  let userId: string | undefined;
+  let optimizationId: string | undefined;
   try {
     const body = (await request.json()) as OptimizeRequestBody;
     let resumeText = body?.resumeText;
@@ -1127,11 +1505,21 @@ export async function POST(request: Request) {
     resumeText = clipToWordLimit(resumeText, RESUME_TEXT_MAX_WORDS);
     jobDescription = clipToWordLimit(jobDescription, JOB_DESCRIPTION_MAX_WORDS);
 
+    const { user } = await getBearerUser(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: "Login required to optimize your resume.", code: "UNAUTHORIZED" },
+        { status: 401 }
+      );
+    }
+    userId = user.id;
+
     const apiKey = process.env.ANTHROPIC_API_KEY;
     const model =
       process.env.ANTHROPIC_MODEL && process.env.ANTHROPIC_MODEL.trim().length > 0
         ? process.env.ANTHROPIC_MODEL
         : "claude-3-haiku-20240307";
+    const budget = getOptimizeLlmBudget();
 
     // If no structured resume is provided, do not attempt to rebuild from raw text.
     // Just return the original resume and unchanged score.
@@ -1142,10 +1530,31 @@ export async function POST(request: Request) {
         scoreAfter: scoreBefore,
         addedKeywords: [],
         bulletImprovements: 0,
+        bulletsAdded: 0,
         quantifiedAchievements: 0,
+        summaryOptimized: false,
       };
       return NextResponse.json(response);
     }
+
+    const reserved = await reserveOptimizationCredit(userId, resumeText, jobDescription);
+    if (!reserved.ok) {
+      return NextResponse.json(
+        {
+          error:
+            reserved.code === "NO_CREDITS"
+              ? "No optimization credits remaining. Buy credits to continue tailoring your resume."
+              : "Unable to reserve a credit. Try again.",
+          code: reserved.code,
+        },
+        { status: 403 }
+      );
+    }
+    optimizationId = reserved.optimizationId;
+
+    const resumeSnapshotBeforeOptimization = JSON.parse(
+      JSON.stringify(body.structuredResume)
+    ) as ResumeDocument;
 
     let baseStructured = body.structuredResume;
 
@@ -1163,7 +1572,7 @@ export async function POST(request: Request) {
       ? analyzeResult.matched_skills.filter((s) => typeof s === "string" && s.trim().length > 0).map((s) => s.trim())
       : [];
 
-    // Rank skills and keep top 8–12 most important for optimization.
+    // Rank skills; cap count by OPTIMIZE_DEPTH budget (token / cost control).
     const jdLower = jobDescription.toLowerCase();
     const candidates: SkillCandidate[] = [];
     for (const s of missingRequired) {
@@ -1178,18 +1587,53 @@ export async function POST(request: Request) {
     }
     candidates.sort((a, b) => b.score - a.score);
 
-    const MAX_TARGET = 12;
-    const targetSkills = candidates.slice(0, MAX_TARGET).map((c) => c.skill);
-    const requiredSkills = candidates.filter((c) => c.required).map((c) => c.skill);
-    const optionalSkills = candidates.filter((c) => !c.required).map((c) => c.skill);
+    const maxTarget = budget.maxTargetSkills;
+    const explicitSkillGaps =
+      missingRequired.length > 0 || missingSkills.length > 0;
+
+    let targetSkills = candidates.slice(0, maxTarget).map((c) => c.skill);
+    if (targetSkills.length === 0) {
+      const fromMatched = dedupeSkillsPreserveOrder(matchedSkills).slice(0, maxTarget);
+      if (fromMatched.length > 0) {
+        targetSkills = fromMatched;
+      } else {
+        targetSkills = extractJdAnchorPhrases(jobDescription, maxTarget);
+      }
+    }
+    if (targetSkills.length === 0) {
+      targetSkills = extractJdAnchorPhrases(
+        `${jobDescription}\n${resumeText.slice(0, budget.resumeAnchorChars)}`,
+        maxTarget
+      );
+    }
+
+    let requiredSkills = candidates.filter((c) => c.required).map((c) => c.skill);
+    let optionalSkills = candidates.filter((c) => !c.required).map((c) => c.skill);
+    if (requiredSkills.length === 0 && optionalSkills.length === 0 && targetSkills.length > 0) {
+      optionalSkills = [...targetSkills];
+    }
+
+    const semanticSimilarity =
+      typeof analyzeResult.semantic_similarity === "number"
+        ? Math.max(0, Math.min(100, analyzeResult.semantic_similarity))
+        : undefined;
 
     // Expand semantically for both:
     // - targetSkills (missing skills we try to add)
     // - matchedSkills (existing strengths we want to preserve)
-    const skillsForExpansion = Array.from(new Set([...targetSkills, ...matchedSkills])).slice(0, 20);
-    const expandedMap = await expandSkillsSemantically(jobDescription, skillsForExpansion, apiKey, model);
+    const skillsForExpansion = Array.from(new Set([...targetSkills, ...matchedSkills])).slice(
+      0,
+      budget.expansionSkillCap
+    );
+    const expandedMap = await expandSkillsSemantically(jobDescription, skillsForExpansion, apiKey, model, {
+      expandMaxTokens: budget.expandMaxTokens,
+      expandJdChars: budget.expandJdChars,
+    });
 
-    const intentClusters = await mapSkillsToIntents(jobDescription, targetSkills, apiKey, model);
+    const intentClusters = await mapSkillsToIntents(jobDescription, targetSkills, apiKey, model, {
+      intentMaxTokens: budget.intentMaxTokens,
+      intentJdChars: budget.intentJdChars,
+    });
 
     // Role-aware recomposition layer (single LLM call) before bullet-level polish.
     try {
@@ -1199,6 +1643,12 @@ export async function POST(request: Request) {
         targetSkills,
         missingRequired,
         matchedSkills,
+        explicitSkillGaps,
+        {
+          recomposeMaxTokens: budget.recomposeMaxTokens,
+          recomposeJdChars: budget.recomposeJdChars,
+          skipRecomposeWhenNoGap: budget.skipRecomposeWhenNoGap,
+        },
         apiKey,
         model
       );
@@ -1255,22 +1705,49 @@ export async function POST(request: Request) {
       const weakBulletKeys = new Set(
         orderedBullets.filter((b) => isWeakBullet(b.text)).map((b) => b.bulletKey)
       );
-      // Preserve strong existing bullets: only weak mapped bullets are eligible for rewrite.
+      const eligibleBulletKeys = explicitSkillGaps
+        ? weakBulletKeys
+        : new Set(orderedBullets.map((b) => b.bulletKey));
       const mappingEntries = Object.entries(coveragePlan.existingBulletMappings).filter(
-        ([key]) => weakBulletKeys.has(key)
+        ([key]) => eligibleBulletKeys.has(key)
       );
-      // Rewrite budget remains decoupled from coverage plan, but bounded by weak eligible bullets.
-      const rewriteBudget = Math.min(
-        mappingEntries.length,
-        Math.max(1, targetSkills.length)
-      );
+      let rewriteBudget = explicitSkillGaps
+        ? Math.min(
+            mappingEntries.length,
+            Math.max(1, targetSkills.length),
+            budget.gapRewriteAbsoluteCap
+          )
+        : Math.min(
+            mappingEntries.length,
+            Math.max(
+              budget.noGapRewriteMin,
+              Math.min(
+                budget.noGapRewriteMax,
+                Math.ceil(orderedBullets.length * 0.45)
+              )
+            )
+          );
+      if (
+        !explicitSkillGaps &&
+        semanticSimilarity !== undefined &&
+        semanticSimilarity < 78 &&
+        budget.semanticExtraRewrites > 0
+      ) {
+        rewriteBudget = Math.min(
+          mappingEntries.length,
+          rewriteBudget + budget.semanticExtraRewrites
+        );
+      }
       const requiredNeedingNewBullets = coveragePlan.skillsNeedingNewBullets.filter(
         (skill) =>
           missingRequired.some(
             (req) => req.toLowerCase().trim() === skill.toLowerCase().trim()
           )
       );
-      const maxNewBullets = Math.min(4, requiredNeedingNewBullets.length);
+      const maxNewBullets = Math.min(
+        budget.maxRequiredNewBullets,
+        requiredNeedingNewBullets.length
+      );
       if (debugEnabled) {
         const mapped: CoveragePlanDebug["existingBulletMappings"] = {};
         for (const [key, skills] of mappingEntries) {
@@ -1288,10 +1765,23 @@ export async function POST(request: Request) {
           maxNewBullets,
         };
       }
-      const quantTarget =
-        rewriteBudget < 2
+      const quantTarget = explicitSkillGaps
+        ? rewriteBudget < 2
           ? rewriteBudget
-          : Math.min(3, Math.max(2, Math.ceil(rewriteBudget * 0.3)));
+          : Math.min(
+              budget.quantCapExplicit,
+              Math.max(1, Math.ceil(rewriteBudget * budget.quantFracExplicit))
+            )
+        : Math.min(
+            rewriteBudget,
+            Math.max(
+              1,
+              Math.min(
+                budget.quantCapNoGap,
+                Math.ceil(rewriteBudget * budget.quantFracNoGap)
+              )
+            )
+          );
       let quantUsed = 0;
 
       for (let i = 0; i < rewriteBudget && i < mappingEntries.length; i++) {
@@ -1312,7 +1802,8 @@ export async function POST(request: Request) {
             apiKey,
             model,
             shouldQuantify,
-            globalStyleForThisBullet
+            globalStyleForThisBullet,
+            budget.bulletRewriteMaxTokens
           )
         );
         if (improved && improved !== original) {
@@ -1353,7 +1844,11 @@ export async function POST(request: Request) {
           jobDescription,
           skill,
           apiKey,
-          model
+          model,
+          {
+            generateBulletMaxTokens: budget.generateBulletMaxTokens,
+            generateJdChars: budget.generateJdChars,
+          }
         );
         if (!generated) continue;
         const next = normalizeInlineText(generated);
@@ -1415,7 +1910,7 @@ export async function POST(request: Request) {
               expandedMap
             )
         );
-        const maxCoverageNewBullets = Math.min(4, stillUncovered.length);
+        const maxCoverageNewBullets = Math.min(budget.coverageBoostMax, stillUncovered.length);
         for (let i = 0; i < maxCoverageNewBullets; i++) {
           const skill = stillUncovered[i]!;
           const expIndex = i % optimizedStructured.experience.length;
@@ -1426,7 +1921,11 @@ export async function POST(request: Request) {
             jobDescription,
             skill,
             apiKey,
-            model
+            model,
+            {
+              generateBulletMaxTokens: budget.generateBulletMaxTokens,
+              generateJdChars: budget.generateJdChars,
+            }
           );
           if (!generated) continue;
           const next = normalizeInlineText(generated);
@@ -1455,10 +1954,11 @@ export async function POST(request: Request) {
     const rewrittenChanges = bulletChanges.filter(
       (c) => c.original.trim().length > 0 && c.improved !== c.original
     );
+    const addedBulletChanges = bulletChanges.filter(
+      (c) => c.original.trim().length === 0 && c.improved.trim().length > 0
+    );
     const improvedBullets = rewrittenChanges.map((c) => c.improved);
-    const bulletImprovements = improvedBullets.length;
     const quantifiedBullets = bulletChanges.filter((c) => c.quantified).map((c) => c.improved);
-    const quantifiedAchievements = quantifiedBullets.length;
 
     let optimizedText = resumeDocumentToPlainText(optimizedStructured) || resumeText;
 
@@ -1469,6 +1969,7 @@ export async function POST(request: Request) {
         requiredSkills: missingRequired,
         apiKey,
         model,
+        maxOutputTokens: budget.validateCoverageMaxTokens,
       });
       if (validation.status === "FIX_NEEDED") {
         const missingSkills = Array.isArray(validation.missing_skills)
@@ -1494,6 +1995,26 @@ export async function POST(request: Request) {
         }
       }
     }
+
+    /** Rewrites we tracked in bulletChanges (matches “rewritten” chips in the UI). */
+    const trackedRewrites = improvedBullets.length;
+    let bulletsAdded = addedBulletChanges.length;
+    let quantifiedAchievements = quantifiedBullets.length;
+    const structuralDiff = diffResumeBulletTexts(
+      resumeSnapshotBeforeOptimization,
+      optimizedStructured
+    );
+    quantifiedAchievements = Math.max(quantifiedAchievements, structuralDiff.newMetrics);
+    // Structural diff can count extra index-level text changes (recompose, reorder) not in bulletChangeMap.
+    // Use that only for scoring — the summary panel should match tracked bulletChanges / highlights.
+    let bulletImprovementsForScore = trackedRewrites;
+    const trackedLineChanges = trackedRewrites + bulletsAdded;
+    if (trackedLineChanges === 0 && structuralDiff.changedBullets > 0) {
+      bulletImprovementsForScore = structuralDiff.changedBullets;
+    } else if (structuralDiff.changedBullets > trackedLineChanges) {
+      bulletImprovementsForScore += structuralDiff.changedBullets - trackedLineChanges;
+    }
+    const bulletImprovements = trackedRewrites;
 
     const originalTextLower = String(resumeText ?? "").toLowerCase();
     const optimizedTextLower = optimizedText.toLowerCase();
@@ -1532,7 +2053,7 @@ export async function POST(request: Request) {
     const scoreBefore = analyzeResult.ats_score;
 
     const k = addedKeywords.length;
-    const b = bulletImprovements;
+    const b = bulletImprovementsForScore + bulletsAdded;
     const q = quantifiedAchievements;
     const f = 1; // formatting is always improved for optimized resumes
 
@@ -1543,7 +2064,7 @@ export async function POST(request: Request) {
       scoreAfter = scoreBefore;
     } else {
       const keywordScore = Math.min(k * 2, 20);
-      const bulletScore = Math.min(b * 1.5, 10);
+      const bulletScore = Math.min(b * 1.5, 10); // b = rewrites + new bullets
       const impactScore = Math.min(q * 3, 12);
       const formatScore = f ? 5 : 0;
 
@@ -1634,6 +2155,10 @@ export async function POST(request: Request) {
             ),
           };
 
+    const summaryOptimized =
+      normalizeSummaryForCompare(resumeSnapshotBeforeOptimization.summary) !==
+      normalizeSummaryForCompare(optimizedStructured.summary);
+
     const response: OptimizeResponse = {
       optimizedResume: resumeDocumentToPlainText(optimizedStructured) || optimizedText,
       scoreAfter,
@@ -1641,7 +2166,9 @@ export async function POST(request: Request) {
       matchedStrengthScore,
       addedKeywords,
       bulletImprovements,
+      bulletsAdded,
       quantifiedAchievements,
+      summaryOptimized,
       optimizedStructuredResume: optimizedStructured,
       quantifiedBullets,
       bulletChanges,
@@ -1655,8 +2182,12 @@ export async function POST(request: Request) {
       ...(debugEnabled ? { debug: { coveragePlan: coveragePlanDebug } } : {}),
     };
 
+    await finalizeOptimizationCredit(optimizationId, userId, true);
     return NextResponse.json(response);
   } catch (err) {
+    if (optimizationId && userId) {
+      await finalizeOptimizationCredit(optimizationId, userId, false);
+    }
     console.error("[optimize]", err);
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Optimization failed" },

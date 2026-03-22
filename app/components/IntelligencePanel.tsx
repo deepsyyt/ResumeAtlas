@@ -5,6 +5,7 @@
 
 import React from "react";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
+import { buildExperienceAlignmentSubtitle } from "@/app/lib/experienceCopy";
 import {
   getScoreStyle,
   getATSBadgeLabel,
@@ -86,13 +87,13 @@ export function IntelligencePanel({
           <div className="absolute inset-0 rounded-2xl bg-slate-100/90 backdrop-blur-sm z-10 flex items-center justify-center">
             <div className="text-center p-4">
               <p className="text-sm font-medium text-slate-700">
-                Upgrade to unlock full Intelligence insights for your resume.
+                Buy optimization credits to unlock full Intelligence insights for your resume.
               </p>
               <a
-                href="/upgrade"
+                href="/#ats-checker-form"
                 className="mt-3 inline-block rounded-full bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition"
               >
-                Upgrade to Pro
+                Buy credits
               </a>
             </div>
           </div>
@@ -117,8 +118,9 @@ export function IntelligencePanel({
     const demoExp = 90;
     const demoImpact = 50;
     const demoQuality = 72;
-    const demoRequiredYears = 5;
-    const demoResumeYears = 7;
+    const demoRequiredYears = 10;
+    const demoRequiredYearsMax = 15;
+    const demoResumeYears = 12;
     const demoMatched = ["Python", "machine learning", "LLMs", "RAG", "AWS", "Docker"];
     const demoMissing = ["transformers", "orchestration frameworks", "experimentation platforms"];
 
@@ -126,7 +128,12 @@ export function IntelligencePanel({
     const demoAtsRingHex = getATSRingHex(demoAts);
     const demoKeywordStyle = getKeywordCoverageStyle(demoKeyword);
     const demoSemanticStyle = getSemanticStyle(demoSemantic);
-    const demoExpStyle = getExperienceAlignmentStyle(demoRequiredYears, demoResumeYears, demoExp);
+    const demoExpStyle = getExperienceAlignmentStyle(
+      demoRequiredYears,
+      demoRequiredYearsMax,
+      demoResumeYears,
+      demoExp
+    );
     const demoImpactStyle = getImpactStyle(demoImpact);
     const demoQualityStyle = getResumeQualityStyle(demoQuality);
     const demoVerdict = getATSVerdictLines(demoAts);
@@ -274,7 +281,12 @@ export function IntelligencePanel({
             </p>
             <DemoScoreBar score={demoExp} hex={demoExpStyle.style.hex} />
             <p className="mt-1 text-[11px] text-slate-600">
-              JD {demoRequiredYears} yrs · resume ~{demoResumeYears} yrs. {demoExpStyle.style.label}.
+              {buildExperienceAlignmentSubtitle({
+                requiredMin: demoRequiredYears,
+                requiredMax: demoRequiredYearsMax,
+                resumeYears: demoResumeYears,
+                verdictLabel: demoExpStyle.style.label,
+              })}
             </p>
           </div>
         </div>
@@ -372,6 +384,8 @@ export function IntelligencePanel({
   const semanticScore = analyzeResult?.semantic_similarity ?? 0;
   const experienceScore = analyzeResult?.experience_alignment ?? 0;
   const requiredYearsExperience = analyzeResult?.required_years_experience ?? null;
+  const requiredYearsExperienceMax =
+    analyzeResult?.required_years_experience_max ?? null;
   const resumeYearsExperience = analyzeResult?.resume_years_experience ?? 0;
   const impactScore = analyzeResult?.impact_score ?? 0;
   const qualityScore = analyzeResult?.resume_quality ?? 0;
@@ -388,6 +402,7 @@ export function IntelligencePanel({
   const semanticStyle = getSemanticStyle(semanticScore);
   const expAlignment = getExperienceAlignmentStyle(
     requiredYearsExperience,
+    requiredYearsExperienceMax,
     resumeYearsExperience,
     experienceScore
   );
@@ -639,9 +654,12 @@ export function IntelligencePanel({
           </p>
           <ScoreBar score={experienceScore} hex={expAlignment.style.hex} />
           <p className="mt-1 text-[11px] text-slate-600">
-            {requiredYearsExperience !== null
-              ? `JD ${requiredYearsExperience} yr${requiredYearsExperience === 1 ? "" : "s"} · resume ~${resumeYearsExperience} yr${resumeYearsExperience === 1 ? "" : "s"}. ${expAlignment.style.label}.`
-              : `Resume ~${resumeYearsExperience} yr${resumeYearsExperience === 1 ? "" : "s"}. JD experience not specified.`}
+            {buildExperienceAlignmentSubtitle({
+              requiredMin: requiredYearsExperience,
+              requiredMax: requiredYearsExperienceMax,
+              resumeYears: resumeYearsExperience,
+              verdictLabel: expAlignment.style.label,
+            })}
           </p>
         </div>
       </div>
