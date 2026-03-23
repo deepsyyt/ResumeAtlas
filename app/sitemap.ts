@@ -70,6 +70,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   });
 
+  // Legal and contact pages
+  const legalLastMod = new Date("2026-03-23");
+  for (const path of ["/contact", "/privacy", "/terms", "/refund-policy", "/feedback"]) {
+    entries.push({
+      url: `${base}${path}`,
+      lastModified: legalLastMod,
+      changeFrequency: "yearly" as const,
+      priority: 0.6,
+    });
+  }
+
   // Resume examples (from RESUME_PAGES)
   const resumeExampleLastMod = new Date("2026-03-05");
   for (const slug of Object.keys(RESUME_PAGES) as (keyof typeof RESUME_PAGES)[]) {
