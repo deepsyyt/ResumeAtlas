@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/app/components/Navbar";
+import { Footer } from "@/app/components/Footer";
 import Script from "next/script";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body className="antialiased min-h-screen bg-white text-slate-900">
         <Navbar />
         <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
