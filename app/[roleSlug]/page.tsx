@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
 import { RESUME_PAGES, type ResumeSlug } from "@/app/lib/seoPages";
+import { getSiteUrl } from "@/app/lib/siteUrl";
 
 type PageParams = {
   roleSlug: ResumeSlug;
@@ -65,7 +66,7 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
   const skillsSeoPath = `/seo/${roleSlug}-resume-skills`;
   const summarySeoPath = `/seo/${roleSlug}-resume-summary`;
   const projectsSeoPath = `/seo/${roleSlug}-resume-projects`;
-  const canonicalBase = "https://resumeatlas.ai-stack.dev";
+  const canonicalBase = getSiteUrl();
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

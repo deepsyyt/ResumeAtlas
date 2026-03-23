@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { RoleSlug } from "@/app/lib/seoPages";
+import { getSiteUrl } from "@/app/lib/siteUrl";
 
 type Topic =
   | "bullet-points"
@@ -926,7 +927,7 @@ export default function SeoSlugPage({ params }: PageProps) {
   const resumeExamplePath = `/${role}-resume-example`;
   const atsKeywordPath = `/ats-keywords/${role}`;
   const hubPath = `/${role}/resume`;
-  const canonicalBase = "https://resumeatlas.ai-stack.dev";
+  const canonicalBase = getSiteUrl();
   const currentPath = `/seo/${params.slug}`;
   const breadcrumbSchema = {
     "@context": "https://schema.org",

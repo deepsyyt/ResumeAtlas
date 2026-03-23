@@ -69,7 +69,7 @@ export const ATSResultShareCard = forwardRef<HTMLDivElement, ATSResultShareCardP
 
         <div className="mt-6 border-t border-slate-200 pt-4 flex items-center justify-between text-[11px] text-slate-500">
           <span>Test your resume against a job description</span>
-          <span className="font-semibold text-slate-800">resumeatlas.ai-stack.dev</span>
+          <span className="font-semibold text-slate-800">resumeatlas.io</span>
         </div>
       </div>
     );
