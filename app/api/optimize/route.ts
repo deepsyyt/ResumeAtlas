@@ -1657,6 +1657,35 @@ export async function POST(request: Request) {
       console.warn("[optimize] recomposition step failed", e);
     }
 
+    // Fallback: ensure summary is optimized when recomposition didn't update it (LLM
+    // may omit/empty summary, or economy summary-only path may have failed).
+    const summaryUnchanged =
+      normalizeSummaryForCompare(resumeSnapshotBeforeOptimization.summary) ===
+      normalizeSummaryForCompare(baseStructured.summary);
+    if (
+      summaryUnchanged &&
+      apiKey &&
+      targetSkills.length > 0
+    ) {
+      try {
+        const summaryOnly = await rewriteSummaryOnlyForJd(
+          baseStructured,
+          jobDescription,
+          targetSkills,
+          missingRequired,
+          matchedSkills,
+          budget.recomposeJdChars,
+          apiKey,
+          model
+        );
+        if (summaryOnly) {
+          baseStructured = { ...baseStructured, summary: summaryOnly };
+        }
+      } catch (e) {
+        console.warn("[optimize] summary fallback rewrite failed", e);
+      }
+    }
+
     const bulletsWithContext: BulletWithContext[] = [];
     baseStructured.experience.forEach((exp, expIndex) => {
       (exp.bullets ?? []).forEach((text, bulletIndex) => {
