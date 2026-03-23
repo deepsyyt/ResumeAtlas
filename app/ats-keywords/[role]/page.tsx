@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
 import { KEYWORD_PAGES, type RoleSlug } from "@/app/lib/seoPages";
+import { getSiteUrl } from "@/app/lib/siteUrl";
 
 type PageParams = {
   role: RoleSlug;
@@ -25,7 +26,7 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
   const resumeExamplePath = `/${roleSlug}-resume-example`;
   const hubPath = `/${roleSlug}/resume`;
   const skillsSeoPath = `/seo/${roleSlug}-resume-skills`;
-  const canonicalBase = "https://resumeatlas.ai-stack.dev";
+  const canonicalBase = getSiteUrl();
 
   const faqSchema = {
     "@context": "https://schema.org",
