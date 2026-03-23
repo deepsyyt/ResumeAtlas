@@ -297,7 +297,11 @@ ${jobDescription}`;
         await recordSuccessfulAnalysis(actor, resumeText, jobDescription);
         usageRecorded = true;
       } catch (recErr) {
-        console.error("[analyze] usage record failed (analysis still returned)", recErr);
+        const msg = recErr instanceof Error ? recErr.message : String(recErr);
+        const hint = /analysis_usage|relation.*does not exist|permission denied/i.test(msg)
+          ? " Ensure analysis_usage table exists (run supabase/migrations/005_ensure_billing_tables.sql)."
+          : "";
+        console.error("[analyze] usage record failed (analysis still returned)", msg, hint);
       }
     }
 

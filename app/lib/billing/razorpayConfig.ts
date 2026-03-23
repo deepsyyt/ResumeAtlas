@@ -18,6 +18,20 @@ function trimEnv(v: string | undefined | null): string | null {
 
 export type RazorpayRuntimeMode = "live" | "test";
 
+/** Razorpay India uses INR (amount in paise). Razorpay International uses USD. */
+export type RazorpayCurrency = "USD" | "INR";
+
+export function resolveRazorpayCurrency(): RazorpayCurrency {
+  const c = (
+    process.env.RAZORPAY_CURRENCY ??
+    process.env.NEXT_PUBLIC_RAZORPAY_CURRENCY
+  )
+    ?.trim()
+    ?.toUpperCase();
+  if (c === "INR") return "INR";
+  return "USD";
+}
+
 export function resolveRazorpayMode(): RazorpayRuntimeMode {
   const m = process.env.RAZORPAY_MODE?.trim().toLowerCase();
   if (m === "live") return "live";
