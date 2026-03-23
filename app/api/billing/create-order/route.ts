@@ -98,8 +98,20 @@ export async function POST(request: Request) {
     });
 
     if (insertErr) {
-      console.error("[billing/create-order] insert payment", insertErr);
-      return NextResponse.json({ error: "Failed to record order" }, { status: 500 });
+      const errMsg =
+        insertErr instanceof Error ? insertErr.message : String(insertErr);
+      const errCode =
+        insertErr && typeof (insertErr as { code?: string }).code === "string"
+          ? (insertErr as { code: string }).code
+          : undefined;
+      console.error(
+        "[billing/create-order] insert payment failed",
+        { message: errMsg, code: errCode, details: insertErr }
+      );
+      return NextResponse.json(
+        { error: "Failed to record order", code: errCode ?? "DB_INSERT_FAILED" },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
