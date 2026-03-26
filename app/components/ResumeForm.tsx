@@ -45,7 +45,7 @@ const inputClass =
   "focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition";
 
 const stepEyebrowClass = "text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500 mb-0.5";
-const stepTitleClass = "text-[15px] font-semibold tracking-tight text-slate-900 mb-2";
+const stepTitleClass = "text-sm font-semibold tracking-tight text-slate-900 mb-1";
 const fieldLabelClass = "block text-xs font-medium text-slate-800 mb-1.5";
 
 export function ResumeForm({
@@ -71,7 +71,7 @@ export function ResumeForm({
     if (typeof window !== "undefined" && (window as any).gtag) {
       (window as any).gtag("event", "analyze_resume_click", {
         event_category: "engagement",
-        event_label: "Get ATS score free",
+        event_label: "Check resume against job free",
       });
     }
     onGenerate({
@@ -122,7 +122,7 @@ export function ResumeForm({
         : "border-emerald-300/80 bg-gradient-to-br from-emerald-50 to-emerald-100/40 text-emerald-950 ring-1 ring-emerald-200/60";
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-sm ring-1 ring-slate-950/[0.04]">
+    <div className="relative overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-900/[0.08]">
       {isGenerating && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-xl bg-white/80 backdrop-blur-[2px]">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-slate-800" />
@@ -130,18 +130,15 @@ export function ResumeForm({
         </div>
       )}
 
-      <header className="border-b border-slate-200/80 bg-gradient-to-b from-slate-50 to-white px-4 py-4 sm:px-5 sm:py-5">
+      <header className="border-b border-slate-200/80 bg-gradient-to-b from-slate-50 to-white px-3 py-2.5 sm:px-4 sm:py-3">
         <p className={stepEyebrowClass}>Free ATS analysis</p>
-        <h2 className="max-w-xl text-lg font-semibold leading-snug tracking-tight text-slate-900 sm:text-xl">
-          Get your ATS score free
-        </h2>
-        <p className="mt-1 max-w-lg text-xs leading-relaxed text-slate-600 sm:text-[13px]">
-          No login required. Paste your resume and a job description. We&apos;ll score keyword fit and gaps.
+        <p className="max-w-lg text-xs leading-relaxed text-slate-600 sm:text-[13px]">
+          Add your resume and the posting below, then run the match check.
         </p>
         {quota != null && quota.limit > 0 && (
           <div
             className={
-              "mt-3 flex w-full flex-col gap-2 rounded-lg border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 " +
+              "mt-2 flex w-full flex-col gap-1.5 rounded-lg border px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 " +
               quotaToneClasses
             }
             role="status"
@@ -164,10 +161,10 @@ export function ResumeForm({
         )}
       </header>
 
-      <div className="px-4 py-5 sm:px-5 sm:py-6">
+      <div className="px-3 py-4 sm:px-4 sm:py-4">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-0">
           {/* Step 1 */}
-          <section className="pb-6">
+          <section className="pb-4">
             <p className={stepEyebrowClass}>Step 1</p>
             <h3 className={stepTitleClass}>Provide your resume</h3>
             <label className={fieldLabelClass} htmlFor="resumeatlas-resume-text">
@@ -186,7 +183,7 @@ export function ResumeForm({
                       id="resumeatlas-resume-text"
                       rows={4}
                       className={textareaClass}
-                      placeholder="Paste your full resume here (any format is fine)…"
+                      placeholder="Paste your resume text here"
                       disabled={isGenerating}
                       onChange={(e) => {
                         field.onChange(
@@ -213,7 +210,7 @@ export function ResumeForm({
           <div className="border-t border-slate-100" />
 
           {/* Step 2 */}
-          <section className="pt-6 pb-1">
+          <section className="pt-4 pb-0">
             <p className={stepEyebrowClass}>Step 2</p>
             <h3 className={stepTitleClass}>Paste the job description</h3>
             <label className={fieldLabelClass} htmlFor="resumeatlas-jd-text">
@@ -232,7 +229,7 @@ export function ResumeForm({
                       id="resumeatlas-jd-text"
                       rows={4}
                       className={textareaClass}
-                      placeholder="Paste the role description you are targeting…"
+                      placeholder="Paste the job description you're applying for"
                       disabled={isGenerating}
                       onChange={(e) => {
                         field.onChange(
@@ -256,34 +253,37 @@ export function ResumeForm({
             />
           </section>
 
-          <div className="pt-5">
+          <div className="pt-3">
             <button
               type="submit"
               disabled={isGenerating}
-              className="flex w-full items-center justify-center gap-2.5 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm ring-1 ring-slate-900/10 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-65"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-3 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-slate-900/10 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-65"
             >
               <span
-                aria-hidden
+                aria-hidden="true"
                 className="h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-400 shadow-[0_0_0_3px_rgba(52,211,153,0.35)]"
               />
-              Get my ATS score free
+              Check my resume against this job (Free)
             </button>
+            <p className="mt-1.5 text-center text-[11px] text-slate-500 sm:text-xs">
+              Free analysis. No signup required.
+            </p>
           </div>
         </form>
 
         {error && (
-          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-xs text-red-800 sm:text-sm">
+          <div className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800 sm:text-sm">
             {error}
           </div>
         )}
 
         {resume && (
-          <div className="mt-6 space-y-4 border-t border-slate-100 pt-6">
+          <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
             <p className="text-[11px] font-medium text-slate-500 sm:text-xs">
-              Editable — changes update the preview instantly.
+              Editable: changes update the preview instantly.
             </p>
 
-            <section className="space-y-2 rounded-lg border border-slate-200 bg-slate-50/80 p-3">
+            <section className="space-y-1.5 rounded-lg border border-slate-200 bg-slate-50/80 p-2.5">
               <h4 className="text-sm font-semibold tracking-tight text-slate-800">
                 Summary
               </h4>
@@ -298,7 +298,7 @@ export function ResumeForm({
             {resume.experience.map((exp, i) => (
               <section
                 key={i}
-                className="space-y-2 rounded-lg border border-slate-200 bg-slate-50/80 p-3"
+                className="space-y-1.5 rounded-lg border border-slate-200 bg-slate-50/80 p-2.5"
               >
                 <h4 className="text-sm font-semibold tracking-tight text-slate-800">
                   Experience: {exp.company}
@@ -319,7 +319,7 @@ export function ResumeForm({
               </section>
             ))}
 
-            <section className="space-y-2 rounded-lg border border-slate-200 bg-slate-50/80 p-3">
+            <section className="space-y-1.5 rounded-lg border border-slate-200 bg-slate-50/80 p-2.5">
               <h4 className="text-sm font-semibold tracking-tight text-slate-800">
                 Skills
               </h4>

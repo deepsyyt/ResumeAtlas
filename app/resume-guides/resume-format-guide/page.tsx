@@ -5,19 +5,19 @@ import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuides
 export const metadata: Metadata = {
   title: "Resume Format Guide: ATS, Modern, Professional & One-Page | ResumeAtlas",
   description:
-    "One complete guide to resume format: ATS-friendly structure, modern and professional formats, one-page resumes, and essential sections. With examples and anchor links.",
+    "ATS-friendly resume format guide. Pair it with ResumeAtlas, an AI ATS resume checker: compare your resume with a job description after you fix structure. One-page, modern, and professional layouts.",
 };
 
 const SECTIONS = [
   {
     id: "ats-resume-format",
     heading: "ATS Resume Format",
-    body: "The right ATS resume format balances structure for machines with readability for humans. Use a reverse-chronological format—it surfaces your most recent experience first and makes it easy for ATS and recruiters to follow your career story. Essential sections: Contact Information, Summary, Skills, Work Experience, and Education. Use a single-column layout, left-aligned text, and consistent date formatting. Avoid charts, graphics, text boxes, and tables for core experience. Use bullet points rather than long paragraphs, and keep font sizes between 10 and 12 points. Purely functional formats can confuse ATS because they hide timelines; a clear reverse-chronological work history is safest. Some systems struggle with columns—a single column is the most reliable format.",
+    body: "The right ATS resume format balances structure for machines with readability for humans. Use a reverse-chronological format. It surfaces your most recent experience first and makes it easy for ATS and recruiters to follow your career story. Essential sections: Contact Information, Summary, Skills, Work Experience, and Education. Use a single-column layout, left-aligned text, and consistent date formatting. Avoid charts, graphics, text boxes, and tables for core experience. Use bullet points rather than long paragraphs, and keep font sizes between 10 and 12 points. Purely functional formats can confuse ATS because they hide timelines; a clear reverse-chronological work history is safest. Some systems struggle with columns: a single column is the most reliable format.",
   },
   {
     id: "resume-format-for-ats",
     heading: "Resume Format for ATS: Do's and Don'ts",
-    body: "Keep the layout simple, avoid decorative elements, and make your headings and dates easy to scan. Use standard fonts, clear section titles, and concise bullets. Do keep margins reasonable, use bullet points, and align text to the left. Do not rely on images, icons, or unusual fonts to carry meaning. Avoid placing important content in headers, footers, or sidebars that some ATS ignore. Copy your resume text into a plain text editor—if the order, headings, and spacing still make sense, your format is likely safe for ATS. Run it through ResumeAtlas with a real job description for additional feedback.",
+    body: "Keep the layout simple, avoid decorative elements, and make your headings and dates easy to scan. Use standard fonts, clear section titles, and concise bullets. Do keep margins reasonable, use bullet points, and align text to the left. Do not rely on images, icons, or unusual fonts to carry meaning. Avoid placing important content in headers, footers, or sidebars that some ATS ignore. Copy your resume text into a plain text editor. If the order, headings, and spacing still make sense, your format is likely safe for ATS. Run it through ResumeAtlas with a real job description for additional feedback.",
   },
   {
     id: "best-resume-format-2025",
@@ -27,17 +27,17 @@ const SECTIONS = [
   {
     id: "modern-resume-format",
     heading: "Modern Resume Format",
-    body: "A modern resume format focuses on clarity, white space, and the story your career tells rather than heavy design. Short paragraphs, clear headings, and consistent spacing help your resume feel up to date. Modern resumes emphasize impact, not just responsibilities, and highlight cross-functional collaboration and measurable results. You do not need multiple colors, icons, or graphics to stand out—those elements can hurt ATS compatibility. A single accent color, strong typography, and good alignment create a professional, modern look. Lead with a concise summary, followed by a skills section and your most relevant experience. Use bullets with strong verbs and metrics. Design-focused resumes can work for creative roles, but keep an ATS-friendly version for online applications.",
+    body: "A modern resume format focuses on clarity, white space, and the story your career tells rather than heavy design. Short paragraphs, clear headings, and consistent spacing help your resume feel up to date. Modern resumes emphasize impact, not just responsibilities, and highlight cross-functional collaboration and measurable results. You do not need multiple colors, icons, or graphics to stand out. Those elements can hurt ATS compatibility. A single accent color, strong typography, and good alignment create a professional, modern look. Lead with a concise summary, followed by a skills section and your most relevant experience. Use bullets with strong verbs and metrics. Design-focused resumes can work for creative roles, but keep an ATS-friendly version for online applications.",
   },
   {
     id: "professional-resume-format",
     heading: "Professional Resume Format",
-    body: "A professional resume format is designed for experienced candidates who need to present depth without overwhelming the reader. Beyond basic sections, emphasize scope (team size, budgets, markets) and outcomes (revenue, efficiency, quality). Include leadership bullets, mentorship, and cross-functional influence. Group related roles within the same company and highlight promotions. Prioritize the last 8–10 years, summarizing earlier roles more briefly. Use bullets to show how your work influenced strategy, roadmaps, or company-level metrics. Even at senior levels, stick to a simple layout—two pages is standard for experienced professionals. Use a professional summary that communicates who you are and the value you bring instead of an objective statement.",
+    body: "A professional resume format is designed for experienced candidates who need to present depth without overwhelming the reader. Beyond basic sections, emphasize scope (team size, budgets, markets) and outcomes (revenue, efficiency, quality). Include leadership bullets, mentorship, and cross-functional influence. Group related roles within the same company and highlight promotions. Prioritize the last 8–10 years, summarizing earlier roles more briefly. Use bullets to show how your work influenced strategy, roadmaps, or company-level metrics. Even at senior levels, stick to a simple layout: two pages is standard for experienced professionals. Use a professional summary that communicates who you are and the value you bring instead of an objective statement.",
   },
   {
     id: "one-page-resume",
     heading: "One-Page Resume",
-    body: "One-page resumes force you to prioritize what matters most. When done well, they are easier for recruiters to read and can perform better in ATS because signal is high and noise is low. If you have less than 8–10 years of experience or are changing careers, a one-page resume is usually enough. Use a compact header, a three- to four-line summary, a short skills section, and your two or three most relevant roles with strong bullets. Cut repeated bullets, remove low-impact responsibilities, and focus on metrics. Do not shrink your font or margins to cram everything in—it is better to be selective and readable than dense and overwhelming. Avoid orphaned lines on a second page; if you need more room, commit to a well-structured two-page resume.",
+    body: "One-page resumes force you to prioritize what matters most. When done well, they are easier for recruiters to read and can perform better in ATS because signal is high and noise is low. If you have less than 8–10 years of experience or are changing careers, a one-page resume is usually enough. Use a compact header, a three- to four-line summary, a short skills section, and your two or three most relevant roles with strong bullets. Cut repeated bullets, remove low-impact responsibilities, and focus on metrics. Do not shrink your font or margins to cram everything in: it is better to be selective and readable than dense and overwhelming. Avoid orphaned lines on a second page; if you need more room, commit to a well-structured two-page resume.",
   },
   {
     id: "resume-sections",
@@ -47,7 +47,7 @@ const SECTIONS = [
   {
     id: "simple-resume-format",
     heading: "Simple Resume Format",
-    body: "A simple resume format is often the most effective: it is quick to create, easy for hiring managers to scan, and highly compatible with ATS. Simple formats work well for most candidates, especially students, recent graduates, and career switchers. Start with contact information, then a short summary, a skills section, and work or project experience. For early-career candidates, education can come before work experience if it is more relevant. Use plenty of white space, consistent fonts, and short bullets. Tailor your summary and bullets to the job—mention specific tools, domains, and results so your resume feels targeted, not one-size-fits-all. You can build a strong simple resume in Google Docs or Word.",
+    body: "A simple resume format is often the most effective: it is quick to create, easy for hiring managers to scan, and highly compatible with ATS. Simple formats work well for most candidates, especially students, recent graduates, and career switchers. Start with contact information, then a short summary, a skills section, and work or project experience. For early-career candidates, education can come before work experience if it is more relevant. Use plenty of white space, consistent fonts, and short bullets. Tailor your summary and bullets to the job: mention specific tools, domains, and results so your resume feels targeted, not one-size-fits-all. You can build a strong simple resume in Google Docs or Word.",
   },
 ];
 
@@ -97,10 +97,10 @@ export default function ResumeFormatGuidePage() {
             jump to any topic.
           </p>
           <Link
-            href="/"
+            href="/#ats-checker-form"
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check Your ATS Resume Score
+            Open the ATS resume checker
           </Link>
         </div>
       </section>
@@ -132,6 +132,23 @@ export default function ResumeFormatGuidePage() {
             <strong>applicant tracking systems (ATS)</strong> and recruiters quickly understand your
             experience. Use this guide to structure your resume in a way that is easy to scan,
             keyword rich, and tailored to the jobs you care about.
+          </p>
+          <p className="mt-4 text-slate-700 text-sm sm:text-base leading-relaxed">
+            After you adjust layout, run the{" "}
+            <Link
+              href="/#ats-checker-form"
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              free ATS resume checker
+            </Link>{" "}
+            and use it as a{" "}
+            <Link
+              href="/#ats-checker-form"
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              resume vs job description tool
+            </Link>{" "}
+            to confirm keyword fit for a real posting.
           </p>
         </section>
 
@@ -179,11 +196,11 @@ export default function ResumeFormatGuidePage() {
               </h3>
               <ul className="list-disc pl-5 space-y-1">
                 <li>
-                  Job Title – Company — Impact-focused bullet with a measurable result for your most
+                  Job Title – Company: Impact-focused bullet with a measurable result for your most
                   recent role.
                 </li>
                 <li>
-                  Job Title – Company — Second bullet highlighting scope, collaboration, or
+                  Job Title – Company: Second bullet highlighting scope, collaboration, or
                   ownership.
                 </li>
               </ul>
@@ -198,18 +215,19 @@ export default function ResumeFormatGuidePage() {
         {/* CTA + related */}
         <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Check How Your Resume Performs in ATS
+            Run the ATS resume checker on your draft
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            Once you have updated your format and sections, run your resume through ResumeAtlas with
-            a real job description. You&apos;ll see keyword coverage, ATS compatibility, and a
-            prioritized list of improvements before you apply.
+            Once you have updated your format and sections, open the{" "}
+            <strong>AI-powered ATS resume checker</strong> and{" "}
+            <strong>compare your resume with a job description</strong>. You will see keyword
+            coverage, ATS-style compatibility, and improvements to prioritize before you apply.
           </p>
           <Link
-            href="/"
+            href="/#ats-checker-form"
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check Your ATS Resume Score
+            Open the free ATS resume checker
           </Link>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">

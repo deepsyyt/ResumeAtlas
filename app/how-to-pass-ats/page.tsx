@@ -26,7 +26,7 @@ const faqSchema = {
       acceptedAnswer: {
         "@type": "Answer",
         text:
-          "Yes. Tailoring your resume to each job description—especially the skills and impact bullets—significantly improves keyword match and ATS scores. Start from a strong master resume, then adapt language and emphasis for each role.",
+          "Yes. Tailoring your resume to each job description, especially the skills and impact bullets, significantly improves keyword match and ATS scores. Start from a strong master resume, then adapt language and emphasis for each role.",
       },
     },
     {
@@ -69,7 +69,7 @@ export default function HowToPassATSPage() {
           <p className="text-slate-700 text-sm sm:text-base">
             Most companies use <strong>Applicant Tracking Systems (ATS)</strong> to filter and rank
             resumes before a recruiter ever looks at them. Passing ATS isn&apos;t about gaming the
-            system—it&apos;s about making your experience easy to parse and clearly relevant to the
+            system. It&apos;s about making your experience easy to parse and clearly relevant to the
             role. This guide walks through the practical steps you can take to improve your chances
             of making it past the screen.
           </p>
@@ -117,7 +117,7 @@ export default function HowToPassATSPage() {
               genuinely part of your experience.
             </li>
             <li>
-              Use the employer&apos;s language—if they say &quot;stakeholder management&quot; or
+              Use the employer&apos;s language. If they say &quot;stakeholder management&quot; or
               &quot;Python&quot;, use those exact phrases.
             </li>
             <li>
@@ -170,7 +170,7 @@ export default function HowToPassATSPage() {
             <li>Group skills by category (e.g. Languages, Frameworks, Tools).</li>
             <li>List only tools you&apos;d be comfortable being interviewed on.</li>
             <li>
-              Reflect the role you want—if you&apos;re moving toward data roles, emphasize SQL,
+              Reflect the role you want. If you&apos;re moving toward data roles, emphasize SQL,
               Python, and analytics tools.
             </li>
           </ul>
@@ -197,7 +197,7 @@ export default function HowToPassATSPage() {
           </p>
           <ul className="mt-3 list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
             <li>
-              Avoid scanned PDFs or designs exported as a single image—ATS can&apos;t read the
+              Avoid scanned PDFs or designs exported as a single image. ATS can&apos;t read the
               text.
             </li>
             <li>

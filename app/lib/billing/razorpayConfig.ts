@@ -21,13 +21,14 @@ export type RazorpayRuntimeMode = "live" | "test";
 /** Razorpay India uses INR (amount in paise). Razorpay International uses USD. */
 export type RazorpayCurrency = "USD" | "INR";
 
+/**
+ * Must match on server (API routes) and client (bundled `NEXT_PUBLIC_*`).
+ * For Razorpay International (USD), set both to USD. If only one env is INR, orders and UI can disagree and checkout may fail.
+ */
 export function resolveRazorpayCurrency(): RazorpayCurrency {
-  const c = (
-    process.env.RAZORPAY_CURRENCY ??
-    process.env.NEXT_PUBLIC_RAZORPAY_CURRENCY
-  )
-    ?.trim()
-    ?.toUpperCase();
+  const pubRaw = process.env.NEXT_PUBLIC_RAZORPAY_CURRENCY?.trim() ?? "";
+  const serverRaw = process.env.RAZORPAY_CURRENCY?.trim() ?? "";
+  const c = (pubRaw.length > 0 ? pubRaw : serverRaw).toUpperCase();
   if (c === "INR") return "INR";
   return "USD";
 }

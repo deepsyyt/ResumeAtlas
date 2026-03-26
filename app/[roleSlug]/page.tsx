@@ -55,7 +55,7 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
         acceptedAnswer: {
           "@type": "Answer",
           text:
-            "Yes. For competitive roles, tailoring your resume to each job description—especially the skills and impact bullets—significantly improves your ATS match score and your chances of getting an interview.",
+            "Yes. For competitive roles, tailoring your resume to each job description, especially the skills and impact bullets, significantly improves your ATS match score and your chances of getting an interview.",
         },
       },
     ],
@@ -107,7 +107,7 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
             </h1>
             <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
               See a real‑world {config.roleName.toLowerCase()} resume example that is structured for
-              Applicant Tracking Systems (ATS) and hiring managers—then adapt it to your own career
+              Applicant Tracking Systems (ATS) and hiring managers, then adapt it to your own career
               story.
             </p>
             <Link

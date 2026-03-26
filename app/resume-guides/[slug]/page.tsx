@@ -49,10 +49,10 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
             {config.intro}
           </p>
           <Link
-            href="/"
+            href="/#ats-checker-form"
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check Your ATS Resume Score
+            Open the ATS resume checker
           </Link>
         </div>
       </section>
@@ -65,6 +65,31 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
             <strong>applicant tracking systems (ATS)</strong> and recruiters quickly understand your
             experience. Use this guide to structure your resume in a way that is easy to scan,
             keyword rich, and tailored to the jobs you care about.
+          </p>
+          <p className="mt-4 text-slate-700 text-sm sm:text-base leading-relaxed">
+            When you want to test wording against a real role, use the{" "}
+            <Link
+              href="/#ats-checker-form"
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              free ATS resume checker
+            </Link>{" "}
+            on the homepage. It doubles as a{" "}
+            <Link
+              href="/#ats-checker-form"
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              resume vs job description tool
+            </Link>
+            : paste both texts (no upload) to see keyword gaps and ATS-style alignment for that posting. For more context, read{" "}
+            <Link href="/how-ats-scans-resumes" className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
+              how ATS scans resumes
+            </Link>{" "}
+            or{" "}
+            <Link href="/problems/how-to-tailor-resume-to-job-description" className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
+              how to tailor a resume to a job description
+            </Link>
+            .
           </p>
         </section>
 
@@ -114,11 +139,11 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
               </h3>
               <ul className="list-disc pl-5 space-y-1">
                 <li>
-                  Job Title – Company — Impact-focused bullet with a measurable result for your most
+                  Job Title – Company: Impact-focused bullet with a measurable result for your most
                   recent role.
                 </li>
                 <li>
-                  Job Title – Company — Second bullet highlighting scope, collaboration, or
+                  Job Title – Company: Second bullet highlighting scope, collaboration, or
                   ownership.
                 </li>
               </ul>
@@ -135,18 +160,20 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
         {/* CTA + related guides */}
         <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Check How Your Resume Performs in ATS
+            Run the ATS resume checker on your draft
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            Once you have updated your format and sections, run your resume through ResumeAtlas with
-            a real job description. You&apos;ll see keyword coverage, ATS compatibility, and a
-            prioritized list of improvements before you apply.
+            Once you have updated your format and sections, open the{" "}
+            <strong>AI-powered ATS resume checker</strong> on ResumeAtlas and{" "}
+            <strong>compare your resume with a job description</strong> you are targeting. You will
+            see keyword coverage, ATS-style compatibility, and a prioritized list of improvements
+            before you apply.
           </p>
           <Link
-            href="/"
+            href="/#ats-checker-form"
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check Your ATS Resume Score
+            Open the free ATS resume checker
           </Link>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">

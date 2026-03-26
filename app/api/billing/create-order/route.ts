@@ -52,6 +52,12 @@ export async function POST(request: Request) {
     const basicAuth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
 
     const receipt = `rc_${user.id.replace(/-/g, "").slice(0, 12)}_${Date.now()}`;
+    const amountMinor = Math.round(pkg.razorpayAmount);
+    const currency = pkg.currency.toUpperCase() as "USD" | "INR";
+    if (!Number.isFinite(amountMinor) || amountMinor <= 0) {
+      return NextResponse.json({ error: "Invalid package amount" }, { status: 500 });
+    }
+
     const razorpayRes = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
       headers: {
@@ -59,8 +65,8 @@ export async function POST(request: Request) {
         Authorization: `Basic ${basicAuth}`,
       },
       body: JSON.stringify({
-        amount: pkg.razorpayAmount,
-        currency: pkg.currency,
+        amount: amountMinor,
+        currency,
         receipt,
         notes: {
           user_id: user.id,
@@ -75,7 +81,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Failed to create payment order" }, { status: 502 });
     }
 
-    let order: { id?: string; amount?: number; currency?: string };
+    let order: { id?: string; amount?: number | string; currency?: string };
     try {
       order = JSON.parse(orderText) as typeof order;
     } catch {
@@ -86,13 +92,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing order id" }, { status: 502 });
     }
 
+    const orderAmountMinor = Math.round(Number(order.amount ?? amountMinor));
+    const orderCurrency = String(order.currency ?? currency).toUpperCase();
+
     const { error: insertErr } = await supabase.from("payments").insert({
       user_id: user.id,
+      email: user.email ?? null,
       package_id: pkg.id,
       provider: "razorpay",
       provider_order_id: order.id,
-      amount: pkg.razorpayAmount,
-      currency: pkg.currency,
+      amount: orderAmountMinor,
+      currency: orderCurrency,
       status: "created",
       credits_granted: pkg.credits,
     });
@@ -116,8 +126,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       orderId: order.id,
-      amount: order.amount ?? pkg.razorpayAmount,
-      currency: order.currency ?? pkg.currency,
+      amount: orderAmountMinor,
+      currency: orderCurrency,
       keyId,
       credits: pkg.credits,
       packageId: pkg.id,

@@ -82,9 +82,9 @@ export function IntelligencePanel({
 
   if (showLocked) {
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-900/[0.06]">
         <div className="relative">
-          <div className="absolute inset-0 rounded-2xl bg-slate-100/90 backdrop-blur-sm z-10 flex items-center justify-center">
+          <div className="absolute inset-0 rounded-xl bg-slate-100/90 backdrop-blur-sm z-10 flex items-center justify-center">
             <div className="text-center p-4">
               <p className="text-sm font-medium text-slate-700">
                 Buy optimization credits to unlock full Intelligence insights for your resume.
@@ -101,9 +101,9 @@ export function IntelligencePanel({
             Intelligence
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 opacity-40">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 h-20" />
-            <div className="rounded-xl border border-slate-200 bg-slate-50 h-20" />
-            <div className="rounded-xl border border-slate-200 bg-slate-50 h-20" />
+            <div className="rounded-xl bg-slate-100 h-20" />
+            <div className="rounded-xl bg-slate-100 h-20" />
+            <div className="rounded-xl bg-slate-100 h-20" />
           </div>
         </div>
       </section>
@@ -151,24 +151,24 @@ export function IntelligencePanel({
     };
 
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+      <section className="rounded-xl bg-white p-3 sm:p-4 shadow-sm ring-1 ring-slate-900/[0.06]">
         {/* Compact header: label + description + demo badge */}
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-          <div className="flex items-baseline gap-2 min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+          <div className="flex items-baseline gap-1.5 min-w-0">
             <h2 className="text-[10px] font-semibold tracking-[0.2em] text-slate-500 uppercase shrink-0">
               Intelligence
             </h2>
-            <p className="text-xs text-slate-600 truncate sm:truncate-none">
+            <p className="text-[11px] text-slate-600 truncate sm:truncate-none sm:text-xs">
               ATS-style signals for your resume vs job description.
             </p>
           </div>
-          <span className="inline-flex shrink-0 items-center rounded-full bg-slate-800 text-white px-3 py-1 text-xs font-medium">
+          <span className="inline-flex shrink-0 items-center rounded-full bg-slate-800 text-white px-2.5 py-0.5 text-[11px] font-medium">
             Demo dashboard
           </span>
         </div>
 
         {/* ATS Pass Likelihood – dominant hero block */}
-        <div className="mt-5 flex items-center gap-4 sm:gap-5 py-2">
+        <div className="mt-3 flex items-center gap-3 sm:gap-4 py-1">
           <div
             className="relative flex items-center justify-center h-20 w-20 sm:h-24 sm:w-24 rounded-full flex-shrink-0"
             style={{ backgroundColor: demoAtsStyle.bgHex }}
@@ -214,14 +214,14 @@ export function IntelligencePanel({
           </div>
         </div>
 
-        <p className="mt-2.5 text-[11px] text-slate-500">
+        <p className="mt-2 text-[11px] text-slate-500 leading-snug">
           Paste your resume and job description, then see your score and fix your resume.
         </p>
 
         {/* Supporting metrics – compact cards */}
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-1.5">
           <div
-            className="rounded-lg border border-slate-200 px-2.5 py-2"
+            className="rounded-xl px-2.5 py-2"
             style={{ backgroundColor: demoKeywordStyle.bgHex }}
           >
             <div className="flex items-center justify-between gap-1.5">
@@ -243,7 +243,7 @@ export function IntelligencePanel({
             </p>
           </div>
           <div
-            className="rounded-lg border border-slate-200 px-2.5 py-2"
+            className="rounded-xl px-2.5 py-2"
             style={{ backgroundColor: demoSemanticStyle.bgHex }}
           >
             <div className="flex items-center justify-between gap-1.5">
@@ -263,7 +263,7 @@ export function IntelligencePanel({
             <p className="mt-1 text-[11px] text-slate-600">{demoSemanticStyle.label}</p>
           </div>
           <div
-            className="rounded-lg border border-slate-200 px-2.5 py-2"
+            className="rounded-xl px-2.5 py-2"
             style={{ backgroundColor: demoExpStyle.style.bgHex }}
           >
             <div className="flex items-center justify-between gap-1.5">
@@ -291,9 +291,9 @@ export function IntelligencePanel({
           </div>
         </div>
 
-        <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="mt-1.5 grid grid-cols-1 md:grid-cols-2 gap-1.5">
           <div
-            className="rounded-lg border border-slate-200 px-2.5 py-2"
+            className="rounded-xl px-2.5 py-2"
             style={{ backgroundColor: demoImpactStyle.bgHex }}
           >
             <div className="flex items-center justify-between gap-1.5">
@@ -313,7 +313,7 @@ export function IntelligencePanel({
             <p className="mt-1 text-[11px] text-slate-600">Quantified achievements (%, $, growth).</p>
           </div>
           <div
-            className="rounded-lg border border-slate-200 px-2.5 py-2"
+            className="rounded-xl px-2.5 py-2"
             style={{ backgroundColor: demoQualityStyle.bgHex }}
           >
             <div className="flex items-center justify-between gap-1.5">
@@ -335,8 +335,8 @@ export function IntelligencePanel({
         </div>
 
         {/* Matched skills – green chips */}
-        <div className="mt-4 rounded-xl border border-slate-200 px-3 py-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
+        <div className="mt-3 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
             Matched skills
           </p>
           <div className="flex flex-wrap gap-2">
@@ -353,8 +353,8 @@ export function IntelligencePanel({
         </div>
 
         {/* Missing skills – red chips */}
-        <div className="mt-3 rounded-xl border border-slate-200 px-3 py-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
+        <div className="mt-2.5 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
             Missing skills (from JD)
           </p>
           <div className="flex flex-wrap gap-2">
@@ -371,7 +371,7 @@ export function IntelligencePanel({
           </div>
         </div>
 
-        <p className="mt-3 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-slate-500 leading-snug">
           Your score and fix suggestions use your resume and the job description you pasted.
         </p>
       </section>
@@ -456,7 +456,7 @@ export function IntelligencePanel({
   }) {
     return (
       <div
-        className="rounded-lg border border-slate-200 px-2.5 py-2"
+        className="rounded-xl px-2.5 py-2"
         style={{ backgroundColor: style.bgHex }}
       >
         <div className="flex items-center justify-between gap-1.5">
@@ -480,9 +480,9 @@ export function IntelligencePanel({
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+    <section className="rounded-xl bg-white p-3 sm:p-4 shadow-sm ring-1 ring-slate-900/[0.06]">
       {/* Compact header: title + description, live result badge */}
-      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
         <div className="flex items-baseline gap-2 min-w-0">
           <h2 className="text-[10px] font-semibold tracking-[0.2em] text-slate-500 uppercase shrink-0">
             Intelligence
@@ -491,13 +491,13 @@ export function IntelligencePanel({
             Your score and fix suggestions for this resume and job.
           </p>
         </div>
-        <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-500/50 bg-emerald-50 text-emerald-700 px-4 py-1.5 text-sm font-medium">
-          Your result — fix below
+        <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-500/50 bg-emerald-50 text-emerald-700 px-3 py-1 text-xs font-medium">
+          Your result. Fix below.
         </span>
       </div>
 
       {/* ATS Pass Likelihood – dominant hero block */}
-      <div className="mt-5 flex items-center gap-4 sm:gap-5 py-2">
+      <div className="mt-3 flex items-center gap-3 sm:gap-4 py-1">
         <div
           className="relative flex items-center justify-center h-20 w-20 sm:h-24 sm:w-24 rounded-full flex-shrink-0"
           style={{ backgroundColor: atsStyle.bgHex }}
@@ -549,9 +549,9 @@ export function IntelligencePanel({
         const potentialLabel = atsScore < 90 ? "90+" : "95+";
         const delta = Math.max(0, potentialNum - atsScore);
         return (
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white px-2.5 py-2.5 shadow-sm">
+          <div className="mt-3 rounded-xl bg-slate-50 px-2.5 py-2">
             {/* Top row: headline + keywords + score (left) | CTA button (right) */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
                 <h3 className="text-sm font-semibold text-slate-900">
                   ⚡ Improve this resume for this job
@@ -578,7 +578,7 @@ export function IntelligencePanel({
                 <button
                   type="button"
                   onClick={onOpenOptimizer}
-                  className="w-full sm:w-auto sm:shrink-0 inline-flex items-center justify-center rounded-lg bg-slate-900 py-2.5 px-4 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[200px] sm:min-w-[220px]"
+                  className="w-full sm:w-auto sm:shrink-0 inline-flex items-center justify-center rounded-lg bg-slate-900 py-2 px-3.5 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[180px] sm:min-w-[200px]"
                 >
                   Optimize Resume For This Job
                 </button>
@@ -589,9 +589,9 @@ export function IntelligencePanel({
             </div>
 
             {/* Before | After – static example (same for all users; not from their resume) */}
-            <div className="mt-3 space-y-1.5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+            <div className="mt-2.5 space-y-1.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="rounded-lg bg-slate-100 px-2.5 py-2">
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
                     Before
                   </p>
@@ -599,7 +599,7 @@ export function IntelligencePanel({
                     {OPTIMIZER_STATIC_BULLET_PREVIEW.before}
                   </div>
                 </div>
-                <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2.5">
+                <div className="rounded-lg bg-emerald-50 px-2.5 py-2">
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 mb-1.5">
                     After
                   </p>
@@ -611,8 +611,8 @@ export function IntelligencePanel({
                   </div>
                 </div>
               </div>
-              <p className="text-[10px] text-slate-400">
-                Example only — your optimized resume uses your real bullets and this job’s keywords.
+              <p className="text-[10px] text-slate-400 leading-snug">
+                Example only. Your optimized resume uses your real bullets and this job&apos;s keywords.
               </p>
             </div>
           </div>
@@ -620,7 +620,7 @@ export function IntelligencePanel({
       })()}
 
       {/* Supporting metrics – compact cards */}
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-2">
+      <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-1.5">
         <MetricCard
           title="Keyword coverage"
           score={keywordScore}
@@ -636,7 +636,7 @@ export function IntelligencePanel({
           iconLabel={semanticStyle.label}
         />
         <div
-          className="rounded-lg border border-slate-200 px-2.5 py-2"
+          className="rounded-xl px-2.5 py-2"
           style={{ backgroundColor: expAlignment.style.bgHex }}
         >
           <div className="flex items-center justify-between gap-1.5">
@@ -664,7 +664,7 @@ export function IntelligencePanel({
         </div>
       </div>
 
-      <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div className="mt-1.5 grid grid-cols-1 md:grid-cols-2 gap-1.5">
         <MetricCard
           title="Impact score"
           score={impactScore}
@@ -682,8 +682,8 @@ export function IntelligencePanel({
       </div>
 
       {/* Matched skills – green chips */}
-      <div className="mt-4 rounded-xl border border-slate-200 px-3 py-3">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
+      <div className="mt-3 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
           Matched skills
         </p>
         {matchedSkills.length ? (
@@ -704,8 +704,8 @@ export function IntelligencePanel({
       </div>
 
       {/* Missing skills – Required vs Preferred when classified, else single list */}
-      <div className="mt-3 rounded-xl border border-slate-200 px-3 py-3">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
+      <div className="mt-2.5 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
           Missing skills (from JD)
         </p>
         {!missingSkills.length ? (
@@ -713,7 +713,7 @@ export function IntelligencePanel({
             No major missing skills detected compared to the JD.
           </p>
         ) : hasRequiredPreferred ? (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {missingRequired.length > 0 && (
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-red-700 mb-1.5">
@@ -771,13 +771,13 @@ export function IntelligencePanel({
 
       {/* Improvement tips */}
       {improvementTips.length > 0 && (
-        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-3">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="mt-3 rounded-xl bg-amber-50/80 px-3 py-2.5">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-800 mb-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-800 mb-1.5">
                 Fix your resume
               </p>
-              <ul className="list-disc list-inside space-y-1 text-sm text-amber-900">
+              <ul className="list-disc list-inside space-y-0.5 text-xs sm:text-sm text-amber-900">
                 {improvementTips.map((tip, i) => (
                   <li key={i}>{tip}</li>
                 ))}
@@ -787,7 +787,7 @@ export function IntelligencePanel({
               <button
                 type="button"
                 onClick={onOpenOptimizer}
-                className="sm:shrink-0 w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-slate-900 py-2.5 px-4 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[200px]"
+                className="sm:shrink-0 w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-slate-900 py-2 px-3.5 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[180px]"
               >
                 Optimize Resume For This Job
               </button>

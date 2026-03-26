@@ -10,8 +10,15 @@ import {
 import {
   assertAnalysisQuotaOrThrow,
   recordSuccessfulAnalysis,
+  resolveAnalysisActor,
   type QuotaExceededPayload,
 } from "@/app/lib/quota";
+import { getAnalysisQuotaStatus } from "@/app/lib/quota/store";
+import {
+  buildAnalysisCacheKey,
+  getCachedAnalysisResult,
+  setCachedAnalysisResult,
+} from "@/app/lib/analysisResultCache";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 
@@ -138,6 +145,60 @@ export async function POST(request: Request) {
     resumeText = clipToWordLimit(resumeText, RESUME_TEXT_MAX_WORDS);
     jobDescription = clipToWordLimit(jobDescription, JOB_DESCRIPTION_MAX_WORDS);
 
+    const model =
+      process.env.ANTHROPIC_MODEL?.trim() || "claude-3-haiku-20240307";
+    const cacheKey = buildAnalysisCacheKey(resumeText, jobDescription, model);
+
+    const cached = await getCachedAnalysisResult(cacheKey);
+    if (cached) {
+      // Even if we reuse the cached ATS result, the user clicked "Analyze" and
+      // should still consume a scan against the free/purchased quota.
+      try {
+        const resolved = await assertAnalysisQuotaOrThrow(request);
+        actor = resolved.actor;
+        quotaStatusBefore = resolved.status;
+      } catch (quotaErr) {
+        const payload = (quotaErr as Error & { quotaPayload?: QuotaExceededPayload }).quotaPayload;
+        if (payload) {
+          return NextResponse.json({ error: payload }, { status: 429 });
+        }
+        throw quotaErr;
+      }
+
+      let usageRecorded = false;
+      if (actor) {
+        try {
+          await recordSuccessfulAnalysis(actor, resumeText, jobDescription);
+          usageRecorded = true;
+        } catch (recErr) {
+          const msg = recErr instanceof Error ? recErr.message : String(recErr);
+          console.error("[analyze] usage record failed (cache still returned result)", msg);
+        }
+      }
+
+      const quotaAfter =
+        quotaStatusBefore && usageRecorded
+          ? {
+              remaining: Math.max(0, quotaStatusBefore.remaining - 1),
+              used: quotaStatusBefore.used + 1,
+              limit: quotaStatusBefore.limit,
+              scope: quotaStatusBefore.scope,
+            }
+          : quotaStatusBefore
+            ? {
+                remaining: quotaStatusBefore.remaining,
+                used: quotaStatusBefore.used,
+                limit: quotaStatusBefore.limit,
+                scope: quotaStatusBefore.scope,
+              }
+            : undefined;
+
+      return NextResponse.json({
+        ...cached,
+        ...(quotaAfter && { quota: quotaAfter }),
+      });
+    }
+
     try {
       const resolved = await assertAnalysisQuotaOrThrow(request);
       actor = resolved.actor;
@@ -151,8 +212,6 @@ export async function POST(request: Request) {
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
-    const model =
-      process.env.ANTHROPIC_MODEL?.trim() || "claude-3-haiku-20240307";
 
     if (!apiKey) {
       return NextResponse.json(
@@ -290,6 +349,8 @@ ${jobDescription}`;
       missing_skills_preferred: missingPreferredAfter.length > 0 ? missingPreferredAfter : undefined,
       summary: typeof result.summary === "string" ? result.summary : "",
     };
+
+    await setCachedAnalysisResult(cacheKey, normalized);
 
     let usageRecorded = false;
     if (actor) {

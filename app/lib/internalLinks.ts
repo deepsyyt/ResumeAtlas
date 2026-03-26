@@ -9,7 +9,6 @@ const ARTICLE_LINKS: InternalLink[] = [
   { path: "/how-ats-scans-resumes", label: "How ATS Systems Scan Resumes" },
   { path: "/how-to-pass-ats", label: "How to Pass ATS Screening" },
   { path: "/common-resume-mistakes-fail-ats", label: "Common Resume Mistakes That Fail ATS" },
-  { path: "/ats-keywords-data-scientist-resumes", label: "ATS Keywords for Data Scientist Resumes" },
 ];
 
 const RESUME_EXAMPLE_LINKS: InternalLink[] = Object.entries(RESUME_PAGES).map(([slug, page]) => ({
@@ -78,7 +77,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/data-analyst-resume-example",
     "/resume-guides/ats-friendly-resume-example",
   ],
-  "/ats-keywords-data-scientist-resumes": [
+  "/ats-keywords/data-scientist": [
     "/data-scientist-resume-example",
     "/resume-guides/resume-format-guide",
     "/resume-guides/resume-skills-examples",

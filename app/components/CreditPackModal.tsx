@@ -8,6 +8,8 @@ import {
   listCreditPackages,
   type CreditPackageId,
 } from "@/app/lib/billing/packages";
+import { logBillingEvent } from "@/app/lib/billing/billingEventsClient";
+import { gtagEvent } from "@/app/lib/gtagClient";
 
 declare global {
   interface Window {
@@ -76,6 +78,12 @@ export function CreditPackModal({
     }
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    gtagEvent("billing_payment_modal_open", { event_category: "billing" });
+    void logBillingEvent("billing_payment_modal_open");
+  }, [open]);
+
   const getAuthHeaders = useCallback(async () => {
     const supabase = createClient();
     const {
@@ -89,7 +97,10 @@ export function CreditPackModal({
   }, []);
 
   const runCheckout = useCallback(
-    async (packageId: CreditPackageId) => {
+    async (
+      packageId: CreditPackageId,
+      checkoutTrigger: "pack_button" | "oauth_resume" = "pack_button"
+    ) => {
       setLocalError(null);
       if (isLoggedIn && creditsRemaining > 0) {
         setLocalError("Use your current optimization credits before buying more.");
@@ -102,6 +113,11 @@ export function CreditPackModal({
         if (!Razorpay) throw new Error("Razorpay unavailable");
 
         const headers = await getAuthHeaders();
+        const supabase = createClient();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
         const res = await fetch("/api/billing/create-order", {
           method: "POST",
           headers,
@@ -130,19 +146,54 @@ export function CreditPackModal({
           throw new Error("Invalid checkout response");
         }
 
+        const amountMinor = Math.round(Number(data.amount));
+        const currency = String(data.currency ?? "USD").toUpperCase();
+        if (!Number.isFinite(amountMinor) || amountMinor <= 0) {
+          throw new Error("Invalid payment amount from server");
+        }
+
+        const pkgMeta = getCreditPackage(packageId);
+        gtagEvent("billing_razorpay_checkout_opened", {
+          event_category: "billing",
+          package_id: packageId,
+          credits: pkgMeta?.credits ?? 0,
+          currency,
+          value: amountMinor / 100,
+          checkout_trigger: checkoutTrigger,
+        });
+        void logBillingEvent("billing_razorpay_checkout_opened", {
+          package_id: packageId,
+          credits: pkgMeta?.credits ?? 0,
+          currency,
+          value_minor: amountMinor,
+          checkout_trigger: checkoutTrigger,
+        });
+
+        const prefill: Record<string, string> = {};
+        if (session?.user?.email) prefill.email = session.user.email;
+        const meta = session?.user?.user_metadata as Record<string, unknown> | undefined;
+        const rawName = meta?.full_name ?? meta?.name;
+        const displayName = typeof rawName === "string" ? rawName.trim() : "";
+        if (displayName) prefill.name = displayName;
+
         await new Promise<void>((resolve, reject) => {
+          let razorpayReportedPaymentSuccess = false;
           const rzp = new Razorpay({
             key: data.keyId,
-            amount: data.amount,
-            currency: data.currency ?? "USD",
+            // Razorpay samples use string subunits; must match order exactly (USD cents / INR paise).
+            amount: String(amountMinor),
+            currency,
             order_id: data.orderId,
             name: "ResumeAtlas",
             description: `${data.credits ?? ""} optimization credit(s)`,
+            ...(Object.keys(prefill).length > 0 ? { prefill } : {}),
+            theme: { color: "#0f172a" },
             handler: async (response: {
               razorpay_order_id?: string;
               razorpay_payment_id?: string;
               razorpay_signature?: string;
             }) => {
+              razorpayReportedPaymentSuccess = true;
               try {
                 const v = await fetch("/api/billing/verify", {
                   method: "POST",
@@ -176,13 +227,38 @@ export function CreditPackModal({
                   creditsAdded,
                   balance,
                 });
+                gtagEvent("billing_payment_success", {
+                  event_category: "billing",
+                  package_id: packageId,
+                  credits: creditsAdded,
+                  currency,
+                  value: amountMinor / 100,
+                });
+                void logBillingEvent("billing_payment_success", {
+                  package_id: packageId,
+                  credits: creditsAdded,
+                  currency,
+                  value_minor: amountMinor,
+                  credits_remaining: balance,
+                });
                 resolve();
               } catch (e) {
                 reject(e instanceof Error ? e : new Error("Verification failed"));
               }
             },
             modal: {
-              ondismiss: () => resolve(),
+              ondismiss: () => {
+                if (!razorpayReportedPaymentSuccess) {
+                  gtagEvent("billing_razorpay_checkout_dismissed", {
+                    event_category: "billing",
+                    package_id: packageId,
+                  });
+                  void logBillingEvent("billing_razorpay_checkout_dismissed", {
+                    package_id: packageId,
+                  });
+                }
+                resolve();
+              },
             },
           });
           rzp.open();
@@ -225,7 +301,7 @@ export function CreditPackModal({
     }
     autoCheckoutDoneRef.current = true;
     onConsumedAutoCheckoutPackage?.();
-    void runCheckoutRef.current(autoCheckoutPackageId);
+    void runCheckoutRef.current(autoCheckoutPackageId, "oauth_resume");
   }, [
     open,
     autoCheckoutPackageId,
@@ -361,17 +437,32 @@ export function CreditPackModal({
                     {p.credits} credit{p.credits === 1 ? "" : "s"}
                   </p>
                   <p className="mt-2 text-[11px] text-slate-500 leading-snug">
-                    Same amount at Razorpay checkout (taxes as applicable).
+                    {packs[0]?.currency === "USD"
+                      ? "Charged in US dollars at Razorpay checkout (taxes as applicable)."
+                      : "Same amount at Razorpay checkout (taxes as applicable)."}
                   </p>
                   <button
                     type="button"
                     disabled={busy && !loading}
                     onClick={() => {
+                      gtagEvent("billing_credit_pack_checkout_click", {
+                        event_category: "billing",
+                        package_id: pid,
+                        credits: p.credits,
+                        pack_name: p.name,
+                        next_step: isLoggedIn ? "razorpay" : "google_auth",
+                      });
+                      void logBillingEvent("billing_credit_pack_checkout_click", {
+                        package_id: pid,
+                        credits: p.credits,
+                        pack_name: p.name,
+                        next_step: isLoggedIn ? "razorpay" : "google_auth",
+                      });
                       if (!isLoggedIn) {
                         void onStartGoogleAuthForPackage(pid);
                         return;
                       }
-                      void runCheckout(pid);
+                      void runCheckout(pid, "pack_button");
                     }}
                     className="mt-auto pt-4 w-full rounded-lg bg-white border border-slate-300 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition disabled:opacity-60"
                   >

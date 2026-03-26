@@ -15,6 +15,9 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
   return {
     title: `${config.h1} (2025 Guide) | ResumeAtlas`,
     description: config.metaDescription,
+    alternates: {
+      canonical: `/ats-keywords/${params.role}`,
+    },
   };
 }
 
@@ -182,7 +185,7 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
               where possible.
             </li>
             <li>
-              Avoid copying tools you&apos;ve never used—recruiters probe on keywords during
+              Avoid copying tools you&apos;ve never used. Recruiters probe on keywords during
               interviews.
             </li>
           </ul>

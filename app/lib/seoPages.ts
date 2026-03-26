@@ -138,7 +138,7 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
     roleName: "Software Engineer",
     h1: "Software Engineer Resume Example",
     metaDescription:
-      "Software Engineer resume example focused on clean code, teamwork, and delivering features that matter—written for ATS scanners and hiring managers.",
+      "Software Engineer resume example focused on clean code, teamwork, and delivering features that matter, written for ATS scanners and hiring managers.",
     exampleTitle: "Software Engineer – Resume Example",
     summary:
       "Software engineer with 4+ years of experience building full‑stack features in high‑growth product teams using TypeScript and Node.js.",

@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+/** Explainer + FAQ hub. The live checker (paste resume + job description) lives on the homepage. */
 export const metadata: Metadata = {
-  title: "Free ATS Resume Checker – Check If Your Resume Passes ATS | ResumeAtlas",
+  title: "What Is an ATS Resume Checker? How It Works & FAQs | ResumeAtlas",
   description:
-    "Use our free ATS resume checker to see if your resume passes Applicant Tracking Systems. Check your ATS score, keyword match, and compatibility before you apply.",
+    "Learn how ATS resume checkers work, how systems scan resumes, and why keywords matter. Run ResumeAtlas on the homepage: paste your resume and a job description (no file upload) for a free ATS-style score and gap analysis.",
+  alternates: {
+    canonical: "/ats-resume-checker",
+  },
 };
 
 const faqSchema = {
@@ -48,22 +52,24 @@ export default function ATSResumeCheckerPage() {
       <section className="border-b border-slate-200 bg-slate-50/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-18 text-center">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
-            Free ATS Resume Checker
+            ATS resume checker: how it works
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-            Upload your resume and see if it will pass Applicant Tracking Systems.
+            This page explains what an ATS resume checker does and how employers scan applications. To{" "}
+            <strong>run the free checker</strong>, go to the homepage and{" "}
+            <strong>paste your resume text plus the job description</strong> (no file upload).
           </p>
           <Link
-            href="/"
+            href="/#ats-checker-form"
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check My Resume
+            Paste resume and job description (free)
           </Link>
         </div>
       </section>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-14">
-        {/* Section 1 — What Is an ATS Resume Checker? */}
+        {/* Section 1: What Is an ATS Resume Checker? */}
         <section>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             What Is an ATS Resume Checker?
@@ -87,7 +93,7 @@ export default function ATSResumeCheckerPage() {
           </div>
         </section>
 
-        {/* Section 2 — How ATS Systems Scan Resumes */}
+        {/* Section 2: How ATS Systems Scan Resumes */}
         <section>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             How ATS Systems Scan Resumes
@@ -101,29 +107,29 @@ export default function ATSResumeCheckerPage() {
           </p>
           <ul className="mt-4 space-y-3 text-slate-700 text-sm sm:text-base list-none">
             <li>
-              <strong>Resume parsing</strong> — The ATS converts your resume into structured data
+              <strong>Resume parsing</strong>. The ATS converts your resume into structured data
               (name, experience, education, skills). Complex layouts or graphics can cause parsing
               errors and missing information.
             </li>
             <li>
-              <strong>Keyword matching</strong> — Your resume is compared to the job description.
+              <strong>Keyword matching</strong>. Your resume is compared to the job description.
               Skills and terms that appear in both tend to rank higher; missing keywords can
               lower your score or trigger filters.
             </li>
             <li>
-              <strong>Formatting rules</strong> — Many ATS systems prefer simple, linear layouts
+              <strong>Formatting rules</strong>. Many ATS systems prefer simple, linear layouts
               with clear section headings. Columns, text boxes, and images often break or confuse
               the parser.
             </li>
             <li>
-              <strong>Experience relevance</strong> — Systems may weigh years of experience,
+              <strong>Experience relevance</strong>. Systems may weigh years of experience,
               job titles, and how well your history aligns with the role. Clear, consistent
               labels help the ATS interpret your background correctly.
             </li>
           </ul>
         </section>
 
-        {/* Section 3 — Why ATS Rejects Many Resumes */}
+        {/* Section 3: Why ATS Rejects Many Resumes */}
         <section>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Why ATS Rejects Many Resumes
@@ -142,7 +148,7 @@ export default function ATSResumeCheckerPage() {
           </ul>
         </section>
 
-        {/* Section 4 — Common Reasons ATS Rejects Resumes */}
+        {/* Section 4: Common Reasons ATS Rejects Resumes */}
         <section>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Common Reasons ATS Rejects Resumes
@@ -156,14 +162,15 @@ export default function ATSResumeCheckerPage() {
           </ul>
         </section>
 
-        {/* Section 4 — Use ResumeAtlas ATS Scanner */}
+        {/* Section 4: Use ResumeAtlas ATS Scanner */}
         <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Use ResumeAtlas ATS Scanner
+            Run ResumeAtlas (paste-only checker)
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            ResumeAtlas analyzes your resume and the job description you care about. You get a
-            clear view of how ATS-friendly your resume is and where to improve.
+            On the homepage, paste your resume and the job description you care about. ResumeAtlas
+            compares them and shows ATS-style alignment, keyword gaps, and improvement ideas. There
+            is no resume file upload: everything runs from the text you paste.
           </p>
           <p className="mt-2 text-slate-700 text-sm sm:text-base font-medium">
             ResumeAtlas analyzes:
@@ -182,14 +189,14 @@ export default function ATSResumeCheckerPage() {
             .
           </p>
           <Link
-            href="/"
+            href="/#ats-checker-form"
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check My Resume
+            Open the free checker
           </Link>
         </section>
 
-        {/* Section 5 — FAQ */}
+        {/* Section 5: FAQ */}
         <section id="faq">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             FAQ
