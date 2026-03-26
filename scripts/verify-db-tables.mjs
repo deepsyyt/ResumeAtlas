@@ -41,6 +41,8 @@ const required = [
   "credit_transactions",
   "optimizations",
   "analysis_usage",
+  "analysis_events",
+  "billing_events",
 ];
 
 const sql = postgres(process.env.DATABASE_URL, { max: 1 });

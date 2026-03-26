@@ -66,7 +66,7 @@ export default function CommonResumeMistakesFailATSPage() {
         {/* Intro */}
         <section>
           <p className="text-slate-700 text-sm sm:text-base">
-            Many strong candidates are filtered out by <strong>Applicant Tracking Systems (ATS)</strong> before a human ever reads their resume. The good news: most rejections come from a handful of fixable mistakes. Here are the most common resume mistakes that fail ATS—and how to avoid them.
+            Many strong candidates are filtered out by <strong>Applicant Tracking Systems (ATS)</strong> before a human ever reads their resume. The good news: most rejections come from a handful of fixable mistakes. Here are the most common resume mistakes that fail ATS, and how to avoid them.
           </p>
         </section>
 
@@ -76,7 +76,7 @@ export default function CommonResumeMistakesFailATSPage() {
             1. Missing Required Keywords
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            ATS compare your resume to the <strong>job description</strong>. If the posting asks for “Python,” “agile,” or “stakeholder management” and those terms don’t appear in your resume (or appear only in a graphic the ATS can’t read), you’ll score lower or be filtered out. You don’t have to copy the job ad word for word—use the same skills and terminology naturally in your summary, bullets, and skills section so the system (and the recruiter) see a clear match.
+            ATS compare your resume to the <strong>job description</strong>. If the posting asks for “Python,” “agile,” or “stakeholder management” and those terms don’t appear in your resume (or appear only in a graphic the ATS can’t read), you’ll score lower or be filtered out. You don’t have to copy the job ad word for word. Use the same skills and terminology naturally in your summary, bullets, and skills section so the system (and the recruiter) see a clear match.
           </p>
         </section>
 
@@ -96,7 +96,7 @@ export default function CommonResumeMistakesFailATSPage() {
             3. Generic or Vague Job Descriptions
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            Bullet points like “Responsible for various tasks” or “Helped the team succeed” don’t give the ATS (or the recruiter) anything to match. Use <strong>concrete language</strong> that reflects the role you’re applying for: specific tools, projects, and outcomes. Mirror the job description’s wording where it honestly fits—e.g. if the role says “cross-functional collaboration,” use that phrase when it’s true for you. Generic resumes get low relevance scores and are easy to skip.
+            Bullet points like “Responsible for various tasks” or “Helped the team succeed” don’t give the ATS (or the recruiter) anything to match. Use <strong>concrete language</strong> that reflects the role you’re applying for: specific tools, projects, and outcomes. Mirror the job description’s wording where it honestly fits (e.g. if the role says “cross-functional collaboration,” use that phrase when it’s true for you). Generic resumes get low relevance scores and are easy to skip.
           </p>
         </section>
 
@@ -106,7 +106,7 @@ export default function CommonResumeMistakesFailATSPage() {
             4. Lack of Measurable Achievements
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            ATS and recruiters both respond better to <strong>quantified impact</strong>: numbers, percentages, scale. “Increased sales” is weak; “Increased regional sales by 23% in 12 months” is strong. Where you can, add metrics—revenue, time saved, team size, adoption rate, error reduction. These make your experience easier to match to the job and show you deliver results.
+            ATS and recruiters both respond better to <strong>quantified impact</strong>: numbers, percentages, scale. “Increased sales” is weak; “Increased regional sales by 23% in 12 months” is strong. Where you can, add metrics: revenue, time saved, team size, adoption rate, error reduction. These make your experience easier to match to the job and show you deliver results.
           </p>
         </section>
 
@@ -116,7 +116,7 @@ export default function CommonResumeMistakesFailATSPage() {
             5. Wrong File Type or Unreadable PDF
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            Most ATS handle <strong>.docx and text-based PDFs</strong> well. Image-only PDFs (e.g. a scanned document or a design exported as one big image) often fail—the ATS can’t extract text. Use a proper text-based PDF or Word file with standard fonts. Avoid password protection or unusual formats unless the employer specifically requests them.
+            Most ATS handle <strong>.docx and text-based PDFs</strong> well. Image-only PDFs (e.g. a scanned document or a design exported as one big image) often fail: the ATS can’t extract text. Use a proper text-based PDF or Word file with standard fonts. Avoid password protection or unusual formats unless the employer specifically requests them.
           </p>
         </section>
 

@@ -93,13 +93,47 @@ export function ResumeOptimizationPanel({
 
       {/* 2 — Optimization summary (legend, metrics + alignment rows, keywords, truth-first, what improved) */}
       <section className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-        <h3 className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+        <h3 className="text-[11px] font-bold uppercase tracking-wide text-slate-800">
           Optimization summary
         </h3>
         <p className="mt-1 text-xs leading-snug text-slate-600">
           This version is stronger, more targeted, formatted for ATS review, and fully tailored to
           this JD.
         </p>
+
+        <div className="mt-2 space-y-2 border-t border-slate-100 pt-2">
+          <div>
+            <h3 className="text-[11px] font-bold uppercase tracking-wide text-slate-800">
+              Keywords highlighted in optimized resume
+            </h3>
+            <div className="mt-1 flex flex-wrap content-start gap-1.5">
+              {addedKeywords.length === 0 ? (
+                <p className="text-xs leading-snug text-slate-600">
+                  Already strongly aligned with this job, so no keywords highlighted.
+                </p>
+              ) : (
+                addedKeywords.map((kw) => (
+                  <span
+                    key={kw}
+                    className="inline-flex max-w-full break-words rounded-md bg-sky-50 px-1.5 py-0.5 text-[10px] font-semibold leading-snug text-sky-900 ring-1 ring-sky-200/80"
+                  >
+                    {kw}
+                  </span>
+                ))
+              )}
+            </div>
+          </div>
+          <div className="border-t border-slate-100 pt-2">
+            <h3 className="text-[11px] font-bold uppercase tracking-wide text-emerald-700">
+              Truth-first optimization
+            </h3>
+            <p className="mt-1 text-xs leading-snug text-slate-600">
+              We only added skills and wording that fit what you already did. Some JD phrases were{" "}
+              <span className="font-semibold text-slate-800">left out on purpose</span> so your resume
+              stays honest and defensible in interviews.
+            </p>
+          </div>
+        </div>
 
         <div className="mt-2 flex flex-wrap gap-1.5 rounded-lg border border-slate-100 bg-slate-50 p-2">
           <span className="inline-flex items-center rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-800 ring-1 ring-violet-200">
@@ -189,42 +223,8 @@ export function ResumeOptimizationPanel({
           </dl>
         </div>
 
-        <div className="mt-2 space-y-2 border-t border-slate-100 pt-2">
-          <div>
-            <h3 className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-              Keywords highlighted in optimized resume
-            </h3>
-            <div className="mt-1 flex flex-wrap content-start gap-1.5">
-              {addedKeywords.length === 0 ? (
-                <p className="text-xs leading-snug text-slate-600">
-                  Already strongly aligned with this job, so no keywords highlighted.
-                </p>
-              ) : (
-                addedKeywords.map((kw) => (
-                  <span
-                    key={kw}
-                    className="inline-flex max-w-full break-words rounded-md bg-sky-50 px-1.5 py-0.5 text-[10px] font-semibold leading-snug text-sky-900 ring-1 ring-sky-200/80"
-                  >
-                    {kw}
-                  </span>
-                ))
-              )}
-            </div>
-          </div>
-          <div className="border-t border-slate-100 pt-2">
-            <h3 className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-              Truth-first optimization
-            </h3>
-            <p className="mt-1 text-xs leading-snug text-slate-600">
-              We only added skills and wording that fit what you already did. Some JD phrases were{" "}
-              <span className="font-semibold text-slate-800">left out on purpose</span> so your resume
-              stays honest and defensible in interviews.
-            </p>
-          </div>
-        </div>
-
         <div className="mt-2 border-t border-slate-100 pt-2">
-          <h3 className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+          <h3 className="text-[11px] font-bold uppercase tracking-wide text-slate-800">
             What improved
           </h3>
           <ul className="mt-1 space-y-1">

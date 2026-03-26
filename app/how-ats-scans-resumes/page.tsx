@@ -26,7 +26,7 @@ const faqSchema = {
       acceptedAnswer: {
         "@type": "Answer",
         text:
-          "ATS compare your resume to the job description. They look for the same skills, tools, and terms the employer listed—e.g. Python, project management, SQL. Including these keywords naturally in your resume improves your match score and chances of passing the filter.",
+          "ATS compare your resume to the job description. They look for the same skills, tools, and terms the employer listed, e.g. Python, project management, SQL. Including these keywords naturally in your resume improves your match score and chances of passing the filter.",
       },
     },
     {
@@ -149,7 +149,7 @@ export default function HowATSScansResumesPage() {
             Check How Your Resume Scores
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            ResumeAtlas analyzes your resume and the job description you care about. You get an ATS-style match score, keyword coverage, and clear improvement ideas—all free, no login required.
+            ResumeAtlas analyzes your resume and the job description you care about. You get an ATS-style match score, keyword coverage, and clear improvement ideas, all free, no login required.
           </p>
           <Link
             href="/"
@@ -197,7 +197,7 @@ export default function HowATSScansResumesPage() {
                 <span className="text-slate-400 text-xs hidden group-open:inline">−</span>
               </summary>
               <p className="mt-2 text-sm text-slate-600">
-                ATS compare your resume to the job description. They look for the same skills, tools, and terms the employer listed—e.g. Python, project management, SQL. Including these keywords naturally in your resume improves your match score and chances of passing the filter.
+                ATS compare your resume to the job description. They look for the same skills, tools, and terms the employer listed, e.g. Python, project management, SQL. Including these keywords naturally in your resume improves your match score and chances of passing the filter.
               </p>
             </details>
             <details className="group rounded-xl border border-slate-200 bg-white px-4 py-3">

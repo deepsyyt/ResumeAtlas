@@ -109,8 +109,8 @@ export default function RoleResumeHubPage({ params }: { params: PageParams }) {
           </h2>
           <p className="mt-2 text-sm sm:text-base text-slate-700">
             Begin with a full, ATS-friendly resume tailored to {roleLower} roles. Use the example to
-            copy the overall structure—section order, bullet style, and how responsibilities and
-            impact are balanced—before swapping in your own experience.
+            copy the overall structure: section order, bullet style, and how responsibilities and
+            impact are balanced, before swapping in your own experience.
           </p>
           <Link
             href={resumeExamplePath}
@@ -183,7 +183,7 @@ export default function RoleResumeHubPage({ params }: { params: PageParams }) {
               5. Highlight the right projects
             </h2>
             <p className="mt-2 text-sm sm:text-base text-slate-700">
-              Projects—professional, academic, or personal—are a powerful way to prove your skills.
+              Projects (professional, academic, or personal) are a powerful way to prove your skills.
               Focus on work that looks like the problems you&apos;ll solve in your next{" "}
               {roleLower} role, and describe them in terms of problem, approach, and impact.
             </p>
@@ -200,7 +200,7 @@ export default function RoleResumeHubPage({ params }: { params: PageParams }) {
               6. Turn responsibilities into impact-focused bullet points
             </h2>
             <p className="mt-2 text-sm sm:text-base text-slate-700">
-              The strongest {roleLower} resumes are built from specific, quantified bullets—not
+              The strongest {roleLower} resumes are built from specific, quantified bullets, not
               copied job descriptions. Start each line with a verb, name the tools or methods you
               used, and end with a clear result or metric.
             </p>
