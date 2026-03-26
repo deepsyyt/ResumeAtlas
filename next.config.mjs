@@ -4,8 +4,8 @@ const nextConfig = {
   distDir: process.env.NODE_ENV === "development" ? "nextbuild" : ".next",
   async rewrites() {
     return [
-      // Browsers request /favicon.ico; serve static PNG from /public.
-      { source: "/favicon.ico", destination: "/favicon.svg" },
+      // Browsers request /favicon.ico; route to our generated raster icon endpoint.
+      { source: "/favicon.ico", destination: "/icon" },
       // DevTools may request this chunk map; Next may not emit it — avoid 404 noise in dev logs.
       {
         source: "/_next/static/chunks/app/LayoutGroupContext.mjs.map",
