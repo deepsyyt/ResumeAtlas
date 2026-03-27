@@ -182,7 +182,7 @@ const POST_OAUTH_ANALYZER_KEY = "resumeatlas_post_oauth_analyze_v1";
  * Restore/save analysis across refresh so the UI can re-display the same
  * cached analysis result for the same JD+resume (trust-preserving).
  */
-const PERSIST_ANALYZER_STATE = true;
+const PERSIST_ANALYZER_STATE = false;
 
 type AnalyzerStoredState = {
   lastInputs: GenerateInputs;
@@ -1086,7 +1086,7 @@ export default function Home() {
               </li>
               <li>
                 <Link
-                  href="/ats-keywords/data-scientist"
+                  href="/data-scientist/keywords"
                   className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   <span>↗</span>
@@ -1171,6 +1171,36 @@ export default function Home() {
           >
             Resume examples, ATS keywords, and guides
           </h2>
+          <div className="mb-6 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Topical authority links
+            </p>
+            <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3 text-sm">
+              <div>
+                <p className="font-semibold text-slate-900">Role hubs</p>
+                <ul className="mt-1 space-y-1">
+                  <li><Link href="/software-engineer" className="text-sky-700 hover:underline">Software Engineer</Link></li>
+                  <li><Link href="/data-scientist" className="text-sky-700 hover:underline">Data Scientist</Link></li>
+                  <li><Link href="/product-manager" className="text-sky-700 hover:underline">Product Manager</Link></li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-slate-900">Problem pages</p>
+                <ul className="mt-1 space-y-1">
+                  <li><Link href="/problems/ats-rejecting-my-resume" className="text-sky-700 hover:underline">ATS rejecting my resume</Link></li>
+                  <li><Link href="/problems/resume-not-getting-interviews" className="text-sky-700 hover:underline">Resume not getting interviews</Link></li>
+                  <li><Link href="/problems/missing-keywords-in-resume" className="text-sky-700 hover:underline">Missing keywords in resume</Link></li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-slate-900">ATS guides</p>
+                <ul className="mt-1 space-y-1">
+                  <li><Link href="/how-to-pass-ats" className="text-sky-700 hover:underline">How to pass ATS</Link></li>
+                  <li><Link href="/how-ats-scans-resumes" className="text-sky-700 hover:underline">How ATS scans resumes</Link></li>
+                </ul>
+              </div>
+            </div>
+          </div>
           {homeProblemCallout ? (
             <p className="mb-5 max-w-3xl text-center text-sm text-slate-700 sm:mb-6 sm:text-left leading-snug">
               {homeProblemCallout.prefix}
@@ -1224,17 +1254,17 @@ export default function Home() {
               </p>
               <ul className="mt-2 space-y-1 text-sm">
                 <li>
-                  <Link href="/ats-keywords/data-scientist" className="text-sky-700 hover:underline">
+                  <Link href="/data-scientist/keywords" className="text-sky-700 hover:underline">
                     Data Scientist
                   </Link>
                 </li>
                 <li>
-                  <Link href="/ats-keywords/software-engineer" className="text-sky-700 hover:underline">
+                  <Link href="/software-engineer/keywords" className="text-sky-700 hover:underline">
                     Software Engineer
                   </Link>
                 </li>
                 <li>
-                  <Link href="/ats-keywords/product-manager" className="text-sky-700 hover:underline">
+                  <Link href="/product-manager/keywords" className="text-sky-700 hover:underline">
                     Product Manager
                   </Link>
                 </li>
