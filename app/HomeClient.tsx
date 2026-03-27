@@ -1179,9 +1179,9 @@ export default function Home() {
               <div>
                 <p className="font-semibold text-slate-900">Role hubs</p>
                 <ul className="mt-1 space-y-1">
-                  <li><Link href="/software-engineer" className="text-sky-700 hover:underline">Software Engineer</Link></li>
-                  <li><Link href="/data-scientist" className="text-sky-700 hover:underline">Data Scientist</Link></li>
-                  <li><Link href="/product-manager" className="text-sky-700 hover:underline">Product Manager</Link></li>
+                  <li><Link href="/software-engineer-resume-example" className="text-sky-700 hover:underline">Software Engineer</Link></li>
+                  <li><Link href="/data-scientist-resume-example" className="text-sky-700 hover:underline">Data Scientist</Link></li>
+                  <li><Link href="/product-manager-resume-example" className="text-sky-700 hover:underline">Product Manager</Link></li>
                 </ul>
               </div>
               <div>
