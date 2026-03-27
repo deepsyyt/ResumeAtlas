@@ -7,6 +7,7 @@ function normalizeResumeBlob(text: string): string {
   return String(text ?? "")
     .toLowerCase()
     .replace(/&/g, " and ")
+    .replace(/[(){}\[\],;:]/g, " ")
     .replace(/\r?\n/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -14,6 +15,12 @@ function normalizeResumeBlob(text: string): string {
 
 /** Regex bundles keyed by lowercase JD skill phrase (trimmed). */
 const SKILL_EVIDENCE: Record<string, RegExp[]> = {
+  "large language models": [
+    /\blarge\s+language\s+models?\b/i,
+    /\bllms?\b/i,
+    /\bfoundation\s+models?\b/i,
+  ],
+  llms: [/\bllms?\b/i, /\blarge\s+language\s+models?\b/i],
   "a/b testing": [
     /\ba\/b\s*tests?\b/i,
     /\ba\/b\s+testing\b/i,
@@ -69,9 +76,45 @@ const SKILL_EVIDENCE: Record<string, RegExp[]> = {
     /\baws\b/i,
     /\bgcp\b/i,
     /\bazure\b/i,
+    /\bgoogle\s+cloud\b/i,
+    /\bamazon\s+web\s+services\b/i,
+    /\bmicrosoft\s+azure\b/i,
     /\bcloud\s+(platform|infrastructure|services?)\b/i,
   ],
 };
+
+function normalizeSkillKey(skill: string): string {
+  return skill
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/\([^)]*\)/g, " ")
+    .replace(/[^\w\s/+.-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractParentheticalOptions(skill: string): string[] {
+  const chunks = Array.from(skill.matchAll(/\(([^)]*)\)/g))
+    .map((m) => m[1]?.trim() ?? "")
+    .filter(Boolean);
+  if (!chunks.length) return [];
+  const opts: string[] = [];
+  for (const chunk of chunks) {
+    const cleaned = chunk
+      .replace(/\be\.?g\.?\b/gi, " ")
+      .replace(/\bi\.?e\.?\b/gi, " ")
+      .replace(/[^\w\s/+.-]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!cleaned) continue;
+    const split = cleaned
+      .split(/\s*(?:,|\/|\bor\b|\band\b)\s*/i)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    opts.push(...split);
+  }
+  return Array.from(new Set(opts));
+}
 
 function phraseRegexFromSkill(skill: string): RegExp | null {
   const words = skill
@@ -93,19 +136,40 @@ export function resumeShowsSkillEvidence(resumeText: string, skillPhrase: string
   if (!skill) return false;
 
   const blob = normalizeResumeBlob(resumeText);
-  const key = skill.toLowerCase();
+  const key = normalizeSkillKey(skill);
+  const rawKey = skill.toLowerCase().trim();
 
   if (blob.includes(key)) return true;
+  if (rawKey && blob.includes(rawKey)) return true;
 
   const flex = phraseRegexFromSkill(skill);
   if (flex && flex.test(blob)) return true;
 
+  const normalizedFlex = phraseRegexFromSkill(key);
+  if (normalizedFlex && normalizedFlex.test(blob)) return true;
+
   const patterns = SKILL_EVIDENCE[key];
   if (patterns?.some((re) => re.test(blob))) return true;
+  const rawPatterns = SKILL_EVIDENCE[rawKey];
+  if (rawPatterns?.some((re) => re.test(blob))) return true;
 
   // Slash/casing variants for short skills (e.g. "A/b" vs "a/b")
   const compactKey = key.replace(/\s*\/\s*/g, "/");
   if (compactKey !== key && blob.includes(compactKey)) return true;
+
+  // Parenthetical variants are common in JD skills:
+  // "cloud platforms (Azure, GCP, or AWS)" or "Large Language Models (LLMs)".
+  // Treat explicit options as equivalent evidence.
+  const options = extractParentheticalOptions(skill);
+  for (const option of options) {
+    const optKey = normalizeSkillKey(option);
+    if (!optKey) continue;
+    if (blob.includes(optKey)) return true;
+    const optFlex = phraseRegexFromSkill(optKey);
+    if (optFlex && optFlex.test(blob)) return true;
+    const optPatterns = SKILL_EVIDENCE[optKey];
+    if (optPatterns?.some((re) => re.test(blob))) return true;
+  }
 
   return false;
 }

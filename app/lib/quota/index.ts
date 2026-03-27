@@ -27,7 +27,7 @@ const USER_MESSAGE =
 /**
  * Resolves the actor for quota: signed-in user takes precedence; otherwise anonymous.
  * Anonymous quota is tied to the `ra_anon_id` httpOnly cookie (see identity.ts), not to IP alone.
- * `ip_hash` on usage rows is stored for abuse signals but is not used to count the 3 free scans.
+ * `ip_hash` on usage rows is stored for abuse signals but is not used to count the free scans.
  */
 export async function resolveAnalysisActor(request: Request): Promise<AnalysisActor> {
   const { user } = await getBearerUser(request);

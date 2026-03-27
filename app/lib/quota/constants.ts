@@ -1,6 +1,6 @@
 /** Free ATS analysis limits per rolling 24-hour window. */
 export const ANALYSIS_QUOTA_LIMITS = {
-  anonymous: 3,
+  anonymous: 1,
   user: 5,
 } as const;
 

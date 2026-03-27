@@ -65,14 +65,14 @@ export default function HowItWorksPage() {
             <p>
               If you want examples to copy the structure from, start with{" "}
               <a
-                href="/seo/bullet-points-data-scientist-resume"
+                href="/data-scientist/resume/bullet-points"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 Data Scientist resume bullet points
               </a>{" "}
               or{" "}
               <a
-                href="/seo/software-engineer-resume-skills"
+                href="/software-engineer/resume/skills"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 Software Engineer resume skills
@@ -110,8 +110,7 @@ export default function HowItWorksPage() {
               to tailor quickly for future roles.
             </p>
             <p className="text-xs text-slate-500">
-              You can run as many free analyses as you like before deciding whether you want to log
-              in or download.
+              You can run 1 free analysis before login in each rolling 24-hour window.
             </p>
           </div>
         </section>
