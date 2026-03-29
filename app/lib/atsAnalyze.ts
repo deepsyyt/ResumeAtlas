@@ -9,7 +9,8 @@ export type BulletPreview = {
 
 export type ATSAnalyzeResult = {
   ats_score: number;
-  keyword_coverage: number;
+  /** JD keyword overlap %; `null` when no job description was analyzed (resume-only ATS scan). */
+  keyword_coverage: number | null;
   semantic_similarity: number;
   experience_alignment: number;
   /** Years of experience required by the job description; null if not specified in the JD. */
@@ -52,9 +53,11 @@ export function isATSAnalyzeResult(obj: unknown): obj is ATSAnalyzeResult {
     o.required_years_experience_max === null ||
     typeof o.required_years_experience_max === "number";
   const resumeYearsOk = typeof o.resume_years_experience === "number";
+  const keywordCovOk =
+    o.keyword_coverage === null || typeof o.keyword_coverage === "number";
   return (
     typeof o.ats_score === "number" &&
-    typeof o.keyword_coverage === "number" &&
+    keywordCovOk &&
     typeof o.semantic_similarity === "number" &&
     typeof o.experience_alignment === "number" &&
     requiredYearsOk &&

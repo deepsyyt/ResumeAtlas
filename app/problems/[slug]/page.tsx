@@ -24,9 +24,14 @@ export function generateMetadata({
 }): Metadata {
   const config = PROBLEM_PAGES[params.slug as ProblemSlug];
   if (!config) return {};
+  const hasExamples = Boolean(config.scenario?.before && config.scenario?.after);
+  const normalizedTitle = config.metaTitle.replace(/\s*\(Examples \+ Fixes\)\s*$/i, "").trim();
   return {
-    title: config.metaTitle,
+    title: hasExamples ? `${normalizedTitle} (Examples + Fixes)` : `${normalizedTitle} (Why + Fix)`,
     description: config.metaDescription,
+    alternates: {
+      canonical: `/problems/${params.slug}`,
+    },
   };
 }
 

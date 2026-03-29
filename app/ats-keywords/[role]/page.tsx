@@ -3,7 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
 import { KEYWORD_PAGES, type RoleSlug } from "@/app/lib/seoPages";
+import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 import { getSiteUrl } from "@/app/lib/siteUrl";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_ANCHOR,
+} from "@/app/lib/internalLinks";
 
 type PageParams = {
   role: RoleSlug;
@@ -16,7 +21,7 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
     title: `${config.h1} (2025 Guide) | ResumeAtlas`,
     description: config.metaDescription,
     alternates: {
-      canonical: `/ats-keywords/${params.role}`,
+      canonical: `/${params.role}/keywords`,
     },
   };
 }
@@ -26,9 +31,10 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
   if (!config) notFound();
 
   const roleSlug = params.role;
+  const roleContent = ROLE_CONTENT_MAP[roleSlug];
   const resumeExamplePath = `/${roleSlug}-resume-example`;
   const hubPath = `/${roleSlug}/resume`;
-  const skillsSeoPath = `/seo/${roleSlug}-resume-skills`;
+  const skillsSeoPath = `/${roleSlug}/resume/skills`;
   const canonicalBase = getSiteUrl();
 
   const faqSchema = {
@@ -80,7 +86,7 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
         "@type": "ListItem",
         position: 2,
         name: config.h1,
-        item: `${canonicalBase}/ats-keywords/${roleSlug}`,
+        item: `${canonicalBase}/${roleSlug}/keywords`,
       },
     ],
   } as const;
@@ -110,10 +116,10 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
             applicant tracking systems are looking for.
           </p>
             <Link
-              href="/"
+              href={CHECK_RESUME_AGAINST_JD_PATH}
               className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
             >
-              Check My Resume for ATS
+              {CHECK_RESUME_AGAINST_JD_ANCHOR}
             </Link>
           </div>
         </div>
@@ -135,6 +141,22 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
           <p className="mt-1 text-[11px] sm:text-xs text-slate-500">
             Last updated: March 2026
           </p>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
+            {config.roleName} keyword context
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700">
+            For this role, ATS scans usually reward specific tooling references such as{" "}
+            {roleContent.tools.slice(0, 4).join(", ")} and action language like{" "}
+            {roleContent.domainVerbs.slice(0, 3).join(", ")}.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-1 text-sm text-slate-700">
+            {roleContent.examplePhrases.slice(0, 2).map((phrase) => (
+              <li key={phrase}>{phrase}</li>
+            ))}
+          </ul>
         </section>
 
         {/* Keyword categories */}
@@ -202,10 +224,10 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
             resume before applying.
           </p>
           <Link
-            href="/"
+            href={CHECK_RESUME_AGAINST_JD_PATH}
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check My Resume for ATS
+            {CHECK_RESUME_AGAINST_JD_ANCHOR}
           </Link>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -256,7 +278,7 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
           </div>
         </section>
 
-        <RelatedResumeGuidesSection currentPath={`/ats-keywords/${params.role}`} className="mt-10 border-t border-slate-200 pt-6" />
+        <RelatedResumeGuidesSection currentPath={`/${params.role}/keywords`} className="mt-10 border-t border-slate-200 pt-6" />
 
         {/* FAQ */}
         <section id="faq">

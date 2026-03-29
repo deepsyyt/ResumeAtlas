@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_ANCHOR,
+} from "@/app/lib/internalLinks";
 
 export const metadata: Metadata = {
   title: "How ATS Systems Scan Resumes – Complete Guide | ResumeAtlas",
   description:
     "Learn how Applicant Tracking Systems scan and rank resumes: parsing, keyword matching, formatting rules, and scoring. Get your resume past ATS with this complete guide.",
+  alternates: {
+    canonical: "/how-ats-scans-resumes",
+  },
 };
 
 const faqSchema = {
@@ -54,10 +61,10 @@ export default function HowATSScansResumesPage() {
             Understand how Applicant Tracking Systems parse, score, and filter resumes so yours gets past the screen and in front of recruiters.
           </p>
           <Link
-            href="/"
+            href={CHECK_RESUME_AGAINST_JD_PATH}
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check My Resume for ATS
+            {CHECK_RESUME_AGAINST_JD_ANCHOR}
           </Link>
         </div>
       </section>
@@ -125,7 +132,14 @@ export default function HowATSScansResumesPage() {
             Many ATS assign a <strong>match score</strong> based on keyword fit, experience alignment, education, and sometimes seniority. Recruiters often sort or filter by this score, so a higher score increases the chance your resume gets reviewed. Scores are usually not visible to you; they’re internal to the system.
           </p>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            To improve your effective score: align your resume with the job description, include relevant keywords, use a parse-friendly format, and make experience and titles easy to recognize. Tools like a free <Link href="/ats-resume-checker" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">ATS resume checker</Link> can show you how ATS-friendly your resume is before you apply.
+            To improve your effective score: align your resume with the job description, include relevant keywords, use a parse-friendly format, and make experience and titles easy to recognize. Use a free{" "}
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_PATH}
+              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
+              {CHECK_RESUME_AGAINST_JD_ANCHOR}
+            </Link>{" "}
+            to see how ATS-friendly your resume is before you apply.
           </p>
         </section>
 
@@ -143,6 +157,33 @@ export default function HowATSScansResumesPage() {
           </ul>
         </section>
 
+        <section>
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Role-Specific ATS Examples (Engineer vs Scientist vs PM)
+          </h2>
+          <p className="mt-3 text-slate-700 text-sm sm:text-base">
+            ATS expects different keyword patterns across roles. A software engineer resume is
+            usually matched on stack and delivery terms (TypeScript, AWS, CI/CD), while a data
+            scientist resume is matched on modeling and experiment language (Python, SQL, A/B
+            testing). Product manager resumes often rank better with ownership and outcome language
+            (roadmap, prioritization, activation, retention).
+          </p>
+          <ul className="mt-3 space-y-2 text-slate-700 text-sm sm:text-base list-disc pl-5">
+            <li>
+              <strong>Software Engineer:</strong> API latency, distributed systems, CI/CD, test
+              coverage, incident response.
+            </li>
+            <li>
+              <strong>Data Scientist:</strong> model evaluation, precision/recall, experiment design,
+              feature engineering, prediction impact.
+            </li>
+            <li>
+              <strong>Product Manager:</strong> roadmap ownership, cross-functional alignment, launch
+              outcomes, KPI movement, stakeholder communication.
+            </li>
+          </ul>
+        </section>
+
         {/* CTA + internal links */}
         <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
@@ -152,22 +193,50 @@ export default function HowATSScansResumesPage() {
             ResumeAtlas analyzes your resume and the job description you care about. You get an ATS-style match score, keyword coverage, and clear improvement ideas, all free, no login required.
           </p>
           <Link
-            href="/"
+            href={CHECK_RESUME_AGAINST_JD_PATH}
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check My Resume for ATS
+            {CHECK_RESUME_AGAINST_JD_ANCHOR}
           </Link>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Related</p>
             <ul className="mt-2 space-y-1 text-sm">
               <li>
-                <Link href="/ats-resume-checker" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  Free ATS Resume Checker
+                <Link
+                  href={CHECK_RESUME_AGAINST_JD_PATH}
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {CHECK_RESUME_AGAINST_JD_ANCHOR}
                 </Link>
               </li>
               <li>
                 <Link href="/how-to-pass-ats" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   How to Pass ATS Screening
+                </Link>
+              </li>
+              <li>
+                <Link href="/software-engineer" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Software Engineer role hub
+                </Link>
+              </li>
+              <li>
+                <Link href="/data-scientist" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Data Scientist role hub
+                </Link>
+              </li>
+              <li>
+                <Link href="/product-manager" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Product Manager role hub
+                </Link>
+              </li>
+              <li>
+                <Link href="/problems/ats-rejecting-my-resume" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Why ATS rejects resumes
+                </Link>
+              </li>
+              <li>
+                <Link href="/problems/missing-keywords-in-resume" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Missing keywords diagnosis
                 </Link>
               </li>
             </ul>

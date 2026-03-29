@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Home from "./HomeClient";
+import HomeClient from "./HomeClient";
 
 export const metadata: Metadata = {
   alternates: {
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <Home />;
+  return <HomeClient />;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
   alignSupabaseOAuthAuthorizeUrl,
@@ -127,6 +128,9 @@ export function Navbar() {
           </span>
         </div>
         <nav className="flex items-center gap-4 text-xs sm:text-sm">
+          <Link href="/tools" className="hover:underline text-white/80 hover:text-white">
+            Tools
+          </Link>
           <a href="/#how-ats-works" className="hover:underline text-white/80 hover:text-white">
             How ATS Works
           </a>

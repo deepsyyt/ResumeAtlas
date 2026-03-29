@@ -26,6 +26,11 @@ type ResumeFormProps = {
   isGenerating: boolean;
   error: string | null;
   isLoggedIn: boolean;
+  /**
+   * `atsCompliance`: resume-only ATS scan; job description optional (paste on JD checker for full keyword match).
+   * `keywordScanner`: gap-focused scan; resume + job description required (same API as jdMatch).
+   */
+  analysisMode?: "jdMatch" | "atsCompliance" | "keywordScanner";
   /** Optional quota for showing usage (rolling window; copy may say “today” for simplicity). */
   analysisQuota?: {
     remaining: number;
@@ -55,8 +60,11 @@ export function ResumeForm({
   isGenerating,
   error,
   isLoggedIn,
+  analysisMode = "jdMatch",
   analysisQuota,
 }: ResumeFormProps) {
+  const isAtsCompliance = analysisMode === "atsCompliance";
+  const isKeywordScanner = analysisMode === "keywordScanner";
   const { register, handleSubmit, control } = useForm<GenerateInputs>({
     defaultValues: {
       resumeText: "",
@@ -126,14 +134,26 @@ export function ResumeForm({
       {isGenerating && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-xl bg-white/80 backdrop-blur-[2px]">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-slate-800" />
-          <p className="text-xs font-medium text-slate-600">Analyzing your resume…</p>
+          <p className="text-xs font-medium text-slate-600">
+            {isKeywordScanner ? "Scanning for keyword gaps…" : "Analyzing your resume…"}
+          </p>
         </div>
       )}
 
       <header className="border-b border-slate-200/80 bg-gradient-to-b from-slate-50 to-white px-3 py-2.5 sm:px-4 sm:py-3">
-        <p className={stepEyebrowClass}>Free ATS analysis</p>
+        <p className={stepEyebrowClass}>
+          {isAtsCompliance
+            ? "Free ATS compatibility scan"
+            : isKeywordScanner
+              ? "Free keyword gap scan"
+              : "Free ATS analysis"}
+        </p>
         <p className="max-w-lg text-xs leading-relaxed text-slate-600 sm:text-[13px]">
-          Add your resume and the posting below, then run the match check.
+          {isAtsCompliance
+            ? "Paste your resume for an ATS readability and structure check. Job description is optional."
+            : isKeywordScanner
+              ? "Paste your resume and the job description to see which keywords and skills are missing or weak."
+              : "Add your resume and the posting below, then run the match check."}
         </p>
         {quota != null && quota.limit > 0 && (
           <div
@@ -212,14 +232,32 @@ export function ResumeForm({
           {/* Step 2 */}
           <section className="pt-4 pb-0">
             <p className={stepEyebrowClass}>Step 2</p>
-            <h3 className={stepTitleClass}>Paste the job description</h3>
+            <h3 className={stepTitleClass}>
+              {isAtsCompliance
+                ? "Optional: job description"
+                : isKeywordScanner
+                  ? "Paste the job description (required)"
+                  : "Paste the job description"}
+            </h3>
+            {isAtsCompliance ? (
+              <p className="mb-2 text-[11px] leading-snug text-slate-600 sm:text-xs">
+                Leave blank for ATS parsing and formatting only. For keyword match to a specific
+                posting, paste the job description here or use the dedicated job description
+                checker.
+              </p>
+            ) : null}
+            {isKeywordScanner ? (
+              <p className="mb-2 text-[11px] leading-snug text-slate-600 sm:text-xs">
+                Keywords and skills are compared against this posting text.
+              </p>
+            ) : null}
             <label className={fieldLabelClass} htmlFor="resumeatlas-jd-text">
               Job description
             </label>
             <Controller
               name="jobDescription"
               control={control}
-              rules={{ required: true }}
+              rules={{ required: !isAtsCompliance }}
               render={({ field }) => {
                 const wc = countWords(field.value);
                 return (
@@ -229,7 +267,13 @@ export function ResumeForm({
                       id="resumeatlas-jd-text"
                       rows={4}
                       className={textareaClass}
-                      placeholder="Paste the job description you're applying for"
+                      placeholder={
+                        isAtsCompliance
+                          ? "Optional — paste a job description for keyword alignment"
+                          : isKeywordScanner
+                            ? "Paste the full job description — gaps are detected against this text"
+                            : "Paste the job description you're applying for"
+                      }
                       disabled={isGenerating}
                       onChange={(e) => {
                         field.onChange(
@@ -263,10 +307,14 @@ export function ResumeForm({
                 aria-hidden="true"
                 className="h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-400 shadow-[0_0_0_3px_rgba(52,211,153,0.35)]"
               />
-              Check my resume against this job (Free)
+              {isAtsCompliance
+                ? "Get my ATS score (free)"
+                : isKeywordScanner
+                  ? "Scan for missing keywords (free)"
+                  : "Check my resume against this job (Free)"}
             </button>
             <p className="mt-1.5 text-center text-[11px] text-slate-500 sm:text-xs">
-              Free analysis. No signup required.
+              Paste-only (no file upload). Free analysis. No signup required.
             </p>
           </div>
         </form>

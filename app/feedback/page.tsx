@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Feedback | ResumeAtlas",
   description:
     "Share feedback about ResumeAtlas. Help us improve your resume scoring and optimization experience.",
+  alternates: {
+    canonical: "/feedback",
+  },
 };
 
 export default function FeedbackPage() {

@@ -9,8 +9,11 @@ const SLUG = "resume-not-getting-interviews" as const;
 const config = PROBLEM_PAGES[SLUG];
 
 export const metadata: Metadata = {
-  title: config.metaTitle,
+  title: `${config.metaTitle.replace(/\s*\(Examples \+ Fixes\)\s*$/i, "").trim()} (Examples + Fixes)`,
   description: config.metaDescription,
+  alternates: {
+    canonical: "/problems/resume-not-getting-interviews",
+  },
 };
 
 const btnPrimary =
@@ -71,8 +74,12 @@ export default function ResumeNotGettingInterviewsLandingPage() {
         <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-18 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">Resume optimization</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
-            Your resume isn&apos;t getting interviews. Fix it in minutes.
+            Your resume isn&apos;t getting interviews. Fix it in minutes (Examples + Fixes)
           </h1>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700 sm:text-base">
+            If your resume is not getting interviews, here&apos;s why and how to fix it using
+            role-specific examples, keyword alignment, and ATS-focused improvements.
+          </p>
           <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
             Compare your resume with a job description to find missing keywords, weak bullets, and ATS gaps. Get
             optimized, job-aligned bullet points while keeping your original experience intact.
@@ -93,6 +100,55 @@ export default function ResumeNotGettingInterviewsLandingPage() {
 
       <div className="mx-auto max-w-3xl px-4 pb-6 sm:px-6 lg:px-8">
         <TopicClusterCallout />
+        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+          <h2 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
+            Role-specific diagnosis
+          </h2>
+          <ul className="mt-3 list-disc pl-5 space-y-2 text-sm text-slate-700">
+            <li>
+              <strong>Software Engineer:</strong> weak delivery proof (latency, uptime, CI/CD) often
+              blocks interviews.{" "}
+              <Link href="/software-engineer/resume/skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                See role fix
+              </Link>
+              {" · "}
+              <Link href="/software-engineer/keywords/technical-skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                keywords
+              </Link>
+            </li>
+            <li>
+              <strong>Data Scientist:</strong> missing SQL and experiment-impact terms can hide fit.{" "}
+              <Link href="/data-scientist/resume/projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                See role fix
+              </Link>
+              {" · "}
+              <Link href="/data-scientist/keywords/core-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                keywords
+              </Link>
+            </li>
+            <li>
+              <strong>Product Manager:</strong> no quantified outcomes (activation, retention, ARR)
+              makes bullets look generic.{" "}
+              <Link href="/product-manager/resume/summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                See role fix
+              </Link>
+              {" · "}
+              <Link href="/product-manager/keywords/projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                keywords
+              </Link>
+            </li>
+          </ul>
+          <p className="mt-3 text-sm text-slate-700">
+            Related ATS guides:{" "}
+            <Link href="/how-ats-scans-resumes" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              how ATS scans resumes
+            </Link>
+            {" · "}
+            <Link href="/how-to-pass-ats" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              how to pass ATS
+            </Link>
+          </p>
+        </section>
       </div>
 
       {/* Product preview mock */}

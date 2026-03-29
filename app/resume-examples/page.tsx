@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { RESUME_PAGES } from "@/app/lib/seoPages";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_ANCHOR,
+} from "@/app/lib/internalLinks";
 
 export const metadata: Metadata = {
   title: "Resume Examples (ATS-Friendly) | ResumeAtlas",
   description: "Browse ATS-friendly resume examples for top roles and industries.",
+  alternates: {
+    canonical: "/resume-examples",
+  },
 };
 
 export default function ResumeExamplesIndexPage() {
@@ -21,10 +28,10 @@ export default function ResumeExamplesIndexPage() {
             ATS-friendly resume examples you can copy, tailor, and improve.
           </p>
           <Link
-            href="/"
+            href={CHECK_RESUME_AGAINST_JD_PATH}
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check Your ATS Score
+            {CHECK_RESUME_AGAINST_JD_ANCHOR}
           </Link>
         </div>
       </section>
@@ -49,7 +56,7 @@ export default function ResumeExamplesIndexPage() {
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link
-                href="/seo/bullet-points-data-scientist-resume"
+                href="/data-scientist/resume/bullet-points"
                 className="text-sky-700 hover:underline"
               >
                 Data Scientist resume bullet points
@@ -57,7 +64,7 @@ export default function ResumeExamplesIndexPage() {
             </li>
             <li>
               <Link
-                href="/seo/software-engineer-resume-skills"
+                href="/software-engineer/resume/skills"
                 className="text-sky-700 hover:underline"
               >
                 Software Engineer resume skills

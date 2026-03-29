@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_ANCHOR,
+} from "@/app/lib/internalLinks";
 import { notFound } from "next/navigation";
 import type { RoleSlug } from "@/app/lib/seoPages";
+import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 
 type PageParams = {
   roleSlug: RoleSlug;
@@ -23,10 +28,14 @@ const ROLE_NAMES: Record<RoleSlug, string> = {
 export function generateMetadata({ params }: { params: PageParams }): Metadata {
   const roleName = ROLE_NAMES[params.roleSlug];
   if (!roleName) return {};
+  const canonicalPath = `/${params.roleSlug}/resume`;
 
   return {
-    title: `${roleName} Resume Guide (ATS-Friendly Examples, Skills & Keywords) | ResumeAtlas`,
+    title: `${roleName} Resume Guide (Tips + Keywords) | ResumeAtlas`,
     description: `Learn how to build an ATS-friendly ${roleName.toLowerCase()} resume with examples, skills, keywords, and optimization tips.`,
+    alternates: {
+      canonical: canonicalPath,
+    },
   };
 }
 
@@ -36,13 +45,14 @@ export default function RoleResumeHubPage({ params }: { params: PageParams }) {
 
   const role = params.roleSlug;
   const roleLower = roleName.toLowerCase();
+  const roleContent = ROLE_CONTENT_MAP[role];
 
   const resumeExamplePath = `/${role}-resume-example`;
-  const atsKeywordsPath = `/ats-keywords/${role}`;
-  const skillsPath = `/seo/${role}-resume-skills`;
-  const summaryPath = `/seo/${role}-resume-summary`;
-  const projectsPath = `/seo/${role}-resume-projects`;
-  const bulletsPath = `/seo/bullet-points-${role}-resume`;
+  const atsKeywordsPath = `/${role}/keywords`;
+  const skillsPath = `/${role}/resume/skills`;
+  const summaryPath = `/${role}/resume/summary`;
+  const projectsPath = `/${role}/resume/projects`;
+  const bulletsPath = `/${role}/resume/bullet-points`;
 
   const faqItems = [
     {
@@ -86,7 +96,7 @@ export default function RoleResumeHubPage({ params }: { params: PageParams }) {
       <section className="border-b border-slate-200 bg-slate-50/60">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-18 text-center">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
-            {roleName} Resume Guide (Examples, Skills, Keywords &amp; Tips)
+            {roleName} Resume Guide (Tips + Keywords)
           </h1>
           <p className="mt-4 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
             A strong {roleLower} resume balances clean structure, role-specific keywords, and
@@ -103,6 +113,22 @@ export default function RoleResumeHubPage({ params }: { params: PageParams }) {
       </section>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10">
+        <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
+            Role-specific signals ATS expects for {roleLower} resumes
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700">
+            Prioritize evidence around tools like {roleContent.tools.slice(0, 3).join(", ")} and
+            verbs such as {roleContent.domainVerbs.slice(0, 3).join(", ")}. These patterns help ATS
+            and recruiters quickly map your experience to role requirements.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-1 text-sm text-slate-700">
+            {roleContent.examplePhrases.slice(0, 2).map((phrase) => (
+              <li key={phrase}>{phrase}</li>
+            ))}
+          </ul>
+        </section>
+
         <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
           <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
             1. Start with a complete {roleLower} resume example
@@ -226,10 +252,10 @@ export default function RoleResumeHubPage({ params }: { params: PageParams }) {
           </div>
           <div className="flex-none">
             <Link
-              href="/"
+              href={CHECK_RESUME_AGAINST_JD_PATH}
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 focus-visible:ring-offset-emerald-50 transition"
             >
-              Check your ATS score →
+              {CHECK_RESUME_AGAINST_JD_ANCHOR}
             </Link>
           </div>
         </section>

@@ -1,25 +1,155 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LastUpdated } from "@/app/components/LastUpdated";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
-import { RESUME_PAGES, type ResumeSlug } from "@/app/lib/seoPages";
+import {
+  KEYWORD_PAGES,
+  RESUME_PAGES,
+  type ResumePageConfig,
+  type ResumeSlug,
+  type RoleSlug,
+} from "@/app/lib/seoPages";
+import { roleToProblemPath } from "@/app/lib/roleSeo";
 import { getSiteUrl } from "@/app/lib/siteUrl";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_ANCHOR,
+} from "@/app/lib/internalLinks";
 
 type PageParams = {
-  roleSlug: ResumeSlug;
+  roleSlug: string;
 };
 
+function resumePageConfigForPath(slug: string): ResumePageConfig | undefined {
+  if (slug in RESUME_PAGES) {
+    return RESUME_PAGES[slug as ResumeSlug];
+  }
+  return undefined;
+}
+
 export function generateMetadata({ params }: { params: PageParams }): Metadata {
-  const config = RESUME_PAGES[params.roleSlug];
+  const roleConfig = KEYWORD_PAGES[params.roleSlug as keyof typeof KEYWORD_PAGES];
+  if (roleConfig) {
+    return {
+      title: `${roleConfig.roleName} Resume Guide | ResumeAtlas`,
+      description: `Explore ${roleConfig.roleName.toLowerCase()} resume examples, ATS keyword guides, and topic deep-dives in one role cluster.`,
+      alternates: {
+        canonical: `/${params.roleSlug}`,
+      },
+    };
+  }
+  const config = resumePageConfigForPath(params.roleSlug);
   if (!config) return {};
+  const canonicalPath = `/${params.roleSlug}`;
   return {
     title: `${config.h1} (ATS-Friendly Template) | ResumeAtlas`,
     description: config.metaDescription,
+    alternates: {
+      canonical: canonicalPath,
+    },
   };
 }
 
 export default function ResumeExamplePage({ params }: { params: PageParams }) {
-  const config = RESUME_PAGES[params.roleSlug];
+  const roleConfig = KEYWORD_PAGES[params.roleSlug as keyof typeof KEYWORD_PAGES];
+  if (roleConfig) {
+    const role = params.roleSlug;
+    const roleLower = roleConfig.roleName.toLowerCase();
+    const canonicalBase = getSiteUrl();
+    const rolePath = `/${role}`;
+    const breadcrumbSchema = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: canonicalBase,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: roleConfig.roleName,
+          item: `${canonicalBase}${rolePath}`,
+        },
+      ],
+    } as const;
+    return (
+      <main className="min-h-screen bg-white text-slate-900">
+        <section className="border-b border-slate-200 bg-slate-50/50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 text-center">
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
+              {roleConfig.roleName} Resume Guide
+            </h1>
+            <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+              Your topical hub for {roleLower} resumes: examples, ATS keywords, and section-level
+              optimization pages.
+            </p>
+            <LastUpdated className="mt-2 text-xs text-slate-500" />
+          </div>
+        </section>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+          <section className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 sm:p-6">
+            <h2 className="text-lg font-semibold text-slate-900">Start here</h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Priority pages for this role—best entry points for reading and for search engines.
+            </p>
+            <ul className="mt-4 space-y-2.5 text-sm font-medium text-slate-800 list-none p-0 m-0">
+              <li>
+                <Link href={`/${role}/resume`} className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
+                  {roleConfig.roleName} Resume Guide
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${role}/resume/projects`} className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
+                  {roleConfig.roleName} Projects Examples
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${role}/resume/experience-examples`} className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
+                  {roleConfig.roleName} Experience Examples
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${role}/keywords/core-keywords`} className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
+                  {roleConfig.roleName} ATS Keywords
+                </Link>
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold text-slate-900">More on this role</h2>
+            <ul className="mt-3 list-disc pl-5 space-y-1 text-sm text-slate-700">
+              <li>
+                <Link href={`/${role}/keywords`} className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  {roleConfig.roleName} keywords (complete guide)
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${role}-resume-example`} className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  {roleConfig.roleName} resume example
+                </Link>
+              </li>
+              <li>
+                <Link href={roleToProblemPath(role as RoleSlug)} className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Related problem page
+                </Link>
+              </li>
+            </ul>
+          </section>
+        </div>
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        />
+      </main>
+    );
+  }
+  const config = resumePageConfigForPath(params.roleSlug);
   if (!config) {
     notFound();
   }
@@ -61,11 +191,11 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
     ],
   };
 
-  const pairedKeywordsPath = `/ats-keywords/${roleSlug}`;
+  const pairedKeywordsPath = `/${roleSlug}/keywords`;
   const hubPath = `/${roleSlug}/resume`;
-  const skillsSeoPath = `/seo/${roleSlug}-resume-skills`;
-  const summarySeoPath = `/seo/${roleSlug}-resume-summary`;
-  const projectsSeoPath = `/seo/${roleSlug}-resume-projects`;
+  const skillsSeoPath = `/${roleSlug}/resume/skills`;
+  const summarySeoPath = `/${roleSlug}/resume/summary`;
+  const projectsSeoPath = `/${roleSlug}/resume/projects`;
   const canonicalBase = getSiteUrl();
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -111,10 +241,10 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
               story.
             </p>
             <Link
-              href="/"
+              href={CHECK_RESUME_AGAINST_JD_PATH}
               className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
             >
-              Check My Resume with ResumeAtlas
+              {CHECK_RESUME_AGAINST_JD_ANCHOR}
             </Link>
           </div>
         </div>
@@ -300,14 +430,14 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
               tables.
             </li>
             <li>
-              Run your resume and target job description through{" "}
+              Before you apply,{" "}
               <Link
-                href="/"
+                href={CHECK_RESUME_AGAINST_JD_PATH}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
-                the free ResumeAtlas ATS resume checker
+                {CHECK_RESUME_AGAINST_JD_ANCHOR}
               </Link>{" "}
-              to see keyword gaps before you apply.
+              with your resume and target job description to see keyword gaps.
             </li>
           </ul>
         </section>
@@ -323,10 +453,10 @@ export default function ResumeExamplePage({ params }: { params: PageParams }) {
             role before you apply.
           </p>
           <Link
-            href="/"
+            href={CHECK_RESUME_AGAINST_JD_PATH}
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check My Resume with ResumeAtlas
+            {CHECK_RESUME_AGAINST_JD_ANCHOR}
           </Link>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">

@@ -28,6 +28,10 @@ export function ProblemConversionPage({ config }: Props) {
   const v = PROBLEM_LANDING_VARIANTS[config.slug];
   const related = getRelatedProblemEntries(config.slug);
   const siteUrl = getSiteUrl();
+  const hasExamples = Boolean(config.scenario?.before && config.scenario?.after);
+  const h1 = hasExamples
+    ? `${v.heroHeadline} (Examples + Fixes)`
+    : `${v.heroHeadline} (Why + Fix)`;
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -49,8 +53,12 @@ export function ProblemConversionPage({ config }: Props) {
         <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-18 lg:px-8">
           <p className={`text-xs font-semibold uppercase tracking-wider ${eyebrowTone}`}>{v.heroEyebrow}</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
-            {v.heroHeadline}
+            {h1}
           </h1>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700 sm:text-base">
+            If your resume is {config.primaryKeyword}, here&apos;s why this happens and how to fix it
+            with ATS-aware, role-specific improvements before your next application.
+          </p>
           <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">{v.heroSubheadline}</p>
           <p className="mx-auto mt-3 max-w-xl text-sm font-medium text-slate-700 sm:text-base">{v.heroSupportLine}</p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:gap-4">
@@ -94,9 +102,82 @@ export function ProblemConversionPage({ config }: Props) {
           <p className="mt-3 text-sm text-slate-600 sm:text-base">{v.bridgeLead}</p>
 
           <TopicClusterCallout className="mt-6" />
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Role solution bridges
+            </p>
+            <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-slate-700">
+              <li>
+                <Link href="/software-engineer/resume/skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Software Engineer resume skills
+                </Link>
+              </li>
+              <li>
+                <Link href="/data-scientist/resume/skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Data Scientist resume skills
+                </Link>
+              </li>
+              <li>
+                <Link href="/product-manager/resume/summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Product Manager resume summary
+                </Link>
+              </li>
+            </ul>
+          </div>
 
           <div className={`mt-8 rounded-2xl border p-4 sm:p-5 text-sm sm:text-base ${toneBox}`}>
             <p className="leading-relaxed">{v.problemToneIntro}</p>
+          </div>
+
+          <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+            <h3 className="text-base font-semibold text-slate-900">Role-specific diagnosis and fixes</h3>
+            <ul className="mt-3 list-disc pl-5 space-y-2 text-sm text-slate-700 sm:text-base">
+              <li>
+                <strong>If you&apos;re a Software Engineer:</strong> missing delivery keywords like
+                APIs, CI/CD, reliability, or latency can lower match.
+                <span className="ml-1">
+                  <Link href="/software-engineer/resume/skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix skills</Link>
+                  {" · "}
+                  <Link href="/software-engineer/keywords/technical-skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Engineer keywords</Link>
+                </span>
+              </li>
+              <li>
+                <strong>If you&apos;re a Data Scientist:</strong> resumes often miss SQL + experiment
+                language or model evaluation metrics.
+                <span className="ml-1">
+                  <Link href="/data-scientist/resume/projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix projects</Link>
+                  {" · "}
+                  <Link href="/data-scientist/keywords/core-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Scientist keywords</Link>
+                </span>
+              </li>
+              <li>
+                <strong>If you&apos;re a Product Manager:</strong> no quantified outcome language
+                (activation, retention, revenue) is a common blocker.
+                <span className="ml-1">
+                  <Link href="/product-manager/resume/summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix summary</Link>
+                  {" · "}
+                  <Link href="/product-manager/keywords/projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">PM keywords</Link>
+                </span>
+              </li>
+            </ul>
+            <p className="mt-3 text-sm text-slate-700">
+              Common scenario patterns: missing SQL terms usually hurts analyst/scientist profiles;
+              missing quantified impact usually hurts PM and leadership-oriented roles.
+            </p>
+            <p className="mt-3 text-sm text-slate-700">
+              ATS guide links:{" "}
+              <Link href="/how-ats-scans-resumes" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                how ATS scans resumes
+              </Link>
+              {" · "}
+              <Link href="/how-to-pass-ats" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                how to pass ATS
+              </Link>
+              {" · "}
+              <Link href="/common-resume-mistakes-fail-ats" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                common ATS mistakes
+              </Link>
+            </p>
           </div>
 
           <h3 className="mt-8 text-base font-semibold text-slate-900">{config.rootCauses.heading}</h3>

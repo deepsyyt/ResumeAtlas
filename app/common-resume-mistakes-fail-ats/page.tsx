@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_ANCHOR,
+} from "@/app/lib/internalLinks";
 
 export const metadata: Metadata = {
-  title: "Common Resume Mistakes That Fail ATS | ResumeAtlas",
+  title: "Common Resume Mistakes That Fail ATS (Explained) | ResumeAtlas",
   description:
     "Avoid the resume mistakes that make ATS reject you: missing keywords, poor formatting, generic descriptions, and no measurable achievements. Fix them before you apply.",
+  alternates: {
+    canonical: "/common-resume-mistakes-fail-ats",
+  },
 };
 
 const faqSchema = {
@@ -48,16 +55,16 @@ export default function CommonResumeMistakesFailATSPage() {
       <section className="border-b border-slate-200 bg-slate-50/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-18 text-center">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
-            Common Resume Mistakes That Fail ATS
+            Common Resume Mistakes That Fail ATS (Explained)
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
             Fix these resume mistakes before you apply so your application gets past Applicant Tracking Systems and in front of recruiters.
           </p>
           <Link
-            href="/"
+            href={CHECK_RESUME_AGAINST_JD_PATH}
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check My Resume for ATS
+            {CHECK_RESUME_AGAINST_JD_ANCHOR}
           </Link>
         </div>
       </section>
@@ -130,26 +137,64 @@ export default function CommonResumeMistakesFailATSPage() {
           </p>
         </section>
 
+        <section>
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Role-specific ATS mistake patterns
+          </h2>
+          <p className="mt-3 text-slate-700 text-sm sm:text-base">
+            ATS doesn&apos;t evaluate all resumes the same way. Engineers, scientists, and product
+            managers often fail for different reasons, even with strong experience.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
+            <li>
+              <strong>Software Engineer:</strong> lists tools but no delivery outcomes (latency,
+              reliability, deployment improvements).
+            </li>
+            <li>
+              <strong>Data Scientist:</strong> mentions ML buzzwords without model evaluation context
+              (precision/recall, experiment impact).
+            </li>
+            <li>
+              <strong>Product Manager:</strong> states responsibilities without ownership and KPI
+              movement (activation, retention, revenue).
+            </li>
+          </ul>
+          <p className="mt-3 text-slate-700 text-sm sm:text-base">
+            ATS expects different keyword sets for engineers vs analysts vs PMs, so role-specific
+            wording and proof matter more than generic “strong communicator” statements.
+          </p>
+        </section>
+
         {/* Summary + CTA */}
         <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Avoid These Mistakes Before You Apply
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            Fix missing keywords, simplify formatting, add measurable achievements, and use standard sections. Then run your resume through a free <Link href="/ats-resume-checker" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">ATS resume checker</Link> to see how it scores and what to improve before you hit submit.
+            Fix missing keywords, simplify formatting, add measurable achievements, and use standard sections. Then{" "}
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_PATH}
+              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
+              {CHECK_RESUME_AGAINST_JD_ANCHOR}
+            </Link>{" "}
+            to see how it scores and what to improve before you hit submit.
           </p>
           <Link
-            href="/"
+            href={CHECK_RESUME_AGAINST_JD_PATH}
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check My Resume for ATS
+            {CHECK_RESUME_AGAINST_JD_ANCHOR}
           </Link>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Related</p>
             <ul className="mt-2 space-y-1 text-sm">
               <li>
-                <Link href="/ats-resume-checker" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  Free ATS Resume Checker
+                <Link
+                  href={CHECK_RESUME_AGAINST_JD_PATH}
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {CHECK_RESUME_AGAINST_JD_ANCHOR}
                 </Link>
               </li>
               <li>
@@ -160,6 +205,31 @@ export default function CommonResumeMistakesFailATSPage() {
               <li>
                 <Link href="/how-to-pass-ats" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   How to Pass ATS Screening
+                </Link>
+              </li>
+              <li>
+                <Link href="/software-engineer" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Software Engineer role hub
+                </Link>
+              </li>
+              <li>
+                <Link href="/data-scientist" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Data Scientist role hub
+                </Link>
+              </li>
+              <li>
+                <Link href="/product-manager" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Product Manager role hub
+                </Link>
+              </li>
+              <li>
+                <Link href="/problems/missing-keywords-in-resume" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Missing keywords in resume
+                </Link>
+              </li>
+              <li>
+                <Link href="/problems/why-recruiters-ignore-resume" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Why recruiters ignore resumes
                 </Link>
               </li>
             </ul>

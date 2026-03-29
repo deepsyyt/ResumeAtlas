@@ -1,5 +1,9 @@
 import Link from "next/link";
 import type { PreviewEmphasis } from "@/app/lib/problemLandingVariants";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_ANCHOR,
+} from "@/app/lib/internalLinks";
 
 export const btnPrimary =
   "inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900";
@@ -385,13 +389,11 @@ export function GuidesFooterLinks() {
       <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Guides and tools</p>
       <ul className="mt-2 space-y-1 text-sm">
         <li>
-          <Link href="/#ats-checker-form" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-            Free ATS resume checker (paste resume + JD)
-          </Link>
-        </li>
-        <li>
-          <Link href="/ats-resume-checker" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-            ATS resume checker overview
+          <Link
+            href={`${CHECK_RESUME_AGAINST_JD_PATH}#ats-checker-form`}
+            className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+          >
+            {CHECK_RESUME_AGAINST_JD_ANCHOR}
           </Link>
         </li>
         <li>

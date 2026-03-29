@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { RESUME_GUIDE_PAGES } from "@/app/lib/resumeGuidePages";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_ANCHOR,
+} from "@/app/lib/internalLinks";
 
 export const metadata: Metadata = {
   title: "Resume Guides (ATS-Friendly) | ResumeAtlas",
   description: "Browse step-by-step resume guides for skills, summaries, experience, and more.",
+  alternates: {
+    canonical: "/resume-guides",
+  },
 };
 
 export default function ResumeGuidesIndexPage() {
@@ -21,10 +28,10 @@ export default function ResumeGuidesIndexPage() {
             Practical guides for writing ATS-friendly resume sections and templates.
           </p>
           <Link
-            href="/"
+            href={CHECK_RESUME_AGAINST_JD_PATH}
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check Your ATS Score
+            {CHECK_RESUME_AGAINST_JD_ANCHOR}
           </Link>
         </div>
       </section>

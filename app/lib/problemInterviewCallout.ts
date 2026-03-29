@@ -16,18 +16,20 @@ export function normalizePathname(pathname: string): string {
   return pathname;
 }
 
-const ATS_CALLOUT_PATHS = new Set([
+import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
+
+const ATS_CALLOUT_PATHS = new Set<string>([
   "/how-to-pass-ats",
   "/how-ats-scans-resumes",
   "/common-resume-mistakes-fail-ats",
-  "/ats-resume-checker",
+  ...TOOL_CLUSTER_PATHS_FOR_OAUTH,
 ]);
 
 /**
  * Maps URL to a problem page for contextual internal linking.
  *
  * - Guides → resume-not-getting-interviews
- * - Keyword cluster (ATS keywords pages, keyword-style SEO, legacy keyword URL) → missing-keywords-in-resume
+ * - Keyword cluster (ATS keywords pages and role resume topic pages) → missing-keywords-in-resume
  * - ATS education / checker pages → ats-rejecting-my-resume
  * - Everything else → resume-not-getting-interviews (broad default)
  */
@@ -54,7 +56,9 @@ export function resolveProblemInterviewCallout(
     };
   }
 
-  if (p === "/ats-keywords" || p.startsWith("/ats-keywords/") || p.startsWith("/seo/")) {
+  const isRoleResumeTopicPath = /^\/[^/]+\/resume\/[^/]+$/.test(p);
+  const isRoleKeywordsPath = /^\/[^/]+\/keywords(\/[^/]+)?$/.test(p);
+  if (p === "/ats-keywords" || p.startsWith("/ats-keywords/") || isRoleResumeTopicPath || isRoleKeywordsPath) {
     return {
       prefix: "Worried about keyword gaps on your resume? ",
       linkText: "See how missing keywords affect your interviews",

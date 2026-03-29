@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Resume Format Guide: ATS, Modern, Professional & One-Page | ResumeAtlas",
   description:
     "ATS-friendly resume format guide. Pair it with ResumeAtlas, an AI ATS resume checker: compare your resume with a job description after you fix structure. One-page, modern, and professional layouts.",
+  alternates: {
+    canonical: "/resume-guides/resume-format-guide",
+  },
 };
 
 const SECTIONS = [

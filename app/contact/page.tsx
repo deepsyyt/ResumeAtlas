@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   title: "Contact Us | ResumeAtlas",
   description:
     "Get in touch with our support team. Contact ResumeAtlas for ATS resume scoring, feedback, and inquiries.",
+  alternates: {
+    canonical: "/contact",
+  },
 };
 
 function InfoCard({

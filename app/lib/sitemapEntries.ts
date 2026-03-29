@@ -5,14 +5,15 @@ import {
   KEYWORD_PAGES,
   type RoleSlug,
 } from "@/app/lib/seoPages";
+import { ROLE_KEYWORD_INTENTS } from "@/app/lib/roleSeo";
 import {
   RESUME_GUIDE_PAGES,
   type ResumeGuideSlug,
 } from "@/app/lib/resumeGuidePages";
 import { PROBLEM_SLUGS } from "@/app/lib/problemPages";
 
-/** SEO topic slugs for /seo/[slug] - must stay in sync with app/seo/[slug]/page.tsx */
-const SEO_TOPIC_SUFFIXES = [
+/** Resume topic slugs for /[role]/resume/[topic] */
+export const RESUME_TOPICS = [
   "bullet-points",
   "skills",
   "summary",
@@ -29,14 +30,17 @@ const LEGAL_PATHS = [
   "/feedback",
 ] as const;
 
-/**
- * Tiered priorities so bulk long-tail URLs do not compete with core landing pages.
- * Tier 1: home, problems, /how-ats-*
- * Tier 2: resume guides
- * Tier 3 (low): /seo/*, /ats-keywords/*
- */
 function priorityForPath(pathname: string): number {
   if (pathname === "/") return 1.0;
+  if (pathname === "/check-resume-against-job-description") return 0.94;
+  if (
+    pathname === "/ats-resume-checker-free" ||
+    pathname === "/resume-score-checker" ||
+    pathname === "/resume-keyword-scanner" ||
+    pathname === "/ats-compatibility-check"
+  ) {
+    return 0.91;
+  }
   if (pathname === "/problems") return 0.95;
   if (pathname.startsWith("/problems/")) return 0.92;
   if (pathname.startsWith("/how-ats-")) return 0.92;
@@ -47,38 +51,62 @@ function priorityForPath(pathname: string): number {
     return 0.85;
   }
   if (pathname.startsWith("/resume-guides/")) return 0.78;
-  if (pathname.startsWith("/seo/")) return 0.5;
-  if (pathname.startsWith("/ats-keywords/")) return 0.5;
+  if (/^\/[^/]+\/keywords(\/[^/]+)?$/.test(pathname)) return 0.55;
   if (LEGAL_PATHS.includes(pathname as (typeof LEGAL_PATHS)[number])) return 0.6;
   if (/^\/[^/]+\/resume$/.test(pathname)) return 0.62;
+  if (/^\/[^/]+\/resume\/[^/]+$/.test(pathname)) return 0.56;
   return 0.65;
 }
 
-function generateSeoSlugs(): string[] {
+function generateRoleResumeTopicPaths(): string[] {
   const roles = Object.keys(KEYWORD_PAGES) as RoleSlug[];
-  const slugs: string[] = [];
+  const paths: string[] = [];
   for (const role of roles) {
-    slugs.push(`bullet-points-${role}-resume`);
-    for (const topic of SEO_TOPIC_SUFFIXES) {
-      if (topic === "bullet-points") continue;
-      slugs.push(`${role}-resume-${topic}`);
+    for (const topic of RESUME_TOPICS) {
+      paths.push(`/${role}/resume/${topic}`);
     }
   }
-  return slugs;
+  return paths;
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const base = getSiteUrl();
-
+/** Full sitemap entries (same composition as legacy app/sitemap.ts). */
+export function getAllSitemapEntries(): MetadataRoute.Sitemap {
+  const base = getSiteUrl().replace(/\/$/, "");
   const entries: MetadataRoute.Sitemap = [];
 
-  // Static pages (priorities from tiers)
   entries.push({
     url: `${base}/`,
     lastModified: new Date("2026-03-09"),
     changeFrequency: "weekly" as const,
     priority: priorityForPath("/"),
   });
+  entries.push({
+    url: `${base}/check-resume-against-job-description`,
+    lastModified: new Date("2026-03-29"),
+    changeFrequency: "weekly" as const,
+    priority: priorityForPath("/check-resume-against-job-description"),
+  });
+  entries.push({
+    url: `${base}/tools`,
+    lastModified: new Date("2026-03-29"),
+    changeFrequency: "monthly" as const,
+    priority: 0.75,
+  });
+  const toolClusterLastMod = new Date("2026-03-29");
+  const toolClusterPaths = [
+    "/ats-resume-checker-free",
+    "/resume-score-checker",
+    "/resume-keyword-scanner",
+    "/ats-compatibility-check",
+  ] as const;
+  for (const p of toolClusterPaths) {
+    entries.push({
+      url: `${base}${p}`,
+      lastModified: toolClusterLastMod,
+      changeFrequency: "weekly" as const,
+      priority: priorityForPath(p),
+    });
+  }
   entries.push({
     url: `${base}/how-ats-scans-resumes`,
     lastModified: new Date("2026-03-08"),
@@ -118,15 +146,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
-  const atsKeywordsLastMod = new Date("2026-03-05");
+  const roleResumeKeywordLastMod = new Date();
   for (const { slug } of Object.values(KEYWORD_PAGES)) {
-    const path = `/ats-keywords/${slug}`;
+    const path = `/${slug}/keywords`;
     entries.push({
       url: `${base}${path}`,
-      lastModified: atsKeywordsLastMod,
+      lastModified: roleResumeKeywordLastMod,
       changeFrequency: "monthly" as const,
       priority: priorityForPath(path),
     });
+    for (const intent of ROLE_KEYWORD_INTENTS) {
+      const intentPath = `/${slug}/keywords/${intent}`;
+      entries.push({
+        url: `${base}${intentPath}`,
+        lastModified: roleResumeKeywordLastMod,
+        changeFrequency: "monthly" as const,
+        priority: priorityForPath(intentPath),
+      });
+    }
   }
 
   const guideLastMod = new Date("2026-03-09");
@@ -146,23 +183,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: priorityForPath("/resume-guides/resume-format-guide"),
   });
 
-  const hubLastMod = new Date("2026-03-17");
   for (const { slug } of Object.values(KEYWORD_PAGES)) {
+    const roleHubPath = `/${slug}`;
+    entries.push({
+      url: `${base}${roleHubPath}`,
+      lastModified: roleResumeKeywordLastMod,
+      changeFrequency: "monthly" as const,
+      priority: priorityForPath(roleHubPath),
+    });
     const path = `/${slug}/resume`;
     entries.push({
       url: `${base}${path}`,
-      lastModified: hubLastMod,
+      lastModified: roleResumeKeywordLastMod,
       changeFrequency: "monthly" as const,
       priority: priorityForPath(path),
     });
   }
 
-  const seoLastMod = new Date("2026-03-17");
-  for (const slug of generateSeoSlugs()) {
-    const path = `/seo/${slug}`;
+  for (const path of generateRoleResumeTopicPaths()) {
     entries.push({
       url: `${base}${path}`,
-      lastModified: seoLastMod,
+      lastModified: roleResumeKeywordLastMod,
       changeFrequency: "monthly" as const,
       priority: priorityForPath(path),
     });
@@ -186,4 +227,42 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
 
   return entries;
+}
+
+function pathnameFromEntryUrl(url: string, base: string): string {
+  const baseNorm = base.replace(/\/$/, "");
+  if (url.startsWith(baseNorm)) {
+    const p = url.slice(baseNorm.length) || "/";
+    return p.startsWith("/") ? p : `/${p}`;
+  }
+  try {
+    const u = new URL(url);
+    return u.pathname || "/";
+  } catch {
+    return "/";
+  }
+}
+
+/** Keyword cluster URLs: /{role}/keywords and /{role}/keywords/{intent} */
+export function isKeywordsClusterPath(pathname: string): boolean {
+  return /^\/[^/]+\/keywords(\/[^/]+)?$/.test(pathname);
+}
+
+export function splitSitemapEntries(
+  entries: MetadataRoute.Sitemap,
+  baseUrl: string
+): { keywords: MetadataRoute.Sitemap; resume: MetadataRoute.Sitemap } {
+  const keywords: MetadataRoute.Sitemap = [];
+  const resume: MetadataRoute.Sitemap = [];
+  const base = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+
+  for (const entry of entries) {
+    const path = pathnameFromEntryUrl(entry.url, base);
+    if (isKeywordsClusterPath(path)) {
+      keywords.push(entry);
+    } else {
+      resume.push(entry);
+    }
+  }
+  return { keywords, resume };
 }

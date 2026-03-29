@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LastUpdated } from "@/app/components/LastUpdated";
 import type { RoleSlug } from "@/app/lib/seoPages";
+import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
+import { getRoleSpecificAtsTips, getRoleTopicExtraParagraphs } from "@/app/lib/resumeTopicCopy";
+import type { ResumeSeoTopic as Topic } from "@/app/lib/resumeTopicTypes";
 import { getSiteUrl } from "@/app/lib/siteUrl";
-
-type Topic =
-  | "bullet-points"
-  | "skills"
-  | "summary"
-  | "responsibilities"
-  | "projects"
-  | "experience-examples";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_ANCHOR,
+} from "@/app/lib/internalLinks";
 
 type SeoTopicConfig = {
   topic: Topic;
@@ -158,51 +158,56 @@ function topicExplanationHeading(topic: Topic, roleName: string): string {
   }
 }
 
-function topicExplanationBody(topic: Topic, roleName: string): string[] {
+function topicExplanationBody(topic: Topic, roleName: string, role: RoleSlug): string[] {
   const base =
     `${roleName} roles are evaluated quickly in ATS and by recruiters. ` +
     "They scan for relevant keywords, clear ownership, and measurable outcomes before deciding whether to read more closely.";
 
+  const roleExtras = getRoleTopicExtraParagraphs(role, topic, roleName);
+
+  let core: string[];
   switch (topic) {
     case "bullet-points":
-      return [
-        base,
+      core = [
         "A high-performing bullet point starts with a clear action verb, names the tools or techniques you used, and ends with a specific, quantified result. That structure makes it easy for both ATS and humans to understand why your work mattered.",
         "Avoid vague lines like “Worked on data projects” or “Responsible for software development.” Instead, anchor each bullet around a problem, the approach you took, and the concrete impact on revenue, reliability, efficiency, or user experience.",
       ];
+      break;
     case "skills":
-      return [
-        base,
+      core = [
         "For the skills section, you want a balance of core technical skills, supporting tools, and domain knowledge. Group skills into logical buckets so hiring teams can verify fit in seconds, then reinforce those same keywords in your bullet points and projects.",
         "Dense keyword stuffing or giant comma-separated lists can backfire. Prioritize skills that are common in strong job descriptions for this role, and remove legacy tools you no longer want to be evaluated on.",
       ];
+      break;
     case "summary":
-      return [
-        base,
+      core = [
         "A strong summary is not a generic objective statement. It should position you for a specific type of opportunity, highlight your years of experience, core strengths, and the business value you create.",
         "Keep it to three or four concise sentences. Mention your technical focus, the environments you’ve worked in (startups, enterprise, consulting), and the type of outcomes you repeatedly deliver, such as revenue growth, performance gains, or better decisions.",
       ];
+      break;
     case "responsibilities":
-      return [
-        base,
+      core = [
         "Responsibility lines should describe what you consistently owned: systems, stakeholders, metrics, and decision areas. Strong responsibilities read like a clear snapshot of your scope, rather than a copied job posting.",
         "Use wording that reflects how you operated day to day – who you partnered with, the scale of systems or teams, and how your responsibilities evolved over time as you earned more trust.",
       ];
+      break;
     case "projects":
-      return [
-        base,
+      core = [
         "Great projects are framed around a meaningful problem, the approach you took, and the business or user impact. That format works for personal, academic, and professional projects.",
         "Recruiters should be able to quickly see where you applied relevant tools, how complex the work was, and what changed after your project shipped or went into production.",
       ];
+      break;
     case "experience-examples":
-      return [
-        base,
+      core = [
         "Your experience section is where you prove that you have already operated at the level this role requires. Strong examples go beyond task lists to show ownership, scale, and measurable outcomes in the context of your title and seniority.",
         "Each bullet should answer three questions: what situation or problem you faced, what you did (including tools and collaborators), and what changed because of your work. When those pieces are present, both ATS and hiring managers can quickly understand why you are a strong match.",
       ];
+      break;
     default:
-      return [base];
+      core = [];
   }
+
+  return [base, ...roleExtras, ...core];
 }
 
 type CategoryId = "ml" | "dataEng" | "analytics" | "leadership";
@@ -841,14 +846,10 @@ export function generateMetadata({ params }: PageProps): Metadata {
 
   const { role, topic } = parsed;
   const roleName = ROLE_NAMES[role];
+  const roleContent = ROLE_CONTENT_MAP[role];
   const topicPhrase = topicToKeywordPhrase(topic);
 
-  const title =
-    topic === "projects"
-      ? `${roleName} Resume Projects (ATS-Friendly Examples) | ResumeAtlas`
-      : topic === "experience-examples"
-      ? `${roleName} Resume Experience Examples (ATS-Friendly Examples) | ResumeAtlas`
-      : `${roleName} Resume ${topicPhrase} (ATS-Friendly Examples) | ResumeAtlas`;
+  const title = `${roleName} Resume ${topicPhrase} (Examples + ATS Tips)`;
   const description =
     topic === "projects"
       ? `Explore ATS-optimized project examples for ${roleName.toLowerCase()} resumes. Includes real projects, impact-focused bullets, and tips to showcase your work effectively.`
@@ -859,6 +860,9 @@ export function generateMetadata({ params }: PageProps): Metadata {
   return {
     title,
     description,
+    alternates: {
+      canonical: `/${role}/resume/${topic}`,
+    },
   };
 }
 
@@ -868,9 +872,10 @@ export default function SeoSlugPage({ params }: PageProps) {
 
   const { role, topic } = parsed;
   const roleName = ROLE_NAMES[role];
+  const roleContent = ROLE_CONTENT_MAP[role];
   const topicPhrase = topicToKeywordPhrase(topic);
 
-  const h1 = `${roleName} ${topicToH1Prefix(topic)} (ATS-Optimized Examples)`;
+  const h1 = `${roleName} Resume ${topicPhrase} (Examples + ATS Keywords)`;
 
   const intro =
     topic === "projects"
@@ -895,7 +900,8 @@ export default function SeoSlugPage({ params }: PageProps) {
         ].join(" ");
 
   const explanationHeading = topicExplanationHeading(topic, roleName);
-  const explanationBody = topicExplanationBody(topic, roleName);
+  const explanationBody = topicExplanationBody(topic, roleName, role);
+  const roleAtsTips = getRoleSpecificAtsTips(role, roleName);
 
   const bullets = buildBulletExamples(role, topic);
 
@@ -925,10 +931,29 @@ export default function SeoSlugPage({ params }: PageProps) {
   } as const;
 
   const resumeExamplePath = `/${role}-resume-example`;
-  const atsKeywordPath = `/ats-keywords/${role}`;
+  const atsKeywordPath = `/${role}/keywords`;
+  const roleHubPath = `/${role}`;
   const hubPath = `/${role}/resume`;
   const canonicalBase = getSiteUrl();
-  const currentPath = `/seo/${params.slug}`;
+  const currentPath = `/${role}/resume/${topic}`;
+  const keywordTopicPath = `/${role}/keywords/${
+    topic === "bullet-points"
+      ? "action-verbs"
+      : topic === "skills"
+      ? "technical-skills"
+      : topic === "projects"
+      ? "projects"
+      : topic === "summary"
+      ? "summary"
+      : "core-keywords"
+  }`;
+  const problemPath =
+    role === "product-manager" || role === "business-analyst"
+      ? "/problems/how-to-tailor-resume-to-job-description"
+      : role === "devops-engineer" || role === "backend-developer"
+      ? "/problems/ats-rejecting-my-resume"
+      : "/problems/resume-not-getting-interviews";
+  const siblingTopics = TOPIC_CONFIGS.map((cfg) => cfg.topic).filter((t) => t !== topic);
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -936,12 +961,24 @@ export default function SeoSlugPage({ params }: PageProps) {
       {
         "@type": "ListItem",
         position: 1,
-        name: `${roleName} Resume Guide`,
-        item: `${canonicalBase}${hubPath}`,
+        name: "Home",
+        item: canonicalBase,
       },
       {
         "@type": "ListItem",
         position: 2,
+        name: roleName,
+        item: `${canonicalBase}${roleHubPath}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: "Resume",
+        item: `${canonicalBase}${hubPath}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
         name: h1,
         item: `${canonicalBase}${currentPath}`,
       },
@@ -968,10 +1005,13 @@ export default function SeoSlugPage({ params }: PageProps) {
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
             {h1}
           </h1>
-          <p className="text-sm text-slate-700 leading-relaxed">{intro}</p>
-          <p className="text-[11px] sm:text-xs text-slate-500">
-            Last updated: March 2026
+          <p className="text-sm text-slate-700 leading-relaxed">
+            Looking for {roleName.toLowerCase()} resume {topicPhrase.toLowerCase()} examples that pass
+            ATS? Here are practical examples, keyword patterns, and role-specific tips to improve match
+            quality against real job descriptions.
           </p>
+          <p className="text-sm text-slate-700 leading-relaxed">{intro}</p>
+          <LastUpdated className="text-[11px] sm:text-xs text-slate-500" />
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
             <span>Built for modern ATS like Greenhouse, Lever, and Workday.</span>
             <span className="hidden sm:inline">·</span>
@@ -988,6 +1028,22 @@ export default function SeoSlugPage({ params }: PageProps) {
               {p}
             </p>
           ))}
+        </section>
+
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
+          <h2 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
+            {roleName}-specific context
+          </h2>
+          <p className="mt-2 text-sm text-slate-700 leading-relaxed">
+            For this role, ATS relevance improves when you show concrete use of tools like{" "}
+            {roleContent.tools.slice(0, 4).join(", ")} and action verbs such as{" "}
+            {roleContent.domainVerbs.slice(0, 4).join(", ")}.
+          </p>
+          <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-slate-700">
+            {roleContent.examplePhrases.slice(0, 2).map((phrase) => (
+              <li key={phrase}>{phrase}</li>
+            ))}
+          </ul>
         </section>
 
         <section className="mt-10">
@@ -1035,10 +1091,10 @@ export default function SeoSlugPage({ params }: PageProps) {
               it matches.
             </p>
             <Link
-              href="/"
+              href={CHECK_RESUME_AGAINST_JD_PATH}
               className="mt-2 inline-flex text-xs sm:text-sm font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
             >
-              Analyze this bullet with ResumeAtlas →
+              {CHECK_RESUME_AGAINST_JD_ANCHOR}
             </Link>
           </div>
         </section>
@@ -1075,26 +1131,9 @@ export default function SeoSlugPage({ params }: PageProps) {
               Use a clean, single-column layout with standard section headings so ATS parsers can
               reliably extract your experience, skills, and education.
             </li>
-            <li>
-              Mirror the exact job title, skills, and domain keywords used in the posting where they
-              truthfully match your background.
-            </li>
-            <li>
-              Anchor each bullet point around a clear action, the tools or methods you used, and a
-              quantified result that matters to the business.
-            </li>
-            <li>
-              Avoid images, text boxes, or overly stylized templates that can break ATS parsing,
-              especially for critical sections like experience and skills.
-            </li>
-            <li>
-              Keep acronyms and full names together at least once (for example, “ETL (extract,
-              transform, load)”) so both recruiters and machines can understand them.
-            </li>
-            <li>
-              Re-run your resume through ATS tools whenever you significantly change the job type,
-              seniority, or domain you are targeting.
-            </li>
+            {roleAtsTips.map((tip) => (
+              <li key={tip}>{tip}</li>
+            ))}
           </ul>
         </section>
 
@@ -1110,10 +1149,10 @@ export default function SeoSlugPage({ params }: PageProps) {
           </div>
           <div className="flex-none">
             <Link
-              href="/"
+              href={CHECK_RESUME_AGAINST_JD_PATH}
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 focus-visible:ring-offset-emerald-50 transition"
             >
-              Check your ATS score →
+              {CHECK_RESUME_AGAINST_JD_ANCHOR}
             </Link>
           </div>
         </section>
@@ -1126,6 +1165,22 @@ export default function SeoSlugPage({ params }: PageProps) {
             polished, ATS-ready application.
           </p>
           <ul className="mt-3 space-y-1.5 text-sm text-slate-800 list-disc pl-5">
+            <li>
+              <Link
+                href={roleHubPath}
+                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                {ROLE_NAMES[role]} role hub
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={hubPath}
+                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                {ROLE_NAMES[role]} resume hub
+              </Link>
+            </li>
             <li>
               <Link
                 href={resumeExamplePath}
@@ -1142,6 +1197,40 @@ export default function SeoSlugPage({ params }: PageProps) {
                 ATS keywords for {roleName.toLowerCase()} resumes
               </Link>
             </li>
+            <li>
+              <Link
+                href={`/${role}/keywords/core-keywords`}
+                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                Core ATS keyword clusters for {roleName.toLowerCase()} →
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={keywordTopicPath}
+                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                Related keyword intent page
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={problemPath}
+                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                Related interview problem page
+              </Link>
+            </li>
+            {siblingTopics.map((siblingTopic) => (
+              <li key={siblingTopic}>
+                <Link
+                  href={`/${role}/resume/${siblingTopic}`}
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {roleName} resume {topicToKeywordPhrase(siblingTopic).toLowerCase()}
+                </Link>
+              </li>
+            ))}
             <li>
               <Link
                 href="/resume-guides/resume-skills-examples"

@@ -26,6 +26,7 @@ import type { AnalysisQuotaStatus } from "@/app/lib/quota";
 import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
 import { resolveProblemInterviewCallout } from "@/app/lib/problemInterviewCallout";
 import { getSiteUrl } from "@/app/lib/siteUrl";
+import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
 import { useRef } from "react";
 
 const homeFaqSchema = {
@@ -112,6 +113,16 @@ const HOW_IT_WORKS_STEPS = [
     line: "Tweak any section in the editor, then export PDF or DOCX",
   },
 ] as const;
+
+/** Crawl spine: primary entry points to `/{role}/resume` (not keyword URLs). */
+const TOP_RESUME_GUIDES_BY_ROLE: { href: string; label: string }[] = [
+  { href: "/data-scientist/resume", label: "Data Scientist Resume" },
+  { href: "/software-engineer/resume", label: "Software Engineer Resume" },
+  { href: "/product-manager/resume", label: "Product Manager Resume" },
+  { href: "/frontend-developer/resume", label: "Frontend Developer Resume" },
+  { href: "/backend-developer/resume", label: "Backend Developer Resume" },
+  { href: "/data-analyst/resume", label: "Data Analyst Resume" },
+];
 
 const HOME_CAPABILITY_CARDS = [
   {
@@ -201,7 +212,23 @@ function writePostOauthAnalyzerSnapshot(state: AnalyzerStoredState) {
   }
 }
 
-export default function Home() {
+export type HomeClientProps = {
+  /** `toolOnly`: analyzer grid + modals only (for SEO landing pages with their own H1/copy). */
+  variant?: "home" | "toolOnly";
+  /**
+   * `atsCompliance`: optional job description, resume-first ATS scan (distinct from JD matcher pages).
+   * `keywordScanner`: keyword gaps + missing skills focus (required JD; simplified results panel).
+   */
+  analysisMode?: "jdMatch" | "atsCompliance" | "keywordScanner";
+};
+
+export default function HomeClient({
+  variant = "home",
+  analysisMode = "jdMatch",
+}: HomeClientProps) {
+  const isHome = variant === "home";
+  const isAtsCompliance = analysisMode === "atsCompliance";
+  const isKeywordScanner = analysisMode === "keywordScanner";
   const router = useRouter();
   const [usage, setUsage] = useState<Usage | null>(null);
   const [analysisQuota, setAnalysisQuota] = useState<AnalysisQuotaStatus | null>(null);
@@ -225,6 +252,8 @@ export default function Home() {
   const [isLaunchingOptimize, setIsLaunchingOptimize] = useState(false);
   const [isStartingGoogleAuth, setIsStartingGoogleAuth] = useState(false);
   const [lastInputs, setLastInputs] = useState<GenerateInputs | null>(null);
+  /** Whether the last completed /api/analyze used a non-empty job description. */
+  const [lastAnalysisUsedJd, setLastAnalysisUsedJd] = useState(true);
   const [optCountry, setOptCountry] = useState<"USA" | "Canada" | "UK">("USA");
   const [optRoleLevel, setOptRoleLevel] = useState<string>("Mid");
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -233,8 +262,9 @@ export default function Home() {
   /** Supabase can send PKCE `code` to Site URL root (`/?code=`) instead of `/auth/callback`. */
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const path = window.location.pathname;
-    if (path !== "/" && path !== "") return;
+    const path = window.location.pathname.replace(/\/$/, "") || "/";
+    const oauthPaths = new Set<string>(["/", ...TOOL_CLUSTER_PATHS_FOR_OAUTH]);
+    if (!oauthPaths.has(path)) return;
     const sp = new URLSearchParams(window.location.search);
     if (!sp.get("code")) return;
     window.location.replace(`${window.location.origin}/auth/callback?${sp.toString()}`);
@@ -285,9 +315,10 @@ export default function Home() {
             const ajd = typeof parsed.lastJD === "string" ? parsed.lastJD : undefined;
             const arl = typeof parsed.lastRoleLevel === "string" ? parsed.lastRoleLevel : undefined;
             const ar = parsed.analyzeResult as ATSAnalyzeResult | undefined;
-            if (li?.resumeText && li?.jobDescription && ajd && ar?.ats_score !== undefined) {
+            if (li?.resumeText && ar?.ats_score !== undefined) {
               setLastInputs(li);
-              setLastJD(ajd);
+              setLastJD(ajd ?? li.jobDescription ?? "");
+              setLastAnalysisUsedJd(!!(li.jobDescription ?? "").trim());
               if (arl) setLastRoleLevel(arl);
               setAnalyzeResult(ar);
               if (li.country) setOptCountry(li.country);
@@ -326,9 +357,10 @@ export default function Home() {
             const ajd = typeof parsed.lastJD === "string" ? parsed.lastJD : undefined;
             const arl = typeof parsed.lastRoleLevel === "string" ? parsed.lastRoleLevel : undefined;
             const ar = parsed.analyzeResult as ATSAnalyzeResult | undefined;
-            if (li?.resumeText && li?.jobDescription && ajd && ar?.ats_score !== undefined) {
+            if (li?.resumeText && ar?.ats_score !== undefined) {
               setLastInputs(li);
-              setLastJD(ajd);
+              setLastJD(ajd ?? li.jobDescription ?? "");
+              setLastAnalysisUsedJd(!!(li.jobDescription ?? "").trim());
               if (arl) setLastRoleLevel(arl);
               setAnalyzeResult(ar);
             }
@@ -429,6 +461,8 @@ export default function Home() {
       setAnalyzeResult(null);
       const country = inputs.country || "USA";
       const roleLevel = inputs.roleLevel || "Mid";
+      const jdTrimmed = inputs.jobDescription.trim();
+      setLastAnalysisUsedJd(!!jdTrimmed);
       const normalizedInputs: GenerateInputs = {
         resumeText: inputs.resumeText,
         jobDescription: inputs.jobDescription,
@@ -455,7 +489,7 @@ export default function Home() {
           headers: { ...headers, "Content-Type": "application/json" },
           body: JSON.stringify({
             resumeText: inputs.resumeText,
-            jobDescription: inputs.jobDescription,
+            jobDescription: jdTrimmed,
           }),
         });
         const raw = await res.text();
@@ -769,9 +803,23 @@ export default function Home() {
 
   const homeProblemCallout = resolveProblemInterviewCallout("/");
 
+  const Root = isHome ? "main" : "div";
+
   return (
-    <main className="min-h-screen flex flex-col bg-white">
+    <Root
+      className="min-h-screen flex flex-col bg-white"
+      {...(!isHome
+        ? {
+            "aria-label": isAtsCompliance
+              ? "ATS resume compatibility checker"
+              : isKeywordScanner
+                ? "Resume keyword scanner"
+                : "Resume and job description checker",
+          }
+        : {})}
+    >
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-2 sm:py-3 flex flex-col gap-3 sm:gap-4">
+        {isHome ? (
         <header className="text-center mt-0 sm:mt-0 mb-0">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 max-w-4xl mx-auto leading-[1.2]">
             Free ATS Resume Checker, Get Your ATS Score &amp; Match Your Resume to Any Job Description
@@ -820,6 +868,33 @@ export default function Home() {
                   <p className="mt-1 text-xs leading-snug text-slate-600 sm:text-[13px]">
                     {card.body}
                   </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section
+            className="mt-10 w-full rounded-xl border border-slate-200 bg-white px-4 py-5 sm:px-5 sm:py-6 shadow-sm"
+            aria-labelledby="top-resume-guides-heading"
+          >
+            <h2
+              id="top-resume-guides-heading"
+              className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 text-center"
+            >
+              Top Resume Guides by Role
+            </h2>
+            <p className="mt-2 text-center text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto">
+              ATS-friendly resume hubs: examples, section tips, and keyword deep-dives for each role.
+            </p>
+            <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 list-none p-0 m-0">
+              {TOP_RESUME_GUIDES_BY_ROLE.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="block rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-2.5 text-sm font-medium text-sky-800 hover:bg-sky-50 hover:border-sky-200 transition text-center sm:text-left"
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -886,8 +961,9 @@ export default function Home() {
             </div>
           </section>
         </header>
+        ) : null}
 
-        <div className="mt-3 sm:mt-4">
+        <div className={isHome ? "mt-3 sm:mt-4" : "mt-0 sm:mt-0"}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 flex-1 min-h-0">
           <div className="lg:col-span-1" id="ats-checker-form">
             {showForm && (
@@ -898,6 +974,7 @@ export default function Home() {
                 isGenerating={isGenerating}
                 error={error}
                 isLoggedIn={isLoggedIn}
+                analysisMode={analysisMode}
                 analysisQuota={analysisQuota}
               />
             )}
@@ -908,7 +985,7 @@ export default function Home() {
               showFullIntelligence={usage?.showFullIntelligence ?? false}
               showLocked={false}
               onOpenOptimizer={
-                analyzeResult && lastInputs
+                analyzeResult && lastInputs && lastAnalysisUsedJd
                   ? () => {
                       void trackOptimizeAfterAnalysisClick();
                       setCreditModalOpen(true);
@@ -917,6 +994,9 @@ export default function Home() {
               }
               resumeText={lastInputs?.resumeText ?? ""}
               jobDescription={lastJD ?? ""}
+              analysisUsedJobDescription={lastAnalysisUsedJd}
+              emptyStateVariant={isAtsCompliance ? "ats" : "jd"}
+              panelVariant={isKeywordScanner ? "keywordScanner" : "default"}
             />
             <CreditPackModal
               open={creditModalOpen}
@@ -934,7 +1014,12 @@ export default function Home() {
               autoCheckoutPackageId={autoCheckoutPackageId}
               onConsumedAutoCheckoutPackage={() => setAutoCheckoutPackageId(null)}
             />
-            {lastInputs && (jdMatchResult || atsResult || evidenceGaps.length > 0) && (
+            {lastInputs &&
+              analyzeResult &&
+              (jdMatchResult ||
+                atsResult ||
+                evidenceGaps.length > 0 ||
+                lastInputs.jobDescription.trim().length > 0) && (
               <section className="rounded-xl bg-slate-50 p-3 space-y-3 sm:p-4">
                 <h3 className="text-sm font-semibold tracking-tight text-slate-900">
                   Step 2: Configure role & country to optimize your resume
@@ -1010,6 +1095,8 @@ export default function Home() {
         </div>
       </div>
 
+      {isHome ? (
+      <>
       <section id="how-ats-works" className="border-t border-slate-200 bg-slate-50/60">
         <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
@@ -1314,6 +1401,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </>
+      ) : null}
 
       <LimitModal
         open={limitModalOpen}
@@ -1326,19 +1415,23 @@ export default function Home() {
         onSignInClick={limitModalQuotaScope === "anonymous" ? handleStartGoogleAuthForQuota : undefined}
         isSigningIn={isStartingGoogleAuth}
       />
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(homeSoftwareApplicationSchema),
-        }}
-      />
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeFaqSchema) }}
-      />
-    </main>
+      {isHome ? (
+        <>
+          <script
+            type="application/ld+json"
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(homeSoftwareApplicationSchema),
+            }}
+          />
+          <script
+            type="application/ld+json"
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(homeFaqSchema) }}
+          />
+        </>
+      ) : null}
+    </Root>
   );
 }
 

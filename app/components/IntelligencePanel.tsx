@@ -4,8 +4,13 @@
 // Uses universal score colors, progress bars, verdict box, and improvement tips.
 
 import React from "react";
+import Link from "next/link";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import { buildExperienceAlignmentSubtitle } from "@/app/lib/experienceCopy";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
+} from "@/app/lib/internalLinks";
 import {
   getScoreStyle,
   getATSBadgeLabel,
@@ -68,6 +73,14 @@ type IntelligencePanelProps = {
   onOpenOptimizer?: () => void;
   resumeText?: string;
   jobDescription?: string;
+  /** False when /api/analyze ran with an empty job description (resume-only ATS scan). */
+  analysisUsedJobDescription?: boolean;
+  /** Empty-state demo copy: `ats` for ATS-first landing pages. */
+  emptyStateVariant?: "jd" | "ats";
+  /**
+   * `keywordScanner`: emphasize keyword coverage + skill gaps only (hides full ATS/score grid).
+   */
+  panelVariant?: "default" | "keywordScanner";
 };
 
 export function IntelligencePanel({
@@ -77,8 +90,13 @@ export function IntelligencePanel({
   onOpenOptimizer,
   resumeText = "",
   jobDescription = "",
+  analysisUsedJobDescription = true,
+  emptyStateVariant = "jd",
+  panelVariant = "default",
 }: IntelligencePanelProps) {
   const hasAny = !!analyzeResult;
+  const emptyAts = emptyStateVariant === "ats";
+  const isKeywordScanner = panelVariant === "keywordScanner";
 
   if (showLocked) {
     return (
@@ -159,7 +177,9 @@ export function IntelligencePanel({
               Intelligence
             </h2>
             <p className="text-[11px] text-slate-600 truncate sm:truncate-none sm:text-xs">
-              ATS-style signals for your resume vs job description.
+              {emptyAts
+                ? "ATS parsing, structure, and readability — not job posting keyword match."
+                : "ATS-style signals for your resume vs job description."}
             </p>
           </div>
           <span className="inline-flex shrink-0 items-center rounded-full bg-slate-800 text-white px-2.5 py-0.5 text-[11px] font-medium">
@@ -215,7 +235,9 @@ export function IntelligencePanel({
         </div>
 
         <p className="mt-2 text-[11px] text-slate-500 leading-snug">
-          Paste your resume and job description, then see your score and fix your resume.
+          {emptyAts
+            ? "Paste your resume to run an ATS-focused scan. Add a job description only if you also want keyword overlap vs that posting."
+            : "Paste your resume and job description, then see your score and fix your resume."}
         </p>
 
         {/* Supporting metrics – compact cards */}
@@ -355,7 +377,9 @@ export function IntelligencePanel({
         {/* Missing skills – red chips */}
         <div className="mt-2.5 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
-            Missing skills (from JD)
+            {emptyAts
+              ? "Missing skills vs job description (example)"
+              : "Missing skills (from JD)"}
           </p>
           <div className="flex flex-wrap gap-2">
             {demoMissing.map((skill) => (
@@ -372,7 +396,9 @@ export function IntelligencePanel({
         </div>
 
         <p className="mt-2 text-xs text-slate-500 leading-snug">
-          Your score and fix suggestions use your resume and the job description you pasted.
+          {emptyAts
+            ? "Illustrative JD match panel. A resume-only scan emphasizes parsing and structure; use the job description checker to align with a specific posting."
+            : "Your score and fix suggestions use your resume and the job description you pasted."}
         </p>
       </section>
     );
@@ -380,7 +406,10 @@ export function IntelligencePanel({
 
   // Live analysis – ATS dashboard (flat JSON from /api/analyze)
   const atsScore = analyzeResult?.ats_score ?? 0;
-  const keywordScore = analyzeResult?.keyword_coverage ?? 0;
+  const keywordCoverageRaw = analyzeResult?.keyword_coverage;
+  const keywordNotApplicable = keywordCoverageRaw === null;
+  const keywordScore =
+    typeof keywordCoverageRaw === "number" ? keywordCoverageRaw : 0;
   const semanticScore = analyzeResult?.semantic_similarity ?? 0;
   const experienceScore = analyzeResult?.experience_alignment ?? 0;
   const requiredYearsExperience = analyzeResult?.required_years_experience ?? null;
@@ -398,7 +427,6 @@ export function IntelligencePanel({
   const atsStyle = getScoreStyle(atsScore);
   const atsRingHex = getATSRingHex(atsScore);
   const atsVerdict = getATSVerdictLines(atsScore);
-  const keywordStyle = getKeywordCoverageStyle(keywordScore);
   const semanticStyle = getSemanticStyle(semanticScore);
   const expAlignment = getExperienceAlignmentStyle(
     requiredYearsExperience,
@@ -409,24 +437,68 @@ export function IntelligencePanel({
   const impactStyle = getImpactStyle(impactScore);
   const qualityStyle = getResumeQualityStyle(qualityScore);
   const totalKeywords = matchedSkills.length + missingSkills.length;
-  const keywordLabel = getKeywordCoverageLabel(keywordScore);
+  const keywordLabel = keywordNotApplicable
+    ? "Not applicable"
+    : getKeywordCoverageLabel(keywordScore);
 
   const improvementTips: string[] = [];
-  if (missingSkills.length > 0) {
+  if (analysisUsedJobDescription) {
+    if (missingSkills.length > 0) {
+      improvementTips.push(
+        hasRequiredPreferred && missingRequired.length > 0
+          ? `Add ${missingRequired.length} Required skills (from JD) automatically with AI optimization`
+          : `Add ${missingSkills.length} missing keywords automatically with AI optimization`
+      );
+    }
+    if (impactScore < 70) {
+      improvementTips.push("Add measurable impact metrics (%, $, growth) to your bullets");
+    }
+    if (
+      typeof keywordCoverageRaw === "number" &&
+      keywordScore < 70 &&
+      missingSkills.length > 0
+    ) {
+      improvementTips.push("Mention specific tools and skills from the job description");
+    }
+    if (qualityScore < 70) {
+      improvementTips.push(
+        "Improve structure: use bullet points and clear Skills/Experience sections"
+      );
+    }
+  } else {
+    if (atsScore < 70) {
+      improvementTips.push(
+        "Simplify layout: avoid tables, multi-column text, and icons that confuse ATS parsers"
+      );
+    }
+    if (qualityScore < 70) {
+      improvementTips.push(
+        "Use standard headings (Experience, Education, Skills) and plain bullet lists"
+      );
+    }
+    if (impactScore < 70) {
+      improvementTips.push("Add measurable outcomes (%, $, scale) so parsed bullets read stronger");
+    }
     improvementTips.push(
-      hasRequiredPreferred && missingRequired.length > 0
-        ? `Add ${missingRequired.length} Required skills (from JD) automatically with AI optimization`
-        : `Add ${missingSkills.length} missing keywords automatically with AI optimization`
+      "Use “Want better results?” above to open the job description checker for keyword alignment and match scoring."
     );
   }
-  if (impactScore < 70) {
-    improvementTips.push("Add measurable impact metrics (%, $, growth) to your bullets");
-  }
-  if (keywordScore < 70 && missingSkills.length > 0) {
-    improvementTips.push("Mention specific tools and skills from the job description");
-  }
-  if (qualityScore < 70) {
-    improvementTips.push("Improve structure: use bullet points and clear Skills/Experience sections");
+
+  if (isKeywordScanner && analysisUsedJobDescription) {
+    improvementTips.length = 0;
+    if (missingSkills.length > 0) {
+      improvementTips.push(
+        `Address ${missingSkills.length} missing keyword${missingSkills.length === 1 ? "" : "s"} from the posting in your bullets or skills—only where truthful.`
+      );
+    }
+    if (typeof keywordCoverageRaw === "number" && keywordScore < 75) {
+      improvementTips.push(
+        "Improve keyword coverage by echoing the job’s terms in context (projects, tools, outcomes)."
+      );
+    }
+    improvementTips.push(
+      "For overall match scoring and deeper JD comparison, use the resume vs job description checker."
+    );
   }
 
   function ScoreBar({ score, hex }: { score: number; hex: string }) {
@@ -485,10 +557,14 @@ export function IntelligencePanel({
       <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
         <div className="flex items-baseline gap-2 min-w-0">
           <h2 className="text-[10px] font-semibold tracking-[0.2em] text-slate-500 uppercase shrink-0">
-            Intelligence
+            {isKeywordScanner ? "Keyword scan" : "Intelligence"}
           </h2>
           <p className="text-xs text-slate-600 truncate sm:truncate-none">
-            Your score and fix suggestions for this resume and job.
+            {isKeywordScanner
+              ? "Missing skills and keyword gaps vs your job description (not a full ATS parse report)."
+              : analysisUsedJobDescription
+                ? "Your score and fix suggestions for this resume and job."
+                : "ATS-focused scores from your resume text (no job description used)."}
           </p>
         </div>
         <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-500/50 bg-emerald-50 text-emerald-700 px-3 py-1 text-xs font-medium">
@@ -496,7 +572,29 @@ export function IntelligencePanel({
         </span>
       </div>
 
+      {isKeywordScanner && analyzeResult ? (
+        <div className="mt-3 rounded-xl border border-violet-200 bg-violet-50/70 px-3 py-3 sm:px-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-violet-900">
+            Keyword coverage vs this posting
+          </p>
+          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4">
+            <span className="text-2xl sm:text-3xl font-bold text-slate-900 tabular-nums">
+              {keywordNotApplicable ? "—" : `${keywordScore}%`}
+            </span>
+            <p className="text-xs text-slate-700 leading-snug min-w-0 flex-1">
+              {analyzeResult.summary}
+            </p>
+          </div>
+          <p className="mt-2 text-[11px] text-slate-500 leading-snug">
+            Formatting and parsing: use the ATS compatibility checker. Overall score breakdown: use
+            the resume score checker.
+          </p>
+        </div>
+      ) : null}
+
       {/* ATS Pass Likelihood – dominant hero block */}
+      {!isKeywordScanner ? (
+        <>
       <div className="mt-3 flex items-center gap-3 sm:gap-4 py-1">
         <div
           className="relative flex items-center justify-center h-20 w-20 sm:h-24 sm:w-24 rounded-full flex-shrink-0"
@@ -522,7 +620,11 @@ export function IntelligencePanel({
           >
             {getATSBadgeLabel(atsScore)}
           </p>
-          <p className="mt-0.5 text-xs text-slate-500">Resume vs this job description</p>
+          <p className="mt-0.5 text-xs text-slate-500">
+            {analysisUsedJobDescription
+              ? "Resume vs this job description"
+              : "Resume scan only — no job description"}
+          </p>
         </div>
       </div>
 
@@ -542,6 +644,24 @@ export function IntelligencePanel({
           <p className="mt-0.5 text-xs text-slate-700 leading-snug">{atsVerdict.subline}</p>
         </div>
       </div>
+
+      {!analysisUsedJobDescription ? (
+        <div className="mt-3 rounded-xl border border-sky-200 bg-gradient-to-br from-sky-50 to-white px-3 py-3 sm:px-4 sm:py-3.5">
+          <p className="text-sm font-semibold text-slate-900">Want better results?</p>
+          <p className="mt-1 text-xs text-slate-700 leading-snug">
+            Compare your resume with a job description to see keyword overlap, missing skills, and a
+            match-style score for that posting.
+          </p>
+          <Link
+            href={CHECK_RESUME_AGAINST_JD_PATH}
+            className="mt-3 inline-flex w-full sm:w-auto items-center justify-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-slate-900/10 transition hover:bg-slate-800"
+          >
+            {RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR}
+          </Link>
+        </div>
+      ) : null}
+        </>
+      ) : null}
 
       {/* Single optimization card – header (problem + opportunity), two-column preview, centered CTA */}
       {onOpenOptimizer && (() => {
@@ -619,15 +739,42 @@ export function IntelligencePanel({
         );
       })()}
 
-      {/* Supporting metrics – compact cards */}
+      {/* Supporting metrics – compact cards (hidden on keyword scanner — hero above) */}
+      {!isKeywordScanner ? (
+        <>
       <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-1.5">
-        <MetricCard
-          title="Keyword coverage"
-          score={keywordScore}
-          style={keywordStyle}
-          subtitle={totalKeywords > 0 ? `${matchedSkills.length} / ${totalKeywords} matched. ${keywordLabel}.` : "% of JD skills present in the resume."}
-          iconLabel={keywordLabel}
-        />
+        {keywordNotApplicable ? (
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-2">
+            <div className="flex items-center justify-between gap-1.5">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+                Keyword coverage
+              </p>
+              <span
+                className="h-2 w-2 shrink-0 rounded-full bg-slate-400"
+                aria-hidden
+                title="Not applicable"
+              />
+            </div>
+            <p className="mt-0.5 text-sm font-semibold text-slate-600 leading-snug">
+              Not applicable (no job description provided)
+            </p>
+            <p className="mt-1.5 text-[11px] text-slate-600 leading-snug">
+              JD keyword overlap is not scored for this scan.
+            </p>
+          </div>
+        ) : (
+          <MetricCard
+            title="Keyword coverage"
+            score={keywordScore}
+            style={getKeywordCoverageStyle(keywordScore)}
+            subtitle={
+              totalKeywords > 0
+                ? `${matchedSkills.length} / ${totalKeywords} matched. ${keywordLabel}.`
+                : "% of JD skills present in the resume."
+            }
+            iconLabel={keywordLabel}
+          />
+        )}
         <MetricCard
           title="Semantic similarity"
           score={semanticScore}
@@ -680,94 +827,100 @@ export function IntelligencePanel({
           iconLabel={qualityStyle.label}
         />
       </div>
+        </>
+      ) : null}
 
-      {/* Matched skills – green chips */}
-      <div className="mt-3 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
-          Matched skills
-        </p>
-        {matchedSkills.length ? (
-          <div className="flex flex-wrap gap-2">
-            {matchedSkills.map((skill) => (
-              <span
-                key={skill}
-                className="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium"
-                style={{ backgroundColor: "#ECFDF5", color: "#16A34A" }}
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="text-xs text-slate-500">No explicit skill matches detected yet.</p>
-        )}
-      </div>
-
-      {/* Missing skills – Required vs Preferred when classified, else single list */}
-      <div className="mt-2.5 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
-          Missing skills (from JD)
-        </p>
-        {!missingSkills.length ? (
-          <p className="text-xs text-slate-600" style={{ color: "#16A34A" }}>
-            No major missing skills detected compared to the JD.
-          </p>
-        ) : hasRequiredPreferred ? (
-          <div className="space-y-2">
-            {missingRequired.length > 0 && (
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-red-700 mb-1.5">
-                  Required
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {missingRequired.map((skill) => (
-                    <span
-                      key={skill}
-                      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
-                      style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#EF4444]" aria-hidden />
-                      {skill}
-                    </span>
-                  ))}
-                </div>
+      {analysisUsedJobDescription || matchedSkills.length > 0 || missingSkills.length > 0 ? (
+        <>
+          {/* Matched skills – green chips */}
+          <div className="mt-3 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
+              Matched skills
+            </p>
+            {matchedSkills.length ? (
+              <div className="flex flex-wrap gap-2">
+                {matchedSkills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium"
+                    style={{ backgroundColor: "#ECFDF5", color: "#16A34A" }}
+                  >
+                    {skill}
+                  </span>
+                ))}
               </div>
-            )}
-            {missingPreferred.length > 0 && (
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-700 mb-1.5">
-                  Preferred
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {missingPreferred.map((skill) => (
-                    <span
-                      key={skill}
-                      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
-                      style={{ backgroundColor: "#FFFBEB", color: "#D97706" }}
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#D97706]" aria-hidden />
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
+            ) : (
+              <p className="text-xs text-slate-500">No explicit skill matches detected yet.</p>
             )}
           </div>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {missingSkills.map((skill) => (
-              <span
-                key={skill}
-                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
-                style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-[#EF4444]" aria-hidden />
-                {skill}
-              </span>
-            ))}
+
+          {/* Missing skills – Required vs Preferred when classified, else single list */}
+          <div className="mt-2.5 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
+              Missing skills (from JD)
+            </p>
+            {!missingSkills.length ? (
+              <p className="text-xs text-slate-600" style={{ color: "#16A34A" }}>
+                No major missing skills detected compared to the JD.
+              </p>
+            ) : hasRequiredPreferred ? (
+              <div className="space-y-2">
+                {missingRequired.length > 0 && (
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-red-700 mb-1.5">
+                      Required
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {missingRequired.map((skill) => (
+                        <span
+                          key={skill}
+                          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
+                          style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
+                        >
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#EF4444]" aria-hidden />
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {missingPreferred.length > 0 && (
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-700 mb-1.5">
+                      Preferred
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {missingPreferred.map((skill) => (
+                        <span
+                          key={skill}
+                          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
+                          style={{ backgroundColor: "#FFFBEB", color: "#D97706" }}
+                        >
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#D97706]" aria-hidden />
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {missingSkills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
+                    style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#EF4444]" aria-hidden />
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      ) : null}
 
       {/* Improvement tips */}
       {improvementTips.length > 0 && (

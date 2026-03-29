@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Refund Policy | ResumeAtlas",
   description:
     "ResumeAtlas refund policy for credit pack purchases. Learn about eligibility and how to request a refund.",
+  alternates: {
+    canonical: "/refund-policy",
+  },
 };
 
 export default function RefundPolicyPage() {

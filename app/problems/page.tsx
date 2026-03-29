@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   title: "Fix Your Resume for Any Job | Job Search Problems | ResumeAtlas",
   description:
     "ResumeAtlas is an AI ATS resume checker: compare your resume with a job description, find gaps, and fix weak bullets. Pick a problem page below or use the free checker on the homepage, no login.",
+  alternates: {
+    canonical: "/problems",
+  },
 };
 
 const HUB_FAQ = [

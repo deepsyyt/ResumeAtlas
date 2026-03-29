@@ -17,17 +17,22 @@ const nextConfig = {
     return [
       {
         source: "/ats-keywords-data-scientist-resumes",
-        destination: "/ats-keywords/data-scientist",
+        destination: "/data-scientist/keywords",
         permanent: true,
       },
       {
         source: "/ats-keywords-data-scientist-resumes/",
-        destination: "/ats-keywords/data-scientist",
+        destination: "/data-scientist/keywords",
+        permanent: true,
+      },
+      {
+        source: "/ats-keywords/:role",
+        destination: "/:role/keywords",
         permanent: true,
       },
       {
         source: "/ats-resume-checker",
-        destination: "/",
+        destination: "/check-resume-against-job-description",
         permanent: true,
       },
       {
@@ -58,6 +63,17 @@ const nextConfig = {
       {
         source: "/resume-guides/simple-resume-format",
         destination: "/resume-guides/resume-format-guide#simple-resume-format",
+        permanent: true,
+      },
+      {
+        source: "/seo/bullet-points-:role-resume",
+        destination: "/:role/resume/bullet-points",
+        permanent: true,
+      },
+      {
+        source:
+          "/seo/:role-resume-:topic(skills|summary|responsibilities|projects|experience-examples)",
+        destination: "/:role/resume/:topic",
         permanent: true,
       },
     ];

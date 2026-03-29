@@ -17,6 +17,9 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
   return {
     title: config.metaTitle,
     description: config.metaDescription,
+    alternates: {
+      canonical: `/resume-guides/${params.slug}`,
+    },
   };
 }
 

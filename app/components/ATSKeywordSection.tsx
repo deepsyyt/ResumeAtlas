@@ -7,11 +7,11 @@ export function ATSKeywordSection() {
   const items = Object.entries(KEYWORD_PAGES).slice(0, 6);
   const seoContentLinks = [
     {
-      href: "/seo/data-scientist-resume-summary",
+      href: "/data-scientist/resume/summary",
       label: "Data Scientist resume summary examples",
     },
     {
-      href: "/seo/product-manager-resume-responsibilities",
+      href: "/product-manager/resume/responsibilities",
       label: "Product Manager resume responsibilities",
     },
   ];
@@ -28,7 +28,7 @@ export function ATSKeywordSection() {
         {items.map(([role, page]) => (
           <li key={role}>
             <Link
-              href={`/ats-keywords/${role}`}
+              href={`/${role}/keywords`}
               className="text-sky-700 hover:underline text-xs sm:text-sm"
             >
               {page.h1}

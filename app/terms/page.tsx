@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Terms of Service | ResumeAtlas",
   description:
     "ResumeAtlas terms of service. Usage terms, account obligations, and service limitations.",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 export default function TermsPage() {

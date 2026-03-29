@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { KEYWORD_PAGES } from "@/app/lib/seoPages";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_ANCHOR,
+} from "@/app/lib/internalLinks";
 
 export const metadata: Metadata = {
   title: "ATS Keyword Guides by Role | ResumeAtlas",
   description: "Browse ATS keyword guides for popular roles to improve resume keyword coverage.",
+  alternates: {
+    canonical: "/ats-keywords",
+  },
 };
 
 export default function ATSKeywordsIndexPage() {
@@ -21,10 +28,10 @@ export default function ATSKeywordsIndexPage() {
             Role-specific keyword checklists to help your resume pass screening.
           </p>
           <Link
-            href="/"
+            href={CHECK_RESUME_AGAINST_JD_PATH}
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check Your ATS Score
+            {CHECK_RESUME_AGAINST_JD_ANCHOR}
           </Link>
         </div>
       </section>
@@ -34,7 +41,7 @@ export default function ATSKeywordsIndexPage() {
           {items.map((p) => (
             <li key={p.slug} className="rounded-xl border border-slate-200 bg-white p-4">
               <Link
-                href={`/ats-keywords/${p.slug}`}
+                href={`/${p.slug}/keywords`}
                 className="font-semibold text-slate-900 hover:underline"
               >
                 {p.h1}
@@ -52,7 +59,7 @@ export default function ATSKeywordsIndexPage() {
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link
-                href="/seo/data-scientist-resume-summary"
+                href="/data-scientist/resume/summary"
                 className="text-sky-700 hover:underline"
               >
                 Data Scientist resume summary examples
@@ -60,7 +67,7 @@ export default function ATSKeywordsIndexPage() {
             </li>
             <li>
               <Link
-                href="/seo/product-manager-resume-responsibilities"
+                href="/product-manager/resume/responsibilities"
                 className="text-sky-700 hover:underline"
               >
                 Product Manager resume responsibilities

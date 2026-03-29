@@ -112,6 +112,44 @@ Output format (no other keys):
   "summary": "string"
 }`;
 
+/** When no job description is provided: ATS readability, structure, parsing — not JD keyword match. */
+const SYSTEM_PROMPT_RESUME_ONLY = `You are an ATS compatibility analyst. There is NO job description. Evaluate ONLY the resume for how likely it is to be parsed and processed correctly by typical Applicant Tracking Systems, and how strong the document is on structure and clarity.
+
+Return ONLY valid JSON. Do not include explanations, markdown, or any text outside the JSON object.
+
+Focus on:
+- Parse-friendly structure: clear section headings (Experience, Work History, Education, Skills, Summary, etc.), logical order, plain text flow (infer from text; flag dense tab-like or column-like patterns as risky).
+- Section coverage: contact signals, experience with dates, education, skills or technical terms somewhere readable.
+- Formatting red flags implied by text: unusual characters-only blocks, heavy unicode decoration, role-play formatting that might break parsers.
+- Bullet quality: action-led bullets, measurable outcomes where present.
+- Keyword coverage: there is NO job description — you MUST set keyword_coverage to null (JSON null) and MUST set matched_skills, missing_skills, missing_skills_required, and missing_skills_preferred to empty arrays [].
+- semantic_similarity: set to 70 (neutral — no role context).
+- experience_alignment: 0–100 based on coherent work history and dates; use 80 if dates are unclear.
+- required_years_experience and required_years_experience_max: MUST be null (no JD).
+- resume_years_experience: estimate total relevant years from employment dates in the resume (number ≥ 0).
+- ats_score: 0–100 overall likelihood the resume parses cleanly and presents experience in an ATS-friendly way (not match to a specific job).
+- impact_score: from quantified achievements in bullets.
+- resume_quality: structure, bullets, clarity.
+- summary: one short sentence emphasizing structure, formatting, and ATS readability; explicitly state that no job description was used so keyword match to a specific posting was not evaluated.
+
+Output format (no other keys):
+{
+  "ats_score": number,
+  "keyword_coverage": null,
+  "semantic_similarity": 70,
+  "experience_alignment": number,
+  "required_years_experience": null,
+  "required_years_experience_max": null,
+  "resume_years_experience": number,
+  "impact_score": number,
+  "resume_quality": number,
+  "matched_skills": [],
+  "missing_skills": [],
+  "missing_skills_required": [],
+  "missing_skills_preferred": [],
+  "summary": "string"
+}`;
+
 function extractJson(raw: string): string {
   const mdMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
   const str = mdMatch ? mdMatch[1].trim() : raw;
@@ -145,9 +183,16 @@ export async function POST(request: Request) {
     resumeText = clipToWordLimit(resumeText, RESUME_TEXT_MAX_WORDS);
     jobDescription = clipToWordLimit(jobDescription, JOB_DESCRIPTION_MAX_WORDS);
 
+    const jdEmpty = !jobDescription.trim();
+    if (!resumeText.trim()) {
+      return NextResponse.json({ error: "resumeText is required" }, { status: 400 });
+    }
+
     const model =
       process.env.ANTHROPIC_MODEL?.trim() || "claude-3-haiku-20240307";
-    const cacheKey = buildAnalysisCacheKey(resumeText, jobDescription, model);
+    const cacheKey = buildAnalysisCacheKey(resumeText, jobDescription, model, {
+      resumeOnly: jdEmpty,
+    });
 
     const cached = await getCachedAnalysisResult(cacheKey);
     if (cached) {
@@ -220,7 +265,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const userContent = `RESUME:
+    const userContent = jdEmpty
+      ? `RESUME ONLY — no job description was provided. Evaluate ATS parsing compatibility, section structure, and formatting signals only:\n${resumeText}`
+      : `RESUME:
 ${resumeText}
 
 JOB DESCRIPTION:
@@ -238,7 +285,7 @@ ${jobDescription}`;
         max_tokens: 1000,
         temperature: 0,
         top_p: 1,
-        system: SYSTEM_PROMPT,
+        system: jdEmpty ? SYSTEM_PROMPT_RESUME_ONLY : SYSTEM_PROMPT,
         messages: [{ role: "user" as const, content: userContent }],
       }),
     });
@@ -349,6 +396,14 @@ ${jobDescription}`;
       missing_skills_preferred: missingPreferredAfter.length > 0 ? missingPreferredAfter : undefined,
       summary: typeof result.summary === "string" ? result.summary : "",
     };
+
+    if (jdEmpty) {
+      normalized.keyword_coverage = null;
+      normalized.matched_skills = [];
+      normalized.missing_skills = [];
+      normalized.missing_skills_required = undefined;
+      normalized.missing_skills_preferred = undefined;
+    }
 
     await setCachedAnalysisResult(cacheKey, normalized);
 
