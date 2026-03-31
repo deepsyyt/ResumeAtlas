@@ -32,8 +32,8 @@ export function ATSResumeCheckerFreeLanding() {
             {TOOL_CLUSTER_ATS_FREE.h1}
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Check if your resume passes applicant tracking systems (ATS), identify formatting and
-            parsing issues, and get an instant ATS score.
+            Get an instant ATS score from your pasted resume, surface parser-breaking formatting
+            risks, and fix readability issues before recruiters or filters skip your profile.
           </p>
         </div>
       </section>
@@ -41,13 +41,19 @@ export function ATSResumeCheckerFreeLanding() {
       <section className="border-b border-slate-200 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 text-center">
           <p className="text-sm sm:text-base text-slate-900">
-            <strong>Paste your resume below to get your ATS score in seconds.</strong>
+            <strong>{TOOL_CLUSTER_ATS_FREE.topStripStrong}</strong>
           </p>
           <p className="mt-2 text-xs sm:text-sm font-medium text-slate-700">
             <span aria-hidden="true">✔</span> Free <span className="text-slate-400">•</span>{" "}
             <span aria-hidden="true">✔</span> Instant Results{" "}
             <span className="text-slate-400">•</span> <span aria-hidden="true">✔</span> No Signup
           </p>
+          <a
+            href="#ats-checker-form"
+            className="mt-4 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
+          >
+            {TOOL_CLUSTER_ATS_FREE.ctaAnchor}
+          </a>
         </div>
       </section>
 
@@ -203,13 +209,22 @@ export function ATSResumeCheckerFreeLanding() {
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900">Example</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900">
+            Real-world ATS proof example
+          </h2>
           <p className="mt-2 text-sm text-slate-700">
-            A resume that reads like multiple columns, lacks a clear Skills section, and uses lots
-            of symbols might score around{" "}
-            <strong className="text-slate-900">58% ATS compatibility</strong> with issues called
-            out around parsing and section structure. Fixes usually start with a simpler linear
-            layout and standard headings.
+            Candidate resume had strong experience but used mixed heading styles and decorative
+            formatting.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-1 text-sm text-slate-700">
+            <li>Before: parser flagged weak section detection and chronology ambiguity.</li>
+            <li>Compatibility estimate: 58% before cleanup.</li>
+            <li>After fixes: one-column layout + standard headings + consistent dates.</li>
+            <li>Expected outcome: cleaner ATS parsing and stronger recruiter skim clarity.</li>
+          </ul>
+          <p className="mt-3 text-sm text-slate-700">
+            This is directional guidance, not a hiring guarantee, but it mirrors the most common ATS
+            formatting failure pattern we see.
           </p>
         </section>
 

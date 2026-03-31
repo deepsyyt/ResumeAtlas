@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useCallback, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ResumeForm, type GenerateInputs, ROLE_LEVELS } from "@/app/components/ResumeForm";
+import { ResumeForm, type GenerateInputs } from "@/app/components/ResumeForm";
 import { ResumePreview } from "@/app/components/ResumePreview";
 import { IntelligencePanel } from "@/app/components/IntelligencePanel";
 import { LimitModal } from "@/app/components/LimitModal";
@@ -236,7 +236,6 @@ export default function HomeClient({
   const [limitModalMessage, setLimitModalMessage] = useState("");
   const [limitModalQuotaScope, setLimitModalQuotaScope] = useState<LimitModalQuotaScope>(null);
   const [creditModalOpen, setCreditModalOpen] = useState(false);
-  const [autoCheckoutPackageId, setAutoCheckoutPackageId] = useState<CreditPackageId | null>(null);
   const [resume, setResume] = useState<Resume | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -254,8 +253,6 @@ export default function HomeClient({
   const [lastInputs, setLastInputs] = useState<GenerateInputs | null>(null);
   /** Whether the last completed /api/analyze used a non-empty job description. */
   const [lastAnalysisUsedJd, setLastAnalysisUsedJd] = useState(true);
-  const [optCountry, setOptCountry] = useState<"USA" | "Canada" | "UK">("USA");
-  const [optRoleLevel, setOptRoleLevel] = useState<string>("Mid");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const openedOptimizerFromQueryRef = useRef(false);
 
@@ -321,8 +318,6 @@ export default function HomeClient({
               setLastAnalysisUsedJd(!!(li.jobDescription ?? "").trim());
               if (arl) setLastRoleLevel(arl);
               setAnalyzeResult(ar);
-              if (li.country) setOptCountry(li.country);
-              if (li.roleLevel) setOptRoleLevel(li.roleLevel);
             }
             window.sessionStorage.removeItem(POST_OAUTH_ANALYZER_KEY);
           }
@@ -387,18 +382,6 @@ export default function HomeClient({
     // Clean the URL so refresh doesn't re-open the modal.
     router.replace("/");
   }, [analyzeResult, lastInputs, router]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("billingCheckout") !== "1") return;
-    const raw = window.sessionStorage.getItem("resumeatlas_pending_package_id");
-    if (raw === "starter" || raw === "jobseeker" || raw === "power") {
-      setAutoCheckoutPackageId(raw);
-      setCreditModalOpen(true);
-    }
-    router.replace("/", { scroll: false });
-  }, [router]);
 
   const logAnalysisEvent = useCallback(
     async (eventType: string) => {
@@ -472,8 +455,6 @@ export default function HomeClient({
       setLastInputs(normalizedInputs);
       setLastJD(inputs.jobDescription);
       setLastRoleLevel(roleLevel);
-      setOptCountry(country);
-      setOptRoleLevel(roleLevel);
       void logAnalysisEvent("analyze_clicked");
       if (typeof window !== "undefined" && (window as any).gtag) {
         (window as any).gtag("event", "ats_analyze_started", {
@@ -666,36 +647,19 @@ export default function HomeClient({
     }
   }, [lastInputs, analyzeResult, lastJD, router, refreshUsage]);
 
-  const handleStep2OptimizeClick = useCallback(() => {
-    if (!lastInputs || !analyzeResult) return;
-    void trackOptimizeAfterAnalysisClick();
-    if (!isLoggedIn || (usage?.creditsRemaining ?? 0) < 1) {
-      setCreditModalOpen(true);
-      return;
-    }
-    void launchOptimizerFlow();
-  }, [
-    lastInputs,
-    analyzeResult,
-    isLoggedIn,
-    usage?.creditsRemaining,
-    launchOptimizerFlow,
-    trackOptimizeAfterAnalysisClick,
-  ]);
-
   const onCreditModalStartOptimize = useCallback(() => {
     return launchOptimizerFlow();
   }, [launchOptimizerFlow]);
 
   const handleStartGoogleAuthForPackage = useCallback(
     async (packageId: CreditPackageId) => {
+      void packageId;
       if (!lastInputs || !analyzeResult) return;
       const supabase = createClient();
       setIsStartingGoogleAuth(true);
       setError(null);
       try {
         if (typeof window !== "undefined") {
-          window.sessionStorage.setItem("resumeatlas_pending_package_id", packageId);
           writePostOauthAnalyzerSnapshot({
             lastInputs,
             lastJD: lastJD ?? lastInputs.jobDescription,
@@ -704,9 +668,7 @@ export default function HomeClient({
             savedAt: Date.now(),
           });
         }
-        const redirectTo = buildAuthCallbackRedirectTo(
-          "/?openOptimizer=1&billingCheckout=1"
-        );
+        const redirectTo = buildAuthCallbackRedirectTo("/?openOptimizer=1");
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: { redirectTo },
@@ -804,10 +766,11 @@ export default function HomeClient({
   const homeProblemCallout = resolveProblemInterviewCallout("/");
 
   const Root = isHome ? "main" : "div";
+  const rootClassName = isHome ? "min-h-screen flex flex-col bg-white" : "flex flex-col bg-white";
 
   return (
     <Root
-      className="min-h-screen flex flex-col bg-white"
+      className={rootClassName}
       {...(!isHome
         ? {
             "aria-label": isAtsCompliance
@@ -868,33 +831,6 @@ export default function HomeClient({
                   <p className="mt-1 text-xs leading-snug text-slate-600 sm:text-[13px]">
                     {card.body}
                   </p>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section
-            className="mt-10 w-full rounded-xl border border-slate-200 bg-white px-4 py-5 sm:px-5 sm:py-6 shadow-sm"
-            aria-labelledby="top-resume-guides-heading"
-          >
-            <h2
-              id="top-resume-guides-heading"
-              className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 text-center"
-            >
-              Top Resume Guides by Role
-            </h2>
-            <p className="mt-2 text-center text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto">
-              ATS-friendly resume hubs: examples, section tips, and keyword deep-dives for each role.
-            </p>
-            <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 list-none p-0 m-0">
-              {TOP_RESUME_GUIDES_BY_ROLE.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="block rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-2.5 text-sm font-medium text-sky-800 hover:bg-sky-50 hover:border-sky-200 transition text-center sm:text-left"
-                  >
-                    {item.label}
-                  </Link>
                 </li>
               ))}
             </ul>
@@ -976,6 +912,8 @@ export default function HomeClient({
                 isLoggedIn={isLoggedIn}
                 analysisMode={analysisMode}
                 analysisQuota={analysisQuota}
+                onLoginForMoreScans={handleStartGoogleAuthForQuota}
+                isLoggingInForMoreScans={isStartingGoogleAuth}
               />
             )}
           </div>
@@ -1002,7 +940,6 @@ export default function HomeClient({
               open={creditModalOpen}
               onClose={() => {
                 setCreditModalOpen(false);
-                setAutoCheckoutPackageId(null);
               }}
               isLoggedIn={isLoggedIn}
               creditsRemaining={usage?.creditsRemaining ?? 0}
@@ -1011,65 +948,7 @@ export default function HomeClient({
               onStartGoogleAuthForPackage={handleStartGoogleAuthForPackage}
               isStartingGoogleAuth={isStartingGoogleAuth}
               isBusy={isLaunchingOptimize}
-              autoCheckoutPackageId={autoCheckoutPackageId}
-              onConsumedAutoCheckoutPackage={() => setAutoCheckoutPackageId(null)}
             />
-            {lastInputs &&
-              analyzeResult &&
-              (jdMatchResult ||
-                atsResult ||
-                evidenceGaps.length > 0 ||
-                lastInputs.jobDescription.trim().length > 0) && (
-              <section className="rounded-xl bg-slate-50 p-3 space-y-3 sm:p-4">
-                <h3 className="text-sm font-semibold tracking-tight text-slate-900">
-                  Step 2: Configure role & country to optimize your resume
-                </h3>
-                <div className="flex flex-col md:flex-row md:items-end gap-2">
-                  <div className="flex-1">
-                    <label className="block text-xs font-semibold tracking-tight text-slate-700 mb-1">
-                      Country
-                    </label>
-                    <select
-                      value={optCountry}
-                      onChange={(e) =>
-                        setOptCountry((e.target.value as "USA" | "Canada" | "UK") || "USA")
-                      }
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-black/20 transition"
-                    >
-                      <option value="USA">USA</option>
-                      <option value="Canada">Canada</option>
-                      <option value="UK">UK</option>
-                    </select>
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-xs font-semibold tracking-tight text-slate-700 mb-1">
-                      Role level
-                    </label>
-                    <select
-                      value={optRoleLevel}
-                      onChange={(e) => setOptRoleLevel(e.target.value || "Mid")}
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-black/20 transition"
-                    >
-                      {ROLE_LEVELS.map((r) => (
-                        <option key={r} value={r}>
-                          {r}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex-none">
-                    <button
-                      type="button"
-                      onClick={handleStep2OptimizeClick}
-                      disabled={isGenerating || isLaunchingOptimize}
-                      className="w-full md:w-auto rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
-                    >
-                      Optimize resume for this job
-                    </button>
-                  </div>
-                </div>
-              </section>
-            )}
             {resume && (
               <div className="flex-1 min-h-0 flex flex-col">
                 <div className="mb-2 flex items-center justify-between gap-2">
@@ -1399,6 +1278,32 @@ export default function HomeClient({
               </a>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="border-t border-slate-200 bg-white" aria-labelledby="top-resume-guides-heading">
+        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <h2
+            id="top-resume-guides-heading"
+            className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 text-center"
+          >
+            Top Resume Guides by Role
+          </h2>
+          <p className="mt-2 text-center text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto">
+            ATS-friendly resume hubs: examples, section tips, and keyword deep-dives for each role.
+          </p>
+          <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 list-none p-0 m-0">
+            {TOP_RESUME_GUIDES_BY_ROLE.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="block rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-2.5 text-sm font-medium text-sky-800 hover:bg-sky-50 hover:border-sky-200 transition text-center sm:text-left"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
       </>

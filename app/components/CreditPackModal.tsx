@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/app/lib/supabase/client";
+import type { ResumeDocument } from "@/app/lib/resumeDocument";
+import { StructuredResume } from "@/app/components/StructuredResume";
+import { ResumeOptimizationPanel } from "@/app/components/ResumeOptimizationPanel";
 import {
   formatCreditPackPrice,
   getCreditPackage,
@@ -29,9 +32,6 @@ export type CreditPackModalProps = {
   onStartGoogleAuthForPackage: (packageId: CreditPackageId) => void | Promise<void>;
   isStartingGoogleAuth?: boolean;
   isBusy?: boolean;
-  /** After OAuth return, open checkout once for this package (then cleared by parent). */
-  autoCheckoutPackageId?: CreditPackageId | null;
-  onConsumedAutoCheckoutPackage?: () => void;
 };
 
 function loadRazorpayScript(): Promise<void> {
@@ -47,6 +47,27 @@ function loadRazorpayScript(): Promise<void> {
   });
 }
 
+const PREVIEW_SAMPLE_RESUME: ResumeDocument = {
+  name: "DEEPIKA NADARAJAN",
+  title: "MANAGER LEAD DATA SCIENTIST",
+  summary:
+    "Data scientist with experience leading experimentation, ML-driven optimization, and business analytics. Rewritten for this JD to emphasize role-fit, ATS keywords, and measurable impact.",
+  skills: ["Python", "SQL", "NLP", "Experimentation", "A/B Testing", "LLM workflows"],
+  experience: [
+    {
+      company: "Manager | Lead Data Scientist",
+      role: "Data & AI",
+      dates: "2025 - Present",
+      bullets: [
+        "Rewrote weak bullet with role-specific verbs and quantified outcomes, improving recruiter skim clarity.",
+        "Added new JD-aligned bullet where existing project evidence supported experimentation ownership.",
+        "Improved keyword alignment while preserving truth-first claims and ATS readability.",
+      ],
+    },
+  ],
+  education: ["MS, Data Science"],
+};
+
 export function CreditPackModal({
   open,
   onClose,
@@ -57,8 +78,6 @@ export function CreditPackModal({
   onStartGoogleAuthForPackage,
   isStartingGoogleAuth = false,
   isBusy = false,
-  autoCheckoutPackageId = null,
-  onConsumedAutoCheckoutPackage,
 }: CreditPackModalProps) {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -67,14 +86,12 @@ export function CreditPackModal({
     creditsAdded: number;
     balance: number;
   } | null>(null);
-  const autoCheckoutDoneRef = useRef(false);
 
   useEffect(() => {
     if (!open) {
       setLocalError(null);
       setCheckoutLoading(null);
       setCheckoutSuccess(null);
-      autoCheckoutDoneRef.current = false;
     }
   }, [open]);
 
@@ -284,38 +301,25 @@ export function CreditPackModal({
     setCheckoutSuccess(null);
   }, []);
 
-  const runCheckoutRef = useRef(runCheckout);
-  runCheckoutRef.current = runCheckout;
-
-  useEffect(() => {
-    if (!open || !autoCheckoutPackageId || !isLoggedIn || autoCheckoutDoneRef.current) return;
-    if (creditsRemaining > 0) {
-      autoCheckoutDoneRef.current = true;
-      try {
-        window.sessionStorage.removeItem("resumeatlas_pending_package_id");
-      } catch {
-        /* ignore */
-      }
-      onConsumedAutoCheckoutPackage?.();
-      return;
-    }
-    autoCheckoutDoneRef.current = true;
-    onConsumedAutoCheckoutPackage?.();
-    void runCheckoutRef.current(autoCheckoutPackageId, "oauth_resume");
-  }, [
-    open,
-    autoCheckoutPackageId,
-    isLoggedIn,
-    creditsRemaining,
-    onConsumedAutoCheckoutPackage,
-  ]);
-
   if (!open) return null;
 
   const packs = listCreditPackages();
   const showStart = isLoggedIn && creditsRemaining > 0;
   const showPurchasePacks = !isLoggedIn || creditsRemaining === 0;
   const busy = isBusy || checkoutLoading !== null || isStartingGoogleAuth;
+  const previewKeywords = ["ATS", "optimization", "experimentation"];
+  const previewRewritten = [
+    "Rewrote weak bullet with role-specific verbs and quantified outcomes, improving recruiter skim clarity.",
+  ];
+  const previewNewBullets = [
+    "Added new JD-aligned bullet where existing project evidence supported experimentation ownership.",
+  ];
+  const previewKeywordBullets = [
+    "Improved keyword alignment while preserving truth-first claims and ATS readability.",
+  ];
+  const previewQuantified = [
+    "Rewrote weak bullet with role-specific verbs and quantified outcomes, improving recruiter skim clarity.",
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -479,9 +483,76 @@ export function CreditPackModal({
         </div>
         )}
 
+        {!checkoutSuccess && (
+          <section className="mt-6 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
+            <h3 className="text-sm font-semibold text-slate-900">What you unlock with optimization</h3>
+            <p className="mt-1 text-xs text-slate-600">
+              Before checkout, here is what the optimization step does for this exact job description.
+            </p>
+
+            <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+              <p className="rounded-md border border-violet-200 bg-violet-50 px-2.5 py-2 text-violet-900">
+                Rewrites weak bullets for role alignment and measurable impact.
+              </p>
+              <p className="rounded-md border border-amber-200 bg-amber-50 px-2.5 py-2 text-amber-900">
+                Adds new bullets where your real experience supports missing JD requirements.
+              </p>
+              <p className="rounded-md border border-indigo-200 bg-indigo-50 px-2.5 py-2 text-indigo-900">
+                Rewrites summary to align with the target role and posting language.
+              </p>
+              <p className="rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-2 text-emerald-900">
+                Lets you edit everything before download (ATS-friendly PDF or DOCX).
+              </p>
+            </div>
+
+            <div className="mt-4 rounded-lg border border-slate-200 bg-white p-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                Real output preview sample
+              </p>
+              <div className="mt-2 grid grid-cols-1 gap-4 xl:grid-cols-[3fr_2fr]">
+                <div className="space-y-2">
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-semibold text-slate-700">Optimized resume preview</h4>
+                  </div>
+                  <div className="rounded-xl border border-slate-200 bg-white p-3 [&_button]:pointer-events-none [&_button]:opacity-60 [&_button]:cursor-not-allowed">
+                    <StructuredResume
+                      resume={PREVIEW_SAMPLE_RESUME}
+                      highlightKeywords={previewKeywords}
+                      quantifiedBullets={previewQuantified}
+                      highlightedBullets={previewRewritten}
+                      keywordBullets={previewKeywordBullets}
+                      newBullets={previewNewBullets}
+                      highlightOptimizedSummary
+                      showJdAlignedSummaryBadge
+                      editable
+                    />
+                  </div>
+                </div>
+                <ResumeOptimizationPanel
+                  addedKeywords={previewKeywords}
+                  bulletImprovements={6}
+                  bulletsAdded={2}
+                  quantifiedAchievements={2}
+                  summaryOptimized
+                  scoreBefore={90}
+                  scoreAfter={95}
+                  roleAlignmentScore={74}
+                  matchedStrengthScore={71}
+                  onDownloadPdf={() => {
+                    /* preview only */
+                  }}
+                  onDownloadDocx={() => {
+                    /* preview only */
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+        )}
+
         {!checkoutSuccess && !isLoggedIn && (
           <p className="mt-4 text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
-            Pick a pack to continue. We&apos;ll send you to Google sign-in, then checkout.
+            Pick a pack to continue. We&apos;ll send you to Google sign-in and return you here to choose your pack again before checkout.
           </p>
         )}
 

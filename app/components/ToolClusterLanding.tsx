@@ -34,30 +34,38 @@ export function ToolClusterLanding({ config }: Props) {
       <section className="border-b border-slate-200 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 text-center">
           <p className="text-sm sm:text-base text-slate-900">
-            <strong>Paste your resume and job description to get results instantly.</strong>
+            <strong>{config.topStripStrong}</strong>
           </p>
           <p className="mt-2 text-xs sm:text-sm font-medium text-slate-700">
             <span aria-hidden="true">✔</span> Free <span className="text-slate-400">•</span>{" "}
             <span aria-hidden="true">✔</span> Instant Results{" "}
             <span className="text-slate-400">•</span> <span aria-hidden="true">✔</span> No Signup
           </p>
+          <a
+            href="#ats-checker-form"
+            className="mt-4 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
+          >
+            {config.ctaAnchor}
+          </a>
+        </div>
+      </section>
+
+      <section className="border-b border-slate-200 bg-sky-50/40">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
+            {config.differentiatorHeading}
+          </h2>
+          <div className="mt-3 space-y-2.5 text-sm sm:text-base text-slate-700 leading-relaxed">
+            {config.differentiatorBody.map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
         </div>
       </section>
 
       <HomeClient variant="toolOnly" />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
-        <section className="rounded-2xl border border-sky-200 bg-sky-50/50 p-5 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            {config.differentiatorHeading}
-          </h2>
-          <div className="mt-4 space-y-3 text-sm sm:text-base text-slate-700 leading-relaxed">
-            {config.differentiatorBody.map((para, i) => (
-              <p key={i}>{para}</p>
-            ))}
-          </div>
-        </section>
-
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
         <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
             {config.serpVariantsParagraph}
@@ -86,7 +94,7 @@ export function ToolClusterLanding({ config }: Props) {
 
         <section>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            How it works
+            {config.howItWorksHeading}
           </h2>
           <ol className="mt-4 space-y-4 list-decimal pl-5 text-sm sm:text-base text-slate-700">
             <li>
@@ -112,7 +120,7 @@ export function ToolClusterLanding({ config }: Props) {
 
         <section>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Why you should match your resume to a job description
+            {config.whyMatchHeading}
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-700">
             Most resumes are rejected not because of a lack of skills, but because:
@@ -130,7 +138,7 @@ export function ToolClusterLanding({ config }: Props) {
 
         <section>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            What you will see in your results
+            {config.resultsHeading}
           </h2>
           <div className="mt-4 space-y-4 text-sm sm:text-base text-slate-700">
             <div>
@@ -162,19 +170,22 @@ export function ToolClusterLanding({ config }: Props) {
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900">Example</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900">
+            Real-world proof example
+          </h2>
           <p className="mt-2 text-sm text-slate-700">
-            <strong className="text-slate-900">Job description requires:</strong> Python, Machine
-            Learning, SQL.
+            <strong className="text-slate-900">Job description requires:</strong>{" "}
+            {config.exampleJobRequires}
           </p>
           <p className="mt-2 text-sm text-slate-700">
-            <strong className="text-slate-900">Your resume contains:</strong> Python, Data Analysis.
+            <strong className="text-slate-900">Your resume contains:</strong>{" "}
+            {config.exampleResumeContains}
           </p>
           <p className="mt-3 text-sm font-medium text-slate-900">Result</p>
           <ul className="mt-1 list-disc pl-5 text-sm text-slate-700 space-y-1">
-            <li>Missing: Machine Learning, SQL</li>
-            <li>ATS score: 62% (illustrative)</li>
-            <li>Suggested fix: add relevant ML projects and SQL experience where truthful</li>
+            <li>Missing: {config.exampleMissing}</li>
+            <li>{config.exampleScoreLine}</li>
+            <li>Suggested fix: {config.exampleFixLine}</li>
           </ul>
         </section>
 

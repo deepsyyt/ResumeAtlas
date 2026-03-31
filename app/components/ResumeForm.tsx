@@ -38,6 +38,8 @@ type ResumeFormProps = {
     limit: number;
     scope: string;
   } | null;
+  onLoginForMoreScans?: () => void | Promise<void>;
+  isLoggingInForMoreScans?: boolean;
 };
 
 const textareaClass =
@@ -62,6 +64,8 @@ export function ResumeForm({
   isLoggedIn,
   analysisMode = "jdMatch",
   analysisQuota,
+  onLoginForMoreScans,
+  isLoggingInForMoreScans = false,
 }: ResumeFormProps) {
   const isAtsCompliance = analysisMode === "atsCompliance";
   const isKeywordScanner = analysisMode === "keywordScanner";
@@ -128,6 +132,21 @@ export function ResumeForm({
       : quotaTone === "amber"
         ? "border-amber-300/80 bg-gradient-to-br from-amber-50 to-amber-100/40 text-amber-950 ring-1 ring-amber-200/60"
         : "border-emerald-300/80 bg-gradient-to-br from-emerald-50 to-emerald-100/40 text-emerald-950 ring-1 ring-emerald-200/60";
+  const loginCalloutClasses = isAtsCompliance
+    ? "mt-2 rounded-md border border-sky-200 bg-sky-50 px-3 py-2.5 text-sky-900"
+    : isKeywordScanner
+      ? "mt-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-emerald-900"
+      : "mt-2 rounded-md border border-indigo-200 bg-indigo-50 px-3 py-2.5 text-indigo-900";
+  const loginIntentCopy = isAtsCompliance
+    ? "Log in to unlock 5 more free ATS compatibility scans."
+    : isKeywordScanner
+      ? "Log in to unlock 5 more free keyword gap analyses."
+      : "Log in to unlock 5 more free resume-vs-job analyses.";
+
+  const handleLoginForMoreScans = () => {
+    if (!onLoginForMoreScans) return;
+    void Promise.resolve(onLoginForMoreScans());
+  };
 
   return (
     <div className="relative overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-900/[0.08]">
@@ -153,31 +172,46 @@ export function ResumeForm({
             ? "Paste your resume for an ATS readability and structure check. Job description is optional."
             : isKeywordScanner
               ? "Paste your resume and the job description to see which keywords and skills are missing or weak."
-              : "Add your resume and the posting below, then run the match check."}
+              : "Paste your resume and the JD/ Role below, then run the match check."}
         </p>
         {quota != null && quota.limit > 0 && (
-          <div
-            className={
-              "mt-2 flex w-full flex-col gap-1.5 rounded-lg border px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 " +
-              quotaToneClasses
-            }
-            role="status"
-            aria-live="polite"
-          >
-            <p className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.14em] opacity-75">
-              Scan allowance
-            </p>
-            <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-0.5 sm:justify-end">
-              <span className="text-2xl font-bold tabular-nums leading-none tracking-tight sm:text-[1.65rem]">
-                {quota.used}
-                <span className="mx-1 text-base font-semibold opacity-45 sm:text-lg">/</span>
-                {quota.limit}
-              </span>
-              <span className="text-xs font-semibold leading-snug opacity-90 sm:text-[13px]">
-                free scans <span className="font-medium opacity-75">today</span>
-              </span>
+          <>
+            <div
+              className={
+                "mt-2 flex w-full flex-col gap-1.5 rounded-lg border px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 " +
+                quotaToneClasses
+              }
+              role="status"
+              aria-live="polite"
+            >
+              <p className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.14em] opacity-75">
+                Scan allowance
+              </p>
+              <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-0.5 sm:justify-end">
+                <span className="text-2xl font-bold tabular-nums leading-none tracking-tight sm:text-[1.65rem]">
+                  {quota.used}
+                  <span className="mx-1 text-base font-semibold opacity-45 sm:text-lg">/</span>
+                  {quota.limit}
+                </span>
+                <span className="text-xs font-semibold leading-snug opacity-90 sm:text-[13px]">
+                  free scans <span className="font-medium opacity-75">today</span>
+                </span>
+              </div>
             </div>
-          </div>
+            {!isLoggedIn ? (
+              <div className={loginCalloutClasses}>
+                <p className="text-[11px] font-medium opacity-80">{loginIntentCopy}</p>
+                <button
+                  type="button"
+                  onClick={handleLoginForMoreScans}
+                  disabled={isLoggingInForMoreScans || !onLoginForMoreScans}
+                  className="mt-2 inline-flex items-center rounded-md bg-slate-900 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-white hover:bg-slate-800 transition disabled:opacity-60"
+                >
+                  {isLoggingInForMoreScans ? "Signing in..." : "Log in for 5 more"}
+                </button>
+              </div>
+            ) : null}
+          </>
         )}
       </header>
 

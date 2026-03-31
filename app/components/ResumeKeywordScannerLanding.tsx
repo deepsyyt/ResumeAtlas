@@ -31,8 +31,8 @@ export function ResumeKeywordScannerLanding() {
             {TOOL_CLUSTER_KEYWORD_SCANNER.h1}
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Scan your resume to find missing keywords, identify skill gaps, and improve your chances
-            of passing ATS screening.
+            Find missing resume keywords against a real job description, close skill gaps with
+            truthful edits, and improve ATS keyword coverage before you apply.
           </p>
         </div>
       </section>
@@ -40,19 +40,38 @@ export function ResumeKeywordScannerLanding() {
       <section className="border-b border-slate-200 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 text-center">
           <p className="text-sm sm:text-base text-slate-900">
-            <strong>Paste your resume to find missing keywords instantly.</strong>
+            <strong>{TOOL_CLUSTER_KEYWORD_SCANNER.topStripStrong}</strong>
           </p>
           <p className="mt-2 text-xs sm:text-sm font-medium text-slate-700">
             <span aria-hidden="true">✔</span> Free <span className="text-slate-400">•</span>{" "}
             <span aria-hidden="true">✔</span> Instant Results{" "}
             <span className="text-slate-400">•</span> <span aria-hidden="true">✔</span> No Signup
           </p>
+          <a
+            href="#ats-checker-form"
+            className="mt-4 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
+          >
+            {TOOL_CLUSTER_KEYWORD_SCANNER.ctaAnchor}
+          </a>
+        </div>
+      </section>
+
+      <section className="border-b border-emerald-200 bg-emerald-50/30">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
+            {TOOL_CLUSTER_KEYWORD_SCANNER.differentiatorHeading}
+          </h2>
+          <div className="mt-3 space-y-2.5 text-sm sm:text-base text-slate-700 leading-relaxed">
+            {TOOL_CLUSTER_KEYWORD_SCANNER.differentiatorBody.map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
         </div>
       </section>
 
       <HomeClient variant="toolOnly" analysisMode="keywordScanner" />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
         <section className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 sm:p-6">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Scan your resume for keywords
@@ -136,7 +155,9 @@ export function ResumeKeywordScannerLanding() {
         <ToolClusterRelatedLinks currentPath={path} />
 
         <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900">Example</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900">
+            Real-world keyword proof example
+          </h2>
           <p className="mt-2 text-sm font-medium text-slate-900">Resume contains</p>
           <ul className="mt-1 list-disc pl-5 text-sm text-slate-700">
             <li>Python</li>
@@ -149,12 +170,12 @@ export function ResumeKeywordScannerLanding() {
             <li>Data visualization</li>
           </ul>
           <p className="mt-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Result:</strong> lower keyword coverage and weaker
-            ATS ranking for that role.
+            <strong className="text-slate-900">Result:</strong> keyword coverage estimated at 61%,
+            with likely ranking drag for jobs emphasizing experimentation and SQL depth.
           </p>
           <p className="mt-2 text-sm text-slate-700">
-            <strong className="text-slate-900">Fix:</strong> add relevant skills and project
-            descriptions where accurate.
+            <strong className="text-slate-900">Fix:</strong> add truthful SQL + A/B testing evidence
+            in project and experience bullets, then rescan against the same posting.
           </p>
         </section>
 
@@ -227,17 +248,6 @@ export function ResumeKeywordScannerLanding() {
               </Link>
             </li>
           </ul>
-        </section>
-
-        <section className="rounded-2xl border border-sky-200 bg-sky-50/50 p-5 sm:p-6">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900">
-            {TOOL_CLUSTER_KEYWORD_SCANNER.differentiatorHeading}
-          </h2>
-          <div className="mt-4 space-y-3 text-sm sm:text-base text-slate-700 leading-relaxed">
-            {TOOL_CLUSTER_KEYWORD_SCANNER.differentiatorBody.map((para, i) => (
-              <p key={i}>{para}</p>
-            ))}
-          </div>
         </section>
 
         <ToolClusterNextSteps />
