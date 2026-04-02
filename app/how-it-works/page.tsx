@@ -65,14 +65,14 @@ export default function HowItWorksPage() {
             <p>
               If you want examples to copy the structure from, start with{" "}
               <a
-                href="/data-scientist/resume/bullet-points"
+                href="/data-scientist-resume-guide#bullet-points"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 Data Scientist resume bullet points
               </a>{" "}
               or{" "}
               <a
-                href="/software-engineer/resume/skills"
+                href="/software-engineer-resume-guide#skills"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 Software Engineer resume skills

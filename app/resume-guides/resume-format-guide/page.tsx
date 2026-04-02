@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/resume-guides/resume-format-guide",
   },
+  robots: { index: false, follow: true },
 };
 
 const SECTIONS = [
@@ -239,7 +240,7 @@ export default function ResumeFormatGuidePage() {
             <ul className="mt-2 space-y-1 text-sm">
               <li>
                 <Link
-                  href="/how-ats-scans-resumes"
+                  href="/how-to-pass-ats#how-ats-scans-resumes"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   How ATS Systems Scan Resumes
@@ -247,7 +248,7 @@ export default function ResumeFormatGuidePage() {
               </li>
               <li>
                 <Link
-                  href="/common-resume-mistakes-fail-ats"
+                  href="/how-to-pass-ats#common-resume-mistakes-fail-ats"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   Common Resume Mistakes That Fail ATS

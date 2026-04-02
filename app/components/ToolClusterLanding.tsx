@@ -47,6 +47,20 @@ export function ToolClusterLanding({ config }: Props) {
           >
             {config.ctaAnchor}
           </a>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm">
+            {[
+              "Resume not getting shortlisted?",
+              "Missing keywords for your role?",
+              "ATS score too low?",
+            ].map((line) => (
+              <span
+                key={line}
+                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 font-medium text-slate-700"
+              >
+                {line}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -89,6 +103,20 @@ export function ToolClusterLanding({ config }: Props) {
           </ul>
           <p className="mt-4 text-sm text-slate-600">
             No signup required. Instant results.
+          </p>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            How this score is computed
+          </h2>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
+            <li>Keyword overlap between your resume and the target job description.</li>
+            <li>Evidence quality in bullets (specific tools, outcomes, and scope clarity).</li>
+            <li>ATS readability signals (section clarity and parser-friendly structure).</li>
+          </ul>
+          <p className="mt-3 text-sm text-slate-600">
+            Scores are directional and help prioritize edits; they are not a hiring guarantee.
           </p>
         </section>
 
@@ -187,6 +215,16 @@ export function ToolClusterLanding({ config }: Props) {
             <li>{config.exampleScoreLine}</li>
             <li>Suggested fix: {config.exampleFixLine}</li>
           </ul>
+          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Multi-intent capture examples
+            </p>
+            <ul className="mt-2 list-disc pl-5 text-sm text-slate-700 space-y-1">
+              <li>Software Engineer: “Resume not getting shortlisted?”</li>
+              <li>Data Scientist: “Missing keywords for your role?”</li>
+              <li>Product Manager: “ATS score too low?”</li>
+            </ul>
+          </div>
         </section>
 
         <section>

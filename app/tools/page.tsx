@@ -1,19 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ALL_TOOL_CLUSTER_CONFIGS } from "@/app/lib/toolClusterPages";
+import { getSiteUrl } from "@/app/lib/siteUrl";
+
+const siteBase = getSiteUrl().replace(/\/$/, "");
+const toolsUrl = `${siteBase}/tools`;
 
 export const metadata: Metadata = {
   title: "Free Resume Tools | ResumeAtlas",
   description:
     "Free online resume tools: compare your resume with a job description, get ATS-style scores, and find missing keywords.",
   alternates: {
-    canonical: "/tools",
+    canonical: toolsUrl,
   },
   openGraph: {
     title: "Free Resume Tools | ResumeAtlas",
     description:
       "Free online resume tools: compare your resume with a job description, get ATS-style scores, and find missing keywords.",
-    url: "/tools",
+    url: toolsUrl,
     type: "website",
     images: [
       {
@@ -42,7 +46,7 @@ export default function ToolsPage() {
       "@type": "ListItem",
       position: index + 1,
       name: c.clusterLinkAnchor,
-      url: `https://resumeatlas.io${c.path}`,
+      url: `${siteBase}${c.path}`,
     })),
   };
 

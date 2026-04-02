@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
-import { KEYWORD_PAGES, type RoleSlug } from "@/app/lib/seoPages";
+import {
+  KEYWORD_PAGES,
+  type RoleSlug,
+  roleResumeSamplePath,
+} from "@/app/lib/seoPages";
 import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import {
@@ -21,7 +25,7 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
     title: `${config.h1} (2025 Guide) | ResumeAtlas`,
     description: config.metaDescription,
     alternates: {
-      canonical: `/${params.role}/keywords`,
+      canonical: `/${params.role}-resume-keywords`,
     },
   };
 }
@@ -32,9 +36,9 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
 
   const roleSlug = params.role;
   const roleContent = ROLE_CONTENT_MAP[roleSlug];
-  const resumeExamplePath = `/${roleSlug}-resume-example`;
-  const hubPath = `/${roleSlug}/resume`;
-  const skillsSeoPath = `/${roleSlug}/resume/skills`;
+  const resumeSamplePath = roleResumeSamplePath(roleSlug);
+  const hubPath = `/${roleSlug}`;
+  const skillsSeoPath = `/${roleSlug}-resume-guide#skills`;
   const canonicalBase = getSiteUrl();
 
   const faqSchema = {
@@ -86,7 +90,7 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
         "@type": "ListItem",
         position: 2,
         name: config.h1,
-        item: `${canonicalBase}/${roleSlug}/keywords`,
+        item: `${canonicalBase}/${roleSlug}-resume-keywords`,
       },
     ],
   } as const;
@@ -236,7 +240,7 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
             <ul className="mt-2 space-y-1 text-sm">
               <li>
                 <Link
-                  href="/how-ats-scans-resumes"
+                  href="/how-to-pass-ats#how-ats-scans-resumes"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   How ATS Systems Scan Resumes
@@ -244,7 +248,7 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
               </li>
               <li>
                 <Link
-                  href="/common-resume-mistakes-fail-ats"
+                  href="/how-to-pass-ats#common-resume-mistakes-fail-ats"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   Common Resume Mistakes That Fail ATS
@@ -252,18 +256,10 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
               </li>
               <li>
                 <Link
-                  href={resumeExamplePath}
+                  href={resumeSamplePath}
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   {config.roleName} Resume Example
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={hubPath}
-                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  {config.roleName} Resume Guide (hub)
                 </Link>
               </li>
               <li>
@@ -278,7 +274,7 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
           </div>
         </section>
 
-        <RelatedResumeGuidesSection currentPath={`/${params.role}/keywords`} className="mt-10 border-t border-slate-200 pt-6" />
+        <RelatedResumeGuidesSection currentPath={`/${params.role}-resume-keywords`} className="mt-10 border-t border-slate-200 pt-6" />
 
         {/* FAQ */}
         <section id="faq">

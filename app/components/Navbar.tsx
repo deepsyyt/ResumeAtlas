@@ -128,8 +128,11 @@ export function Navbar() {
           </span>
         </div>
         <nav className="flex items-center gap-4 text-xs sm:text-sm">
-          <Link href="/tools" className="hover:underline text-white/80 hover:text-white">
-            Tools
+          <Link
+            href="/resume-vs-job-description-checker"
+            className="hover:underline text-white/80 hover:text-white"
+          >
+            Resume checker
           </Link>
           <a href="/#how-ats-works" className="hover:underline text-white/80 hover:text-white">
             How ATS Works

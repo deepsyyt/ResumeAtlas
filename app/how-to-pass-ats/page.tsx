@@ -82,6 +82,85 @@ export default function HowToPassATSPage() {
           </p>
         </section>
 
+        {/* How ATS scans (merged from /how-ats-scans-resumes) */}
+        <section
+          id="how-ats-scans-resumes"
+          className="scroll-mt-24 rounded-2xl border border-slate-200 bg-slate-50/60 p-5 sm:p-6"
+        >
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            How ATS Systems Scan Resumes
+          </h2>
+          <p className="mt-3 text-slate-700 text-sm sm:text-base">
+            When you apply online, your resume is usually processed by an{" "}
+            <strong>Applicant Tracking System (ATS)</strong> before a human sees it. ATS software
+            parses your resume, looks for keyword overlap with the job description, and then ranks
+            or filters candidates.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
+            <li>
+              <strong>Parsing:</strong> ATS extracts your data (name, work history, education, skills)
+              using headings and layout cues. Single-column, standard headings parse best.
+            </li>
+            <li>
+              <strong>Keyword matching:</strong> ATS checks for overlap in skills, tools, and
+              responsibilities. Use the job&apos;s language only where it matches your real experience.
+            </li>
+            <li>
+              <strong>Formatting rules:</strong> Columns, tables, and text inside images can break
+              extraction and hide content.
+            </li>
+            <li>
+              <strong>Scoring & ranking:</strong> Many ATS assign a match score based on relevance and
+              how well your experience aligns to the posting’s requirements.
+            </li>
+          </ul>
+          <p className="mt-3 text-slate-700 text-sm sm:text-base">
+            Quick win: keep formatting simple, use standard section titles, and mirror the posting&apos;s
+            skills and responsibilities naturally in your summary, skills, and bullets.
+          </p>
+        </section>
+
+        {/* Common mistakes (merged from /common-resume-mistakes-fail-ats) */}
+        <section
+          id="common-resume-mistakes-fail-ats"
+          className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"
+        >
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Common Resume Mistakes That Fail ATS
+          </h2>
+          <p className="mt-3 text-slate-700 text-sm sm:text-base">
+            Most “ATS rejections” come from a small set of fixable issues. If you improve these
+            patterns, your resume becomes easier for ATS to parse and easier for recruiters to skim.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
+            <li>
+              <strong>Missing required keywords:</strong> don&apos;t bury must-have skills in non-text formats.
+              Use the job&apos;s terms in context where you truly have the experience.
+            </li>
+            <li>
+              <strong>Poor or incompatible formatting:</strong> avoid multiple columns, tables for core content,
+              and text in images.
+            </li>
+            <li>
+              <strong>Vague responsibilities:</strong> replace “responsible for” bullets with evidence-based
+              action verbs and measurable outcomes.
+            </li>
+            <li>
+              <strong>Lack of measurable achievements:</strong> add numbers (impact, scale, time saved, adoption,
+              reliability, revenue) where you can.
+            </li>
+            <li>
+              <strong>Wrong file type / unreadable PDF:</strong> prefer text-based PDF or DOCX, and avoid scanned/image-only files.
+            </li>
+            <li>
+              <strong>Non-standard section names:</strong> stick to “Experience / Skills / Education / Summary” so ATS maps content correctly.
+            </li>
+          </ul>
+          <p className="mt-3 text-slate-700 text-sm sm:text-base">
+            Use this guide&apos;s steps (formatting + keyword alignment + impact bullets) to fix the highest-risk areas first.
+          </p>
+        </section>
+
         {/* 1. Fix formatting */}
         <section>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
@@ -184,7 +263,7 @@ export default function HowToPassATSPage() {
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
             For role‑specific keyword ideas, see the{" "}
             <Link
-              href="/data-scientist/keywords"
+              href="/data-scientist-resume-keywords"
               className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
             >
               ATS keywords for Data Scientist
@@ -263,18 +342,18 @@ export default function HowToPassATSPage() {
             <ul className="mt-2 space-y-1 text-sm">
               <li>
                 <Link
-                  href="/how-ats-scans-resumes"
+                  href="/how-to-pass-ats#how-ats-scans-resumes"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  How ATS Systems Scan Resumes
+                  How ATS Systems Scan Resumes (anchor)
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/common-resume-mistakes-fail-ats"
+                  href="/how-to-pass-ats#common-resume-mistakes-fail-ats"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  Common Resume Mistakes That Fail ATS
+                  Common Resume Mistakes That Fail ATS (anchor)
                 </Link>
               </li>
               <li>

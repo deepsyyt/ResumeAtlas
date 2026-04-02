@@ -54,13 +54,30 @@ export function ATSResumeCheckerFreeLanding() {
           >
             {TOOL_CLUSTER_ATS_FREE.ctaAnchor}
           </a>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm">
+            {[
+              "Resume not getting shortlisted?",
+              "Missing keywords for your role?",
+              "ATS score too low?",
+            ].map((line) => (
+              <span
+                key={line}
+                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 font-medium text-slate-700"
+              >
+                {line}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
       <HomeClient variant="toolOnly" analysisMode="atsCompliance" />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
-        <section className="rounded-2xl border border-sky-200 bg-sky-50/50 p-5 sm:p-6">
+        <section
+          id="ats-compatibility-check"
+          className="rounded-2xl border border-sky-200 bg-sky-50/50 p-5 sm:p-6"
+        >
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Check your resume now
           </h2>
@@ -76,6 +93,20 @@ export function ATSResumeCheckerFreeLanding() {
           <p className="mt-4 text-sm text-slate-600">
             Paste-only (no file upload). Optional job description field if you also want keyword
             overlap vs that posting.
+          </p>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Why this ATS score changes
+          </h2>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
+            <li>Parsing quality (are sections and dates machine-readable?).</li>
+            <li>Layout simplicity (single-column, standard headings, no parser traps).</li>
+            <li>Optional keyword overlap if a target job description is provided.</li>
+          </ul>
+          <p className="mt-3 text-sm text-slate-600">
+            Use the score as a fix-priority signal, not a guaranteed pass/fail outcome.
           </p>
         </section>
 
@@ -228,7 +259,10 @@ export function ATSResumeCheckerFreeLanding() {
           </p>
         </section>
 
-        <section className="rounded-xl border border-amber-200 bg-amber-50/40 p-5 sm:p-6">
+        <section
+          id="resume-score-checker"
+          className="rounded-xl border border-amber-200 bg-amber-50/40 p-5 sm:p-6"
+        >
           <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
             ATS resume scan vs keyword matching
           </h2>
@@ -286,7 +320,7 @@ export function ATSResumeCheckerFreeLanding() {
             </li>
             <li>
               <Link
-                href="/how-ats-scans-resumes"
+                href="/how-to-pass-ats#how-ats-scans-resumes"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 Learn how ATS systems scan resumes

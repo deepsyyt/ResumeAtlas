@@ -14,6 +14,7 @@ import {
   roleToProblemPath,
   type RoleKeywordIntent,
 } from "@/app/lib/roleSeo";
+import { NOINDEX_ROLE_KEYWORD_INTENT_PAGES } from "@/app/lib/roleClusterIndexPolicy";
 
 type PageParams = {
   roleSlug: RoleSlug;
@@ -24,13 +25,14 @@ function intentToResumeTopicPath(
   role: RoleSlug,
   intent: RoleKeywordIntent
 ): string {
-  if (intent === "core-keywords") return `/${role}/resume/skills`;
-  if (intent === "action-verbs") return `/${role}/resume/bullet-points`;
-  if (intent === "summary") return `/${role}/resume/summary`;
-  if (intent === "projects") return `/${role}/resume/projects`;
-  if (intent === "technical-skills") return `/${role}/resume/skills`;
-  if (intent === "tools-platforms") return `/${role}/resume/skills`;
-  return `/${role}/resume/summary`;
+  const guidePath = `/${role}-resume-guide`;
+  if (intent === "core-keywords") return `${guidePath}#skills`;
+  if (intent === "action-verbs") return `${guidePath}#bullet-points`;
+  if (intent === "summary") return `${guidePath}#summary`;
+  if (intent === "projects") return `${guidePath}#projects`;
+  if (intent === "technical-skills") return `${guidePath}#skills`;
+  if (intent === "tools-platforms") return `${guidePath}#skills`;
+  return `${guidePath}#summary`;
 }
 
 export function generateMetadata({ params }: { params: PageParams }): Metadata {
@@ -45,6 +47,9 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
     alternates: {
       canonical: `/${params.roleSlug}/keywords/${intent}`,
     },
+    ...(NOINDEX_ROLE_KEYWORD_INTENT_PAGES
+      ? { robots: { index: false, follow: true } as const }
+      : {}),
   };
 }
 
@@ -71,7 +76,7 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
             </Link>
             <span className="mx-1.5">/</span>
             <Link
-              href={`/${role}/keywords`}
+              href={`/${role}-resume-keywords`}
               className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
             >
               Keywords
@@ -175,15 +180,7 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
           <ul className="mt-3 list-disc pl-5 space-y-1 text-sm text-slate-700">
             <li>
               <Link href={`/${role}`} className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                {roleConfig.roleName} role hub
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={`/${role}/resume`}
-                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                {roleConfig.roleName} resume hub
+                {roleConfig.roleName} resume guide (hub)
               </Link>
             </li>
             <li>

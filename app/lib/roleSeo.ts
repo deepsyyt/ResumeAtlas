@@ -70,7 +70,7 @@ export function getRelatedKeywordIntents(current: RoleKeywordIntent): RoleKeywor
 
 export function roleToProblemPath(role: RoleSlug): string {
   if (role === "product-manager" || role === "business-analyst") {
-    return "/problems/how-to-tailor-resume-to-job-description";
+    return "/problems/resume-vs-job-description";
   }
   if (role === "devops-engineer" || role === "backend-developer") {
     return "/problems/ats-rejecting-my-resume";

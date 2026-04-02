@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { RESUME_PAGES } from "@/app/lib/seoPages";
+import {
+  RESUME_PAGES,
+  type RoleSlug,
+  roleResumeSamplePath,
+} from "@/app/lib/seoPages";
 import {
   CHECK_RESUME_AGAINST_JD_PATH,
   CHECK_RESUME_AGAINST_JD_ANCHOR,
@@ -38,14 +42,20 @@ export default function ResumeExamplesIndexPage() {
 
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 space-y-10">
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-          {items.map((p) => (
+          {items.map((p) => {
+            const role = p.slug.replace(/-resume-example$/, "") as RoleSlug;
+            return (
             <li key={p.slug} className="rounded-xl border border-slate-200 bg-white p-4">
-              <Link href={`/${p.slug}`} className="font-semibold text-slate-900 hover:underline">
+              <Link
+                href={roleResumeSamplePath(role)}
+                className="font-semibold text-slate-900 hover:underline"
+              >
                 {p.h1}
               </Link>
               <p className="mt-1 text-xs text-slate-500">{p.metaDescription}</p>
             </li>
-          ))}
+            );
+          })}
         </ul>
 
         <div className="border-t border-slate-200 pt-6">
@@ -56,7 +66,7 @@ export default function ResumeExamplesIndexPage() {
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link
-                href="/data-scientist/resume/bullet-points"
+                href="/data-scientist-resume-guide#bullet-points"
                 className="text-sky-700 hover:underline"
               >
                 Data Scientist resume bullet points
@@ -64,7 +74,7 @@ export default function ResumeExamplesIndexPage() {
             </li>
             <li>
               <Link
-                href="/software-engineer/resume/skills"
+                href="/software-engineer-resume-guide#skills"
                 className="text-sky-700 hover:underline"
               >
                 Software Engineer resume skills

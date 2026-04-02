@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
-import { KEYWORD_PAGES, type RoleSlug } from "@/app/lib/seoPages";
+import {
+  KEYWORD_PAGES,
+  type RoleSlug,
+  roleResumeSamplePath,
+} from "@/app/lib/seoPages";
 import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 import { INTENT_HUB_BLURBS } from "@/app/lib/keywordIntentHubBlurbs";
 import {
@@ -17,8 +21,8 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
 
   const roleSlug = params.role;
   const roleContent = ROLE_CONTENT_MAP[roleSlug];
-  const resumeExamplePath = `/${roleSlug}-resume-example`;
-  const hubPath = `/${roleSlug}/resume`;
+  const resumeSamplePath = roleResumeSamplePath(roleSlug);
+  const hubPath = `/${roleSlug}`;
   const canonicalBase = getSiteUrl().replace(/\/$/, "");
 
   const faqSchema = {
@@ -70,7 +74,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
         "@type": "ListItem",
         position: 2,
         name: `${config.roleName} resume keywords (complete guide)`,
-        item: `${canonicalBase}/${roleSlug}/keywords`,
+        item: `${canonicalBase}/${roleSlug}-resume-keywords`,
       },
     ],
   } as const;
@@ -91,7 +95,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           </nav>
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
-              {config.roleName} Resume Keywords (Complete Guide)
+              Top Missing Keywords in {config.roleName} Resumes (Check Yours)
             </h1>
             <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
               This guide maps the most important ATS keywords for {config.roleName.toLowerCase()} resumes:
@@ -103,11 +107,24 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               {roleContent.tools.slice(0, 4).join(", ")} and verbs like{" "}
               {roleContent.domainVerbs.slice(0, 3).join(", ")}.
             </p>
+            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-left max-w-2xl mx-auto">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                JD vs resume quick comparison
+              </p>
+              <p className="mt-2 text-sm text-slate-700">
+                <strong className="text-slate-900">JD asks:</strong> {roleContent.tools.slice(0, 3).join(", ")},{" "}
+                measurable impact, and role-specific delivery terms.
+              </p>
+              <p className="mt-1 text-sm text-slate-700">
+                <strong className="text-slate-900">Resumes often miss:</strong> one or more required tool terms,
+                quantified outcomes, and domain verbs in top bullets.
+              </p>
+            </div>
             <Link
               href="/"
               className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
             >
-              Check My Resume for ATS
+              Scan my resume for missing keywords
             </Link>
           </div>
         </div>
@@ -141,6 +158,36 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           </ul>
         </section>
 
+        <section className="rounded-2xl border border-amber-200 bg-amber-50/40 p-6 sm:p-8">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Top missing keywords we repeatedly see in {config.roleName} resumes
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700">
+            These are high-frequency gaps when resumes underperform against real job descriptions:
+          </p>
+          <ul className="mt-4 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
+            {roleContent.tools.slice(0, 4).map((tool) => (
+              <li key={tool}>{tool} (missing or weakly supported in experience bullets)</li>
+            ))}
+          </ul>
+          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Example JD vs resume gap output
+            </p>
+            <p className="mt-2 text-sm text-slate-700">
+              JD asks for <strong className="text-slate-900">{roleContent.tools.slice(0, 3).join(", ")}</strong> and
+              measurable delivery. Resume contains generic tooling terms but no clear result bullets.
+              Estimated keyword coverage: <strong className="text-slate-900">61%</strong>.
+            </p>
+          </div>
+          <Link
+            href="/#ats-checker-form"
+            className="mt-5 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
+          >
+            Scan my resume against a real JD
+          </Link>
+        </section>
+
         <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900">
             Related resume guides
@@ -151,7 +198,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           <ul className="mt-4 space-y-2 text-sm">
             <li>
               <Link
-                href={`/${roleSlug}/resume/projects`}
+                href={`/${roleSlug}-resume-guide#projects`}
                 className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
               >
                 {config.roleName} resume projects →
@@ -162,12 +209,12 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                 href={hubPath}
                 className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
               >
-                {config.roleName} resume hub →
+                {config.roleName} resume guide →
               </Link>
             </li>
             <li>
               <Link
-                href={`/${roleSlug}/resume/skills`}
+                href={`/${roleSlug}-resume-guide#skills`}
                 className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
               >
                 {config.roleName} resume skills examples →
@@ -189,7 +236,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             href="/"
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check My Resume for ATS
+            Check my keyword gaps now
           </Link>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -198,7 +245,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             <ul className="mt-2 space-y-1 text-sm">
               <li>
                 <Link
-                  href="/how-ats-scans-resumes"
+                  href="/how-to-pass-ats#how-ats-scans-resumes"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   How ATS Systems Scan Resumes
@@ -206,7 +253,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               </li>
               <li>
                 <Link
-                  href="/common-resume-mistakes-fail-ats"
+                  href="/how-to-pass-ats#common-resume-mistakes-fail-ats"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   Common Resume Mistakes That Fail ATS
@@ -214,7 +261,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               </li>
               <li>
                 <Link
-                  href={resumeExamplePath}
+                  href={resumeSamplePath}
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   {config.roleName} Resume Example
@@ -225,7 +272,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
         </section>
 
         <RelatedResumeGuidesSection
-          currentPath={`/${roleSlug}/keywords`}
+          currentPath={`/${roleSlug}-resume-keywords`}
           className="border-t border-slate-200 pt-6"
         />
 

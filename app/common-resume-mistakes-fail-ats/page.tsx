@@ -4,6 +4,7 @@ import {
   CHECK_RESUME_AGAINST_JD_PATH,
   CHECK_RESUME_AGAINST_JD_ANCHOR,
 } from "@/app/lib/internalLinks";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Common Resume Mistakes That Fail ATS (Explained) | ResumeAtlas",
@@ -49,6 +50,7 @@ const faqSchema = {
 };
 
 export default function CommonResumeMistakesFailATSPage() {
+  redirect("/how-to-pass-ats#common-resume-mistakes-fail-ats");
   return (
     <main className="min-h-screen bg-white text-slate-900">
       {/* Hero */}
@@ -228,8 +230,11 @@ export default function CommonResumeMistakesFailATSPage() {
                 </Link>
               </li>
               <li>
-                <Link href="/problems/why-recruiters-ignore-resume" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  Why recruiters ignore resumes
+                <Link
+                  href="/problems/resume-not-getting-interviews"
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  Why your resume may not get interviews
                 </Link>
               </li>
             </ul>

@@ -20,8 +20,6 @@ import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
 
 const ATS_CALLOUT_PATHS = new Set<string>([
   "/how-to-pass-ats",
-  "/how-ats-scans-resumes",
-  "/common-resume-mistakes-fail-ats",
   ...TOOL_CLUSTER_PATHS_FOR_OAUTH,
 ]);
 
@@ -57,7 +55,8 @@ export function resolveProblemInterviewCallout(
   }
 
   const isRoleResumeTopicPath = /^\/[^/]+\/resume\/[^/]+$/.test(p);
-  const isRoleKeywordsPath = /^\/[^/]+\/keywords(\/[^/]+)?$/.test(p);
+  const isRoleKeywordsPath =
+    /^\/[^/]+\/keywords(\/[^/]+)?$/.test(p) || /^\/[^/]+-resume-keywords$/.test(p);
   if (p === "/ats-keywords" || p.startsWith("/ats-keywords/") || isRoleResumeTopicPath || isRoleKeywordsPath) {
     return {
       prefix: "Worried about keyword gaps on your resume? ",

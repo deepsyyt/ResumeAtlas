@@ -16,6 +16,18 @@ export const PROBLEM_SLUGS = [
   "why-recruiters-ignore-resume",
 ] as const;
 
+/**
+ * Canonical problems set (one pillar page per intent).
+ * Duplicates remain reachable but are noindex + redirected.
+ */
+export const CANONICAL_PROBLEM_SLUGS = [
+  "resume-not-getting-interviews",
+  "no-response-after-applying",
+  "ats-rejecting-my-resume",
+  "missing-keywords-in-resume",
+  "resume-vs-job-description",
+] as const;
+
 export type ProblemSlug = (typeof PROBLEM_SLUGS)[number];
 
 export type ProblemPageConfig = {
@@ -343,10 +355,10 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
       },
     ],
     relatedSlugs: [
-      "applied-to-200-jobs-no-response",
-      "why-am-i-not-getting-interviews",
-      "how-to-tailor-resume-to-job-description",
+      "no-response-after-applying",
+      "missing-keywords-in-resume",
       "ats-rejecting-my-resume",
+      "resume-vs-job-description",
     ],
   },
 
@@ -490,7 +502,7 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
   "no-response-after-applying": {
     slug: "no-response-after-applying",
     primaryKeyword: "no response after applying",
-    metaTitle: "No Response After Applying? Fix Resume–Job Fit & ATS Alignment | ResumeAtlas",
+    metaTitle: "Applied but No Response? See Why Your Resume Gets Ignored | ResumeAtlas",
     metaDescription:
       "No response after applying usually means weak match or pipeline noise. Learn how to improve tailoring, keywords, and clarity before the next wave of applications.",
     h1: "No Response After Applying - How to Break the Silence Without Sending 100 More Copies",
@@ -617,17 +629,17 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
       },
     ],
     relatedSlugs: [
-      "applied-to-200-jobs-no-response",
-      "why-recruiters-ignore-resume",
-      "resume-not-passing-ats",
-      "how-to-tailor-resume-to-job-description",
+      "resume-not-getting-interviews",
+      "no-response-after-applying",
+      "ats-rejecting-my-resume",
+      "missing-keywords-in-resume",
     ],
   },
 
   "ats-rejecting-my-resume": {
     slug: "ats-rejecting-my-resume",
     primaryKeyword: "ATS rejecting my resume",
-    metaTitle: "ATS Rejecting My Resume? Format, Keywords & Alignment | ResumeAtlas",
+    metaTitle: "ATS Rejecting Your Resume? Check What Fails Before You Apply Again | ResumeAtlas",
     metaDescription:
       "Worried about ATS rejecting my resume? Learn format fixes, keyword alignment, and how to get useful match feedback - without guaranteed ATS promises.",
     h1: "ATS Rejecting My Resume - What That Usually Means (and What to Do Next)",
@@ -750,10 +762,10 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
       },
     ],
     relatedSlugs: [
-      "resume-not-passing-ats",
-      "missing-keywords-in-resume",
-      "how-to-tailor-resume-to-job-description",
       "resume-not-getting-interviews",
+      "no-response-after-applying",
+      "missing-keywords-in-resume",
+      "resume-vs-job-description",
     ],
   },
 
@@ -895,7 +907,7 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
   "missing-keywords-in-resume": {
     slug: "missing-keywords-in-resume",
     primaryKeyword: "missing keywords in resume",
-    metaTitle: "Missing Keywords in Resume? Map Them to Real Experience | ResumeAtlas",
+    metaTitle: "Missing Keywords in Resume? Find the Exact Gaps in One Scan | ResumeAtlas",
     metaDescription:
       "Missing keywords in resume often cost interviews. Learn how to pull terms from the job description, place them credibly, and check gaps with ResumeAtlas.",
     h1: "Missing Keywords in Resume - How to Find Them Without Turning Into a Word Salad",
@@ -1019,10 +1031,10 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
       },
     ],
     relatedSlugs: [
-      "resume-vs-job-description",
-      "how-to-tailor-resume-to-job-description",
-      "resume-not-passing-ats",
+      "resume-not-getting-interviews",
+      "no-response-after-applying",
       "ats-rejecting-my-resume",
+      "resume-vs-job-description",
     ],
   },
 
@@ -1168,7 +1180,7 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
   "resume-vs-job-description": {
     slug: "resume-vs-job-description",
     primaryKeyword: "resume vs job description",
-    metaTitle: "Resume vs Job Description: Close the Gap Before You Apply | ResumeAtlas",
+    metaTitle: "Resume vs Job Description Mismatch? Find Gaps and Fix Them Fast | ResumeAtlas",
     metaDescription:
       "Understand resume vs job description alignment: what employers compare, how to map keywords, and how ResumeAtlas shows likely gaps for a specific posting.",
     h1: "Resume vs Job Description - What Employers Actually Compare in the First 30 Seconds",
@@ -1292,10 +1304,10 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
       },
     ],
     relatedSlugs: [
-      "how-to-tailor-resume-to-job-description",
+      "resume-not-getting-interviews",
+      "no-response-after-applying",
+      "ats-rejecting-my-resume",
       "missing-keywords-in-resume",
-      "why-am-i-not-getting-interviews",
-      "resume-not-passing-ats",
     ],
   },
 

@@ -362,7 +362,7 @@ export function TopicClusterCallout({ className = "" }: { className?: string }) 
           Compare your resume with a job description
         </Link>{" "}
         in one paste on the homepage, free. Read{" "}
-        <Link href="/how-ats-scans-resumes" className={b}>
+        <Link href="/how-to-pass-ats#how-ats-scans-resumes" className={b}>
           how ATS scans resumes
         </Link>
         ,{" "}
@@ -397,8 +397,11 @@ export function GuidesFooterLinks() {
           </Link>
         </li>
         <li>
-          <Link href="/problems/how-to-tailor-resume-to-job-description" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-            How to tailor your resume to a job description
+          <Link
+            href="/problems/resume-vs-job-description"
+            className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+          >
+            Resume vs job description
           </Link>
         </li>
         <li>

@@ -152,7 +152,7 @@ export const PROBLEM_LANDING_VARIANTS: Record<ProblemSlug, ProblemLandingVariant
     previewSubtitle:
       "See estimated ATS alignment plus concrete gaps for the job you applied to so silence is less mysterious and more actionable.",
     heroEyebrow: "When the inbox stays quiet",
-    heroHeadline: "No response after applying? Your resume may not have matched the job on file.",
+    heroHeadline: "Applied to jobs but heard nothing? See why your resume gets ignored.",
     heroSubheadline:
       "Paste the posting and your resume. Get keyword gaps, ATS-style feedback, and stronger bullets aligned to that role before you send more applications into the void.",
     heroSupportLine:
@@ -187,7 +187,7 @@ export const PROBLEM_LANDING_VARIANTS: Record<ProblemSlug, ProblemLandingVariant
     previewSubtitle:
       "Put estimated pass strength and formatting risk up front, then drill into missing keywords and bullet fixes for this exact job.",
     heroEyebrow: "ATS and keyword reality",
-    heroHeadline: "ATS rejecting your resume? Fix keyword fit and how the file is read.",
+    heroHeadline: "ATS rejecting your resume? Check what fails before you apply again.",
     heroSubheadline:
       "Compare resume to the JD for coverage, structure, and bullet quality. AI aligns phrasing to the posting without inventing employers, tools, or metrics.",
     heroSupportLine:
@@ -258,7 +258,7 @@ export const PROBLEM_LANDING_VARIANTS: Record<ProblemSlug, ProblemLandingVariant
     previewSubtitle:
       "Prioritize gap chips and coverage vs the JD, then upgrade bullets so terms appear with proof, not stuffing.",
     heroEyebrow: "Keyword gaps, closed fast",
-    heroHeadline: "Missing keywords in your resume? Find them against the real job description.",
+    heroHeadline: "Missing keywords in your resume? Find the exact gaps in one scan.",
     heroSubheadline:
       "Side-by-side compare lists absent or thin terms from the posting. AI weaves them into bullets only where they match your work, and flags ATS-style issues.",
     heroSupportLine:
@@ -328,7 +328,7 @@ export const PROBLEM_LANDING_VARIANTS: Record<ProblemSlug, ProblemLandingVariant
     previewSubtitle:
       "Visualize overlap: coverage vs the posting, missing terms, ATS-style readout, and bullets rewritten to echo the job ask.",
     heroEyebrow: "Compare, then close gaps",
-    heroHeadline: "Resume vs job description: see the gaps, then fix them.",
+    heroHeadline: "Resume vs job description mismatch? Find gaps and fix them fast.",
     heroSubheadline:
       "Instant compare view for keywords, bullets, and structure against what the employer asked for. AI aligns language to the JD while preserving your real history.",
     heroSupportLine:

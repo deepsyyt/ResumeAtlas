@@ -13,7 +13,11 @@ import {
   TimeSavingSection,
 } from "@/app/components/problemLandingShared";
 import { PROBLEM_CONVERSION } from "@/app/lib/problemLandingVariants";
-import { PROBLEM_PAGES, PROBLEM_SLUGS, problemPageLinkLabel } from "@/app/lib/problemPages";
+import {
+  PROBLEM_PAGES,
+  CANONICAL_PROBLEM_SLUGS,
+  problemPageLinkLabel,
+} from "@/app/lib/problemPages";
 
 export const metadata: Metadata = {
   title: "Fix Your Resume for Any Job | Job Search Problems | ResumeAtlas",
@@ -22,6 +26,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/problems",
   },
+  robots: { index: false, follow: true },
 };
 
 const HUB_FAQ = [
@@ -101,7 +106,7 @@ export default function ProblemsHubPage() {
           </p>
           <TopicClusterCallout className="mt-5" />
           <ul className="mt-8 space-y-3">
-            {PROBLEM_SLUGS.map((slug) => {
+            {CANONICAL_PROBLEM_SLUGS.map((slug) => {
               const conv = PROBLEM_CONVERSION[slug];
               const page = PROBLEM_PAGES[slug];
               return (

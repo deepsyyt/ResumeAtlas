@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LastUpdated } from "@/app/components/LastUpdated";
-import type { RoleSlug } from "@/app/lib/seoPages";
+import { roleResumeSamplePath, type RoleSlug } from "@/app/lib/seoPages";
 import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 import { getRoleSpecificAtsTips, getRoleTopicExtraParagraphs } from "@/app/lib/resumeTopicCopy";
 import type { ResumeSeoTopic as Topic } from "@/app/lib/resumeTopicTypes";
@@ -866,6 +866,113 @@ export function generateMetadata({ params }: PageProps): Metadata {
   };
 }
 
+export function ResumeTopicSectionForGuide({
+  role,
+  topic,
+  anchorId,
+}: {
+  role: RoleSlug;
+  topic: Topic;
+  anchorId: string;
+}) {
+  const roleName = ROLE_NAMES[role];
+  const roleContent = ROLE_CONTENT_MAP[role];
+  const topicPhrase = topicToKeywordPhrase(topic);
+
+  const explanationHeading = topicExplanationHeading(topic, roleName);
+  const explanationBody = topicExplanationBody(topic, roleName, role);
+  const roleAtsTips = getRoleSpecificAtsTips(role, roleName);
+
+  const bullets = buildBulletExamples(role, topic);
+  const bulletsByCategory: Record<CategoryId, string[]> = {
+    ml: [],
+    dataEng: [],
+    analytics: [],
+    leadership: [],
+  };
+  for (const b of bullets) {
+    bulletsByCategory[b.categoryId].push(b.text);
+  }
+
+  return (
+    <section id={anchorId} className="scroll-mt-24 space-y-5">
+      <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+        {topicPhrase}
+      </h2>
+
+      <section className="space-y-3">
+        <h3 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
+          {explanationHeading}
+        </h3>
+        {explanationBody.map((p, i) => (
+          <p key={i} className="text-sm text-slate-700 leading-relaxed">
+            {p}
+          </p>
+        ))}
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
+        <h3 className="text-base font-semibold tracking-tight text-slate-900">
+          {roleName}-specific context
+        </h3>
+        <p className="mt-2 text-sm text-slate-700 leading-relaxed">
+          For this role, ATS relevance improves when you show concrete use of tools like{" "}
+          {roleContent.tools.slice(0, 4).join(", ")} and action verbs such as{" "}
+          {roleContent.domainVerbs.slice(0, 4).join(", ")}.
+        </p>
+        <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-slate-700">
+          {roleContent.examplePhrases.slice(0, 2).map((phrase) => (
+            <li key={phrase}>{phrase}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section>
+        <h3 className="text-lg font-semibold tracking-tight text-slate-900">
+          {topicPhrase} examples by category
+        </h3>
+        <div className="mt-4 space-y-4">
+          {CATEGORIES.map((cat) => {
+            const items = bulletsByCategory[cat.id];
+            if (!items || items.length === 0) return null;
+            const catIntro = getCategoryIntro(role, topic, cat.id);
+            return (
+              <div
+                key={cat.id}
+                className="border border-slate-200 rounded-xl p-4 bg-slate-50/60"
+              >
+                <h4 className="text-sm font-semibold text-slate-900">{cat.label}</h4>
+                {catIntro && (
+                  <p className="mt-1.5 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    {catIntro}
+                  </p>
+                )}
+                <ul className="mt-2 space-y-1.5 text-sm text-slate-700 list-disc pl-5">
+                  {items.map((text) => (
+                    <li key={text}>{text}</li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="pt-2">
+        <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
+          ATS optimization tips
+        </p>
+        <ul className="mt-2 space-y-1.5 text-sm text-slate-700 list-disc pl-5">
+          <li>Use a clean, single-column layout with standard section headings.</li>
+          {roleAtsTips.map((tip) => (
+            <li key={tip}>{tip}</li>
+          ))}
+        </ul>
+      </section>
+    </section>
+  );
+}
+
 export default function SeoSlugPage({ params }: PageProps) {
   const parsed = parseSlug(params.slug);
   if (!parsed) return notFound();
@@ -930,10 +1037,9 @@ export default function SeoSlugPage({ params }: PageProps) {
     })),
   } as const;
 
-  const resumeExamplePath = `/${role}-resume-example`;
-  const atsKeywordPath = `/${role}/keywords`;
+  const resumeSamplePath = roleResumeSamplePath(role);
+  const atsKeywordPath = `/${role}-resume-keywords`;
   const roleHubPath = `/${role}`;
-  const hubPath = `/${role}/resume`;
   const canonicalBase = getSiteUrl();
   const currentPath = `/${role}/resume/${topic}`;
   const keywordTopicPath = `/${role}/keywords/${
@@ -949,7 +1055,7 @@ export default function SeoSlugPage({ params }: PageProps) {
   }`;
   const problemPath =
     role === "product-manager" || role === "business-analyst"
-      ? "/problems/how-to-tailor-resume-to-job-description"
+      ? "/problems/resume-vs-job-description"
       : role === "devops-engineer" || role === "backend-developer"
       ? "/problems/ats-rejecting-my-resume"
       : "/problems/resume-not-getting-interviews";
@@ -973,12 +1079,6 @@ export default function SeoSlugPage({ params }: PageProps) {
       {
         "@type": "ListItem",
         position: 3,
-        name: "Resume",
-        item: `${canonicalBase}${hubPath}`,
-      },
-      {
-        "@type": "ListItem",
-        position: 4,
         name: h1,
         item: `${canonicalBase}${currentPath}`,
       },
@@ -991,10 +1091,10 @@ export default function SeoSlugPage({ params }: PageProps) {
         <header className="space-y-3">
           <nav className="text-[11px] sm:text-xs text-slate-500">
             <Link
-              href={hubPath}
+              href={roleHubPath}
               className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
             >
-              {roleName} Resume Guide
+              {roleName} resume guide
             </Link>
             <span className="mx-1.5 text-slate-400">/</span>
             <span>{topicPhrase}</span>
@@ -1170,20 +1270,12 @@ export default function SeoSlugPage({ params }: PageProps) {
                 href={roleHubPath}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
-                {ROLE_NAMES[role]} role hub
+                {ROLE_NAMES[role]} resume guide
               </Link>
             </li>
             <li>
               <Link
-                href={hubPath}
-                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                {ROLE_NAMES[role]} resume hub
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={resumeExamplePath}
+                href={resumeSamplePath}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 {ROLE_NAMES[role]} resume example

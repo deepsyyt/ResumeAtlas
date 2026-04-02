@@ -9,10 +9,10 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
   const config = KEYWORD_PAGES[params.roleSlug];
   if (!config) return {};
   return {
-    title: `${config.roleName} Resume Keywords (Complete Guide) | ResumeAtlas`,
-    description: `${config.metaDescription} Full guide to keyword categories, examples, and placement.`,
+    title: `Top Missing Keywords in ${config.roleName} Resumes (Check Yours) | ResumeAtlas`,
+    description: `Top missing keywords in ${config.roleName.toLowerCase()} resumes: compare JD vs resume wording, close role-specific gaps, and improve ATS keyword coverage.`,
     alternates: {
-      canonical: `/${params.roleSlug}/keywords`,
+      canonical: `/${params.roleSlug}-resume-keywords`,
     },
   };
 }

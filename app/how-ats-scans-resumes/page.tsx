@@ -4,6 +4,7 @@ import {
   CHECK_RESUME_AGAINST_JD_PATH,
   CHECK_RESUME_AGAINST_JD_ANCHOR,
 } from "@/app/lib/internalLinks";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "How ATS Systems Scan Resumes – Complete Guide | ResumeAtlas",
@@ -49,6 +50,7 @@ const faqSchema = {
 };
 
 export default function HowATSScansResumesPage() {
+  redirect("/how-to-pass-ats#how-ats-scans-resumes");
   return (
     <main className="min-h-screen bg-white text-slate-900">
       {/* Hero */}

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
 import {
   RESUME_GUIDE_PAGES,
+  INDEXED_RESUME_GUIDE_SLUGS,
   type ResumeGuideSlug,
 } from "@/app/lib/resumeGuidePages";
 
@@ -14,12 +15,14 @@ type PageParams = {
 export function generateMetadata({ params }: { params: PageParams }): Metadata {
   const config = RESUME_GUIDE_PAGES[params.slug];
   if (!config) return {};
+  const isIndexed = (INDEXED_RESUME_GUIDE_SLUGS as readonly string[]).includes(params.slug);
   return {
     title: config.metaTitle,
     description: config.metaDescription,
     alternates: {
       canonical: `/resume-guides/${params.slug}`,
     },
+    ...(isIndexed ? {} : { robots: { index: false, follow: true } }),
   };
 }
 
@@ -85,12 +88,18 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
               resume vs job description tool
             </Link>
             : paste both texts (no upload) to see keyword gaps and ATS-style alignment for that posting. For more context, read{" "}
-            <Link href="/how-ats-scans-resumes" className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
+            <Link
+              href="/how-to-pass-ats#how-ats-scans-resumes"
+              className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
               how ATS scans resumes
             </Link>{" "}
             or{" "}
-            <Link href="/problems/how-to-tailor-resume-to-job-description" className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
-              how to tailor a resume to a job description
+            <Link
+              href="/problems/resume-vs-job-description"
+              className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              resume vs job description
             </Link>
             .
           </p>
@@ -185,7 +194,7 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
             <ul className="mt-2 space-y-1 text-sm">
               <li>
                 <Link
-                  href="/how-ats-scans-resumes"
+                  href="/how-to-pass-ats#how-ats-scans-resumes"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   How ATS Systems Scan Resumes
@@ -193,7 +202,7 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
               </li>
               <li>
                 <Link
-                  href="/common-resume-mistakes-fail-ats"
+                  href="/how-to-pass-ats#common-resume-mistakes-fail-ats"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   Common Resume Mistakes That Fail ATS
@@ -201,7 +210,7 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
               </li>
               <li>
                 <Link
-                  href="/data-scientist/resume"
+                  href="/data-scientist"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   Data Scientist resume guide
@@ -209,7 +218,7 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
               </li>
               <li>
                 <Link
-                  href="/software-engineer/resume"
+                  href="/software-engineer"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   Software Engineer resume guide
@@ -217,7 +226,7 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
               </li>
               <li>
                 <Link
-                  href="/product-manager/resume"
+                  href="/product-manager"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   Product Manager resume guide

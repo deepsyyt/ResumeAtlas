@@ -9,6 +9,12 @@ export type ResumeGuideSlug =
   | "resume-projects-examples"
   | "resume-template-for-job-application";
 
+/** Only these guide slugs are worth indexing; other guide pages stay reachable but noindex. */
+export const INDEXED_RESUME_GUIDE_SLUGS = [
+  "ats-resume-template",
+  "ats-friendly-resume-example",
+] as const satisfies readonly ResumeGuideSlug[];
+
 export type ResumeGuidePageConfig = {
   slug: ResumeGuideSlug;
   h1: string;

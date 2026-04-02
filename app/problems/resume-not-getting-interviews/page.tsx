@@ -9,7 +9,7 @@ const SLUG = "resume-not-getting-interviews" as const;
 const config = PROBLEM_PAGES[SLUG];
 
 export const metadata: Metadata = {
-  title: `${config.metaTitle.replace(/\s*\(Examples \+ Fixes\)\s*$/i, "").trim()} (Examples + Fixes)`,
+  title: "Applied to 100 Jobs but No Interviews? Fix Your Resume in 2 Minutes | ResumeAtlas",
   description: config.metaDescription,
   alternates: {
     canonical: "/problems/resume-not-getting-interviews",
@@ -74,7 +74,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
         <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-18 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">Resume optimization</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
-            Your resume isn&apos;t getting interviews. Fix it in minutes (Examples + Fixes)
+            Applied to 100 Jobs but No Interviews? Fix Your Resume in 2 Minutes
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700 sm:text-base">
             If your resume is not getting interviews, here&apos;s why and how to fix it using
@@ -89,7 +89,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
           </p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:gap-4">
             <Link href="/#ats-checker-form" className={btnPrimary}>
-              Compare resume with job description
+              Upload resume and get instant fix suggestions
             </Link>
             <p className="text-xs text-slate-500 sm:text-sm">
               No login required · Free ATS analysis · Takes under 30 seconds
@@ -97,6 +97,32 @@ export default function ResumeNotGettingInterviewsLandingPage() {
           </div>
         </div>
       </section>
+
+      <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-6 lg:px-8">
+        <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-4 sm:p-5">
+          <h2 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
+            Top 3 reasons your resume fails first screening
+          </h2>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm text-slate-700">
+            <li>Missing must-have keywords from the target job description.</li>
+            <li>Bullets describe tasks, not outcomes recruiters can quickly score.</li>
+            <li>ATS-parsing friction hides core experience (titles, tools, or dates).</li>
+          </ul>
+          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Example failure output</p>
+            <p className="mt-2 text-sm text-slate-700">
+              Match estimate: <strong className="text-slate-900">62%</strong> · Missing terms:
+              <span className="ml-1">SQL, experimentation, stakeholder communication</span> ·
+              Highest-impact fix: rewrite top 3 bullets using JD language + measurable outcomes.
+            </p>
+          </div>
+          <div className="mt-4">
+            <Link href="/#ats-checker-form" className={btnPrimarySm}>
+              Show me exactly what is failing
+            </Link>
+          </div>
+        </section>
+      </div>
 
       <div className="mx-auto max-w-3xl px-4 pb-6 sm:px-6 lg:px-8">
         <TopicClusterCallout />
@@ -108,7 +134,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             <li>
               <strong>Software Engineer:</strong> weak delivery proof (latency, uptime, CI/CD) often
               blocks interviews.{" "}
-              <Link href="/software-engineer/resume/skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/software-engineer-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 See role fix
               </Link>
               {" · "}
@@ -118,7 +144,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             </li>
             <li>
               <strong>Data Scientist:</strong> missing SQL and experiment-impact terms can hide fit.{" "}
-              <Link href="/data-scientist/resume/projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/data-scientist-resume-guide#projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 See role fix
               </Link>
               {" · "}
@@ -129,7 +155,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             <li>
               <strong>Product Manager:</strong> no quantified outcomes (activation, retention, ARR)
               makes bullets look generic.{" "}
-              <Link href="/product-manager/resume/summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/product-manager-resume-guide#summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 See role fix
               </Link>
               {" · "}
@@ -140,7 +166,10 @@ export default function ResumeNotGettingInterviewsLandingPage() {
           </ul>
           <p className="mt-3 text-sm text-slate-700">
             Related ATS guides:{" "}
-            <Link href="/how-ats-scans-resumes" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+            <Link
+              href="/how-to-pass-ats#how-ats-scans-resumes"
+              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
               how ATS scans resumes
             </Link>
             {" · "}
@@ -285,7 +314,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
           </ul>
           <div className="mt-8 flex justify-center">
             <Link href="/#ats-checker-form" className={btnPrimarySm}>
-              Compare with job description
+              Run instant resume failure check
             </Link>
           </div>
         </section>

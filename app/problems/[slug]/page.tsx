@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ProblemConversionPage } from "@/app/components/ProblemConversionPage";
 import {
   PROBLEM_PAGES,
+  CANONICAL_PROBLEM_SLUGS,
   PROBLEM_SLUGS,
   type ProblemSlug,
 } from "@/app/lib/problemPages";
@@ -25,6 +26,7 @@ export function generateMetadata({
   const config = PROBLEM_PAGES[params.slug as ProblemSlug];
   if (!config) return {};
   const hasExamples = Boolean(config.scenario?.before && config.scenario?.after);
+  const isCanonical = (CANONICAL_PROBLEM_SLUGS as readonly string[]).includes(params.slug);
   const normalizedTitle = config.metaTitle.replace(/\s*\(Examples \+ Fixes\)\s*$/i, "").trim();
   return {
     title: hasExamples ? `${normalizedTitle} (Examples + Fixes)` : `${normalizedTitle} (Why + Fix)`,
@@ -32,6 +34,7 @@ export function generateMetadata({
     alternates: {
       canonical: `/problems/${params.slug}`,
     },
+    ...(isCanonical ? {} : { robots: { index: false, follow: true } }),
   };
 }
 

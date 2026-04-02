@@ -17,7 +17,11 @@ import {
   PROBLEM_LANDING_VARIANTS,
   problemToneCalloutClass,
 } from "@/app/lib/problemLandingVariants";
-import { getRelatedProblemEntries, type ProblemPageConfig } from "@/app/lib/problemPages";
+import {
+  getRelatedProblemEntries,
+  type ProblemPageConfig,
+  type ProblemSlug,
+} from "@/app/lib/problemPages";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 
 type Props = {
@@ -46,6 +50,61 @@ export function ProblemConversionPage({ config }: Props) {
   const toneBox = problemToneCalloutClass(v.intent);
   const eyebrowTone = heroEyebrowClass(v.intent);
 
+  // Intent-specific example output.
+  // This avoids a "template" feel on every /problems/* page.
+  const exampleBySlug: Partial<
+    Record<
+      ProblemSlug,
+      { estimate: number; missingTerms: string[]; highestImpactFix: string }
+    >
+  > = {
+    "resume-not-getting-interviews": {
+      estimate: 62,
+      missingTerms: ["SQL depth", "experiment language", "stakeholder outcomes"],
+      highestImpactFix: "rewrite top bullets with JD terms + measurable proof",
+    },
+    "no-response-after-applying": {
+      estimate: 58,
+      missingTerms: ["role vocabulary", "tool mentions in bullets", "outcome framing"],
+      highestImpactFix: "tighten headline/summary + lead bullets with the posting's must-haves",
+    },
+    "ats-rejecting-my-resume": {
+      estimate: 54,
+      missingTerms: ["standard section headings", "clean one-column structure", "parser-friendly dates"],
+      highestImpactFix: "simplify layout and normalize headings so ATS can map fields reliably",
+    },
+    "missing-keywords-in-resume": {
+      estimate: 61,
+      missingTerms: ["must-have JD keywords", "context (where you used them)", "evidence-backed bullets"],
+      highestImpactFix: "add truthful keyword coverage with proof in experience/skills sections",
+    },
+    "resume-vs-job-description": {
+      estimate: 63,
+      missingTerms: ["key JD themes", "metric-backed outcomes", "translation between titles and responsibilities"],
+      highestImpactFix: "map each JD requirement to a specific bullet and reorder for relevance",
+    },
+  };
+
+  const example = exampleBySlug[config.slug] ?? {
+    estimate: 64,
+    missingTerms: ["must-have terms", "evidence in top bullets", "clean ATS parsing"],
+    highestImpactFix: "add missing JD terms with measurable proof",
+  };
+
+  const heroToolLineBySlug: Partial<Record<ProblemSlug, string>> = {
+    "no-response-after-applying":
+      "Paste your resume and one target job description to see why applications go silent.",
+    "ats-rejecting-my-resume":
+      "Paste your resume first to detect ATS parsing and structure issues before reapplying.",
+    "missing-keywords-in-resume":
+      "Paste resume + JD to find missing keywords and where to add truthful proof.",
+    "resume-vs-job-description":
+      "Paste both texts and map each job requirement to resume evidence in minutes.",
+  };
+  const heroToolLine =
+    heroToolLineBySlug[config.slug] ??
+    "Paste your resume and a target job description to diagnose gaps before applying.";
+
   return (
     <main className="min-h-screen bg-white text-slate-900">
       {/* 1. Hero */}
@@ -69,8 +128,46 @@ export function ProblemConversionPage({ config }: Props) {
               No login required · Free ATS analysis · Takes under 30 seconds
             </p>
           </div>
+          <div className="mx-auto mt-5 max-w-2xl rounded-xl border border-slate-200 bg-white p-3 text-left">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Instant tool output preview
+            </p>
+            <p className="mt-1 text-sm text-slate-700">{heroToolLine}</p>
+            <p className="mt-2 text-sm text-slate-700">
+              Example: <strong className="text-slate-900">{example.estimate}%</strong> match · Missing:
+              <span className="ml-1">{example.missingTerms.slice(0, 2).join(", ")}</span>.
+            </p>
+          </div>
         </div>
       </section>
+
+      <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-6 lg:px-8">
+        <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-4 sm:p-5">
+          <h2 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
+            Top 3 reasons your resume fails first screening
+          </h2>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm text-slate-700">
+            {config.rootCauses.bullets.slice(0, 3).map((b) => (
+              <li key={b.title}>{b.title}</li>
+            ))}
+          </ul>
+          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Example failure output
+            </p>
+            <p className="mt-2 text-sm text-slate-700">
+              Match estimate: <strong className="text-slate-900">{example.estimate}%</strong> · Missing
+              must-have terms: <span className="ml-1">{example.missingTerms.join(", ")}</span> ·
+              Highest-impact fix: {example.highestImpactFix}.
+            </p>
+          </div>
+          <div className="mt-4">
+            <Link href="/#ats-checker-form" className={btnPrimarySm}>
+              Show me exactly what is failing
+            </Link>
+          </div>
+        </section>
+      </div>
 
       {/* 2. Visual proof (intent-based emphasis) */}
       <ProductPreviewSection
@@ -108,17 +205,17 @@ export function ProblemConversionPage({ config }: Props) {
             </p>
             <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-slate-700">
               <li>
-                <Link href="/software-engineer/resume/skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/software-engineer-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Software Engineer resume skills
                 </Link>
               </li>
               <li>
-                <Link href="/data-scientist/resume/skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/data-scientist-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Data Scientist resume skills
                 </Link>
               </li>
               <li>
-                <Link href="/product-manager/resume/summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/product-manager-resume-guide#summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Product Manager resume summary
                 </Link>
               </li>
@@ -136,7 +233,7 @@ export function ProblemConversionPage({ config }: Props) {
                 <strong>If you&apos;re a Software Engineer:</strong> missing delivery keywords like
                 APIs, CI/CD, reliability, or latency can lower match.
                 <span className="ml-1">
-                  <Link href="/software-engineer/resume/skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix skills</Link>
+                  <Link href="/software-engineer-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix skills</Link>
                   {" · "}
                   <Link href="/software-engineer/keywords/technical-skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Engineer keywords</Link>
                 </span>
@@ -145,7 +242,7 @@ export function ProblemConversionPage({ config }: Props) {
                 <strong>If you&apos;re a Data Scientist:</strong> resumes often miss SQL + experiment
                 language or model evaluation metrics.
                 <span className="ml-1">
-                  <Link href="/data-scientist/resume/projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix projects</Link>
+                  <Link href="/data-scientist-resume-guide#projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix projects</Link>
                   {" · "}
                   <Link href="/data-scientist/keywords/core-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Scientist keywords</Link>
                 </span>
@@ -154,7 +251,7 @@ export function ProblemConversionPage({ config }: Props) {
                 <strong>If you&apos;re a Product Manager:</strong> no quantified outcome language
                 (activation, retention, revenue) is a common blocker.
                 <span className="ml-1">
-                  <Link href="/product-manager/resume/summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix summary</Link>
+                  <Link href="/product-manager-resume-guide#summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix summary</Link>
                   {" · "}
                   <Link href="/product-manager/keywords/projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">PM keywords</Link>
                 </span>
@@ -166,7 +263,7 @@ export function ProblemConversionPage({ config }: Props) {
             </p>
             <p className="mt-3 text-sm text-slate-700">
               ATS guide links:{" "}
-              <Link href="/how-ats-scans-resumes" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/how-to-pass-ats#how-ats-scans-resumes" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 how ATS scans resumes
               </Link>
               {" · "}
@@ -174,7 +271,7 @@ export function ProblemConversionPage({ config }: Props) {
                 how to pass ATS
               </Link>
               {" · "}
-              <Link href="/common-resume-mistakes-fail-ats" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/how-to-pass-ats#common-resume-mistakes-fail-ats" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 common ATS mistakes
               </Link>
             </p>

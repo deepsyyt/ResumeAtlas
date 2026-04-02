@@ -1,11 +1,5 @@
-import {
-  TOOL_CLUSTER_COMPAT,
-  buildToolClusterMetadata,
-} from "@/app/lib/toolClusterPages";
-import { ToolClusterLanding } from "@/app/components/ToolClusterLanding";
-
-export const metadata = buildToolClusterMetadata(TOOL_CLUSTER_COMPAT);
+import { redirect } from "next/navigation";
 
 export default function ATSCompatibilityCheckPage() {
-  return <ToolClusterLanding config={TOOL_CLUSTER_COMPAT} />;
+  redirect("/ats-resume-checker#ats-compatibility-check");
 }

@@ -1,11 +1,5 @@
-import {
-  TOOL_CLUSTER_PRIMARY,
-  buildToolClusterMetadata,
-} from "@/app/lib/toolClusterPages";
-import { ToolClusterLanding } from "@/app/components/ToolClusterLanding";
-
-export const metadata = buildToolClusterMetadata(TOOL_CLUSTER_PRIMARY);
+import { redirect } from "next/navigation";
 
 export default function CheckResumeAgainstJobDescriptionPage() {
-  return <ToolClusterLanding config={TOOL_CLUSTER_PRIMARY} />;
+  redirect("/resume-vs-job-description-checker");
 }

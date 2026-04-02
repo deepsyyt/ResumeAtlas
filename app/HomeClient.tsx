@@ -27,6 +27,7 @@ import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
 import { resolveProblemInterviewCallout } from "@/app/lib/problemInterviewCallout";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
+import { roleResumeSamplePath } from "@/app/lib/seoPages";
 import { useRef } from "react";
 
 const homeFaqSchema = {
@@ -114,14 +115,14 @@ const HOW_IT_WORKS_STEPS = [
   },
 ] as const;
 
-/** Crawl spine: primary entry points to `/{role}/resume` (not keyword URLs). */
+/** Crawl spine: canonical role hubs `/{role}` (keywords + deep topics linked from each hub). */
 const TOP_RESUME_GUIDES_BY_ROLE: { href: string; label: string }[] = [
-  { href: "/data-scientist/resume", label: "Data Scientist Resume" },
-  { href: "/software-engineer/resume", label: "Software Engineer Resume" },
-  { href: "/product-manager/resume", label: "Product Manager Resume" },
-  { href: "/frontend-developer/resume", label: "Frontend Developer Resume" },
-  { href: "/backend-developer/resume", label: "Backend Developer Resume" },
-  { href: "/data-analyst/resume", label: "Data Analyst Resume" },
+  { href: "/data-scientist", label: "Data Scientist Resume" },
+  { href: "/software-engineer", label: "Software Engineer Resume" },
+  { href: "/product-manager", label: "Product Manager Resume" },
+  { href: "/frontend-developer", label: "Frontend Developer Resume" },
+  { href: "/backend-developer", label: "Backend Developer Resume" },
+  { href: "/data-analyst", label: "Data Analyst Resume" },
 ];
 
 const HOME_CAPABILITY_CARDS = [
@@ -1034,7 +1035,7 @@ export default function HomeClient({
             <ul className="mt-2 space-y-0.5 text-sm text-slate-700 list-disc pl-5">
               <li>
                 <Link
-                  href="/how-ats-scans-resumes"
+                  href="/how-to-pass-ats#how-ats-scans-resumes"
                   className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   <span>↗</span>
@@ -1043,7 +1044,7 @@ export default function HomeClient({
               </li>
               <li>
                 <Link
-                  href="/common-resume-mistakes-fail-ats"
+                  href="/how-to-pass-ats#common-resume-mistakes-fail-ats"
                   className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   <span>↗</span>
@@ -1052,7 +1053,7 @@ export default function HomeClient({
               </li>
               <li>
                 <Link
-                  href="/data-scientist/keywords"
+                  href="/data-scientist-resume-keywords"
                   className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   <span>↗</span>
@@ -1145,9 +1146,9 @@ export default function HomeClient({
               <div>
                 <p className="font-semibold text-slate-900">Role hubs</p>
                 <ul className="mt-1 space-y-1">
-                  <li><Link href="/software-engineer-resume-example" className="text-sky-700 hover:underline">Software Engineer</Link></li>
-                  <li><Link href="/data-scientist-resume-example" className="text-sky-700 hover:underline">Data Scientist</Link></li>
-                  <li><Link href="/product-manager-resume-example" className="text-sky-700 hover:underline">Product Manager</Link></li>
+                  <li><Link href="/software-engineer" className="text-sky-700 hover:underline">Software Engineer</Link></li>
+                  <li><Link href="/data-scientist" className="text-sky-700 hover:underline">Data Scientist</Link></li>
+                  <li><Link href="/product-manager" className="text-sky-700 hover:underline">Product Manager</Link></li>
                 </ul>
               </div>
               <div>
@@ -1162,7 +1163,7 @@ export default function HomeClient({
                 <p className="font-semibold text-slate-900">ATS guides</p>
                 <ul className="mt-1 space-y-1">
                   <li><Link href="/how-to-pass-ats" className="text-sky-700 hover:underline">How to pass ATS</Link></li>
-                  <li><Link href="/how-ats-scans-resumes" className="text-sky-700 hover:underline">How ATS scans resumes</Link></li>
+                  <li><Link href="/how-to-pass-ats#how-ats-scans-resumes" className="text-sky-700 hover:underline">How ATS scans resumes</Link></li>
                 </ul>
               </div>
             </div>
@@ -1188,17 +1189,26 @@ export default function HomeClient({
               </p>
               <ul className="mt-2 space-y-1 text-sm">
                 <li>
-                  <Link href="/data-scientist-resume-example" className="text-sky-700 hover:underline">
+                  <Link
+                    href={roleResumeSamplePath("data-scientist")}
+                    className="text-sky-700 hover:underline"
+                  >
                     Data Scientist
                   </Link>
                 </li>
                 <li>
-                  <Link href="/software-engineer-resume-example" className="text-sky-700 hover:underline">
+                  <Link
+                    href={roleResumeSamplePath("software-engineer")}
+                    className="text-sky-700 hover:underline"
+                  >
                     Software Engineer
                   </Link>
                 </li>
                 <li>
-                  <Link href="/product-manager-resume-example" className="text-sky-700 hover:underline">
+                  <Link
+                    href={roleResumeSamplePath("product-manager")}
+                    className="text-sky-700 hover:underline"
+                  >
                     Product Manager
                   </Link>
                 </li>
@@ -1220,17 +1230,26 @@ export default function HomeClient({
               </p>
               <ul className="mt-2 space-y-1 text-sm">
                 <li>
-                  <Link href="/data-scientist/keywords" className="text-sky-700 hover:underline">
+                  <Link
+                    href="/data-scientist-resume-keywords"
+                    className="text-sky-700 hover:underline"
+                  >
                     Data Scientist
                   </Link>
                 </li>
                 <li>
-                  <Link href="/software-engineer/keywords" className="text-sky-700 hover:underline">
+                  <Link
+                    href="/software-engineer-resume-keywords"
+                    className="text-sky-700 hover:underline"
+                  >
                     Software Engineer
                   </Link>
                 </li>
                 <li>
-                  <Link href="/product-manager/keywords" className="text-sky-700 hover:underline">
+                  <Link
+                    href="/product-manager-resume-keywords"
+                    className="text-sky-700 hover:underline"
+                  >
                     Product Manager
                   </Link>
                 </li>

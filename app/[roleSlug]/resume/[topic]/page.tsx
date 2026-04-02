@@ -5,6 +5,7 @@ import SeoSlugPage, {
 } from "@/app/seo/[slug]/page";
 import type { RoleSlug } from "@/app/lib/seoPages";
 import type { ResumeSeoTopic as Topic } from "@/app/lib/resumeTopicTypes";
+import { isRoleResumeTopicIndexed } from "@/app/lib/roleClusterIndexPolicy";
 
 type PageParams = {
   roleSlug: RoleSlug;
@@ -35,11 +36,29 @@ export async function generateMetadata({
   if (!TOPICS.has(params.topic)) return {};
   const slug = buildLegacySeoSlug(params.roleSlug, params.topic);
   const existing = await generateSeoMetadata({ params: { slug } });
+  const indexed = isRoleResumeTopicIndexed(params.topic);
+  const mergedAnchor =
+    params.topic === "bullet-points"
+      ? "bullet-points"
+      : params.topic === "skills"
+        ? "skills"
+        : params.topic === "summary"
+          ? "summary"
+          : params.topic === "projects"
+            ? "projects"
+            : null;
   return {
     ...existing,
     alternates: {
-      canonical: `/${params.roleSlug}/resume/${params.topic}`,
+      canonical: mergedAnchor
+        ? `/${params.roleSlug}-resume-guide#${mergedAnchor}`
+        : `/${params.roleSlug}/resume/${params.topic}`,
     },
+    ...(indexed
+      ? {}
+      : {
+          robots: { index: false, follow: true },
+        }),
   };
 }
 

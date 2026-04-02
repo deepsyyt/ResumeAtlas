@@ -53,6 +53,20 @@ export function ResumeKeywordScannerLanding() {
           >
             {TOOL_CLUSTER_KEYWORD_SCANNER.ctaAnchor}
           </a>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm">
+            {[
+              "Resume not getting shortlisted?",
+              "Missing keywords for your role?",
+              "ATS score too low?",
+            ].map((line) => (
+              <span
+                key={line}
+                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 font-medium text-slate-700"
+              >
+                {line}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -88,6 +102,20 @@ export function ResumeKeywordScannerLanding() {
           <p className="mt-3 text-sm text-slate-600">
             Paste-only (no file upload). The job description is required so gaps are measured against
             a real posting.
+          </p>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            How keyword gap scoring works
+          </h2>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
+            <li>Extracts repeated must-have terms from the job description.</li>
+            <li>Checks whether those terms appear in summary, skills, and bullet context.</li>
+            <li>Flags weak coverage where terms are missing or unsupported by evidence.</li>
+          </ul>
+          <p className="mt-3 text-sm text-slate-600">
+            Goal: close honest gaps so ATS and recruiters can map your fit faster.
           </p>
         </section>
 
@@ -228,7 +256,7 @@ export function ResumeKeywordScannerLanding() {
             </li>
             <li>
               <Link
-                href="/ats-resume-checker-free"
+                href="/ats-resume-checker#ats-compatibility-check"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 {CHECK_ATS_COMPATIBILITY_ANCHOR}
@@ -236,7 +264,7 @@ export function ResumeKeywordScannerLanding() {
             </li>
             <li>
               <Link
-                href="/resume-score-checker"
+                href="/ats-resume-checker#resume-score-checker"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 {CHECK_YOUR_RESUME_SCORE_ANCHOR}
