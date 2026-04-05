@@ -6,9 +6,9 @@ import { ToolClusterNextSteps } from "@/app/components/ToolClusterNextSteps";
 import { ToolClusterRelatedLinks } from "@/app/components/ToolClusterRelatedLinks";
 import {
   CHECK_ATS_COMPATIBILITY_ANCHOR,
-  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   CHECK_YOUR_RESUME_SCORE_ANCHOR,
-  RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
 } from "@/app/lib/internalLinks";
 import {
   TOOL_CLUSTER_KEYWORD_SCANNER,
@@ -219,10 +219,10 @@ export function ResumeKeywordScannerLanding() {
           <p className="mt-3 text-sm sm:text-base text-slate-700">
             For deeper role comparison and match scoring, use the{" "}
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
-              {RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR}
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
             .
           </p>
@@ -248,10 +248,10 @@ export function ResumeKeywordScannerLanding() {
           <ul className="mt-3 list-disc pl-5 space-y-2 text-sm sm:text-base text-slate-700">
             <li>
               <Link
-                href={CHECK_RESUME_AGAINST_JD_PATH}
+                href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
-                {RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR}
+                {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
               </Link>
             </li>
             <li>

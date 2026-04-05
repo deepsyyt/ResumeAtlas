@@ -4,7 +4,10 @@ import { RelatedProblemsWidget } from "@/app/components/RelatedProblemsWidget";
 import { TopicClusterCallout } from "@/app/components/problemLandingShared";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { PROBLEM_PAGES, getRelatedProblemEntries } from "@/app/lib/problemPages";
-import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
+import {
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+} from "@/app/lib/internalLinks";
 
 const SLUG = "resume-not-getting-interviews" as const;
 const config = PROBLEM_PAGES[SLUG];
@@ -474,7 +477,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
             >
-              Compare resume with job description
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
           </div>
           <div className="mt-8 border-t border-slate-200 pt-6">

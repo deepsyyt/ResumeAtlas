@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { KEYWORD_PAGES } from "@/app/lib/seoPages";
 import {
-  CHECK_RESUME_AGAINST_JD_PATH,
-  CHECK_RESUME_AGAINST_JD_ANCHOR,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 
 export const metadata: Metadata = {
@@ -28,10 +28,10 @@ export default function ATSKeywordsIndexPage() {
             Role-specific keyword checklists to help your resume pass screening.
           </p>
           <Link
-            href={CHECK_RESUME_AGAINST_JD_PATH}
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            {CHECK_RESUME_AGAINST_JD_ANCHOR}
+            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
           </Link>
         </div>
       </section>

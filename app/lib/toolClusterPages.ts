@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import {
   CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
 } from "@/app/lib/internalLinks";
 
@@ -222,7 +223,7 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
   webAppName: "ATS Resume Checker",
   webAppDescription:
     "Estimate whether ATS software can read your resume cleanly: structure, parsing-friendly layout, and compatibility scoring. Optional job description for extra keyword overlap.",
-  ctaAnchor: "Check why ATS rejects my resume",
+  ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   differentiatorHeading: "What This ATS Check Actually Measures",
   differentiatorBody: [
     "This scan emphasizes how applicant tracking systems ingest your resume: whether sections and bullets parse cleanly, whether headings look machine-readable, and whether the document avoids patterns that often break parsers (dense columns, unusual separators, heavy decoration).",
@@ -287,7 +288,7 @@ export const TOOL_CLUSTER_SCORE: ToolClusterPageConfig = {
   webAppName: "Resume Score Checker",
   webAppDescription:
     "Check your resume score against a job description: keyword match, gaps, and ATS-style alignment.",
-  ctaAnchor: "resume score checker",
+  ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   differentiatorHeading: "How Resume Score Is Calculated",
   differentiatorBody: [
     "Your score summarizes how well your resume aligns with the pasted job description—especially keyword coverage, skills overlap, and whether your experience reads relevant to that posting. It is an estimate meant to mirror what many systems reward: clear match to the role’s stated requirements.",
@@ -412,7 +413,7 @@ export const TOOL_CLUSTER_COMPAT: ToolClusterPageConfig = {
   webAppName: "ATS Compatibility Check",
   webAppDescription:
     "Free ATS compatibility test: compare your resume with a job description for keyword and structure alignment.",
-  ctaAnchor: "ATS compatibility check",
+  ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   differentiatorHeading: "ATS Formatting & Parsing Issues That Hurt Compatibility",
   differentiatorBody: [
     "Even strong experience can underperform if the ATS cannot parse your layout: multi-column designs, text in images, tables for core content, or unusual section titles. Compatibility is partly “does my resume say the right things?” and partly “can a machine read it reliably?”",

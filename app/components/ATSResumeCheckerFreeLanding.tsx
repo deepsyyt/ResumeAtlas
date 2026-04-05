@@ -5,7 +5,7 @@ import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuides
 import { ToolClusterNextSteps } from "@/app/components/ToolClusterNextSteps";
 import { ToolClusterRelatedLinks } from "@/app/components/ToolClusterRelatedLinks";
 import {
-  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
   COMPARE_RESUME_WITH_JD_ANCHOR,
   MATCH_RESUME_TO_JOB_DESCRIPTION_ANCHOR,
   RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
@@ -274,21 +274,21 @@ export function ATSResumeCheckerFreeLanding() {
           <p className="mt-3 text-sm sm:text-base text-slate-700">
             Want to compare your resume with a specific job description?{" "}
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
               {COMPARE_RESUME_WITH_JD_ANCHOR}
             </Link>
             . You can also use our{" "}
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
               {RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR}
             </Link>{" "}
             — same tool, phrased the way many people search. Searching for{" "}
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
               {MATCH_RESUME_TO_JOB_DESCRIPTION_ANCHOR}

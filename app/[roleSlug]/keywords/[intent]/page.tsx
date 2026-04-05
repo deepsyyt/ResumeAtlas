@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  CHECK_RESUME_AGAINST_JD_PATH,
-  CHECK_RESUME_AGAINST_JD_ANCHOR,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 import { notFound } from "next/navigation";
 import { KEYWORD_PAGES, type RoleSlug } from "@/app/lib/seoPages";
@@ -91,10 +91,10 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
           <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed">{content.intro}</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
             >
-              {CHECK_RESUME_AGAINST_JD_ANCHOR}
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
             <Link
               href={resumeTopicPath}

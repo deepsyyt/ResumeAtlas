@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
-import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
+import {
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+} from "@/app/lib/internalLinks";
 
 export const metadata: Metadata = {
   title: "Resume Format Guide: ATS, Modern, Professional & One-Page | ResumeAtlas",
@@ -102,10 +105,10 @@ export default function ResumeFormatGuidePage() {
             jump to any topic.
           </p>
           <Link
-            href="/ats-resume-checker#ats-checker-form"
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            Open the ATS resume checker
+            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
           </Link>
         </div>
       </section>
@@ -151,7 +154,7 @@ export default function ResumeFormatGuidePage() {
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
-              check resume against job description
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>{" "}
             to confirm keyword fit for a real posting.
           </p>
@@ -232,7 +235,7 @@ export default function ResumeFormatGuidePage() {
             href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            Check resume against a job description
+            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
           </Link>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">

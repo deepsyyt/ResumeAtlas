@@ -31,7 +31,8 @@ function priorityForPath(pathname: string): number {
   if (pathname.startsWith("/how-ats-")) return 0.92;
   if (
     pathname === "/how-to-pass-ats" ||
-    pathname === "/common-resume-mistakes-fail-ats"
+    pathname === "/common-resume-mistakes-fail-ats" ||
+    pathname === "/customize-resume-without-lying"
   ) {
     return 0.85;
   }
@@ -90,6 +91,12 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     lastModified: new Date("2026-03-09"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/how-to-pass-ats"),
+  });
+  entries.push({
+    url: `${base}/customize-resume-without-lying`,
+    lastModified: new Date("2026-04-02"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/customize-resume-without-lying"),
   });
   const legalLastMod = new Date("2026-03-23");
   for (const path of LEGAL_PATHS) {

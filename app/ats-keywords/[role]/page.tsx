@@ -10,8 +10,8 @@ import {
 import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import {
-  CHECK_RESUME_AGAINST_JD_PATH,
-  CHECK_RESUME_AGAINST_JD_ANCHOR,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 
 type PageParams = {
@@ -120,10 +120,10 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
             applicant tracking systems are looking for.
           </p>
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
             >
-              {CHECK_RESUME_AGAINST_JD_ANCHOR}
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
           </div>
         </div>
@@ -228,10 +228,10 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
             resume before applying.
           </p>
           <Link
-            href={CHECK_RESUME_AGAINST_JD_PATH}
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            {CHECK_RESUME_AGAINST_JD_ANCHOR}
+            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
           </Link>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">

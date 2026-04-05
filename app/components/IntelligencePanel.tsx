@@ -8,8 +8,8 @@ import Link from "next/link";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import { buildExperienceAlignmentSubtitle } from "@/app/lib/experienceCopy";
 import {
-  CHECK_RESUME_AGAINST_JD_PATH,
-  RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 import {
   getScoreStyle,
@@ -653,10 +653,10 @@ export function IntelligencePanel({
             match-style score for that posting.
           </p>
           <Link
-            href={CHECK_RESUME_AGAINST_JD_PATH}
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-3 inline-flex w-full sm:w-auto items-center justify-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-slate-900/10 transition hover:bg-slate-800"
           >
-            {RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR}
+            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
           </Link>
         </div>
       ) : null}

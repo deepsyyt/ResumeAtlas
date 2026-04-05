@@ -3,8 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LastUpdated } from "@/app/components/LastUpdated";
 import {
-  CHECK_RESUME_AGAINST_JD_PATH,
-  CHECK_RESUME_AGAINST_JD_ANCHOR,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 import {
@@ -125,16 +125,16 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
           <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
             Start with the example below, tighten each section using the topic guides, then{" "}
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
-              {CHECK_RESUME_AGAINST_JD_ANCHOR}
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>{" "}
             against your target posting.
           </p>
           <div className="mt-6">
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition"
             >
               Check why my {roleName} resume is not getting interviews
@@ -209,7 +209,7 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
               <li>ATS-unfriendly bullet wording that hides outcomes and tooling.</li>
               <li>Weak alignment between JD must-haves and top experience bullets.</li>
             </ul>
-            <Link href={CHECK_RESUME_AGAINST_JD_PATH} className="mt-3 inline-flex text-sm font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className="mt-3 inline-flex text-sm font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
               Check my {roleName} resume gaps now
             </Link>
           </div>
@@ -416,10 +416,10 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
           </div>
           <div className="flex-none">
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 focus-visible:ring-offset-emerald-50 transition"
             >
-              {CHECK_RESUME_AGAINST_JD_ANCHOR}
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
           </div>
         </section>

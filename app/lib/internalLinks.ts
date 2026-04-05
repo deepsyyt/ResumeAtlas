@@ -11,8 +11,9 @@ export const CHECK_RESUME_AGAINST_JD_PATH =
 export const CHECK_RESUME_AGAINST_JD_FORM_HREF =
   `${CHECK_RESUME_AGAINST_JD_PATH}#ats-checker-form` as const;
 
-/** Exact anchor text for internal links to the primary tool URL (ranking signal). */
-export const CHECK_RESUME_AGAINST_JD_ANCHOR = "check resume against job description" as const;
+/** Primary JD-tool CTA: keyword-rich anchor for buttons and links to the matcher. */
+export const CHECK_RESUME_AGAINST_JD_PRIMARY_CTA =
+  "Check resume against job description (free tool)" as const;
 
 /** Anchor for links from ATS compliance page → JD matcher (distinct intent). */
 export const COMPARE_RESUME_WITH_JD_ANCHOR = "compare resume with job description" as const;
@@ -43,6 +44,10 @@ const ARTICLE_LINKS: InternalLink[] = [
   { path: "/resume-keyword-scanner", label: "Resume keyword scanner" },
   { path: "/ats-resume-checker", label: "ATS resume checker" },
   { path: "/how-to-pass-ats", label: "How to Pass ATS Screening" },
+  {
+    path: "/customize-resume-without-lying",
+    label: "Customize resume without lying",
+  },
 ];
 
 const RESUME_EXAMPLE_LINKS: InternalLink[] = (Object.keys(KEYWORD_PAGES) as RoleSlug[]).map(
@@ -90,7 +95,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   [CHECK_RESUME_AGAINST_JD_PATH]: [
     "/ats-resume-checker",
     "/resume-keyword-scanner",
-    "/how-to-pass-ats",
+    "/customize-resume-without-lying",
     "/how-to-pass-ats",
     "/how-to-pass-ats",
     "/resume-guides/resume-format-guide",
@@ -101,7 +106,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   ],
   "/how-to-pass-ats": [
     CHECK_RESUME_AGAINST_JD_PATH,
-    "/how-to-pass-ats",
+    "/customize-resume-without-lying",
     "/resume-guides/resume-format-guide",
     "/how-to-pass-ats",
     "/software-engineer-resume-keywords",
@@ -109,6 +114,16 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/resume-guides/ats-friendly-resume-example",
     "/software-engineer-resume-guide",
     "/resume-guides/ats-resume-template",
+  ],
+  "/customize-resume-without-lying": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/ats-resume-checker",
+    "/resume-keyword-scanner",
+    "/how-to-pass-ats",
+    "/how-to-pass-ats",
+    "/resume-guides/resume-format-guide",
+    "/software-engineer-resume-keywords",
+    "/data-scientist-resume-keywords",
   ],
   "/data-scientist-resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,

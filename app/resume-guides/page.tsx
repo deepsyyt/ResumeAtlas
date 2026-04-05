@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { RESUME_GUIDE_PAGES } from "@/app/lib/resumeGuidePages";
 import {
-  CHECK_RESUME_AGAINST_JD_PATH,
-  CHECK_RESUME_AGAINST_JD_ANCHOR,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 
 export const metadata: Metadata = {
@@ -29,10 +29,10 @@ export default function ResumeGuidesIndexPage() {
             Practical guides for writing ATS-friendly resume sections and templates.
           </p>
           <Link
-            href={CHECK_RESUME_AGAINST_JD_PATH}
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            {CHECK_RESUME_AGAINST_JD_ANCHOR}
+            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
           </Link>
         </div>
       </section>

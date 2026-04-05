@@ -8,8 +8,9 @@ import { getRoleSpecificAtsTips, getRoleTopicExtraParagraphs } from "@/app/lib/r
 import type { ResumeSeoTopic as Topic } from "@/app/lib/resumeTopicTypes";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import {
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PATH,
-  CHECK_RESUME_AGAINST_JD_ANCHOR,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 
 type SeoTopicConfig = {
@@ -1192,10 +1193,10 @@ export default function SeoSlugPage({ params }: PageProps) {
               it matches.
             </p>
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="mt-2 inline-flex text-xs sm:text-sm font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
             >
-              {CHECK_RESUME_AGAINST_JD_ANCHOR}
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
           </div>
         </section>
@@ -1250,10 +1251,10 @@ export default function SeoSlugPage({ params }: PageProps) {
           </div>
           <div className="flex-none">
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 focus-visible:ring-offset-emerald-50 transition"
             >
-              {CHECK_RESUME_AGAINST_JD_ANCHOR}
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
           </div>
         </section>

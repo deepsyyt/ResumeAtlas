@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  CHECK_RESUME_AGAINST_JD_PATH,
-  CHECK_RESUME_AGAINST_JD_ANCHOR,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 import { redirect } from "next/navigation";
 
@@ -63,10 +63,10 @@ export default function HowATSScansResumesPage() {
             Understand how Applicant Tracking Systems parse, score, and filter resumes so yours gets past the screen and in front of recruiters.
           </p>
           <Link
-            href={CHECK_RESUME_AGAINST_JD_PATH}
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
-            {CHECK_RESUME_AGAINST_JD_ANCHOR}
+            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
           </Link>
         </div>
       </section>
@@ -136,10 +136,10 @@ export default function HowATSScansResumesPage() {
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
             To improve your effective score: align your resume with the job description, include relevant keywords, use a parse-friendly format, and make experience and titles easy to recognize. Use a free{" "}
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
             >
-              {CHECK_RESUME_AGAINST_JD_ANCHOR}
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>{" "}
             to see how ATS-friendly your resume is before you apply.
           </p>
@@ -195,20 +195,20 @@ export default function HowATSScansResumesPage() {
             ResumeAtlas analyzes your resume and the job description you care about. You get an ATS-style match score, keyword coverage, and clear improvement ideas, all free, no login required.
           </p>
           <Link
-            href={CHECK_RESUME_AGAINST_JD_PATH}
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            {CHECK_RESUME_AGAINST_JD_ANCHOR}
+            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
           </Link>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Related</p>
             <ul className="mt-2 space-y-1 text-sm">
               <li>
                 <Link
-                  href={CHECK_RESUME_AGAINST_JD_PATH}
+                  href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  {CHECK_RESUME_AGAINST_JD_ANCHOR}
+                  {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
                 </Link>
               </li>
               <li>

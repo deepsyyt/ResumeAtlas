@@ -3,8 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { RoleSlug } from "@/app/lib/seoPages";
 import {
-  CHECK_RESUME_AGAINST_JD_PATH,
-  CHECK_RESUME_AGAINST_JD_ANCHOR,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 import { KEYWORD_PAGES } from "@/app/lib/seoPages";
 import type { ResumeSeoTopic } from "@/app/lib/resumeTopicTypes";
@@ -77,10 +77,10 @@ export default function RoleResumeGuidePage({ params }: { params: PageParams }) 
           </div>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
             >
-              {CHECK_RESUME_AGAINST_JD_ANCHOR}
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
             <Link
               href="#bullet-points"
@@ -112,10 +112,10 @@ export default function RoleResumeGuidePage({ params }: { params: PageParams }) 
           </p>
           <div className="mt-6">
             <Link
-              href={CHECK_RESUME_AGAINST_JD_PATH}
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm sm:text-base font-semibold text-white hover:bg-slate-800 transition"
             >
-              {CHECK_RESUME_AGAINST_JD_ANCHOR}
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
           </div>
         </section>

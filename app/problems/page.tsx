@@ -18,7 +18,10 @@ import {
   INDEXED_PROBLEM_SLUGS,
   problemPageLinkLabel,
 } from "@/app/lib/problemPages";
-import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
+import {
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+} from "@/app/lib/internalLinks";
 
 export const metadata: Metadata = {
   title: "Fix Your Resume for Any Job | Job Search Problems | ResumeAtlas",
@@ -80,7 +83,7 @@ export default function ProblemsHubPage() {
           </p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:gap-4">
             <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimary}>
-              Compare resume with job description
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
             <p className="text-xs text-slate-500 sm:text-sm">
               No login required · Free ATS analysis · Takes under 30 seconds
@@ -166,7 +169,7 @@ export default function ProblemsHubPage() {
           </p>
           <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
             <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={`${btnPrimary} sm:px-8`}>
-              Compare resume with job description
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
             <Link
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
