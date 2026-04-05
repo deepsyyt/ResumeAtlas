@@ -10,14 +10,16 @@ const siteUrl = getSiteUrl();
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": `${siteUrl}/#website`,
   name: "ResumeAtlas",
-  alternateName: "resumeatlas.io",
   url: siteUrl,
+  publisher: { "@id": `${siteUrl}/#organization` },
 };
 
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": `${siteUrl}/#organization`,
   name: "ResumeAtlas",
   url: siteUrl,
   logo: `${siteUrl}/favicon.svg`,
