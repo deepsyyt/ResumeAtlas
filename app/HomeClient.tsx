@@ -1139,7 +1139,7 @@ export default function HomeClient({
             <div>
               <h3 className="text-sm font-semibold text-slate-900">Browse by role</h3>
               <p className="text-sm text-slate-500 mt-1 leading-snug">
-                Examples, keyword lists, and writing guides—each index groups everything by role.
+                Sample resumes, keyword ideas, and writing help for the role you&apos;re targeting.
               </p>
               <ul className="mt-3 space-y-2 text-sm">
                 <li>
