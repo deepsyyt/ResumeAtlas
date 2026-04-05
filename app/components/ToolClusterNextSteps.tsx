@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const ROLE_GUIDES: { href: string; label: string }[] = [
-  { href: "/data-scientist", label: "Data Scientist resume guide" },
-  { href: "/software-engineer", label: "Software Engineer resume guide" },
-  { href: "/product-manager", label: "Product Manager resume guide" },
-  { href: "/data-analyst", label: "Data Analyst resume guide" },
+  { href: "/data-scientist-resume-guide", label: "Data Scientist resume guide" },
+  { href: "/software-engineer-resume-guide", label: "Software Engineer resume guide" },
+  { href: "/product-manager-resume-guide", label: "Product Manager resume guide" },
+  { href: "/data-analyst-resume-guide", label: "Data Analyst resume guide" },
 ];
 
 const KEYWORD_GUIDES: { href: string; label: string }[] = [
@@ -14,7 +14,7 @@ const KEYWORD_GUIDES: { href: string; label: string }[] = [
 ];
 
 /**
- * Post-check “next steps” links to role hubs and keyword guides (session depth + internal authority).
+ * Post-check “next steps” links to merged role guides and keyword clusters (session depth + internal authority).
  */
 export function ToolClusterNextSteps() {
   return (

@@ -275,16 +275,17 @@ export const KEYWORD_PAGES: Record<RoleSlug, KeywordsConfig> = {
   },
 };
 
-/** Inline sample copy on `/{role}` (legacy `/{role}-resume-example` and `/{role}/resume` redirect there). */
+/** Inline sample copy still defined on `/{role}` for legacy/redirect traffic; internal links use the merged guide. */
 export function resumePageConfigForRole(role: RoleSlug): ResumePageConfig | undefined {
   const key = `${role}-resume-example` as ResumeSlug;
   return RESUME_PAGES[key];
 }
 
-/** Fragment linking to the embedded sample card on the role hub. */
+/** Fragment for the embedded sample card on the role hub (direct visits / legacy bookmarks only). */
 export const RESUME_SAMPLE_HASH = "#resume-sample" as const;
 
+/** Prefer the merged role resume guide (indexed) over the broad `/{role}` hub (noindex). */
 export function roleResumeSamplePath(role: RoleSlug): string {
-  return `/${role}${RESUME_SAMPLE_HASH}`;
+  return `/${role}-resume-guide#bullet-points`;
 }
 

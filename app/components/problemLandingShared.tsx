@@ -3,6 +3,7 @@ import type { PreviewEmphasis } from "@/app/lib/problemLandingVariants";
 import {
   CHECK_RESUME_AGAINST_JD_ANCHOR,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PATH,
 } from "@/app/lib/internalLinks";
 
 export const btnPrimary =
@@ -370,7 +371,7 @@ export function TopicClusterCallout({ className = "" }: { className?: string }) 
           how to pass ATS
         </Link>
         , or{" "}
-        <Link href="/problems/resume-vs-job-description" className={b}>
+        <Link href={CHECK_RESUME_AGAINST_JD_PATH} className={b}>
           resume vs job description
         </Link>
         . Browse{" "}
@@ -394,14 +395,6 @@ export function GuidesFooterLinks() {
             className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
           >
             {CHECK_RESUME_AGAINST_JD_ANCHOR}
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="/problems/resume-vs-job-description"
-            className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-          >
-            Resume vs job description
           </Link>
         </li>
         <li>

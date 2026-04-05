@@ -11,6 +11,7 @@ import {
   isRoleKeywordIntent,
   keywordIntentLabel,
   getRelatedKeywordIntents,
+  roleToProblemLinkLabel,
   roleToProblemPath,
   type RoleKeywordIntent,
 } from "@/app/lib/roleSeo";
@@ -69,7 +70,7 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <nav className="text-xs text-slate-500">
             <Link
-              href={`/${role}`}
+              href={`/${role}-resume-keywords`}
               className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
             >
               {roleConfig.roleName}
@@ -179,8 +180,11 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
           <h2 className="text-lg font-semibold text-slate-900">Internal links</h2>
           <ul className="mt-3 list-disc pl-5 space-y-1 text-sm text-slate-700">
             <li>
-              <Link href={`/${role}`} className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                {roleConfig.roleName} resume guide (hub)
+              <Link
+                href={`/${role}-resume-guide`}
+                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                {roleConfig.roleName} resume guide (all sections)
               </Link>
             </li>
             <li>
@@ -204,7 +208,7 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
                 href={roleToProblemPath(role)}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
-                Related problem page
+                {roleToProblemLinkLabel(role)}
               </Link>
             </li>
           </ul>

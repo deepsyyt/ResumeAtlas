@@ -23,7 +23,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
   const roleSlug = params.role;
   const roleContent = ROLE_CONTENT_MAP[roleSlug];
   const resumeSamplePath = roleResumeSamplePath(roleSlug);
-  const hubPath = `/${roleSlug}`;
+  const mergedGuidePath = `/${roleSlug}-resume-guide`;
   const canonicalBase = getSiteUrl().replace(/\/$/, "");
 
   const faqSchema = {
@@ -69,7 +69,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
         "@type": "ListItem",
         position: 1,
         name: `${config.roleName} Resume Guide`,
-        item: `${canonicalBase}${hubPath}`,
+        item: `${canonicalBase}${mergedGuidePath}`,
       },
       {
         "@type": "ListItem",
@@ -86,7 +86,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-10 sm:pb-12">
           <nav className="mb-3 text-[11px] sm:text-xs text-slate-500 text-left">
             <Link
-              href={hubPath}
+              href={mergedGuidePath}
               className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
             >
               {config.roleName} Resume Guide
@@ -207,7 +207,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             </li>
             <li>
               <Link
-                href={hubPath}
+                href={mergedGuidePath}
                 className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
               >
                 {config.roleName} resume guide →

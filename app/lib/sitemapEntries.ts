@@ -6,7 +6,7 @@ import {
   RESUME_GUIDE_PAGES,
   type ResumeGuideSlug,
 } from "@/app/lib/resumeGuidePages";
-import { CANONICAL_PROBLEM_SLUGS } from "@/app/lib/problemPages";
+import { INDEXED_PROBLEM_SLUGS } from "@/app/lib/problemPages";
 import { INDEXED_ROLE_RESUME_TOPICS } from "@/app/lib/roleClusterIndexPolicy";
 
 const LEGAL_PATHS = [
@@ -123,16 +123,6 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     });
   }
 
-  for (const { slug } of Object.values(KEYWORD_PAGES)) {
-    const roleHubPath = `/${slug}`;
-    entries.push({
-      url: `${base}${roleHubPath}`,
-      lastModified: roleResumeKeywordLastMod,
-      changeFrequency: "monthly" as const,
-      priority: priorityForPath(roleHubPath),
-    });
-  }
-
   const resumeGuideLastMod = new Date("2026-03-09");
   for (const { slug } of Object.values(KEYWORD_PAGES)) {
     const resumeGuidePath = `/${slug}-resume-guide`;
@@ -156,7 +146,7 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
   const problemsHubLastMod = new Date("2026-03-25");
   // `/problems` hub is intentionally low-demand (noindex set on the page).
   // Kept reachable but excluded from sitemap to reduce crawl focus.
-  for (const slug of CANONICAL_PROBLEM_SLUGS) {
+  for (const slug of INDEXED_PROBLEM_SLUGS) {
     const path = `/problems/${slug}`;
     entries.push({
       url: `${base}${path}`,

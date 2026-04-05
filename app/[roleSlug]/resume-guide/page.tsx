@@ -6,8 +6,7 @@ import {
   CHECK_RESUME_AGAINST_JD_PATH,
   CHECK_RESUME_AGAINST_JD_ANCHOR,
 } from "@/app/lib/internalLinks";
-import { KEYWORD_PAGES, roleResumeSamplePath } from "@/app/lib/seoPages";
-import { getSiteUrl } from "@/app/lib/siteUrl";
+import { KEYWORD_PAGES } from "@/app/lib/seoPages";
 import type { ResumeSeoTopic } from "@/app/lib/resumeTopicTypes";
 import { ResumeTopicSectionForGuide } from "@/app/seo/[slug]/page";
 
@@ -53,8 +52,6 @@ export default function RoleResumeGuidePage({ params }: { params: PageParams }) 
   const config = KEYWORD_PAGES[params.roleSlug];
   if (!config) notFound();
 
-  const canonicalBase = getSiteUrl().replace(/\/$/, "");
-
   return (
     <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/60">
@@ -86,7 +83,7 @@ export default function RoleResumeGuidePage({ params }: { params: PageParams }) 
               {CHECK_RESUME_AGAINST_JD_ANCHOR}
             </Link>
             <Link
-              href={roleResumeSamplePath(params.roleSlug)}
+              href="#bullet-points"
               className="inline-flex rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-800 hover:bg-slate-50 transition"
             >
               View resume example
@@ -121,9 +118,6 @@ export default function RoleResumeGuidePage({ params }: { params: PageParams }) 
               {CHECK_RESUME_AGAINST_JD_ANCHOR}
             </Link>
           </div>
-          <p className="mt-4 text-xs text-slate-500">
-            Canonical: {canonicalBase}/{params.roleSlug}-resume-guide
-          </p>
         </section>
       </div>
     </main>

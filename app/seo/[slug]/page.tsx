@@ -1040,7 +1040,7 @@ export default function SeoSlugPage({ params }: PageProps) {
 
   const resumeSamplePath = roleResumeSamplePath(role);
   const atsKeywordPath = `/${role}-resume-keywords`;
-  const roleHubPath = `/${role}`;
+  const roleMergedGuidePath = `/${role}-resume-guide`;
   const canonicalBase = getSiteUrl();
   const currentPath = `/${role}/resume/${topic}`;
   const keywordTopicPath = `/${role}/keywords/${
@@ -1056,7 +1056,7 @@ export default function SeoSlugPage({ params }: PageProps) {
   }`;
   const problemPath =
     role === "product-manager" || role === "business-analyst"
-      ? "/problems/resume-vs-job-description"
+      ? CHECK_RESUME_AGAINST_JD_PATH
       : role === "devops-engineer" || role === "backend-developer"
       ? "/problems/ats-rejecting-my-resume"
       : "/problems/resume-not-getting-interviews";
@@ -1075,7 +1075,7 @@ export default function SeoSlugPage({ params }: PageProps) {
         "@type": "ListItem",
         position: 2,
         name: roleName,
-        item: `${canonicalBase}${roleHubPath}`,
+        item: `${canonicalBase}${roleMergedGuidePath}`,
       },
       {
         "@type": "ListItem",
@@ -1092,7 +1092,7 @@ export default function SeoSlugPage({ params }: PageProps) {
         <header className="space-y-3">
           <nav className="text-[11px] sm:text-xs text-slate-500">
             <Link
-              href={roleHubPath}
+              href={roleMergedGuidePath}
               className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
             >
               {roleName} resume guide
@@ -1268,7 +1268,7 @@ export default function SeoSlugPage({ params }: PageProps) {
           <ul className="mt-3 space-y-1.5 text-sm text-slate-800 list-disc pl-5">
             <li>
               <Link
-                href={roleHubPath}
+                href={roleMergedGuidePath}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 {ROLE_NAMES[role]} resume guide
@@ -1311,7 +1311,9 @@ export default function SeoSlugPage({ params }: PageProps) {
                 href={problemPath}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
-                Related interview problem page
+                {role === "product-manager" || role === "business-analyst"
+                  ? "Check resume vs job description"
+                  : "Related interview problem page"}
               </Link>
             </li>
             {siblingTopics.map((siblingTopic) => (

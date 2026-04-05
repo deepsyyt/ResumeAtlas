@@ -1,4 +1,5 @@
 import type { RoleSlug } from "@/app/lib/seoPages";
+import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
 
 export const ROLE_KEYWORD_INTENTS = [
   "core-keywords",
@@ -70,10 +71,18 @@ export function getRelatedKeywordIntents(current: RoleKeywordIntent): RoleKeywor
 
 export function roleToProblemPath(role: RoleSlug): string {
   if (role === "product-manager" || role === "business-analyst") {
-    return "/problems/resume-vs-job-description";
+    return CHECK_RESUME_AGAINST_JD_PATH;
   }
   if (role === "devops-engineer" || role === "backend-developer") {
     return "/problems/ats-rejecting-my-resume";
   }
   return "/problems/resume-not-getting-interviews";
+}
+
+/** Anchor for {@link roleToProblemPath} (tool URL vs problem page). */
+export function roleToProblemLinkLabel(role: RoleSlug): string {
+  if (role === "product-manager" || role === "business-analyst") {
+    return "Check resume vs job description";
+  }
+  return "Related problem page";
 }

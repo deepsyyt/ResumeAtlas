@@ -357,18 +357,18 @@ export default function HowToPassATSPage() {
                 </Link>
               </li>
               <li>
-                <Link href="/software-engineer" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  Software Engineer role hub
+                <Link href="/software-engineer-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Software Engineer ATS keywords
                 </Link>
               </li>
               <li>
-                <Link href="/data-scientist" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  Data Scientist role hub
+                <Link href="/data-scientist-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Data Scientist ATS keywords
                 </Link>
               </li>
               <li>
-                <Link href="/product-manager" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  Product Manager role hub
+                <Link href="/product-manager-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                  Product Manager ATS keywords
                 </Link>
               </li>
               <li>

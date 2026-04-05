@@ -48,7 +48,7 @@ const ARTICLE_LINKS: InternalLink[] = [
 const RESUME_EXAMPLE_LINKS: InternalLink[] = (Object.keys(KEYWORD_PAGES) as RoleSlug[]).map(
   (role) => {
     const page = RESUME_PAGES[`${role}-resume-example` as keyof typeof RESUME_PAGES];
-    return { path: `/${role}`, label: page.h1 };
+    return { path: `/${role}-resume-guide`, label: page.h1 };
   }
 );
 
@@ -96,8 +96,8 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/resume-guides/resume-format-guide",
     "/data-scientist-resume-keywords",
     "/software-engineer-resume-keywords",
-    "/data-scientist",
-    "/software-engineer",
+    "/data-scientist-resume-guide",
+    "/software-engineer-resume-guide",
   ],
   "/how-to-pass-ats": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -107,12 +107,12 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/software-engineer-resume-keywords",
     "/resume-guides/resume-summary-examples",
     "/resume-guides/ats-friendly-resume-example",
-    "/software-engineer",
+    "/software-engineer-resume-guide",
     "/resume-guides/ats-resume-template",
   ],
   "/data-scientist-resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,
-    "/data-scientist",
+    "/data-scientist-resume-guide",
     "/resume-guides/resume-format-guide",
     "/resume-guides/resume-skills-examples",
     "/how-to-pass-ats",
@@ -179,10 +179,10 @@ function getSemanticPathsFor(currentPath: string): string[] {
   const atsKeywordMatch = normalized.match(/^\/([a-z0-9-]+)-resume-keywords$/);
   if (atsKeywordMatch) {
     const role = atsKeywordMatch[1];
-    const roleHubPath = `/${role}`;
+    const mergedGuidePath = `/${role}-resume-guide`;
     return [
       CHECK_RESUME_AGAINST_JD_PATH,
-      roleHubPath,
+      mergedGuidePath,
       "/resume-guides/resume-format-guide",
       "/how-to-pass-ats",
       "/how-to-pass-ats",
@@ -222,8 +222,8 @@ function getSemanticPathsFor(currentPath: string): string[] {
       "/resume-guides/ats-friendly-resume-example",
       "/software-engineer-resume-keywords",
       "/data-analyst-resume-keywords",
-      "/software-engineer",
-      "/data-analyst",
+      "/software-engineer-resume-guide",
+      "/data-analyst-resume-guide",
     ].filter((p) => PATH_BY_PATH[p] != null && p !== normalized).slice(0, 8);
   }
 

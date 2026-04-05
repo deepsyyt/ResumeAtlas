@@ -15,7 +15,7 @@ import {
 import { PROBLEM_CONVERSION } from "@/app/lib/problemLandingVariants";
 import {
   PROBLEM_PAGES,
-  CANONICAL_PROBLEM_SLUGS,
+  INDEXED_PROBLEM_SLUGS,
   problemPageLinkLabel,
 } from "@/app/lib/problemPages";
 import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
@@ -102,12 +102,12 @@ export default function ProblemsHubPage() {
             Pick your situation
           </h2>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            Each page keeps SEO depth for your search, then points to the same tool: compare resume and job description,
-            fix gaps, download.
+            Three high-intent angles—each links to the same workflow: compare resume and job description, fix gaps,
+            download.
           </p>
           <TopicClusterCallout className="mt-5" />
           <ul className="mt-8 space-y-3">
-            {CANONICAL_PROBLEM_SLUGS.map((slug) => {
+            {INDEXED_PROBLEM_SLUGS.map((slug) => {
               const conv = PROBLEM_CONVERSION[slug];
               const page = PROBLEM_PAGES[slug];
               return (

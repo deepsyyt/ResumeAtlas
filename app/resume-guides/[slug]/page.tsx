@@ -7,7 +7,10 @@ import {
   INDEXED_RESUME_GUIDE_SLUGS,
   type ResumeGuideSlug,
 } from "@/app/lib/resumeGuidePages";
-import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
+import {
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PATH,
+} from "@/app/lib/internalLinks";
 
 type PageParams = {
   slug: ResumeGuideSlug;
@@ -97,7 +100,7 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
             </Link>{" "}
             or{" "}
             <Link
-              href="/problems/resume-vs-job-description"
+              href={CHECK_RESUME_AGAINST_JD_PATH}
               className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
               resume vs job description
@@ -211,7 +214,7 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
               </li>
               <li>
                 <Link
-                  href="/data-scientist"
+                  href="/data-scientist-resume-guide"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   Data Scientist resume guide
@@ -219,7 +222,7 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
               </li>
               <li>
                 <Link
-                  href="/software-engineer"
+                  href="/software-engineer-resume-guide"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   Software Engineer resume guide
@@ -227,7 +230,7 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
               </li>
               <li>
                 <Link
-                  href="/product-manager"
+                  href="/product-manager-resume-guide"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   Product Manager resume guide

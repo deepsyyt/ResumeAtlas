@@ -29,6 +29,16 @@ export const CANONICAL_PROBLEM_SLUGS = [
 ] as const;
 
 /**
+ * Problem pages to include in the sitemap and allow indexing.
+ * Others in {@link CANONICAL_PROBLEM_SLUGS} stay reachable (hub + links) but are noindex to reduce SERP overlap with tools.
+ */
+export const INDEXED_PROBLEM_SLUGS = [
+  "resume-not-getting-interviews",
+  "no-response-after-applying",
+  "ats-rejecting-my-resume",
+] as const satisfies readonly ProblemSlug[];
+
+/**
  * Old URLs that 301 to a canonical problem page (`next.config.mjs`).
  * Do not pre-render these paths — avoids duplicate HTML + clearer crawl signals.
  */
@@ -1469,8 +1479,11 @@ export function problemPageLinkLabel(slug: ProblemSlug): string {
 export function getRelatedProblemEntries(
   slug: ProblemSlug
 ): { slug: ProblemSlug; label: string }[] {
-  return PROBLEM_PAGES[slug].relatedSlugs.map((s) => ({
-    slug: s,
-    label: PROBLEM_PAGES[s].primaryKeyword,
-  }));
+  const allowed = new Set<string>(INDEXED_PROBLEM_SLUGS);
+  return PROBLEM_PAGES[slug].relatedSlugs
+    .filter((s) => allowed.has(s) && s !== slug)
+    .map((s) => ({
+      slug: s,
+      label: PROBLEM_PAGES[s].primaryKeyword,
+    }));
 }

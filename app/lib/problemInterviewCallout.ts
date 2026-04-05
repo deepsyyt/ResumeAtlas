@@ -27,7 +27,7 @@ const ATS_CALLOUT_PATHS = new Set<string>([
  * Maps URL to a problem page for contextual internal linking.
  *
  * - Guides → resume-not-getting-interviews
- * - Keyword cluster (ATS keywords pages and role resume topic pages) → missing-keywords-in-resume
+ * - Keyword cluster (ATS keywords pages and role resume topic pages) → resume keyword scanner
  * - ATS education / checker pages → ats-rejecting-my-resume
  * - Everything else → resume-not-getting-interviews (broad default)
  */
@@ -39,7 +39,7 @@ export function resolveProblemInterviewCallout(
   if (p === "/problems/resume-not-getting-interviews") {
     return null;
   }
-  if (p === "/problems/missing-keywords-in-resume") {
+  if (p === "/problems/missing-keywords-in-resume" || p === "/problems/resume-vs-job-description") {
     return null;
   }
   if (p === "/problems/ats-rejecting-my-resume") {
@@ -60,8 +60,8 @@ export function resolveProblemInterviewCallout(
   if (p === "/ats-keywords" || p.startsWith("/ats-keywords/") || isRoleResumeTopicPath || isRoleKeywordsPath) {
     return {
       prefix: "Worried about keyword gaps on your resume? ",
-      linkText: "See how missing keywords affect your interviews",
-      href: "/problems/missing-keywords-in-resume",
+      linkText: "Scan your resume against a job posting",
+      href: "/resume-keyword-scanner#ats-checker-form",
     };
   }
 

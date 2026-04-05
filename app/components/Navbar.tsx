@@ -141,7 +141,7 @@ export function Navbar() {
             className="hover:underline text-white/80 hover:text-white"
             title="ATS resume checker"
           >
-            ATS checker
+            ATS resume checker
           </Link>
           <Link
             href="/resume-keyword-scanner"

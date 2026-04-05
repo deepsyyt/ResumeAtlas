@@ -11,10 +11,9 @@ import {
   KEYWORD_PAGES,
   RESUME_SAMPLE_HASH,
   resumePageConfigForRole,
-  roleResumeSamplePath,
   type RoleSlug,
 } from "@/app/lib/seoPages";
-import { roleToProblemPath } from "@/app/lib/roleSeo";
+import { roleToProblemLinkLabel, roleToProblemPath } from "@/app/lib/roleSeo";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 
 type PageParams = {
@@ -31,6 +30,7 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
     alternates: {
       canonical: `/${params.roleSlug}`,
     },
+    robots: { index: false, follow: true },
   };
 }
 
@@ -153,7 +153,7 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
           <ul className="mt-4 space-y-2.5 text-sm font-medium text-slate-800 list-none p-0 m-0">
             <li>
               <Link
-                href={roleResumeSamplePath(role)}
+                href={`${rolePath}${RESUME_SAMPLE_HASH}`}
                 className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 {roleName} resume example (on this page)
@@ -397,7 +397,7 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
                 href={roleToProblemPath(role)}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
-                Related problem page
+                {roleToProblemLinkLabel(role)}
               </Link>
             </li>
           </ul>

@@ -27,10 +27,6 @@ import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
 import { resolveProblemInterviewCallout } from "@/app/lib/problemInterviewCallout";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
-import { roleResumeSamplePath } from "@/app/lib/seoPages";
-import {
-  CHECK_RESUME_AGAINST_JD_FORM_HREF,
-} from "@/app/lib/internalLinks";
 import { useRef } from "react";
 
 const homeFaqSchema = {
@@ -117,16 +113,6 @@ const HOW_IT_WORKS_STEPS = [
     line: "Tweak any section in the editor, then export PDF or DOCX",
   },
 ] as const;
-
-/** Crawl spine: canonical role hubs `/{role}` (keywords + deep topics linked from each hub). */
-const TOP_RESUME_GUIDES_BY_ROLE: { href: string; label: string }[] = [
-  { href: "/data-scientist", label: "Data Scientist Resume" },
-  { href: "/software-engineer", label: "Software Engineer Resume" },
-  { href: "/product-manager", label: "Product Manager Resume" },
-  { href: "/frontend-developer", label: "Frontend Developer Resume" },
-  { href: "/backend-developer", label: "Backend Developer Resume" },
-  { href: "/data-analyst", label: "Data Analyst Resume" },
-];
 
 const HOME_CAPABILITY_CARDS = [
   {
@@ -810,36 +796,6 @@ export default function HomeClient({
                 </span>
                 Edit everything before download. No fake content. Ready-to-apply in minutes.
               </p>
-              <nav
-                className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1.5 text-xs sm:text-sm text-slate-600"
-                aria-label="Dedicated tool landing pages"
-              >
-                <span className="text-slate-500">Indexed tools:</span>
-                <Link
-                  href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-                >
-                  Check resume vs job description
-                </Link>
-                <span className="text-slate-300" aria-hidden>
-                  ·
-                </span>
-                <Link
-                  href="/ats-resume-checker#ats-checker-form"
-                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-                >
-                  ATS resume checker
-                </Link>
-                <span className="text-slate-300" aria-hidden>
-                  ·
-                </span>
-                <Link
-                  href="/resume-keyword-scanner#ats-checker-form"
-                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-                >
-                  Keyword scanner
-                </Link>
-              </nav>
             </div>
           </div>
 
@@ -1164,45 +1120,12 @@ export default function HomeClient({
         className="border-t border-slate-200 bg-slate-50/60"
         aria-labelledby="home-resource-links"
       >
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <h2
-            id="home-resource-links"
-            className="sr-only"
-          >
-            Resume examples, ATS keywords, and guides
+        <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <h2 id="home-resource-links" className="sr-only">
+            Resources and guides
           </h2>
-          <div className="mb-6 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Topical authority links
-            </p>
-            <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3 text-sm">
-              <div>
-                <p className="font-semibold text-slate-900">Role hubs</p>
-                <ul className="mt-1 space-y-1">
-                  <li><Link href="/software-engineer" className="text-sky-700 hover:underline">Software Engineer</Link></li>
-                  <li><Link href="/data-scientist" className="text-sky-700 hover:underline">Data Scientist</Link></li>
-                  <li><Link href="/product-manager" className="text-sky-700 hover:underline">Product Manager</Link></li>
-                </ul>
-              </div>
-              <div>
-                <p className="font-semibold text-slate-900">Problem pages</p>
-                <ul className="mt-1 space-y-1">
-                  <li><Link href="/problems/ats-rejecting-my-resume" className="text-sky-700 hover:underline">ATS rejecting my resume</Link></li>
-                  <li><Link href="/problems/resume-not-getting-interviews" className="text-sky-700 hover:underline">Resume not getting interviews</Link></li>
-                  <li><Link href="/problems/missing-keywords-in-resume" className="text-sky-700 hover:underline">Missing keywords in resume</Link></li>
-                </ul>
-              </div>
-              <div>
-                <p className="font-semibold text-slate-900">ATS guides</p>
-                <ul className="mt-1 space-y-1">
-                  <li><Link href="/how-to-pass-ats" className="text-sky-700 hover:underline">How to pass ATS</Link></li>
-                  <li><Link href="/how-to-pass-ats#how-ats-scans-resumes" className="text-sky-700 hover:underline">How ATS scans resumes</Link></li>
-                </ul>
-              </div>
-            </div>
-          </div>
           {homeProblemCallout ? (
-            <p className="mb-5 max-w-3xl text-center text-sm text-slate-700 sm:mb-6 sm:text-left leading-snug">
+            <p className="mb-6 max-w-3xl text-center text-sm text-slate-700 sm:text-left leading-snug">
               {homeProblemCallout.prefix}
               <Link
                 href={homeProblemCallout.href}
@@ -1212,150 +1135,62 @@ export default function HomeClient({
               </Link>
             </p>
           ) : null}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-start">
             <div>
-              <h3 className="text-sm font-semibold text-slate-900">
-                Resume Examples
-              </h3>
-              <p className="text-sm text-slate-500 mt-0.5">
-                See ATS-friendly resume examples for top roles.
+              <h3 className="text-sm font-semibold text-slate-900">Browse by role</h3>
+              <p className="text-sm text-slate-500 mt-1 leading-snug">
+                Examples, keyword lists, and writing guides—each index groups everything by role.
               </p>
-              <ul className="mt-2 space-y-1 text-sm">
+              <ul className="mt-3 space-y-2 text-sm">
                 <li>
-                  <Link
-                    href={roleResumeSamplePath("data-scientist")}
-                    className="text-sky-700 hover:underline"
-                  >
-                    Data Scientist
+                  <Link href="/resume-examples" className="text-sky-700 font-medium hover:underline">
+                    Resume examples
                   </Link>
+                  <span className="text-slate-600"> — browse by role</span>
                 </li>
                 <li>
-                  <Link
-                    href={roleResumeSamplePath("software-engineer")}
-                    className="text-sky-700 hover:underline"
-                  >
-                    Software Engineer
+                  <Link href="/ats-keywords" className="text-sky-700 font-medium hover:underline">
+                    ATS keyword guides
                   </Link>
+                  <span className="text-slate-600"> — skills and terms by role</span>
                 </li>
                 <li>
-                  <Link
-                    href={roleResumeSamplePath("product-manager")}
-                    className="text-sky-700 hover:underline"
-                  >
-                    Product Manager
+                  <Link href="/resume-guides" className="text-sky-700 font-medium hover:underline">
+                    Resume writing guides
                   </Link>
+                  <span className="text-slate-600"> — sections, formatting, examples</span>
                 </li>
               </ul>
-              <a
-                href="/resume-examples"
-                className="inline-block mt-1 text-sm font-medium text-sky-700 hover:underline"
-              >
-                View all resume examples →
-              </a>
             </div>
-
             <div>
-              <h3 className="text-sm font-semibold text-slate-900">
-                ATS Keyword Guides
-              </h3>
-              <p className="text-sm text-slate-500 mt-0.5">
-                Learn which skills, tools, and concepts ATS expect to see.
+              <h3 className="text-sm font-semibold text-slate-900">ATS help &amp; common issues</h3>
+              <p className="text-sm text-slate-500 mt-1 leading-snug">
+                How screening works and what to fix when applications stall.
               </p>
-              <ul className="mt-2 space-y-1 text-sm">
+              <ul className="mt-3 space-y-2 text-sm">
                 <li>
-                  <Link
-                    href="/data-scientist-resume-keywords"
-                    className="text-sky-700 hover:underline"
-                  >
-                    Data Scientist
+                  <Link href="/how-to-pass-ats" className="text-sky-700 hover:underline">
+                    How to pass ATS screening
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/software-engineer-resume-keywords"
-                    className="text-sky-700 hover:underline"
-                  >
-                    Software Engineer
+                  <Link href="/how-to-pass-ats#how-ats-scans-resumes" className="text-sky-700 hover:underline">
+                    How ATS scans resumes
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/product-manager-resume-keywords"
-                    className="text-sky-700 hover:underline"
-                  >
-                    Product Manager
+                  <Link href="/problems/ats-rejecting-my-resume" className="text-sky-700 hover:underline">
+                    Why ATS may reject your resume
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/problems/resume-not-getting-interviews" className="text-sky-700 hover:underline">
+                    Resume not getting interviews
                   </Link>
                 </li>
               </ul>
-              <a
-                href="/ats-keywords"
-                className="inline-block mt-1 text-sm font-medium text-sky-700 hover:underline"
-              >
-                View all ATS keyword guides →
-              </a>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">
-                Resume Guides
-              </h3>
-              <p className="text-sm text-slate-500 mt-0.5">
-                Learn how to write each section in an ATS-friendly way.
-              </p>
-              <ul className="mt-2 space-y-1 text-sm">
-                <li>
-                  <Link href="/resume-guides/resume-skills-examples" className="text-sky-700 hover:underline">
-                    Resume Skills Examples
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/resume-guides/resume-summary-examples" className="text-sky-700 hover:underline">
-                    Resume Summary Examples
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/resume-guides/resume-work-experience-examples"
-                    className="text-sky-700 hover:underline"
-                  >
-                    Resume Work Experience Examples
-                  </Link>
-                </li>
-              </ul>
-              <a
-                href="/resume-guides"
-                className="inline-block mt-1 text-sm font-medium text-sky-700 hover:underline"
-              >
-                View all resume guides →
-              </a>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="border-t border-slate-200 bg-white" aria-labelledby="top-resume-guides-heading">
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <h2
-            id="top-resume-guides-heading"
-            className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 text-center"
-          >
-            Top Resume Guides by Role
-          </h2>
-          <p className="mt-2 text-center text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto">
-            ATS-friendly resume hubs: examples, section tips, and keyword deep-dives for each role.
-          </p>
-          <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 list-none p-0 m-0">
-            {TOP_RESUME_GUIDES_BY_ROLE.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="block rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-2.5 text-sm font-medium text-sky-800 hover:bg-sky-50 hover:border-sky-200 transition text-center sm:text-left"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
         </div>
       </section>
       </>
