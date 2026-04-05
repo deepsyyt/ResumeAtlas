@@ -234,10 +234,10 @@ export function ToolClusterLanding({ config }: Props) {
           <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
             <li>
               <Link
-                href="/resume-guides"
+                href="/resume-examples"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
-                Role-based resume guides
+                Resume examples by role
               </Link>
             </li>
             <li>

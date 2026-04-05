@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { KEYWORD_PAGES, type RoleSlug } from "@/app/lib/seoPages";
-import {
-  INDEXED_RESUME_GUIDE_SLUGS,
-  RESUME_GUIDE_PAGES,
-  type ResumeGuideSlug,
-} from "@/app/lib/resumeGuidePages";
 import { INDEXED_PROBLEM_SLUGS } from "@/app/lib/problemPages";
 import { INDEXED_ROLE_RESUME_TOPICS } from "@/app/lib/roleClusterIndexPolicy";
+import {
+  RESUME_BULLET_ROLES,
+  publicPathForBulletHub,
+  publicPathForBulletDetail,
+  RESUME_BULLET_LEVELS,
+} from "@/app/lib/resumeBulletPointContent";
 
 const LEGAL_PATHS = [
   "/contact",
@@ -37,7 +38,11 @@ function priorityForPath(pathname: string): number {
     return 0.85;
   }
   if (pathname.endsWith("-resume-guide")) return 0.84;
-  if (pathname.startsWith("/resume-guides/")) return 0.78;
+  if (
+    /^\/[^/]+-resume-bullet-points(-entry-level|-junior|-senior)?$/.test(pathname)
+  ) {
+    return 0.82;
+  }
   if (/^\/[^/]+-resume-keywords$/.test(pathname)) return 0.55;
   if (LEGAL_PATHS.includes(pathname as (typeof LEGAL_PATHS)[number])) return 0.6;
   if (/^\/[^/]+\/resume$/.test(pathname)) return 0.62;
@@ -98,6 +103,25 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/customize-resume-without-lying"),
   });
+  const resumeBulletLastMod = new Date("2026-04-05");
+  for (const role of RESUME_BULLET_ROLES) {
+    const hubPath = publicPathForBulletHub(role);
+    entries.push({
+      url: `${base}${hubPath}`,
+      lastModified: resumeBulletLastMod,
+      changeFrequency: "monthly" as const,
+      priority: priorityForPath(hubPath),
+    });
+    for (const level of RESUME_BULLET_LEVELS) {
+      const p = publicPathForBulletDetail(role, level);
+      entries.push({
+        url: `${base}${p}`,
+        lastModified: resumeBulletLastMod,
+        changeFrequency: "monthly" as const,
+        priority: priorityForPath(p),
+      });
+    }
+  }
   const legalLastMod = new Date("2026-03-23");
   for (const path of LEGAL_PATHS) {
     entries.push({
@@ -114,17 +138,6 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     entries.push({
       url: `${base}${path}`,
       lastModified: roleResumeKeywordLastMod,
-      changeFrequency: "monthly" as const,
-      priority: priorityForPath(path),
-    });
-  }
-
-  const guideLastMod = new Date("2026-03-09");
-  for (const slug of INDEXED_RESUME_GUIDE_SLUGS) {
-    const path = `/resume-guides/${slug}`;
-    entries.push({
-      url: `${base}${path}`,
-      lastModified: guideLastMod,
       changeFrequency: "monthly" as const,
       priority: priorityForPath(path),
     });

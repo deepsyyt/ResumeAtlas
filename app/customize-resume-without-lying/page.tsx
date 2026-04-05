@@ -385,7 +385,7 @@ export default function CustomizeResumeWithoutLyingPage() {
             </li>
             <li>
               <Link
-                href="/resume-guides/resume-format-guide"
+                href="/how-to-pass-ats"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 ATS-friendly resume format

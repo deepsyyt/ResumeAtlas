@@ -1,5 +1,4 @@
 import { KEYWORD_PAGES, RESUME_PAGES, type RoleSlug } from "@/app/lib/seoPages";
-import { RESUME_GUIDE_PAGES } from "@/app/lib/resumeGuidePages";
 
 export type InternalLink = { path: string; label: string };
 
@@ -35,7 +34,7 @@ export const MATCH_RESUME_TO_JOB_DESCRIPTION_PATH = CHECK_RESUME_AGAINST_JD_PATH
 /** Linking to `/resume-score-checker` from keyword/ATS cluster pages. */
 export const CHECK_YOUR_RESUME_SCORE_ANCHOR = "check your resume score" as const;
 
-// All SEO pages (excluding home) for internal linking. Order: articles, resume examples, ats keyword pages, resume guides.
+// All SEO pages (excluding home) for internal linking. Order: articles, resume examples, ats keyword pages.
 const ARTICLE_LINKS: InternalLink[] = [
   {
     path: CHECK_RESUME_AGAINST_JD_PATH,
@@ -47,6 +46,19 @@ const ARTICLE_LINKS: InternalLink[] = [
   {
     path: "/customize-resume-without-lying",
     label: "Customize resume without lying",
+  },
+  { path: "/resume-examples", label: "Resume examples by role" },
+  {
+    path: "/data-scientist-resume-bullet-points",
+    label: "Data scientist resume bullet examples",
+  },
+  {
+    path: "/software-engineer-resume-bullet-points",
+    label: "Software engineer resume bullet examples",
+  },
+  {
+    path: "/product-manager-resume-bullet-points",
+    label: "Product manager resume bullet examples",
   },
 ];
 
@@ -62,19 +74,10 @@ const ATS_KEYWORD_LINKS: InternalLink[] = Object.entries(KEYWORD_PAGES).map(([sl
   label: page.h1,
 }));
 
-const RESUME_GUIDE_LINKS: InternalLink[] = [
-  { path: "/resume-guides/resume-format-guide", label: "Resume Format Guide" },
-  ...Object.entries(RESUME_GUIDE_PAGES).map(([slug, config]) => ({
-    path: `/resume-guides/${slug}`,
-    label: config.h1,
-  })),
-];
-
 export const ALL_SEO_LINKS: InternalLink[] = [
   ...ARTICLE_LINKS,
   ...RESUME_EXAMPLE_LINKS,
   ...ATS_KEYWORD_LINKS,
-  ...RESUME_GUIDE_LINKS,
 ];
 
 // Paths that are already heavily linked in "Popular Resume Examples" (first 6) and "ATS Keyword Guides" (first 6).
@@ -98,7 +101,6 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/customize-resume-without-lying",
     "/how-to-pass-ats",
     "/how-to-pass-ats",
-    "/resume-guides/resume-format-guide",
     "/data-scientist-resume-keywords",
     "/software-engineer-resume-keywords",
     "/data-scientist-resume-guide",
@@ -107,13 +109,11 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   "/how-to-pass-ats": [
     CHECK_RESUME_AGAINST_JD_PATH,
     "/customize-resume-without-lying",
-    "/resume-guides/resume-format-guide",
-    "/how-to-pass-ats",
+    "/resume-examples",
     "/software-engineer-resume-keywords",
-    "/resume-guides/resume-summary-examples",
-    "/resume-guides/ats-friendly-resume-example",
     "/software-engineer-resume-guide",
-    "/resume-guides/ats-resume-template",
+    "/data-scientist-resume-guide",
+    "/resume-keyword-scanner",
   ],
   "/customize-resume-without-lying": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -121,20 +121,18 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/resume-keyword-scanner",
     "/how-to-pass-ats",
     "/how-to-pass-ats",
-    "/resume-guides/resume-format-guide",
     "/software-engineer-resume-keywords",
     "/data-scientist-resume-keywords",
   ],
   "/data-scientist-resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,
+    "/data-scientist-resume-bullet-points",
     "/data-scientist-resume-guide",
-    "/resume-guides/resume-format-guide",
-    "/resume-guides/resume-skills-examples",
+    "/customize-resume-without-lying",
     "/how-to-pass-ats",
     "/how-to-pass-ats",
-    "/how-to-pass-ats",
-    "/resume-guides/resume-summary-examples",
     "/machine-learning-engineer-resume-keywords",
+    "/resume-examples",
   ],
   "/ats-resume-checker-free": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -143,7 +141,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/ats-compatibility-check",
     "/how-to-pass-ats",
     "/how-to-pass-ats",
-    "/resume-guides/resume-format-guide",
+    "/customize-resume-without-lying",
     "/software-engineer-resume-keywords",
   ],
   "/resume-score-checker": [
@@ -154,7 +152,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/how-to-pass-ats",
     "/how-to-pass-ats",
     "/data-scientist-resume-keywords",
-    "/resume-guides/resume-format-guide",
+    "/customize-resume-without-lying",
   ],
   "/resume-keyword-scanner": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -162,7 +160,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/how-to-pass-ats",
     "/how-to-pass-ats",
     "/software-engineer-resume-keywords",
-    "/resume-guides/resume-skills-examples",
+    "/software-engineer-resume-guide",
   ],
   "/ats-compatibility-check": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -172,7 +170,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/how-to-pass-ats",
     "/how-to-pass-ats",
     "/data-analyst-resume-keywords",
-    "/resume-guides/ats-friendly-resume-example",
+    "/customize-resume-without-lying",
   ],
 };
 
@@ -198,13 +196,13 @@ function getSemanticPathsFor(currentPath: string): string[] {
     return [
       CHECK_RESUME_AGAINST_JD_PATH,
       mergedGuidePath,
-      "/resume-guides/resume-format-guide",
+      "/customize-resume-without-lying",
       "/how-to-pass-ats",
       "/how-to-pass-ats",
-      "/resume-guides/ats-friendly-resume-example",
+      "/resume-examples",
       "/how-to-pass-ats",
-      "/resume-guides/resume-summary-examples",
-      "/resume-guides/resume-achievements-examples",
+      "/customize-resume-without-lying",
+      "/resume-keyword-scanner",
     ].filter((p) => PATH_BY_PATH[p] != null);
   }
 
@@ -218,28 +216,13 @@ function getSemanticPathsFor(currentPath: string): string[] {
     return [
       CHECK_RESUME_AGAINST_JD_PATH,
       atsKeywordPath,
-      "/resume-guides/resume-format-guide",
+      "/customize-resume-without-lying",
       "/how-to-pass-ats",
-      "/resume-guides/ats-friendly-resume-example",
+      "/resume-examples",
       "/how-to-pass-ats",
-      "/resume-guides/resume-skills-examples",
-      "/resume-guides/resume-summary-examples",
+      "/how-to-pass-ats",
+      "/resume-keyword-scanner",
     ].filter((p) => PATH_BY_PATH[p] != null);
-  }
-
-  const guideMatch = normalized.match(/^\/resume-guides\/([a-z0-9-]+)$/);
-  if (guideMatch) {
-    return [
-      CHECK_RESUME_AGAINST_JD_PATH,
-      "/resume-guides/resume-format-guide",
-      "/how-to-pass-ats",
-      "/how-to-pass-ats",
-      "/resume-guides/ats-friendly-resume-example",
-      "/software-engineer-resume-keywords",
-      "/data-analyst-resume-keywords",
-      "/software-engineer-resume-guide",
-      "/data-analyst-resume-guide",
-    ].filter((p) => PATH_BY_PATH[p] != null && p !== normalized).slice(0, 8);
   }
 
   return [];

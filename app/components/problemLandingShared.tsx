@@ -373,9 +373,9 @@ export function TopicClusterCallout({ className = "" }: { className?: string }) 
         <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={b}>
           {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
         </Link>
-        . Browse{" "}
-        <Link href="/resume-guides" className={b}>
-          ATS-friendly resume guides
+        . See{" "}
+        <Link href="/resume-examples" className={b}>
+          resume examples by role
         </Link>
         .
       </p>
@@ -403,10 +403,10 @@ export function GuidesFooterLinks() {
         </li>
         <li>
           <Link
-            href="/resume-guides/resume-skills-examples"
+            href="/resume-examples"
             className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
           >
-            Resume skills examples
+            Resume examples by role
           </Link>
         </li>
         <li>

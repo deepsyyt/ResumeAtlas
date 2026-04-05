@@ -12,6 +12,13 @@ const ROLE_SLUGS = [
   "full-stack-developer",
 ];
 
+/** Role slugs with resume bullet hub + level pages (`app/lib/resumeBulletPointContent.ts`). */
+const RESUME_BULLET_ROLES = [
+  "data-scientist",
+  "software-engineer",
+  "product-manager",
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Avoid EPERM on .next when project is in OneDrive (use a separate build dir)
@@ -43,6 +50,28 @@ const nextConfig = {
         source: "/:roleSlug-resume-guide/",
         destination: "/:roleSlug/resume-guide",
       },
+      ...RESUME_BULLET_ROLES.flatMap((role) => [
+        {
+          source: `/${role}-resume-bullet-points`,
+          destination: `/resume-bullet-points/${role}`,
+        },
+        {
+          source: `/${role}-resume-bullet-points/`,
+          destination: `/resume-bullet-points/${role}`,
+        },
+        {
+          source: `/${role}-resume-bullet-points-entry-level`,
+          destination: `/resume-bullet-points/${role}/entry-level`,
+        },
+        {
+          source: `/${role}-resume-bullet-points-junior`,
+          destination: `/resume-bullet-points/${role}/junior`,
+        },
+        {
+          source: `/${role}-resume-bullet-points-senior`,
+          destination: `/resume-bullet-points/${role}/senior`,
+        },
+      ]),
     ];
   },
   async redirects() {
@@ -79,6 +108,34 @@ const nextConfig = {
       },
     ]);
 
+    const resumeBulletCanonicalRedirects = RESUME_BULLET_ROLES.flatMap((role) => [
+      {
+        source: `/resume-bullet-points/${role}`,
+        destination: `/${role}-resume-bullet-points`,
+        permanent: true,
+      },
+      {
+        source: `/resume-bullet-points/${role}/`,
+        destination: `/${role}-resume-bullet-points`,
+        permanent: true,
+      },
+      {
+        source: `/resume-bullet-points/${role}/entry-level`,
+        destination: `/${role}-resume-bullet-points-entry-level`,
+        permanent: true,
+      },
+      {
+        source: `/resume-bullet-points/${role}/junior`,
+        destination: `/${role}-resume-bullet-points-junior`,
+        permanent: true,
+      },
+      {
+        source: `/resume-bullet-points/${role}/senior`,
+        destination: `/${role}-resume-bullet-points-senior`,
+        permanent: true,
+      },
+    ]);
+
     const resumeGuideTopicRedirects = ROLE_SLUGS.flatMap((role) => {
       const topics = [
         "bullet-points",
@@ -100,6 +157,7 @@ const nextConfig = {
       ]);
     });
     return [
+      ...resumeBulletCanonicalRedirects,
       ...roleHubRedirects,
       ...resumeGuideTopicRedirects,
       {
@@ -187,34 +245,20 @@ const nextConfig = {
         destination: "/ats-resume-checker#ats-compatibility-check",
         permanent: true,
       },
+      // Retired thin /resume-guides/* — consolidate to main ATS guide for GSC (301).
       {
-        source: "/resume-guides/ats-resume-format",
-        destination: "/resume-guides/resume-format-guide#ats-resume-format",
+        source: "/resume-guides",
+        destination: "/how-to-pass-ats",
         permanent: true,
       },
       {
-        source: "/resume-guides/resume-format-for-ats",
-        destination: "/resume-guides/resume-format-guide#resume-format-for-ats",
+        source: "/resume-guides/",
+        destination: "/how-to-pass-ats",
         permanent: true,
       },
       {
-        source: "/resume-guides/best-resume-format-2025",
-        destination: "/resume-guides/resume-format-guide#best-resume-format-2025",
-        permanent: true,
-      },
-      {
-        source: "/resume-guides/modern-resume-format",
-        destination: "/resume-guides/resume-format-guide#modern-resume-format",
-        permanent: true,
-      },
-      {
-        source: "/resume-guides/professional-resume-format",
-        destination: "/resume-guides/resume-format-guide#professional-resume-format",
-        permanent: true,
-      },
-      {
-        source: "/resume-guides/simple-resume-format",
-        destination: "/resume-guides/resume-format-guide#simple-resume-format",
+        source: "/resume-guides/:path*",
+        destination: "/how-to-pass-ats",
         permanent: true,
       },
       {

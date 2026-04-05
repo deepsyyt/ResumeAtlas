@@ -11,8 +11,7 @@ type Props = {
 };
 
 /**
- * Renders a "Related Resume Guides" section with a rotated set of internal links.
- * Each page gets a different set so all SEO pages receive internal links (not the same 5 on every page).
+ * Rotated internal links for topical authority (tools, role guides, articles).
  */
 export function RelatedResumeGuidesSection({
   currentPath,
@@ -25,7 +24,7 @@ export function RelatedResumeGuidesSection({
   return (
     <section className={className}>
       <h2 className="text-lg font-semibold tracking-tight text-slate-900 mb-3">
-        Related Resume Guides
+        Related resources
       </h2>
       <ul className="list-disc pl-5 space-y-1 text-sm">
         {links.map(({ path, label }) => (

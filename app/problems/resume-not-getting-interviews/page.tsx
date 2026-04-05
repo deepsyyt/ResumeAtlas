@@ -490,10 +490,10 @@ export default function ResumeNotGettingInterviewsLandingPage() {
               </li>
               <li>
                 <Link
-                  href="/resume-guides/resume-skills-examples"
+                  href="/resume-examples"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  Resume skills examples
+                  Resume examples by role
                 </Link>
               </li>
               <li>

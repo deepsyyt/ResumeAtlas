@@ -1155,10 +1155,13 @@ export default function HomeClient({
                   <span className="text-slate-600"> — skills and terms by role</span>
                 </li>
                 <li>
-                  <Link href="/resume-guides" className="text-sky-700 font-medium hover:underline">
-                    Resume writing guides
+                  <Link
+                    href="/customize-resume-without-lying"
+                    className="text-sky-700 font-medium hover:underline"
+                  >
+                    Customize resume without lying
                   </Link>
-                  <span className="text-slate-600"> — sections, formatting, examples</span>
+                  <span className="text-slate-600"> — align to the job, honestly</span>
                 </li>
               </ul>
             </div>

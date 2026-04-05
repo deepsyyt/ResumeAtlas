@@ -1329,18 +1329,18 @@ export default function SeoSlugPage({ params }: PageProps) {
             ))}
             <li>
               <Link
-                href="/resume-guides/resume-skills-examples"
+                href={`${roleMergedGuidePath}#skills`}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
-                Resume skills examples
+                {roleName} resume skills section
               </Link>
             </li>
             <li>
               <Link
-                href="/resume-guides/resume-summary-examples"
+                href={`${roleMergedGuidePath}#summary`}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
-                Resume summary examples
+                {roleName} resume summary
               </Link>
             </li>
           </ul>

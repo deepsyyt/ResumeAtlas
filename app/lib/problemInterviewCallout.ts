@@ -26,7 +26,6 @@ const ATS_CALLOUT_PATHS = new Set<string>([
 /**
  * Maps URL to a problem page for contextual internal linking.
  *
- * - Guides → resume-not-getting-interviews
  * - Keyword cluster (ATS keywords pages and role resume topic pages) → resume keyword scanner
  * - ATS education / checker pages → ats-rejecting-my-resume
  * - Everything else → resume-not-getting-interviews (broad default)
@@ -44,14 +43,6 @@ export function resolveProblemInterviewCallout(
   }
   if (p === "/problems/ats-rejecting-my-resume") {
     return null;
-  }
-
-  if (p.startsWith("/resume-guides")) {
-    return {
-      prefix: "Not getting interview calls? ",
-      linkText: "See why your resume may be getting rejected",
-      href: "/problems/resume-not-getting-interviews",
-    };
   }
 
   const isRoleResumeTopicPath = /^\/[^/]+\/resume\/[^/]+$/.test(p);
