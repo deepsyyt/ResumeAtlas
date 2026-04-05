@@ -4,6 +4,7 @@ import { ProblemConversionPage } from "@/app/components/ProblemConversionPage";
 import {
   PROBLEM_PAGES,
   CANONICAL_PROBLEM_SLUGS,
+  PROBLEM_REDIRECT_SOURCE_SLUGS,
   PROBLEM_SLUGS,
   type ProblemSlug,
 } from "@/app/lib/problemPages";
@@ -11,9 +12,12 @@ import {
 type PageParams = { slug: string };
 
 const DEDICATED_PAGE_SLUGS = new Set<ProblemSlug>(["resume-not-getting-interviews"]);
+const REDIRECT_SOURCE_SET = new Set<string>(PROBLEM_REDIRECT_SOURCE_SLUGS);
 
 export function generateStaticParams(): { slug: ProblemSlug }[] {
-  return PROBLEM_SLUGS.filter((slug) => !DEDICATED_PAGE_SLUGS.has(slug)).map((slug) => ({
+  return PROBLEM_SLUGS.filter(
+    (slug) => !DEDICATED_PAGE_SLUGS.has(slug) && !REDIRECT_SOURCE_SET.has(slug)
+  ).map((slug) => ({
     slug,
   }));
 }

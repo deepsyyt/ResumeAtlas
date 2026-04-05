@@ -4,6 +4,7 @@ import { RelatedProblemsWidget } from "@/app/components/RelatedProblemsWidget";
 import { TopicClusterCallout } from "@/app/components/problemLandingShared";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { PROBLEM_PAGES, getRelatedProblemEntries } from "@/app/lib/problemPages";
+import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
 
 const SLUG = "resume-not-getting-interviews" as const;
 const config = PROBLEM_PAGES[SLUG];
@@ -88,7 +89,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             AI rewrites your resume. You stay in control: edit, refine, or personalize before downloading.
           </p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:gap-4">
-            <Link href="/#ats-checker-form" className={btnPrimary}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimary}>
               Upload resume and get instant fix suggestions
             </Link>
             <p className="text-xs text-slate-500 sm:text-sm">
@@ -117,7 +118,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             </p>
           </div>
           <div className="mt-4">
-            <Link href="/#ats-checker-form" className={btnPrimarySm}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimarySm}>
               Show me exactly what is failing
             </Link>
           </div>
@@ -313,7 +314,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             ))}
           </ul>
           <div className="mt-8 flex justify-center">
-            <Link href="/#ats-checker-form" className={btnPrimarySm}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimarySm}>
               Run instant resume failure check
             </Link>
           </div>
@@ -346,7 +347,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             ))}
           </ol>
           <div className="mt-8 flex justify-center">
-            <Link href="/#ats-checker-form" className={btnPrimarySm}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimarySm}>
               Fix my resume
             </Link>
           </div>
@@ -409,7 +410,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             </div>
           </div>
           <div className="mt-8 flex justify-center">
-            <Link href="/#ats-checker-form" className={btnPrimary}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimary}>
               Get this transformation
             </Link>
           </div>
@@ -466,11 +467,11 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             </p>
           ))}
           <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
-            <Link href="/#ats-checker-form" className={`${btnPrimary} sm:px-8`}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={`${btnPrimary} sm:px-8`}>
               Check my resume
             </Link>
             <Link
-              href="/#ats-checker-form"
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
             >
               Compare resume with job description

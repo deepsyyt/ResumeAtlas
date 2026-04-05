@@ -19,8 +19,7 @@ const LEGAL_PATHS = [
 
 function priorityForPath(pathname: string): number {
   if (pathname === "/") return 1.0;
-  if (pathname === "/resume-vs-job-description-checker") return 0.94;
-  if (pathname === "/match-resume-to-job-description") return 0.93;
+  if (pathname === "/check-resume-against-job-description") return 0.94;
   if (
     pathname === "/ats-resume-checker" ||
     pathname === "/resume-keyword-scanner"
@@ -68,16 +67,10 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     priority: priorityForPath("/"),
   });
   entries.push({
-    url: `${base}/resume-vs-job-description-checker`,
+    url: `${base}/check-resume-against-job-description`,
     lastModified: new Date("2026-03-29"),
     changeFrequency: "weekly" as const,
-    priority: priorityForPath("/resume-vs-job-description-checker"),
-  });
-  entries.push({
-    url: `${base}/match-resume-to-job-description`,
-    lastModified: new Date("2026-03-29"),
-    changeFrequency: "weekly" as const,
-    priority: priorityForPath("/match-resume-to-job-description"),
+    priority: priorityForPath("/check-resume-against-job-description"),
   });
   const toolClusterLastMod = new Date("2026-03-29");
   const toolClusterPaths = [

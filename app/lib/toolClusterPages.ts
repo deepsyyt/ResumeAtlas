@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import {
   CHECK_RESUME_AGAINST_JD_PATH,
-  CHECK_RESUME_AGAINST_JD_ANCHOR,
   RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
-  MATCH_RESUME_TO_JOB_DESCRIPTION_PATH,
-  MATCH_RESUME_TO_JOB_DESCRIPTION_ANCHOR,
 } from "@/app/lib/internalLinks";
 
 export type ToolClusterFaqItem = { question: string; answer: string };
@@ -147,23 +144,24 @@ export function toolClusterBreadcrumbSchema(config: ToolClusterPageConfig) {
 
 export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   path: CHECK_RESUME_AGAINST_JD_PATH,
-  breadcrumbName: "Resume vs Job Description Checker",
+  breadcrumbName: "Check resume against job description",
   clusterLinkAnchor: RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
-  titleAbsolute: "Resume Not Getting Shortlisted? Compare Your Resume to the JD in 10 Seconds",
+  titleAbsolute:
+    "Check Resume Against Job Description (Free ATS Match + Keyword Gaps)",
   description:
-    "Resume not getting shortlisted? Compare your resume to a job description, find missing keywords and weak sections, and fix ATS alignment fast. Free, instant, no signup.",
-  ogTitle: "Resume Not Getting Shortlisted? Compare Resume vs Job Description",
+    "Check your resume against a job description: see ATS-style match, missing keywords, and weak sections—then fix alignment before you apply. Free, instant, no signup.",
+  ogTitle: "Check Resume Against Job Description (Free ATS Match + Keyword Gaps)",
   ogDescription:
-    "Compare your resume with a job description and find missing keywords instantly. Improve ATS score and get more interviews.",
-  twitterTitle: "Resume Not Getting Shortlisted?",
-  twitterDescription: "Compare resume vs JD, find gaps, fix fast.",
-  h1: "Resume Not Getting Shortlisted? Compare Your Resume to the JD in 10 Seconds",
+    "Check resume vs job description: missing keywords, match estimate, and fixes. Free, no signup.",
+  twitterTitle: "Check Resume Against Job Description",
+  twitterDescription: "ATS match + keyword gaps vs the JD—free.",
+  h1: "Check Your Resume Against the Job Description (Free ATS Match + Gaps)",
   intro:
-    "Compare your resume with a target job description in seconds, see missing keywords and skill gaps, and prioritize the edits most likely to improve shortlist chances.",
+    "Paste your resume and the exact job description to check alignment in seconds—missing keywords, skill gaps, and the edits most likely to improve shortlist odds.",
   topStripStrong: "Paste your resume and job description to get results instantly.",
-  webAppName: "Resume vs Job Description Checker",
+  webAppName: "Check resume against job description",
   webAppDescription:
-    "Check your resume against a job description, find missing keywords, and improve ATS score instantly.",
+    "Check your resume against a job description for keyword gaps, match-style feedback, and ATS alignment before you apply.",
   ctaAnchor: "Check why my resume gets rejected",
   differentiatorHeading: "Why Match Your Resume to the Job Description (Not a Generic Resume)",
   differentiatorBody: [
@@ -201,67 +199,6 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
       question: "How can I improve my resume score?",
       answer:
         "You can improve your score by adding missing keywords, aligning your experience with the job requirements, and optimizing your resume structure.",
-    },
-  ],
-};
-
-export const TOOL_CLUSTER_MATCH_RESUME: ToolClusterPageConfig = {
-  path: MATCH_RESUME_TO_JOB_DESCRIPTION_PATH,
-  breadcrumbName: "Match Resume to Job Description",
-  clusterLinkAnchor: MATCH_RESUME_TO_JOB_DESCRIPTION_ANCHOR,
-  titleAbsolute:
-    "Match Resume to Job Description Online Free (ATS Match Score + Keyword Gaps)",
-  description:
-    "Match your resume to a job description instantly. Get an ATS-style match score, missing keywords, and targeted suggestions to improve your chances of being shortlisted. Free and no signup.",
-  ogTitle:
-    "Match Resume to Job Description Online Free (ATS Match Score + Keyword Gaps)",
-  ogDescription:
-    "Get an ATS-style match score plus missing keywords and improvements—instantly and free.",
-  twitterTitle: "Match Resume to Job Description (Free)",
-  twitterDescription: "ATS match score + keyword gaps. No signup.",
-  h1: "Match Resume to Job Description Online Free",
-  intro:
-    "Paste your resume and a target job description to see a match score, understand what drives it, and fix the gaps most likely to block ATS filtering.",
-  topStripStrong: "Paste your resume + job description to see match score instantly.",
-  webAppName: "Resume to Job Description Matcher",
-  webAppDescription:
-    "Match your resume to a job description: ATS-style score, keyword gaps, and actionable suggestions to improve alignment.",
-  ctaAnchor: MATCH_RESUME_TO_JOB_DESCRIPTION_ANCHOR,
-  differentiatorHeading: "Why matching wording beats generic resume templates",
-  differentiatorBody: [
-    "This tool compares your resume against the exact job description you paste in, then surfaces missing keyword signals and alignment gaps that ATS filtering often rewards.",
-    "If you mirror the posting’s language where it truly fits your background, your experience becomes easier to map into ATS fields—so you get higher match odds without padding or buzzwords.",
-  ],
-  serpVariantsParagraph:
-    "People search for match resume to job description, resume job match score, ATS match score for resumes, and resume-to-JD keyword overlap. This free tool focuses on resume–JD alignment: score, keyword gaps, and improvements you can apply immediately.",
-  howItWorksHeading: "How resume-to-JD matching works",
-  whyMatchHeading: "Why match score feedback changes your edit priorities",
-  resultsHeading: "What to expect in your match report",
-  exampleJobRequires: "Analytics depth, SQL queries, and stakeholder communication.",
-  exampleResumeContains: "SQL and dashboards, but limited stakeholder-facing evidence.",
-  exampleMissing: "Stakeholder communication framing, and clearer analytics outcome metrics.",
-  exampleScoreLine: "Estimated match score: 66% before targeted edits.",
-  exampleFixLine: "Fix first: add one metrics-backed project bullet + one stakeholder impact bullet where truthful.",
-  faq: [
-    {
-      question: "What does it mean to match a resume to a job description?",
-      answer:
-        "It means aligning your resume’s skills and keywords with the job posting so ATS and recruiters can map your experience to the role’s stated requirements.",
-    },
-    {
-      question: "Is the match score the same as an employer’s ATS score?",
-      answer:
-        "No. Different ATS tools score differently. Our match score is an estimate to help you improve alignment before you apply.",
-    },
-    {
-      question: "Does matching require keyword stuffing?",
-      answer:
-        "No. The goal is honest overlap: use the posting’s language only where it matches your real experience, and describe outcomes in your own evidence.",
-    },
-    {
-      question: "Is this matcher free?",
-      answer:
-        "Yes. Match your resume to a job description for free and get instant insights.",
     },
   ],
 };
@@ -519,7 +456,6 @@ export const TOOL_CLUSTER_COMPAT: ToolClusterPageConfig = {
 /** All tool cluster pages (primary first). */
 export const ALL_TOOL_CLUSTER_CONFIGS: ToolClusterPageConfig[] = [
   TOOL_CLUSTER_PRIMARY,
-  TOOL_CLUSTER_MATCH_RESUME,
   TOOL_CLUSTER_ATS_FREE,
   TOOL_CLUSTER_KEYWORD_SCANNER,
 ];

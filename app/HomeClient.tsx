@@ -28,6 +28,9 @@ import { resolveProblemInterviewCallout } from "@/app/lib/problemInterviewCallou
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
 import { roleResumeSamplePath } from "@/app/lib/seoPages";
+import {
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+} from "@/app/lib/internalLinks";
 import { useRef } from "react";
 
 const homeFaqSchema = {
@@ -807,6 +810,36 @@ export default function HomeClient({
                 </span>
                 Edit everything before download. No fake content. Ready-to-apply in minutes.
               </p>
+              <nav
+                className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1.5 text-xs sm:text-sm text-slate-600"
+                aria-label="Dedicated tool landing pages"
+              >
+                <span className="text-slate-500">Indexed tools:</span>
+                <Link
+                  href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  Check resume vs job description
+                </Link>
+                <span className="text-slate-300" aria-hidden>
+                  ·
+                </span>
+                <Link
+                  href="/ats-resume-checker#ats-checker-form"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  ATS resume checker
+                </Link>
+                <span className="text-slate-300" aria-hidden>
+                  ·
+                </span>
+                <Link
+                  href="/resume-keyword-scanner#ats-checker-form"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  Keyword scanner
+                </Link>
+              </nav>
             </div>
           </div>
 

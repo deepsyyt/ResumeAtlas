@@ -863,6 +863,7 @@ export function generateMetadata({ params }: PageProps): Metadata {
     alternates: {
       canonical: `/${role}/resume/${topic}`,
     },
+    robots: { index: false, follow: true },
   };
 }
 

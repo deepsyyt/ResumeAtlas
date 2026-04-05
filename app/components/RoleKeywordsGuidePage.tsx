@@ -13,6 +13,7 @@ import {
   type RoleKeywordIntent,
 } from "@/app/lib/roleSeo";
 import { getSiteUrl } from "@/app/lib/siteUrl";
+import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
 
 type PageParams = { role: RoleSlug };
 
@@ -181,7 +182,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             </p>
           </div>
           <Link
-            href="/#ats-checker-form"
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-5 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
             Scan my resume against a real JD

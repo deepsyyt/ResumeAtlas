@@ -23,6 +23,7 @@ import {
   type ProblemSlug,
 } from "@/app/lib/problemPages";
 import { getSiteUrl } from "@/app/lib/siteUrl";
+import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
 
 type Props = {
   config: ProblemPageConfig;
@@ -121,7 +122,7 @@ export function ProblemConversionPage({ config }: Props) {
           <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">{v.heroSubheadline}</p>
           <p className="mx-auto mt-3 max-w-xl text-sm font-medium text-slate-700 sm:text-base">{v.heroSupportLine}</p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:gap-4">
-            <Link href="/#ats-checker-form" className={btnPrimary}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimary}>
               {v.cta.hero}
             </Link>
             <p className="text-xs text-slate-500 sm:text-sm">
@@ -162,7 +163,7 @@ export function ProblemConversionPage({ config }: Props) {
             </p>
           </div>
           <div className="mt-4">
-            <Link href="/#ats-checker-form" className={btnPrimarySm}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimarySm}>
               Show me exactly what is failing
             </Link>
           </div>
@@ -297,7 +298,7 @@ export function ProblemConversionPage({ config }: Props) {
           </ul>
 
           <div className="mt-8 flex justify-center">
-            <Link href="/#ats-checker-form" className={btnPrimarySm}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimarySm}>
               {v.cta.afterProblem}
             </Link>
           </div>
@@ -307,7 +308,7 @@ export function ProblemConversionPage({ config }: Props) {
       {/* 4. Benefits (shared) */}
       <BenefitsProductSection />
       <div className="flex justify-center pb-4">
-        <Link href="/#ats-checker-form" className={btnPrimarySm}>
+        <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimarySm}>
           {v.cta.afterBenefits}
         </Link>
       </div>
@@ -318,7 +319,7 @@ export function ProblemConversionPage({ config }: Props) {
       {/* 6. Before / after (shared) */}
       <BeforeAfterVisualSection />
       <div className="flex justify-center pb-12">
-        <Link href="/#ats-checker-form" className={btnPrimary}>
+        <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimary}>
           {v.cta.afterBeforeAfter}
         </Link>
       </div>
@@ -363,11 +364,11 @@ export function ProblemConversionPage({ config }: Props) {
           </h2>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">{config.cta.body}</p>
           <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
-            <Link href="/#ats-checker-form" className={`${btnPrimary} sm:px-8`}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={`${btnPrimary} sm:px-8`}>
               {v.cta.bottomPrimary}
             </Link>
             <Link
-              href="/#ats-checker-form"
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
             >
               {v.cta.bottomSecondary}

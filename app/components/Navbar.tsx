@@ -127,12 +127,29 @@ export function Navbar() {
             ResumeAtlas
           </span>
         </div>
-        <nav className="flex items-center gap-4 text-xs sm:text-sm">
+        <nav className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-[11px] sm:text-sm">
           <Link
-            href="/resume-vs-job-description-checker"
+            href="/check-resume-against-job-description"
             className="hover:underline text-white/80 hover:text-white"
+            title="Check resume against job description"
           >
-            Resume checker
+            <span className="hidden sm:inline">Check resume vs job description</span>
+            <span className="sm:hidden">Check vs JD</span>
+          </Link>
+          <Link
+            href="/ats-resume-checker"
+            className="hover:underline text-white/80 hover:text-white"
+            title="ATS resume checker"
+          >
+            ATS checker
+          </Link>
+          <Link
+            href="/resume-keyword-scanner"
+            className="hover:underline text-white/80 hover:text-white"
+            title="Resume keyword scanner"
+          >
+            <span className="hidden sm:inline">Keyword scanner</span>
+            <span className="sm:hidden">Keywords</span>
           </Link>
           <a href="/#how-ats-works" className="hover:underline text-white/80 hover:text-white">
             How ATS Works

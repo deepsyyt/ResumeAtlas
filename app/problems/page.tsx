@@ -18,6 +18,7 @@ import {
   CANONICAL_PROBLEM_SLUGS,
   problemPageLinkLabel,
 } from "@/app/lib/problemPages";
+import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
 
 export const metadata: Metadata = {
   title: "Fix Your Resume for Any Job | Job Search Problems | ResumeAtlas",
@@ -78,7 +79,7 @@ export default function ProblemsHubPage() {
             AI speeds you up. You stay in control: tone, wording, and every bullet before PDF or DOCX.
           </p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:gap-4">
-            <Link href="/#ats-checker-form" className={btnPrimary}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimary}>
               Compare resume with job description
             </Link>
             <p className="text-xs text-slate-500 sm:text-sm">
@@ -126,7 +127,7 @@ export default function ProblemsHubPage() {
             })}
           </ul>
           <div className="mt-8 flex justify-center">
-            <Link href="/#ats-checker-form" className={btnPrimarySm}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimarySm}>
               Fix my resume
             </Link>
           </div>
@@ -135,7 +136,7 @@ export default function ProblemsHubPage() {
 
       <BenefitsProductSection />
       <div className="flex justify-center pb-4">
-        <Link href="/#ats-checker-form" className={btnPrimarySm}>
+        <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimarySm}>
           Check my resume
         </Link>
       </div>
@@ -144,7 +145,7 @@ export default function ProblemsHubPage() {
 
       <BeforeAfterVisualSection />
       <div className="flex justify-center pb-12">
-        <Link href="/#ats-checker-form" className={btnPrimary}>
+        <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimary}>
           Compare resume with job description
         </Link>
       </div>
@@ -164,11 +165,11 @@ export default function ProblemsHubPage() {
             One workflow replaces hours of manual tailoring. Start with the job you care about most.
           </p>
           <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
-            <Link href="/#ats-checker-form" className={`${btnPrimary} sm:px-8`}>
+            <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={`${btnPrimary} sm:px-8`}>
               Compare resume with job description
             </Link>
             <Link
-              href="/#ats-checker-form"
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
             >
               Fix my resume

@@ -3,9 +3,13 @@ import { RESUME_GUIDE_PAGES } from "@/app/lib/resumeGuidePages";
 
 export type InternalLink = { path: string; label: string };
 
-/** Primary free tool landing: resume vs job description matcher (preferred internal-link anchor sitewide). */
+/** Primary free tool landing: JD comparison (single canonical URL for all resume–JD intents). */
 export const CHECK_RESUME_AGAINST_JD_PATH =
-  "/resume-vs-job-description-checker" as const;
+  "/check-resume-against-job-description" as const;
+
+/** Same tool with in-page form anchor (use for CTAs that should scroll to the checker). */
+export const CHECK_RESUME_AGAINST_JD_FORM_HREF =
+  `${CHECK_RESUME_AGAINST_JD_PATH}#ats-checker-form` as const;
 
 /** Exact anchor text for internal links to the primary tool URL (ranking signal). */
 export const CHECK_RESUME_AGAINST_JD_ANCHOR = "check resume against job description" as const;
@@ -24,9 +28,8 @@ export const RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR =
 export const MATCH_RESUME_TO_JOB_DESCRIPTION_ANCHOR =
   "match resume to job description" as const;
 
-/** Alias landing for higher-intent matching phrasing (deduped to same analyzer engine). */
-export const MATCH_RESUME_TO_JOB_DESCRIPTION_PATH =
-  "/match-resume-to-job-description" as const;
+/** Same tool as {@link CHECK_RESUME_AGAINST_JD_PATH} (legacy alias for anchor copy). */
+export const MATCH_RESUME_TO_JOB_DESCRIPTION_PATH = CHECK_RESUME_AGAINST_JD_PATH;
 
 /** Linking to `/resume-score-checker` from keyword/ATS cluster pages. */
 export const CHECK_YOUR_RESUME_SCORE_ANCHOR = "check your resume score" as const;
@@ -36,10 +39,6 @@ const ARTICLE_LINKS: InternalLink[] = [
   {
     path: CHECK_RESUME_AGAINST_JD_PATH,
     label: RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
-  },
-  {
-    path: MATCH_RESUME_TO_JOB_DESCRIPTION_PATH,
-    label: MATCH_RESUME_TO_JOB_DESCRIPTION_ANCHOR,
   },
   { path: "/resume-keyword-scanner", label: "Resume keyword scanner" },
   { path: "/ats-resume-checker", label: "ATS resume checker" },
@@ -80,7 +79,6 @@ const POPULAR_EXAMPLES_PATHS = new Set(
 const ATS_GUIDES_PATHS = new Set(ATS_KEYWORD_LINKS.slice(0, 6).map((l) => l.path));
 const FEATURED_PATHS = new Set<string>([
   CHECK_RESUME_AGAINST_JD_PATH,
-  MATCH_RESUME_TO_JOB_DESCRIPTION_PATH,
   "/resume-keyword-scanner",
   "/ats-resume-checker",
   ...Array.from(POPULAR_EXAMPLES_PATHS),

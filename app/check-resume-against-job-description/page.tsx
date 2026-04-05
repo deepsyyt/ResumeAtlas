@@ -1,5 +1,11 @@
-import { redirect } from "next/navigation";
+import { ToolClusterLanding } from "@/app/components/ToolClusterLanding";
+import {
+  TOOL_CLUSTER_PRIMARY,
+  buildToolClusterMetadata,
+} from "@/app/lib/toolClusterPages";
+
+export const metadata = buildToolClusterMetadata(TOOL_CLUSTER_PRIMARY);
 
 export default function CheckResumeAgainstJobDescriptionPage() {
-  redirect("/resume-vs-job-description-checker");
+  return <ToolClusterLanding config={TOOL_CLUSTER_PRIMARY} />;
 }

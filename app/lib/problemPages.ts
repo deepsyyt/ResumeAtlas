@@ -28,6 +28,18 @@ export const CANONICAL_PROBLEM_SLUGS = [
   "resume-vs-job-description",
 ] as const;
 
+/**
+ * Old URLs that 301 to a canonical problem page (`next.config.mjs`).
+ * Do not pre-render these paths — avoids duplicate HTML + clearer crawl signals.
+ */
+export const PROBLEM_REDIRECT_SOURCE_SLUGS = [
+  "why-am-i-not-getting-interviews",
+  "applied-to-200-jobs-no-response",
+  "resume-not-passing-ats",
+  "how-to-tailor-resume-to-job-description",
+  "why-recruiters-ignore-resume",
+] as const satisfies readonly ProblemSlug[];
+
 export type ProblemSlug = (typeof PROBLEM_SLUGS)[number];
 
 export type ProblemPageConfig = {

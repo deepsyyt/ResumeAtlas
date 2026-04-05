@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { PreviewEmphasis } from "@/app/lib/problemLandingVariants";
 import {
-  CHECK_RESUME_AGAINST_JD_PATH,
   CHECK_RESUME_AGAINST_JD_ANCHOR,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
 } from "@/app/lib/internalLinks";
 
 export const btnPrimary =
@@ -332,7 +332,7 @@ export function TimeSavingSection() {
         <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
           Manual tailoring means rereading the JD, hunting keywords, rewriting bullets, and rechecking ATS rules, over and over. ResumeAtlas runs that loop in one guided flow so you focus on judgment, not busywork. Start with the{" "}
           <Link
-            href="/#ats-checker-form"
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
           >
             AI ATS resume checker
@@ -354,14 +354,14 @@ export function TopicClusterCallout({ className = "" }: { className?: string }) 
       className={`rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm leading-relaxed text-slate-700 ${className}`}
     >
       <p>
-        <Link href="/#ats-checker-form" className={a}>
+        <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={a}>
           Use this AI ATS resume checker
         </Link>{" "}
         to find gaps against a real posting.{" "}
-        <Link href="/#ats-checker-form" className={a}>
+        <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={a}>
           Compare your resume with a job description
         </Link>{" "}
-        in one paste on the homepage, free. Read{" "}
+        in one paste on the JD checker, free. Read{" "}
         <Link href="/how-to-pass-ats#how-ats-scans-resumes" className={b}>
           how ATS scans resumes
         </Link>
@@ -390,7 +390,7 @@ export function GuidesFooterLinks() {
       <ul className="mt-2 space-y-1 text-sm">
         <li>
           <Link
-            href={`${CHECK_RESUME_AGAINST_JD_PATH}#ats-checker-form`}
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
           >
             {CHECK_RESUME_AGAINST_JD_ANCHOR}

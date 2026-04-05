@@ -108,7 +108,7 @@ export function IntelligencePanel({
                 Buy optimization credits to unlock full Intelligence insights for your resume.
               </p>
               <a
-                href="/#ats-checker-form"
+                href="#ats-checker-form"
                 className="mt-3 inline-block rounded-full bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition"
               >
                 Buy credits

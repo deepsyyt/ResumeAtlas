@@ -1,8 +1,5 @@
 import Link from "next/link";
-import {
-  CHECK_RESUME_AGAINST_JD_PATH,
-  MATCH_RESUME_TO_JOB_DESCRIPTION_PATH,
-} from "@/app/lib/internalLinks";
+import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
 
 const FOOTER_LINKS = [
   { href: "/privacy", label: "Privacy Policy" },
@@ -13,10 +10,9 @@ const FOOTER_LINKS = [
 ] as const;
 
 const TOOL_LINKS = [
-  { href: CHECK_RESUME_AGAINST_JD_PATH, label: "Resume vs job description" },
   {
-    href: MATCH_RESUME_TO_JOB_DESCRIPTION_PATH,
-    label: "Match resume to job description",
+    href: CHECK_RESUME_AGAINST_JD_PATH,
+    label: "Check resume against job description",
   },
   { href: "/resume-keyword-scanner", label: "Resume keyword scanner" },
   { href: "/ats-resume-checker", label: "ATS resume checker" },

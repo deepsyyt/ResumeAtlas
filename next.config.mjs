@@ -103,13 +103,23 @@ const nextConfig = {
       ...roleHubRedirects,
       ...resumeGuideTopicRedirects,
       {
-        source: "/check-resume-against-job-description",
-        destination: "/resume-vs-job-description-checker",
+        source: "/resume-vs-job-description-checker",
+        destination: "/check-resume-against-job-description",
         permanent: true,
       },
       {
-        source: "/check-resume-against-job-description/",
-        destination: "/resume-vs-job-description-checker",
+        source: "/resume-vs-job-description-checker/",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/match-resume-to-job-description",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/match-resume-to-job-description/",
+        destination: "/check-resume-against-job-description",
         permanent: true,
       },
       {

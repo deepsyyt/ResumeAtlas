@@ -7,6 +7,7 @@ import {
   INDEXED_RESUME_GUIDE_SLUGS,
   type ResumeGuideSlug,
 } from "@/app/lib/resumeGuidePages";
+import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
 
 type PageParams = {
   slug: ResumeGuideSlug;
@@ -55,7 +56,7 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
             {config.intro}
           </p>
           <Link
-            href="/#ats-checker-form"
+            href="/ats-resume-checker#ats-checker-form"
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
           >
             Open the ATS resume checker
@@ -75,17 +76,17 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
           <p className="mt-4 text-slate-700 text-sm sm:text-base leading-relaxed">
             When you want to test wording against a real role, use the{" "}
             <Link
-              href="/#ats-checker-form"
+              href="/ats-resume-checker#ats-checker-form"
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
               free ATS resume checker
             </Link>{" "}
-            on the homepage. It doubles as a{" "}
+            on its own page. For{" "}
             <Link
-              href="/#ats-checker-form"
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
-              resume vs job description tool
+              check resume against job description
             </Link>
             : paste both texts (no upload) to see keyword gaps and ATS-style alignment for that posting. For more context, read{" "}
             <Link
@@ -182,10 +183,10 @@ export default function ResumeGuidePage({ params }: { params: PageParams }) {
             before you apply.
           </p>
           <Link
-            href="/#ats-checker-form"
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
-            Open the free ATS resume checker
+            Check resume against a job description
           </Link>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
