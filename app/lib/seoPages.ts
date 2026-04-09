@@ -24,9 +24,9 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
   "data-analyst-resume-example": {
     slug: "data-analyst-resume-example",
     roleName: "Data Analyst",
-    h1: "Data Analyst Resume Example",
+    h1: "Data Analyst Resume Example & Template (ATS-Friendly + Sample Projects)",
     metaDescription:
-      "See a strong Data Analyst resume example with ATS-friendly formatting, impact-focused bullets, and the right SQL, BI, and analytics keywords.",
+      "Data analyst resume example and copy-paste template: SQL, Python, Power BI, metrics, and sample bullets for data analytics roles. ATS-friendly format, then match to any job description.",
     exampleTitle: "Data Analyst – Resume Example",
     summary:
       "Data analyst with 4+ years of experience turning messy data into clear, actionable insights for product, marketing, and operations teams across B2B SaaS.",
@@ -120,9 +120,9 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
   "product-manager-resume-example": {
     slug: "product-manager-resume-example",
     roleName: "Product Manager",
-    h1: "Product Manager Resume Example",
+    h1: "Product Manager Resume Example & Template (ATS-Friendly + Real Projects)",
     metaDescription:
-      "Product Manager resume example that shows clear ownership, roadmap delivery, and data‑driven decision‑making in an ATS‑friendly way.",
+      "Product manager resume examples, sample resume, and templates: roadmaps, metrics, B2B and API PM angles, product lead and data PM keywords. Copy-paste ATS-friendly resume for product management; match any job description.",
     exampleTitle: "Product Manager – Resume Example",
     summary:
       "Product manager with 7+ years of experience owning B2B SaaS products from discovery to launch, focused on impact and execution.",
@@ -194,6 +194,15 @@ export type RoleSlug =
   | "machine-learning-engineer"
   | "devops-engineer"
   | "full-stack-developer";
+
+/**
+ * Roles with `app/{role}-resume-example/page.tsx`. The `/{role}` hub should use the same canonical
+ * URL so the resume-example page is the single primary URL for “resume example” intent.
+ */
+export const ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE: readonly RoleSlug[] = [
+  "data-analyst",
+  "product-manager",
+];
 
 export type KeywordsConfig = {
   slug: RoleSlug;
@@ -287,5 +296,16 @@ export const RESUME_SAMPLE_HASH = "#resume-sample" as const;
 /** Prefer the merged role resume guide (indexed) over the broad `/{role}` hub (noindex). */
 export function roleResumeSamplePath(role: RoleSlug): string {
   return `/${role}-resume-guide#bullet-points`;
+}
+
+/**
+ * Public URL for “resume example” intent: dedicated `/{role}-resume-example` when it exists;
+ * otherwise the merged guide sample anchor (same as {@link roleResumeSamplePath}).
+ */
+export function resumeExamplePublicPath(role: RoleSlug): string {
+  for (const r of ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE) {
+    if (r === role) return `/${role}-resume-example`;
+  }
+  return roleResumeSamplePath(role);
 }
 

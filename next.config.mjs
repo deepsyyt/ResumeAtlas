@@ -19,6 +19,12 @@ const RESUME_BULLET_ROLES = [
   "product-manager",
 ];
 
+/**
+ * Roles that have a dedicated indexed `app/{role}-resume-example/page.tsx`.
+ * They must NOT use the legacy redirect from `/{role}-resume-example` → `/{role}` (role hub is noindex).
+ */
+const RESUME_EXAMPLE_STANDALONE_ROLES = ["data-analyst", "product-manager"];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Avoid EPERM on .next when project is in OneDrive (use a separate build dir)
@@ -75,22 +81,28 @@ const nextConfig = {
     ];
   },
   async redirects() {
-    const roleHubRedirects = ROLE_SLUGS.flatMap((role) => [
-      {
-        source: `/${role}-resume-example`,
-        destination: `/${role}`,
-        permanent: true,
-      },
-      {
-        source: `/${role}-resume-example/`,
-        destination: `/${role}`,
-        permanent: true,
-      },
-      {
-        source: `/${role}/resume`,
-        destination: `/${role}`,
-        permanent: true,
-      },
+    const roleHubRedirects = ROLE_SLUGS.flatMap((role) => {
+      const legacyResumeExampleRedirects = RESUME_EXAMPLE_STANDALONE_ROLES.includes(role)
+        ? []
+        : [
+            {
+              source: `/${role}-resume-example`,
+              destination: `/${role}`,
+              permanent: true,
+            },
+            {
+              source: `/${role}-resume-example/`,
+              destination: `/${role}`,
+              permanent: true,
+            },
+          ];
+      return [
+        ...legacyResumeExampleRedirects,
+        {
+          source: `/${role}/resume`,
+          destination: `/${role}`,
+          permanent: true,
+        },
       {
         source: `/${role}/resume/`,
         destination: `/${role}`,
@@ -106,7 +118,8 @@ const nextConfig = {
         destination: `/${role}-resume-keywords`,
         permanent: true,
       },
-    ]);
+    ];
+    });
 
     const resumeBulletCanonicalRedirects = RESUME_BULLET_ROLES.flatMap((role) => [
       {

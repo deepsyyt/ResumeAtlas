@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ResumeExampleSeoFunnel } from "@/app/components/ResumeExampleSeoFunnel";
 import { RelatedProblemsWidget } from "@/app/components/RelatedProblemsWidget";
 import {
   BeforeAfterVisualSection,
@@ -47,6 +48,42 @@ export function ProblemConversionPage({ config }: Props) {
       acceptedAnswer: { "@type": "Answer", text: f.answer },
     })),
   };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${siteUrl}/`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Problems",
+        item: `${siteUrl}/problems`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: v.heroHeadline,
+        item: `${siteUrl}/problems/${config.slug}`,
+      },
+    ],
+  } as const;
+
+  const topReasonsItemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Top reasons your resume is not getting interviews",
+    itemListElement: config.rootCauses.bullets.map((b, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: b.title,
+    })),
+  } as const;
 
   const toneBox = problemToneCalloutClass(v.intent);
   const eyebrowTone = heroEyebrowClass(v.intent);
@@ -107,7 +144,7 @@ export function ProblemConversionPage({ config }: Props) {
     "Paste your resume and a target job description to diagnose gaps before applying.";
 
   return (
-    <main className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-white text-slate-900">
       {/* 1. Hero */}
       <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50/80 to-white">
         <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-18 lg:px-8">
@@ -121,11 +158,17 @@ export function ProblemConversionPage({ config }: Props) {
           </p>
           <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">{v.heroSubheadline}</p>
           <p className="mx-auto mt-3 max-w-xl text-sm font-medium text-slate-700 sm:text-base">{v.heroSupportLine}</p>
-          <div className="mt-8 flex flex-col items-center gap-3 sm:gap-4">
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
             <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimary}>
               {v.cta.hero}
             </Link>
-            <p className="text-xs text-slate-500 sm:text-sm">
+            <Link
+              href="/resume-keyword-scanner"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
+            >
+              Find missing keywords in your resume
+            </Link>
+            <p className="w-full text-center text-xs text-slate-500 sm:text-sm">
               No login required · Free ATS analysis · Takes under 30 seconds
             </p>
           </div>
@@ -143,9 +186,13 @@ export function ProblemConversionPage({ config }: Props) {
       </section>
 
       <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-6 lg:px-8">
+        <ResumeExampleSeoFunnel />
+      </div>
+
+      <div className="mx-auto max-w-3xl px-4 pt-4 sm:px-6 lg:px-8">
         <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-4 sm:p-5">
           <h2 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
-            Top 3 reasons your resume fails first screening
+            Top reasons your resume is not getting interviews
           </h2>
           <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm text-slate-700">
             {config.rootCauses.bullets.slice(0, 3).map((b) => (
@@ -401,6 +448,16 @@ export function ProblemConversionPage({ config }: Props) {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-    </main>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(topReasonsItemListSchema) }}
+      />
+    </div>
   );
 }

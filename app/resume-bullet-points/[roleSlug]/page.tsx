@@ -12,12 +12,10 @@ import {
   RESUME_BULLET_LEVELS,
   type ResumeBulletRole,
 } from "@/app/lib/resumeBulletPointContent";
-import {
-  CHECK_RESUME_AGAINST_JD_FORM_HREF,
-  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
-} from "@/app/lib/internalLinks";
+import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { ResumeBulletPreviewCopyButton } from "@/app/components/ResumeBulletPreviewCopyButton";
+import { ResumeExampleSeoFunnel } from "@/app/components/ResumeExampleSeoFunnel";
 
 type PageParams = { roleSlug: string };
 
@@ -42,7 +40,8 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
     title: hub.metaTitle,
     description: hub.metaDescription,
     keywords: hub.keywords,
-    alternates: { canonical: canonicalPath },
+    robots: { index: true, follow: true },
+    alternates: { canonical },
     openGraph: {
       title: hub.metaTitle,
       description: hub.metaDescription,
@@ -117,7 +116,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
   };
 
   return (
-    <main className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-white text-slate-900">
       <section className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-b from-slate-50 via-white to-white">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-sky-50/80 to-transparent" />
         <div className="relative mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
@@ -162,13 +161,13 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
             >
-              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+              Generate bullets for my resume
             </Link>
             <Link
               href="/resume-keyword-scanner#ats-checker-form"
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50"
             >
-              Find missing keywords in your {hub.roleName.toLowerCase()} resume
+              Find missing keywords in your resume
             </Link>
           </div>
           <p className="mt-3 max-w-xl text-xs text-slate-500">
@@ -268,6 +267,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
       </section>
 
       <div className="mx-auto max-w-3xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
+        <ResumeExampleSeoFunnel />
         <section id="preview" className="scroll-mt-24">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             {hub.previewSection.h2}
@@ -538,6 +538,6 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
-    </main>
+    </div>
   );
 }

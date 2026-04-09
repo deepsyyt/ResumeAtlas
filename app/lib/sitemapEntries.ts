@@ -27,6 +27,7 @@ function priorityForPath(pathname: string): number {
   ) {
     return 0.91;
   }
+  if (pathname === "/resume-examples") return 0.86;
   if (pathname === "/problems") return 0.95;
   if (pathname.startsWith("/problems/")) return 0.92;
   if (pathname.startsWith("/how-ats-")) return 0.92;
@@ -38,12 +39,19 @@ function priorityForPath(pathname: string): number {
     return 0.85;
   }
   if (pathname.endsWith("-resume-guide")) return 0.84;
+  if (pathname.endsWith("-resume-example")) return 0.84;
   if (
     /^\/[^/]+-resume-bullet-points(-entry-level|-junior|-senior)?$/.test(pathname)
   ) {
     return 0.82;
   }
   if (/^\/[^/]+-resume-keywords$/.test(pathname)) return 0.55;
+  if (
+    /^\/[a-z0-9-]+$/.test(pathname) &&
+    Object.prototype.hasOwnProperty.call(KEYWORD_PAGES, pathname.slice(1))
+  ) {
+    return 0.83;
+  }
   if (LEGAL_PATHS.includes(pathname as (typeof LEGAL_PATHS)[number])) return 0.6;
   if (/^\/[^/]+\/resume$/.test(pathname)) return 0.62;
   if (/^\/[^/]+\/resume\/[^/]+$/.test(pathname)) return 0.56;
@@ -144,7 +152,15 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
   }
 
   const resumeGuideLastMod = new Date("2026-03-09");
+  const roleHubLastMod = new Date("2026-04-09");
   for (const { slug } of Object.values(KEYWORD_PAGES)) {
+    const roleHubPath = `/${slug}`;
+    entries.push({
+      url: `${base}${roleHubPath}`,
+      lastModified: roleHubLastMod,
+      changeFrequency: "monthly" as const,
+      priority: priorityForPath(roleHubPath),
+    });
     const resumeGuidePath = `/${slug}-resume-guide`;
     entries.push({
       url: `${base}${resumeGuidePath}`,
@@ -153,6 +169,27 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
       priority: priorityForPath(resumeGuidePath),
     });
   }
+
+  entries.push({
+    url: `${base}/resume-examples`,
+    lastModified: new Date("2026-04-09"),
+    changeFrequency: "weekly" as const,
+    priority: priorityForPath("/resume-examples"),
+  });
+
+  entries.push({
+    url: `${base}/data-analyst-resume-example`,
+    lastModified: new Date("2026-04-09"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/data-analyst-resume-example"),
+  });
+
+  entries.push({
+    url: `${base}/product-manager-resume-example`,
+    lastModified: new Date("2026-04-09"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/product-manager-resume-example"),
+  });
 
   for (const path of generateRoleResumeTopicPaths()) {
     entries.push({

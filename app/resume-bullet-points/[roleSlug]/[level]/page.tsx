@@ -15,7 +15,9 @@ import {
   type ResumeBulletRole,
 } from "@/app/lib/resumeBulletPointContent";
 import { ResumeBulletConversionBlocks } from "@/app/components/ResumeBulletConversionBlocks";
+import { ResumeExampleSeoFunnel } from "@/app/components/ResumeExampleSeoFunnel";
 import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
+import { getSiteUrl } from "@/app/lib/siteUrl";
 
 type PageParams = { roleSlug: string; level: string };
 
@@ -44,12 +46,14 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
   const level = parseLevel(params.level);
   if (!level) return {};
   const d = getResumeBulletDetail(params.roleSlug, level);
-  const canonical = publicPathForBulletDetail(params.roleSlug, level);
+  const path = publicPathForBulletDetail(params.roleSlug, level);
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
   return {
     title: d.metaTitle,
     description: d.metaDescription,
     ...(d.keywords?.length ? { keywords: d.keywords } : {}),
-    alternates: { canonical },
+    robots: { index: true, follow: true },
+    alternates: { canonical: `${siteUrl}${path}` },
   };
 }
 
@@ -100,7 +104,7 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
     : null;
 
   return (
-    <main className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/60">
         <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">
@@ -192,13 +196,13 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
             >
-              Compare your resume with this job description
+              Generate bullets for my resume
             </Link>
             <Link
               href="/resume-keyword-scanner#ats-checker-form"
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
             >
-              Find missing keywords in your {hub.roleName.toLowerCase()} resume
+              Find missing keywords in your resume
             </Link>
           </div>
           <p className="mt-3 text-xs text-slate-500">
@@ -252,6 +256,7 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
       </section>
 
       <div className="mx-auto max-w-3xl space-y-10 px-4 py-10 sm:px-6 lg:px-8">
+        <ResumeExampleSeoFunnel />
         <div className="rounded-xl border border-amber-100 bg-amber-50/50 px-4 py-3 text-sm text-amber-950">
           {d.doubtLine}
         </div>
@@ -585,6 +590,6 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
           }}
         />
       ) : null}
-    </main>
+    </div>
   );
 }

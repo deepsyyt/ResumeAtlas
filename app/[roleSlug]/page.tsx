@@ -2,18 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LastUpdated } from "@/app/components/LastUpdated";
-import {
-  CHECK_RESUME_AGAINST_JD_FORM_HREF,
-  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
-} from "@/app/lib/internalLinks";
+import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
 import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 import {
   KEYWORD_PAGES,
   RESUME_SAMPLE_HASH,
+  ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE,
   resumePageConfigForRole,
   type RoleSlug,
 } from "@/app/lib/seoPages";
 import { roleToProblemLinkLabel, roleToProblemPath } from "@/app/lib/roleSeo";
+import { goodResumeSnippet } from "@/app/lib/roleHubSeo";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 
 type PageParams = {
@@ -24,13 +23,23 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
   const roleConfig = KEYWORD_PAGES[params.roleSlug as keyof typeof KEYWORD_PAGES];
   if (!roleConfig) return {};
   const rn = roleConfig.roleName;
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
+  const role = params.roleSlug as RoleSlug;
+  const standaloneExample =
+    ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE.includes(role);
+  const canonicalPath = standaloneExample
+    ? `/${role}-resume-example`
+    : `/${params.roleSlug}`;
   return {
-    title: `${rn} Resume Not Getting Interviews? Fix It Here | ResumeAtlas`,
-    description: `If your ${rn.toLowerCase()} resume is not getting interviews, find role-specific keyword gaps, ATS issues, and targeted fixes in one page.`,
+    title: `${rn} Resume Not Getting Interviews? (ATS + JD Fix) | ResumeAtlas`,
+    description: `If your ${rn.toLowerCase()} resume is not getting interviews, fix keyword gaps, ATS readability, and job-description alignment—then validate against a real posting.`,
+    // Standalone `/{role}-resume-example` is the indexed URL; hub duplicates canonical to avoid competing URLs.
+    robots: standaloneExample
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
     alternates: {
-      canonical: `/${params.roleSlug}`,
+      canonical: `${siteUrl}${canonicalPath}`,
     },
-    robots: { index: false, follow: true },
   };
 }
 
@@ -110,34 +119,60 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
     ],
   } as const;
 
+  const topReasonsItems = [
+    `Weak overlap between your ${roleLower} resume and the job description (ATS filters before humans see you).`,
+    "Impact buried below the fold—recruiters skim the top third first.",
+    "Skills listed without proof in bullets (tools mentioned once, never tied to outcomes).",
+    "Formatting ATS struggles to parse (multi-column layouts, icons, or key text in images).",
+    "One generic resume sent to every role instead of mirroring each posting’s language.",
+  ];
+
+  const topReasonsItemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Top reasons your resume is not getting interviews",
+    itemListElement: topReasonsItems.map((text, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: text,
+    })),
+  } as const;
+
+  const goodSnippet = goodResumeSnippet(role, roleName);
+
   return (
-    <main className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/60">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16 text-center">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
-            {roleName} Resume Not Getting Interviews? Fix It Here
+            {roleName} Resume Not Getting Interviews? Fix Keywords &amp; ATS
           </h1>
           <p className="mt-4 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
-            One page for your {roleLower} job search: an ATS-friendly sample resume, keyword lists,
-            and deep links for skills, summaries, projects, and bullets—so you rank in screenings and
-            read clearly to hiring managers.
+            If interviews have gone quiet, your resume is still the first gate: most applications fail
+            on keyword match, buried metrics, or ATS-unfriendly structure—before a human reads a line.
           </p>
           <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
-            Start with the example below, tighten each section using the topic guides, then{" "}
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
-            </Link>{" "}
-            against your target posting.
+            Use this hub to spot gaps, then run a real posting through ResumeAtlas to see what’s
+            missing.
           </p>
-          <div className="mt-6">
+          <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
             <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              href="/problems/ats-rejecting-my-resume"
               className="inline-flex rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition"
             >
-              Check why my {roleName} resume is not getting interviews
+              Fix why my resume is getting rejected
+            </Link>
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="inline-flex rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
+            >
+              Check resume against job description
+            </Link>
+            <Link
+              href="/resume-keyword-scanner"
+              className="inline-flex rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
+            >
+              Find missing keywords in your resume
             </Link>
           </div>
           <LastUpdated className="mt-2 text-xs text-slate-500" />
@@ -145,6 +180,57 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
       </section>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 space-y-10">
+        <section
+          className="rounded-2xl border border-amber-200 bg-amber-50/40 p-5 sm:p-6"
+          aria-labelledby="top-reasons-heading"
+        >
+          <h2 id="top-reasons-heading" className="text-lg sm:text-xl font-semibold text-slate-900">
+            Top reasons your resume is not getting interviews
+          </h2>
+          <ul className="mt-3 list-disc pl-5 space-y-2 text-sm text-slate-800">
+            {topReasonsItems.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
+            What is a good {roleLower} resume?
+          </h2>
+          <p className="mt-3 text-sm sm:text-base text-slate-700">{goodSnippet.line1}</p>
+          <p className="mt-2 text-sm sm:text-base text-slate-700">{goodSnippet.line2}</p>
+        </section>
+
+        <section className="rounded-2xl border border-sky-100 bg-sky-50/50 p-5 sm:p-6">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-600">
+            Free tools (next steps)
+          </h2>
+          <ul className="mt-3 space-y-2 text-sm font-medium text-slate-900 list-none p-0 m-0">
+            <li>
+              <Link
+                href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Check resume against job description
+              </Link>
+            </li>
+            <li>
+              <Link href="/resume-keyword-scanner" className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
+                Find missing keywords in your resume
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/problems/resume-not-getting-interviews"
+                className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Resume not getting interviews (diagnosis guide)
+              </Link>
+            </li>
+          </ul>
+        </section>
+
         <section className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 sm:p-6">
           <h2 className="text-lg font-semibold text-slate-900">Start here</h2>
           <p className="mt-1 text-sm text-slate-600">
@@ -419,7 +505,7 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 focus-visible:ring-offset-emerald-50 transition"
             >
-              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+              Check resume against job description
             </Link>
           </div>
         </section>
@@ -456,6 +542,11 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-    </main>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(topReasonsItemListSchema) }}
+      />
+    </div>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ResumeExampleSeoFunnel } from "@/app/components/ResumeExampleSeoFunnel";
 import { RelatedProblemsWidget } from "@/app/components/RelatedProblemsWidget";
 import { TopicClusterCallout } from "@/app/components/problemLandingShared";
 import { getSiteUrl } from "@/app/lib/siteUrl";
@@ -12,11 +13,14 @@ import {
 const SLUG = "resume-not-getting-interviews" as const;
 const config = PROBLEM_PAGES[SLUG];
 
+const canonicalPath = "/problems/resume-not-getting-interviews";
+
 export const metadata: Metadata = {
   title: "Applied to 100 Jobs but No Interviews? Fix Your Resume in 2 Minutes | ResumeAtlas",
   description: config.metaDescription,
+  robots: { index: true, follow: true },
   alternates: {
-    canonical: "/problems/resume-not-getting-interviews",
+    canonical: `${getSiteUrl().replace(/\/$/, "")}${canonicalPath}`,
   },
 };
 
@@ -71,8 +75,34 @@ export default function ResumeNotGettingInterviewsLandingPage() {
     })),
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+      { "@type": "ListItem", position: 2, name: "Problems", item: `${siteUrl}/problems` },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: "Resume not getting interviews",
+        item: `${siteUrl}${canonicalPath}`,
+      },
+    ],
+  } as const;
+
+  const topReasonsItemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Top reasons your resume is not getting interviews",
+    itemListElement: config.rootCauses.bullets.map((b, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: b.title,
+    })),
+  } as const;
+
   return (
-    <main className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen bg-white text-slate-900">
       {/* Hero */}
       <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50/80 to-white">
         <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-18 lg:px-8">
@@ -91,11 +121,17 @@ export default function ResumeNotGettingInterviewsLandingPage() {
           <p className="mx-auto mt-3 max-w-xl text-sm font-medium text-slate-700 sm:text-base">
             AI rewrites your resume. You stay in control: edit, refine, or personalize before downloading.
           </p>
-          <div className="mt-8 flex flex-col items-center gap-3 sm:gap-4">
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
             <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className={btnPrimary}>
               Upload resume and get instant fix suggestions
             </Link>
-            <p className="text-xs text-slate-500 sm:text-sm">
+            <Link
+              href="/resume-keyword-scanner"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
+            >
+              Find missing keywords in your resume
+            </Link>
+            <p className="w-full text-center text-xs text-slate-500 sm:text-sm">
               No login required · Free ATS analysis · Takes under 30 seconds
             </p>
           </div>
@@ -103,9 +139,13 @@ export default function ResumeNotGettingInterviewsLandingPage() {
       </section>
 
       <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-6 lg:px-8">
+        <ResumeExampleSeoFunnel />
+      </div>
+
+      <div className="mx-auto max-w-3xl px-4 pt-4 sm:px-6 lg:px-8">
         <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-4 sm:p-5">
           <h2 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
-            Top 3 reasons your resume fails first screening
+            Top reasons your resume is not getting interviews
           </h2>
           <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm text-slate-700">
             <li>Missing must-have keywords from the target job description.</li>
@@ -533,6 +573,16 @@ export default function ResumeNotGettingInterviewsLandingPage() {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-    </main>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(topReasonsItemListSchema) }}
+      />
+    </div>
   );
 }

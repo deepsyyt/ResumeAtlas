@@ -4,7 +4,7 @@ import Link from "next/link";
 import {
   RESUME_PAGES,
   type RoleSlug,
-  roleResumeSamplePath,
+  resumeExamplePublicPath,
 } from "@/app/lib/seoPages";
 
 export function ResumeExamplesSection() {
@@ -34,7 +34,7 @@ export function ResumeExamplesSection() {
           return (
             <li key={slug}>
               <Link
-                href={roleResumeSamplePath(role)}
+                href={resumeExamplePublicPath(role)}
                 className="text-sky-700 hover:underline text-xs sm:text-sm"
               >
                 {page.h1}

@@ -8,6 +8,7 @@ import {
   PROBLEM_SLUGS,
   type ProblemSlug,
 } from "@/app/lib/problemPages";
+import { getSiteUrl } from "@/app/lib/siteUrl";
 
 type PageParams = { slug: string };
 
@@ -32,13 +33,17 @@ export function generateMetadata({
   const hasExamples = Boolean(config.scenario?.before && config.scenario?.after);
   const isIndexedProblem = (INDEXED_PROBLEM_SLUGS as readonly string[]).includes(params.slug);
   const normalizedTitle = config.metaTitle.replace(/\s*\(Examples \+ Fixes\)\s*$/i, "").trim();
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
+  const path = `/problems/${params.slug}`;
   return {
     title: hasExamples ? `${normalizedTitle} (Examples + Fixes)` : `${normalizedTitle} (Why + Fix)`,
     description: config.metaDescription,
     alternates: {
-      canonical: `/problems/${params.slug}`,
+      canonical: `${siteUrl}${path}`,
     },
-    ...(isIndexedProblem ? {} : { robots: { index: false, follow: true } }),
+    ...(isIndexedProblem
+      ? { robots: { index: true, follow: true } as const }
+      : { robots: { index: false, follow: true } as const }),
   };
 }
 
