@@ -9,7 +9,9 @@ import { ResumePreview } from "@/app/components/ResumePreview";
 import { IntelligencePanel } from "@/app/components/IntelligencePanel";
 import { LimitModal } from "@/app/components/LimitModal";
 import { CreditPackModal } from "@/app/components/CreditPackModal";
-import type { CreditPackageId } from "@/app/lib/billing/packages";
+import { OptimizeConversionModal } from "@/app/components/OptimizeConversionModal";
+import { getCreditPackage, type CreditPackageId } from "@/app/lib/billing/packages";
+import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import {
   alignSupabaseOAuthAuthorizeUrl,
   buildAuthCallbackRedirectTo,
@@ -178,6 +180,15 @@ const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
 const ANALYZER_STATE_KEY = "resumeatlas_analyzer_state_v1";
 /** Tab-scoped snapshot so analysis survives Google OAuth → `/?openOptimizer=1` (independent of PERSIST_ANALYZER_STATE). */
 const POST_OAUTH_ANALYZER_KEY = "resumeatlas_post_oauth_analyze_v1";
+/** Successful logged-in analyses in this tab (sessionStorage). Upgrade modal on 2nd and 4th dashboard only. */
+const LOGGED_IN_ANALYSIS_SUCCESS_COUNT_KEY = "resumeatlas_logged_in_analysis_success_count";
+
+function countMissingKeywordsForConversion(r: ATSAnalyzeResult): number {
+  const req = r.missing_skills_required?.length ?? 0;
+  const pref = r.missing_skills_preferred?.length ?? 0;
+  if (req + pref > 0) return req + pref;
+  return r.missing_skills?.length ?? 0;
+}
 
 /**
  * Restore/save analysis across refresh so the UI can re-display the same
@@ -226,6 +237,15 @@ export default function HomeClient({
   const [limitModalMessage, setLimitModalMessage] = useState("");
   const [limitModalQuotaScope, setLimitModalQuotaScope] = useState<LimitModalQuotaScope>(null);
   const [creditModalOpen, setCreditModalOpen] = useState(false);
+  const [optimizeConversionModalOpen, setOptimizeConversionModalOpen] = useState(false);
+  const [conversionModalBusy, setConversionModalBusy] = useState(false);
+  const [conversionModalError, setConversionModalError] = useState<string | null>(null);
+  const [optimizeConversionPaymentSuccess, setOptimizeConversionPaymentSuccess] = useState(false);
+  const [optimizeConversionPaymentReceipt, setOptimizeConversionPaymentReceipt] = useState<{
+    packName: string;
+    creditsGranted: number;
+    creditsRemaining: number;
+  } | null>(null);
   const [resume, setResume] = useState<Resume | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -274,6 +294,12 @@ export default function HomeClient({
     setAnalysisQuota(q);
   }, []);
 
+  const closeOptimizeConversionModal = useCallback(() => {
+    setOptimizeConversionPaymentSuccess(false);
+    setOptimizeConversionPaymentReceipt(null);
+    setOptimizeConversionModalOpen(false);
+  }, []);
+
   useEffect(() => {
     refreshUsage();
     const supabase = createClient();
@@ -281,6 +307,13 @@ export default function HomeClient({
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session?.access_token);
+      if (!session?.access_token) {
+        try {
+          window.sessionStorage.removeItem(LOGGED_IN_ANALYSIS_SUCCESS_COUNT_KEY);
+        } catch {
+          /* ignore */
+        }
+      }
       refreshUsage();
     });
     if (typeof window !== "undefined") {
@@ -426,6 +459,10 @@ export default function HomeClient({
   const handleGenerate = useCallback(
     async (inputs: GenerateInputs) => {
       setError(null);
+      setOptimizeConversionModalOpen(false);
+      setOptimizeConversionPaymentSuccess(false);
+      setOptimizeConversionPaymentReceipt(null);
+      setConversionModalError(null);
       setIsGenerating(true);
       setJdMatchResult(null);
       setJdAnalysis(null);
@@ -535,6 +572,34 @@ export default function HomeClient({
             event_label: "ATS dashboard result generated",
           });
         }
+
+        try {
+          const supabase = createClient();
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+          if (session?.access_token && jdTrimmed && typeof window !== "undefined") {
+            const raw = window.sessionStorage.getItem(LOGGED_IN_ANALYSIS_SUCCESS_COUNT_KEY);
+            const prev = raw ? Math.max(0, parseInt(raw, 10) || 0) : 0;
+            const next = prev + 1;
+            window.sessionStorage.setItem(LOGGED_IN_ANALYSIS_SUCCESS_COUNT_KEY, String(next));
+            if (next === 2 || next === 4) {
+              void logAnalysisEvent("optimize_conversion_modal_shown");
+              if ((window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
+                (window as unknown as { gtag: (...a: unknown[]) => void }).gtag(
+                  "event",
+                  "ats_optimize_conversion_modal_shown",
+                  { event_category: "engagement", analysis_count: next }
+                );
+              }
+              setOptimizeConversionPaymentSuccess(false);
+              setOptimizeConversionPaymentReceipt(null);
+              setOptimizeConversionModalOpen(true);
+            }
+          }
+        } catch {
+          /* ignore */
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : "Something went wrong");
       } finally {
@@ -582,31 +647,13 @@ export default function HomeClient({
     try {
       const resumeText = lastInputs.resumeText;
       const jobDescription = lastJD ?? lastInputs.jobDescription;
-      let parsedResume: unknown = null;
-      if (typeof window !== "undefined") {
-        try {
-          const res = await fetch("/api/parse-resume", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ resumeText: lastInputs.resumeText }),
-          });
-          if (res.ok) {
-            const data = (await res.json()) as { resume?: unknown };
-            if (data && typeof data === "object" && "resume" in data) {
-              parsedResume = data.resume;
-            }
-          }
-        } catch {
-          // best-effort; fall back to raw text only
-        }
-      }
+      // Parse-resume runs on /optimize so navigation is not blocked (localhost parse can take several seconds).
       if (typeof window !== "undefined") {
         try {
           const payload = JSON.stringify({
             resumeText,
             jobDescription,
             analyzeResult,
-            parsedResume,
           });
           window.sessionStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
           window.localStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
@@ -676,6 +723,81 @@ export default function HomeClient({
     },
     [lastInputs, lastJD, lastRoleLevel, analyzeResult]
   );
+
+  const handleConversionPrimaryAction = useCallback(async () => {
+    setConversionModalError(null);
+    void logAnalysisEvent("optimize_conversion_modal_fix_clicked");
+    if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
+      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", "ats_optimize_conversion_modal_fix_clicked", {
+        event_category: "engagement",
+      });
+    }
+    if (!lastInputs || !analyzeResult) return;
+    if (!isLoggedIn) {
+      closeOptimizeConversionModal();
+      await handleStartGoogleAuthForPackage("starter");
+      return;
+    }
+    const credits = usage?.creditsRemaining ?? 0;
+    if (credits > 0) {
+      closeOptimizeConversionModal();
+      await launchOptimizerFlow();
+      return;
+    }
+    void logAnalysisEvent("upgrade_modal_pay");
+    if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
+      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", "upgrade_modal_pay", {
+        event_category: "conversion",
+      });
+    }
+    setConversionModalBusy(true);
+    try {
+      const result = await openRazorpayPackCheckout({
+        packageId: "starter",
+        creditsRemaining: credits,
+        isLoggedIn: true,
+        getAuthHeaders,
+        onRefreshBalance: refreshUsage,
+        checkoutTrigger: "conversion_modal",
+      });
+      if (result.status === "paid") {
+        await refreshUsage();
+        const pkg = getCreditPackage("starter");
+        setOptimizeConversionPaymentReceipt({
+          packName: pkg?.name ?? "Starter",
+          creditsGranted: result.creditsGranted,
+          creditsRemaining: result.creditsRemaining,
+        });
+        setOptimizeConversionPaymentSuccess(true);
+      } else if (result.status === "error") {
+        setConversionModalError(result.message);
+      }
+    } finally {
+      setConversionModalBusy(false);
+    }
+  }, [
+    analyzeResult,
+    closeOptimizeConversionModal,
+    getAuthHeaders,
+    handleStartGoogleAuthForPackage,
+    isLoggedIn,
+    lastInputs,
+    launchOptimizerFlow,
+    logAnalysisEvent,
+    refreshUsage,
+    usage?.creditsRemaining,
+  ]);
+
+  const handleConversionFixResumeNow = useCallback(async () => {
+    void logAnalysisEvent("optimize_conversion_modal_fix_resume_now_clicked");
+    if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
+      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", "ats_optimize_conversion_modal_fix_resume_now", {
+        event_category: "engagement",
+      });
+    }
+    closeOptimizeConversionModal();
+    await launchOptimizerFlow();
+  }, [closeOptimizeConversionModal, launchOptimizerFlow, logAnalysisEvent]);
 
   const handleResumeChange = useCallback((next: Resume) => {
     setResume(next);
@@ -916,6 +1038,7 @@ export default function HomeClient({
                 analyzeResult && lastInputs && lastAnalysisUsedJd
                   ? () => {
                       void trackOptimizeAfterAnalysisClick();
+                      closeOptimizeConversionModal();
                       setCreditModalOpen(true);
                     }
                   : undefined
@@ -938,6 +1061,33 @@ export default function HomeClient({
               onStartGoogleAuthForPackage={handleStartGoogleAuthForPackage}
               isStartingGoogleAuth={isStartingGoogleAuth}
               isBusy={isLaunchingOptimize}
+            />
+            <OptimizeConversionModal
+              open={optimizeConversionModalOpen}
+              onClose={closeOptimizeConversionModal}
+              onContinueManual={() => {
+                void logAnalysisEvent("optimize_conversion_modal_continue_manual");
+                if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
+                  (window as unknown as { gtag: (...a: unknown[]) => void }).gtag(
+                    "event",
+                    "ats_optimize_conversion_modal_continue_manual",
+                    { event_category: "engagement" }
+                  );
+                }
+                closeOptimizeConversionModal();
+              }}
+              onPrimaryAction={() => void handleConversionPrimaryAction()}
+              onFixResumeNow={() => void handleConversionFixResumeNow()}
+              paymentSuccess={optimizeConversionPaymentSuccess}
+              paymentReceipt={optimizeConversionPaymentReceipt}
+              missingKeywordCount={
+                analyzeResult ? countMissingKeywordsForConversion(analyzeResult) : 0
+              }
+              isLoggedIn={isLoggedIn}
+              hasOptimizationCredits={(usage?.creditsRemaining ?? 0) > 0}
+              isBusy={conversionModalBusy || isLaunchingOptimize}
+              isStartingGoogleAuth={isStartingGoogleAuth}
+              localError={conversionModalError}
             />
             {resume && (
               <div className="flex-1 min-h-0 flex flex-col">

@@ -162,6 +162,25 @@ export default function OptimizePage() {
 
         if (cancelled) return;
 
+        /** Home page skips parse before navigate so /optimize loads immediately; parse here while the loading UI shows. */
+        let structuredResume: ResumeDocument | undefined = parsed.parsedResume;
+        if (!structuredResume || !Array.isArray(structuredResume.experience)) {
+          const parseRes = await fetch("/api/parse-resume", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ resumeText: parsed.resumeText }),
+            signal: abortController.signal,
+          });
+          if (parseRes.ok) {
+            const parseData = (await parseRes.json()) as { resume?: ResumeDocument };
+            if (parseData?.resume && typeof parseData.resume === "object") {
+              structuredResume = parseData.resume;
+            }
+          }
+        }
+
+        if (cancelled) return;
+
         setHydrating(false);
         setOptimizeInFlight(true);
         setError(null);
@@ -179,7 +198,7 @@ export default function OptimizePage() {
             resumeText: parsed.resumeText,
             jobDescription: parsed.jobDescription,
             analyzeResult: parsed.analyzeResult,
-            structuredResume: parsed.parsedResume,
+            structuredResume,
           }),
         });
 

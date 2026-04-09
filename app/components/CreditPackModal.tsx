@@ -11,14 +11,9 @@ import {
   listCreditPackages,
   type CreditPackageId,
 } from "@/app/lib/billing/packages";
+import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import { logBillingEvent } from "@/app/lib/billing/billingEventsClient";
 import { gtagEvent } from "@/app/lib/gtagClient";
-
-declare global {
-  interface Window {
-    Razorpay?: new (options: Record<string, unknown>) => { open: () => void };
-  }
-}
 
 export type CreditPackModalProps = {
   open: boolean;
@@ -33,19 +28,6 @@ export type CreditPackModalProps = {
   isStartingGoogleAuth?: boolean;
   isBusy?: boolean;
 };
-
-function loadRazorpayScript(): Promise<void> {
-  if (typeof window === "undefined") return Promise.resolve();
-  if (window.Razorpay) return Promise.resolve();
-  return new Promise((resolve, reject) => {
-    const s = document.createElement("script");
-    s.src = "https://checkout.razorpay.com/v1/checkout.js";
-    s.async = true;
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error("Failed to load Razorpay"));
-    document.body.appendChild(s);
-  });
-}
 
 const PREVIEW_SAMPLE_RESUME: ResumeDocument = {
   name: "DEEPIKA NADARAJAN",
@@ -119,167 +101,27 @@ export function CreditPackModal({
       checkoutTrigger: "pack_button" | "oauth_resume" = "pack_button"
     ) => {
       setLocalError(null);
-      if (isLoggedIn && creditsRemaining > 0) {
-        setLocalError("Use your current optimization credits before buying more.");
-        return;
-      }
       setCheckoutLoading(packageId);
       try {
-        await loadRazorpayScript();
-        const Razorpay = window.Razorpay;
-        if (!Razorpay) throw new Error("Razorpay unavailable");
-
-        const headers = await getAuthHeaders();
-        const supabase = createClient();
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        const res = await fetch("/api/billing/create-order", {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ packageId }),
-        });
-        const data = (await res.json().catch(() => ({}))) as {
-          error?: string;
-          code?: string;
-          orderId?: string;
-          amount?: number;
-          currency?: string;
-          keyId?: string;
-          credits?: number;
-        };
-        if (!res.ok) {
-          if (res.status === 409 && data.code === "CREDITS_REMAINING") {
-            throw new Error(
-              typeof data.error === "string"
-                ? data.error
-                : "Use your credits before buying more."
-            );
-          }
-          throw new Error(typeof data.error === "string" ? data.error : "Could not start checkout");
-        }
-        if (!data.orderId || !data.keyId) {
-          throw new Error("Invalid checkout response");
-        }
-
-        const amountMinor = Math.round(Number(data.amount));
-        const currency = String(data.currency ?? "USD").toUpperCase();
-        if (!Number.isFinite(amountMinor) || amountMinor <= 0) {
-          throw new Error("Invalid payment amount from server");
-        }
-
         const pkgMeta = getCreditPackage(packageId);
-        gtagEvent("billing_razorpay_checkout_opened", {
-          event_category: "billing",
-          package_id: packageId,
-          credits: pkgMeta?.credits ?? 0,
-          currency,
-          value: amountMinor / 100,
-          checkout_trigger: checkoutTrigger,
+        const result = await openRazorpayPackCheckout({
+          packageId,
+          creditsRemaining,
+          isLoggedIn,
+          getAuthHeaders,
+          onRefreshBalance,
+          checkoutTrigger,
         });
-        void logBillingEvent("billing_razorpay_checkout_opened", {
-          package_id: packageId,
-          credits: pkgMeta?.credits ?? 0,
-          currency,
-          value_minor: amountMinor,
-          checkout_trigger: checkoutTrigger,
-        });
-
-        const prefill: Record<string, string> = {};
-        if (session?.user?.email) prefill.email = session.user.email;
-        const meta = session?.user?.user_metadata as Record<string, unknown> | undefined;
-        const rawName = meta?.full_name ?? meta?.name;
-        const displayName = typeof rawName === "string" ? rawName.trim() : "";
-        if (displayName) prefill.name = displayName;
-
-        await new Promise<void>((resolve, reject) => {
-          let razorpayReportedPaymentSuccess = false;
-          const rzp = new Razorpay({
-            key: data.keyId,
-            // Razorpay samples use string subunits; must match order exactly (USD cents / INR paise).
-            amount: String(amountMinor),
-            currency,
-            order_id: data.orderId,
-            name: "ResumeAtlas",
-            description: `${data.credits ?? ""} optimization credit(s)`,
-            ...(Object.keys(prefill).length > 0 ? { prefill } : {}),
-            theme: { color: "#0f172a" },
-            handler: async (response: {
-              razorpay_order_id?: string;
-              razorpay_payment_id?: string;
-              razorpay_signature?: string;
-            }) => {
-              razorpayReportedPaymentSuccess = true;
-              try {
-                const v = await fetch("/api/billing/verify", {
-                  method: "POST",
-                  headers: await getAuthHeaders(),
-                  body: JSON.stringify({
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature,
-                  }),
-                });
-                const vr = (await v.json().catch(() => ({}))) as {
-                  error?: string;
-                  creditsGranted?: number;
-                  creditsRemaining?: number;
-                };
-                if (!v.ok) {
-                  throw new Error(typeof vr.error === "string" ? vr.error : "Payment verification failed");
-                }
-                await onRefreshBalance?.();
-                const pkg = getCreditPackage(packageId);
-                const creditsAdded =
-                  typeof vr.creditsGranted === "number"
-                    ? vr.creditsGranted
-                    : data.credits ?? 0;
-                const balance =
-                  typeof vr.creditsRemaining === "number"
-                    ? vr.creditsRemaining
-                    : creditsRemaining + creditsAdded;
-                setCheckoutSuccess({
-                  packName: pkg?.name ?? "Credit pack",
-                  creditsAdded,
-                  balance,
-                });
-                gtagEvent("billing_payment_success", {
-                  event_category: "billing",
-                  package_id: packageId,
-                  credits: creditsAdded,
-                  currency,
-                  value: amountMinor / 100,
-                });
-                void logBillingEvent("billing_payment_success", {
-                  package_id: packageId,
-                  credits: creditsAdded,
-                  currency,
-                  value_minor: amountMinor,
-                  credits_remaining: balance,
-                });
-                resolve();
-              } catch (e) {
-                reject(e instanceof Error ? e : new Error("Verification failed"));
-              }
-            },
-            modal: {
-              ondismiss: () => {
-                if (!razorpayReportedPaymentSuccess) {
-                  gtagEvent("billing_razorpay_checkout_dismissed", {
-                    event_category: "billing",
-                    package_id: packageId,
-                  });
-                  void logBillingEvent("billing_razorpay_checkout_dismissed", {
-                    package_id: packageId,
-                  });
-                }
-                resolve();
-              },
-            },
+        if (result.status === "paid") {
+          const pkg = getCreditPackage(packageId);
+          setCheckoutSuccess({
+            packName: pkg?.name ?? pkgMeta?.name ?? "Credit pack",
+            creditsAdded: result.creditsGranted,
+            balance: result.creditsRemaining,
           });
-          rzp.open();
-        });
+        } else if (result.status === "error") {
+          setLocalError(result.message);
+        }
       } catch (e) {
         setLocalError(e instanceof Error ? e.message : "Checkout failed");
       } finally {
