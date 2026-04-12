@@ -1,9 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ResumeExampleSeoFunnel } from "@/app/components/ResumeExampleSeoFunnel";
-import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
+import {
+  ResumeExampleAtsScoreCta,
+  ResumeExampleExploreMoreFooter,
+  ResumeExampleSeoBulletSamplesSection,
+  ResumeExampleSeoIntro,
+  ResumeExampleStandardFaqBlock,
+  ResumeExampleTopAtsKeywordsSection,
+} from "@/app/components/ResumeExampleSeoTemplate";
+import {
+  ATS_RESUME_TEMPLATE_GUIDE_PATH,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+} from "@/app/lib/internalLinks";
+import {
+  buildResumeExampleMetadata,
+  DEFAULT_SEO_SAMPLE_BULLETS,
+  DEFAULT_TOP_ATS_KEYWORDS,
+  getResumeExampleSerpTitle,
+  mergeResumeExampleFaqSchema,
+  type FaqSchemaEntity,
+} from "@/app/lib/resumeExampleSeoTemplate";
 import { goodResumeSnippet } from "@/app/lib/roleHubSeo";
-import { getSiteUrl } from "@/app/lib/siteUrl";
+
+const ROLE = "Product Manager";
 
 const JD_CHECK_HREF = CHECK_RESUME_AGAINST_JD_FORM_HREF;
 const KEYWORD_SCANNER_HREF = "/resume-keyword-scanner";
@@ -12,9 +32,7 @@ const ATS_CHECKER_HREF = "/ats-resume-checker";
 const CANONICAL_PATH = "/product-manager-resume-example";
 
 export const metadata: Metadata = {
-  title: "Product Manager Resume Example & Template (ATS-Friendly + Real Projects)",
-  description:
-    "Product management resume examples and templates: sample resume for product manager, product lead, B2B, API, and data product manager roles. Roadmaps, metrics, SQL, launches. ATS-friendly; compare your resume to any job description.",
+  ...buildResumeExampleMetadata(CANONICAL_PATH, "product-manager"),
   keywords: [
     "resume for product manager",
     "product management resume examples",
@@ -37,13 +55,6 @@ export const metadata: Metadata = {
     "PM resume example",
     "ATS resume example",
   ],
-  robots: {
-    index: true,
-    follow: true,
-  },
-  alternates: {
-    canonical: `${getSiteUrl()}${CANONICAL_PATH}`,
-  },
 };
 
 const COPY_PASTE_TEMPLATE = `ALEX RIVERA
@@ -61,12 +72,12 @@ SKILLS
 
 EXPERIENCE
 
-Product Manager | Meridian Software | 2021 – Present
+Product Manager | Meridian Software | 2021 - Present
 • Led launch of a feature increasing user retention by 18%
 • Defined roadmap aligned with business goals across 3 teams
 • Used SQL to analyze user behavior and optimize funnel
 
-Associate Product Manager | Meridian Software | 2019 – 2021
+Associate Product Manager | Meridian Software | 2019 - 2021
 • Conducted user research leading to 2 major feature improvements
 • Collaborated with engineering and design to ship features faster
 
@@ -79,57 +90,55 @@ EDUCATION
 MBA, State University, 2019
 B.S. Business Administration, State University, 2014`;
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "What is a good product manager resume?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text:
-          "A good product manager resume proves impact with metrics (retention, revenue, adoption) and shows how you used research, roadmapping, and data. It should mirror the job description you are applying for, not a generic list of tasks.",
-      },
+const faqLegacyEntities: FaqSchemaEntity[] = [
+  {
+    "@type": "Question",
+    name: "What is a good product manager resume?",
+    acceptedAnswer: {
+      "@type": "Answer",
+      text:
+        "A good product manager resume proves impact with metrics (retention, revenue, adoption) and shows how you used research, roadmapping, and data. It should mirror the job description you are applying for, not a generic list of tasks.",
     },
-    {
-      "@type": "Question",
-      name: "What should a resume for a product manager include?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text:
-          "Include scope (B2B, API, platform, or consumer where true), outcomes with numbers, and how you worked with design and engineering. Product lead and senior roles should show strategy and stakeholder breadth; specialist PMs (data product manager, API product manager) should name the systems and metrics you owned.",
-      },
+  },
+  {
+    "@type": "Question",
+    name: "What should a resume for a product manager include?",
+    acceptedAnswer: {
+      "@type": "Answer",
+      text:
+        "Include scope (B2B, API, platform, or consumer where true), outcomes with numbers, and how you worked with design and engineering. Product lead and senior roles should show strategy and stakeholder breadth; specialist PMs (data product manager, API product manager) should name the systems and metrics you owned.",
     },
-    {
-      "@type": "Question",
-      name: "How do product management resume examples differ for B2B or API PMs?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text:
-          "B2B product manager resumes emphasize revenue, expansion, and stakeholder workflows. API product manager resumes should cite developer experience, adoption, reliability SLAs, and partner integrations. Use the same ATS-friendly layout; swap bullets so they match the posting.",
-      },
+  },
+  {
+    "@type": "Question",
+    name: "How do product management resume examples differ for B2B or API PMs?",
+    acceptedAnswer: {
+      "@type": "Answer",
+      text:
+        "B2B product manager resumes emphasize revenue, expansion, and stakeholder workflows. API product manager resumes should cite developer experience, adoption, reliability SLAs, and partner integrations. Use the same ATS-friendly layout; swap bullets so they match the posting.",
     },
-    {
-      "@type": "Question",
-      name: "How do I write a product manager resume with no experience?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text:
-          "Lean on internships, side projects, and cross-functional work: ship narratives with outcomes, cite tools (docs, SQL, analytics), and show how you prioritized. Entry-level and junior PMs still win by matching keywords to the posting.",
-      },
+  },
+  {
+    "@type": "Question",
+    name: "How do I write a product manager resume with no experience?",
+    acceptedAnswer: {
+      "@type": "Answer",
+      text:
+        "Lean on internships, side projects, and cross-functional work: ship narratives with outcomes, cite tools (docs, SQL, analytics), and show how you prioritized. Entry-level and junior PMs still win by matching keywords to the posting.",
     },
-    {
-      "@type": "Question",
-      name: "What skills should a product manager include in a resume?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text:
-          "Include roadmapping, stakeholder communication, user research, SQL or data analysis where true, experimentation, and prioritization frameworks, always tied to examples. Senior PMs add strategy and org scope; align depth to the role.",
-      },
+  },
+  {
+    "@type": "Question",
+    name: "What skills should a product manager include in a resume?",
+    acceptedAnswer: {
+      "@type": "Answer",
+      text:
+        "Include roadmapping, stakeholder communication, user research, SQL or data analysis where true, experimentation, and prioritization frameworks, always tied to examples. Senior PMs add strategy and org scope; align depth to the role.",
     },
-  ],
-};
+  },
+];
+
+const faqPageSchema = mergeResumeExampleFaqSchema(ROLE, faqLegacyEntities);
 
 const copyPasteExampleBullets = [
   "Led product launch increasing retention by 18%",
@@ -156,24 +165,10 @@ export default function ProductManagerResumeExamplePage() {
       {/* 1. Hero */}
       <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            Product Manager Resume Example &amp; Template (ATS-Friendly + Real Projects)
+          <h1 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            {getResumeExampleSerpTitle("product-manager")}
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
-            Use this page as a <strong className="font-semibold text-slate-800">sample product manager resume</strong>{" "}
-            and <strong className="font-semibold text-slate-800">product manager resume template</strong>: metric-driven
-            bullets for general PM, <strong className="font-semibold text-slate-800">product lead</strong>,{" "}
-            <strong className="font-semibold text-slate-800">B2B product manager</strong>,{" "}
-            <strong className="font-semibold text-slate-800">API product manager</strong>, or{" "}
-            <strong className="font-semibold text-slate-800">data product manager</strong> searches, aligned with how teams
-            hire (roadmaps, stakeholders, outcomes).
-          </p>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            Whether you need a <strong className="font-semibold text-slate-800">resume for product management</strong> or a
-            focused <strong className="font-semibold text-slate-800">resume for product manager</strong> roles, swap in
-            your launches and mirror each job description. Not getting interviews? Tighten proof and keywords before you
-            apply.
-          </p>
+          <ResumeExampleSeoIntro role={ROLE} />
           <p className="mt-3 text-sm font-medium text-slate-500">
             Takes 10 seconds • No signup required
           </p>
@@ -195,36 +190,51 @@ export default function ProductManagerResumeExamplePage() {
       </section>
 
       <div className="mx-auto max-w-3xl space-y-14 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-        {/* Copy & paste intent (above full example) */}
-        <section aria-labelledby="copy-paste-snippet">
-          <h2
-            id="copy-paste-snippet"
-            className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl"
+        <div className="space-y-4">
+          <ResumeExampleTopAtsKeywordsSection role={ROLE} keywords={DEFAULT_TOP_ATS_KEYWORDS["product-manager"]} />
+          <Link
+            href={KEYWORD_SCANNER_HREF}
+            className="inline-flex text-sm font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
           >
-            Product Manager Resume Example (Copy &amp; Paste)
+            Scan my resume for missing keywords
+          </Link>
+        </div>
+
+        <ResumeExampleSeoBulletSamplesSection role={ROLE} bullets={DEFAULT_SEO_SAMPLE_BULLETS["product-manager"]} />
+
+        <ResumeExampleAtsScoreCta />
+
+        <section aria-labelledby="resume-examples-h2" className="space-y-10">
+          <h2 id="resume-examples-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Resume Examples
           </h2>
-          <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            Steal the structure, then rewrite with your own launches and numbers. This is the
-            &quot;resume example&quot; block search engines and candidates scan first.
-          </p>
-          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-800 sm:text-base">
-            {copyPasteExampleBullets.map((b) => (
-              <li key={b}>{b}</li>
-            ))}
-          </ul>
-        </section>
+
+          <div className="space-y-3">
+            <h3 id="copy-paste-snippet" className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
+              Product Manager Resume Example (Copy &amp; Paste)
+            </h3>
+            <p className="mt-3 text-sm text-slate-600 sm:text-base">
+              Steal the structure, then rewrite with your own launches and numbers. This is the
+              &quot;resume example&quot; block search engines and candidates scan first.
+            </p>
+            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-800 sm:text-base">
+              {copyPasteExampleBullets.map((b) => (
+                <li key={b}>{b}</li>
+              ))}
+            </ul>
+          </div>
 
         {/* Featured-snippet style answer */}
         <section
           aria-labelledby="what-is-good-pm-resume"
           className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"
         >
-          <h2
+          <h3
             id="what-is-good-pm-resume"
             className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl"
           >
             What is a good product manager resume?
-          </h2>
+          </h3>
           <p className="mt-3 text-sm text-slate-700 sm:text-base">{goodResumeLines.line1}</p>
           <p className="mt-2 text-sm text-slate-700 sm:text-base">{goodResumeLines.line2}</p>
         </section>
@@ -232,11 +242,11 @@ export default function ProductManagerResumeExamplePage() {
         <ResumeExampleSeoFunnel />
 
         {/* 2. Full resume example */}
-        <section aria-labelledby="resume-preview-heading">
-          <h2 id="resume-preview-heading" className="sr-only">
-            Full resume example
-          </h2>
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div>
+          <h3 id="resume-preview-heading" className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
+            Full resume sample (ATS-friendly layout)
+          </h3>
+          <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-100 bg-slate-50/80 px-5 py-4 sm:px-6">
               <p className="text-center text-xs font-medium uppercase tracking-wider text-slate-500">
                 Resume preview (ATS-friendly layout)
@@ -281,7 +291,7 @@ export default function ProductManagerResumeExamplePage() {
                   <div>
                     <p className="font-semibold text-slate-900">
                       Product Manager · Meridian Software{" "}
-                      <span className="font-normal text-slate-600">(2021–Present)</span>
+                      <span className="font-normal text-slate-600">(2021-Present)</span>
                     </p>
                     <ul className="mt-2 list-disc space-y-1.5 pl-5 text-slate-700">
                       <li>Led launch of feature increasing user retention by 18%</li>
@@ -292,7 +302,7 @@ export default function ProductManagerResumeExamplePage() {
                   <div>
                     <p className="font-semibold text-slate-900">
                       Associate Product Manager · Meridian Software{" "}
-                      <span className="font-normal text-slate-600">(2019–2021)</span>
+                      <span className="font-normal text-slate-600">(2019-2021)</span>
                     </p>
                     <ul className="mt-2 list-disc space-y-1.5 pl-5 text-slate-700">
                       <li>Conducted user research leading to 2 major feature improvements</li>
@@ -323,13 +333,13 @@ export default function ProductManagerResumeExamplePage() {
               </div>
             </div>
           </div>
-        </section>
+        </div>
 
         {/* 3. Template */}
-        <section>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+        <div>
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
             Product Manager Resume Template (Copy-Paste)
-          </h2>
+          </h3>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
             Plain text, one column, standard headings. Easy for ATS to read. Copy into Word or Google
             Docs and replace with your details.
@@ -337,12 +347,13 @@ export default function ProductManagerResumeExamplePage() {
           <pre className="mt-4 max-h-[min(28rem,70vh)] overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs leading-relaxed text-slate-800 sm:p-5 sm:text-[13px]">
             {COPY_PASTE_TEMPLATE}
           </pre>
+        </div>
         </section>
 
         {/* 4. Bullet point bridge */}
-        <section>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Product Manager Resume Bullet Points
+        <section aria-labelledby="resume-bullet-points-h2">
+          <h2 id="resume-bullet-points-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Resume Bullet Points
           </h2>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
             Hiring managers skim for outcomes. Lead with impact, scope, and the metrics that matter
@@ -436,33 +447,7 @@ export default function ProductManagerResumeExamplePage() {
           </Link>
         </section>
 
-        {/* 7. Keywords */}
-        <section>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Keywords to Include in a Product Manager Resume
-          </h2>
-          <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            Mirror the posting where it reflects your real experience. These map to common{" "}
-            <strong className="font-medium text-slate-800">product manager resume examples</strong> and job posts for
-            general PM, product lead, and specialist PM tracks.
-          </p>
-          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
-            <li>Product strategy, roadmapping, prioritization (RICE, ICE, or your team&apos;s framework)</li>
-            <li>Discovery: user research, interviews, PRDs, stakeholder alignment</li>
-            <li>SQL / data analysis, experimentation, A/B testing</li>
-            <li>B2B: expansion, revenue, workflow depth (when true)</li>
-            <li>API / platform: developer experience, adoption, reliability, integrations (when true)</li>
-            <li>Data product manager: metrics definitions, dashboards, data partnerships (when true)</li>
-          </ul>
-          <Link
-            href={KEYWORD_SCANNER_HREF}
-            className="mt-6 inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
-          >
-            Scan my resume for missing keywords
-          </Link>
-        </section>
-
-        {/* 8. ATS */}
+        {/* 7. ATS */}
         <section>
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             How to Make Your Resume ATS-Friendly
@@ -473,11 +458,19 @@ export default function ProductManagerResumeExamplePage() {
             alignment, not fancy design.
           </p>
           <p className="mt-3 text-sm text-slate-700 sm:text-base">
+            Use our{" "}
             <Link
-              href="/how-to-pass-ats"
+              href={ATS_RESUME_TEMPLATE_GUIDE_PATH}
               className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
             >
-              Read the full ATS guide
+              ATS resume template
+            </Link>{" "}
+            hub for previews + copy-paste starters, then lock in an{" "}
+            <Link
+              href={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#ats-resume-format`}
+              className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
+              ATS-friendly resume format
             </Link>
             . Want a quick sanity check before you apply? Run the{" "}
             <Link
@@ -490,35 +483,37 @@ export default function ProductManagerResumeExamplePage() {
           </p>
         </section>
 
-        {/* 10. FAQ */}
+        {/* 8. FAQ */}
         <section id="faq">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            FAQ
+            Frequently Asked Questions
           </h2>
-          <div className="mt-6 space-y-3">
-            {(faqSchema.mainEntity as { name: string; acceptedAnswer: { text: string } }[]).map(
-              (q) => (
-                <details
-                  key={q.name}
-                  className="group rounded-xl border border-slate-200 bg-white px-4 py-3"
-                >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
-                    <span className="text-sm font-semibold text-slate-900">{q.name}</span>
-                    <span className="text-xs text-slate-400 group-open:hidden">+</span>
-                    <span className="hidden text-xs text-slate-400 group-open:inline">−</span>
-                  </summary>
-                  <p className="mt-2 text-sm text-slate-600">{q.acceptedAnswer.text}</p>
-                </details>
-              )
-            )}
+          <ResumeExampleStandardFaqBlock role={ROLE} />
+          <h3 className="mt-10 text-lg font-semibold tracking-tight text-slate-900">More answers</h3>
+          <div className="mt-4 space-y-3">
+            {faqLegacyEntities.map((q) => (
+              <details
+                key={q.name}
+                className="group rounded-xl border border-slate-200 bg-white px-4 py-3"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+                  <span className="text-sm font-semibold text-slate-900">{q.name}</span>
+                  <span className="text-xs text-slate-400 group-open:hidden">+</span>
+                  <span className="hidden text-xs text-slate-400 group-open:inline">−</span>
+                </summary>
+                <p className="mt-2 text-sm text-slate-600">{q.acceptedAnswer.text}</p>
+              </details>
+            ))}
           </div>
         </section>
+
+        <ResumeExampleExploreMoreFooter currentRole="product-manager" />
       </div>
 
       <script
         type="application/ld+json"
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageSchema) }}
       />
       <script
         type="application/ld+json"

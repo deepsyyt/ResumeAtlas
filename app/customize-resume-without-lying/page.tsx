@@ -368,7 +368,7 @@ export default function CustomizeResumeWithoutLyingPage() {
               {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
             <Link
-              href="/how-to-pass-ats"
+              href="/resume-guides/ats-resume-template"
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
             >
               How to pass ATS screening
@@ -377,7 +377,7 @@ export default function CustomizeResumeWithoutLyingPage() {
           <ul className="mt-6 space-y-2 text-sm text-slate-600">
             <li>
               <Link
-                href="/how-to-pass-ats#how-ats-scans-resumes"
+                href="/resume-guides/ats-resume-template#how-ats-scans-resumes"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 How ATS scans resumes
@@ -385,7 +385,7 @@ export default function CustomizeResumeWithoutLyingPage() {
             </li>
             <li>
               <Link
-                href="/how-to-pass-ats"
+                href="/resume-guides/ats-resume-template"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 ATS-friendly resume format

@@ -896,19 +896,19 @@ export default function HomeClient({
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-2 sm:py-3 flex flex-col gap-3 sm:gap-4">
         {isHome ? (
         <header className="text-center mt-0 sm:mt-0 mb-0">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 max-w-4xl mx-auto leading-[1.2]">
+          <h1 className="text-xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 max-w-4xl mx-auto leading-snug sm:leading-[1.2]">
             Free ATS Resume Checker, Get Your ATS Score &amp; Match Your Resume to Any Job Description
           </h1>
 
-          <p className="mt-2 sm:mt-2.5 text-sm sm:text-base text-slate-600 max-w-3xl mx-auto px-2 leading-snug">
+          <p className="mt-2 sm:mt-2.5 text-[13px] sm:text-base text-slate-600 max-w-3xl mx-auto px-1 sm:px-2 leading-relaxed sm:leading-snug">
             Analyze your resume vs job description, find missing keywords, fix weak bullets, and optimize instantly with AI while keeping your experience intact.
           </p>
 
-          <div className="mt-4 sm:mt-5 mb-4 sm:mb-5 mx-auto w-full max-w-lg px-2 sm:px-0">
-            <div className="rounded-xl bg-slate-50 p-4 sm:p-5 text-center">
+          <div className="mt-4 sm:mt-5 mb-4 sm:mb-5 mx-auto w-full max-w-lg px-0 sm:px-0">
+            <div className="rounded-xl bg-slate-50 px-4 py-4 sm:p-5 text-center">
               <a
                 href="#ats-checker-form"
-                className="inline-flex w-full sm:w-auto min-w-[min(100%,16rem)] items-center justify-center rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-slate-800 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:px-8 sm:py-3 sm:text-base"
+                className="inline-flex w-full sm:w-auto min-w-[min(100%,16rem)] items-center justify-center rounded-xl bg-slate-900 px-4 py-3 text-[13px] font-semibold text-white shadow-md transition hover:bg-slate-800 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:px-8 sm:py-3 sm:text-base"
               >
                 Check My Resume for This Job (Free)
               </a>
@@ -927,7 +927,7 @@ export default function HomeClient({
           >
             <h2
               id="home-capabilities-heading"
-              className="text-center text-lg sm:text-xl font-semibold tracking-tight text-slate-900"
+              className="text-center text-base sm:text-xl font-semibold tracking-tight text-slate-900"
             >
               What you can do with ResumeAtlas
             </h2>
@@ -935,7 +935,7 @@ export default function HomeClient({
               {HOME_CAPABILITY_CARDS.map((card) => (
                 <li
                   key={card.title}
-                  className="rounded-lg bg-white p-3 text-left shadow-sm ring-1 ring-slate-900/[0.05] sm:p-3.5"
+                  className="rounded-lg bg-white p-3 text-center shadow-sm ring-1 ring-slate-900/[0.05] sm:p-3.5 sm:text-left"
                 >
                   <h3 className="text-sm font-semibold leading-snug text-slate-900">
                     {card.title}
@@ -967,7 +967,7 @@ export default function HomeClient({
               </div>
 
               <motion.ol
-                className="m-0 mt-4 sm:mt-5 flex list-none flex-row flex-wrap items-center justify-center gap-y-4 p-0"
+                className="m-0 mt-4 sm:mt-5 flex list-none flex-col items-stretch gap-4 p-0 md:flex-row md:flex-wrap md:items-center md:justify-center md:gap-y-4"
                 variants={howFlowContainer}
                 initial="hidden"
                 whileInView="visible"
@@ -977,25 +977,27 @@ export default function HomeClient({
                   <motion.li
                     key={step.key}
                     variants={howFlowItem}
-                    className="flex items-center"
+                    className="flex items-stretch md:items-center"
                   >
-                    <div className="flex w-[8.75rem] flex-col items-center text-center sm:w-[9.5rem] md:w-[10rem]">
+                    <div className="flex w-full max-w-md mx-auto flex-row items-start gap-3 rounded-xl bg-white/80 px-3 py-3 text-left shadow-sm ring-1 ring-slate-900/[0.06] md:w-[9.5rem] md:max-w-none md:flex-col md:items-center md:bg-transparent md:p-0 md:text-center md:shadow-none md:ring-0 lg:w-[10rem]">
                       <span
-                        className="text-3xl leading-none sm:text-4xl"
+                        className="text-2xl leading-none sm:text-4xl md:text-4xl shrink-0"
                         aria-hidden="true"
                       >
                         {step.emoji}
                       </span>
-                      <h3 className="mt-1.5 text-xs font-semibold tracking-tight text-slate-900 sm:mt-2 sm:text-sm">
-                        {step.title}
-                      </h3>
-                      <p className="mt-0.5 text-[11px] leading-snug text-slate-600 sm:text-xs sm:leading-snug">
-                        {step.line}
-                      </p>
+                      <div className="min-w-0 flex-1 md:w-full">
+                        <h3 className="mt-0 text-sm font-semibold tracking-tight text-slate-900 md:mt-1.5 md:text-sm">
+                          {step.title}
+                        </h3>
+                        <p className="mt-0.5 text-xs leading-snug text-slate-600 sm:leading-snug">
+                          {step.line}
+                        </p>
+                      </div>
                     </div>
                     {i < HOW_IT_WORKS_STEPS.length - 1 ? (
                       <div
-                        className="flex shrink-0 items-center justify-center self-stretch px-1 sm:px-1.5 md:px-2"
+                        className="hidden md:flex shrink-0 items-center justify-center self-stretch px-1 sm:px-1.5 md:px-2"
                         aria-hidden="true"
                       >
                         <span className="text-xl font-semibold leading-none text-slate-400 sm:text-2xl md:text-3xl">
@@ -1174,7 +1176,7 @@ export default function HomeClient({
             <ul className="mt-2 space-y-0.5 text-sm text-slate-700 list-disc pl-5">
               <li>
                 <Link
-                  href="/how-to-pass-ats#how-ats-scans-resumes"
+                  href="/resume-guides/ats-resume-template#how-ats-scans-resumes"
                   className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   <span>↗</span>
@@ -1183,7 +1185,7 @@ export default function HomeClient({
               </li>
               <li>
                 <Link
-                  href="/how-to-pass-ats#common-resume-mistakes-fail-ats"
+                  href="/resume-guides/ats-resume-template#common-resume-mistakes-fail-ats"
                   className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   <span>↗</span>
@@ -1322,12 +1324,12 @@ export default function HomeClient({
               </p>
               <ul className="mt-3 space-y-2 text-sm">
                 <li>
-                  <Link href="/how-to-pass-ats" className="text-sky-700 hover:underline">
+                  <Link href="/resume-guides/ats-resume-template" className="text-sky-700 hover:underline">
                     How to pass ATS screening
                   </Link>
                 </li>
                 <li>
-                  <Link href="/how-to-pass-ats#how-ats-scans-resumes" className="text-sky-700 hover:underline">
+                  <Link href="/resume-guides/ats-resume-template#how-ats-scans-resumes" className="text-sky-700 hover:underline">
                     How ATS scans resumes
                   </Link>
                 </li>

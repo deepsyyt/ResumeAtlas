@@ -50,7 +50,7 @@ const faqSchema = {
 };
 
 export default function CommonResumeMistakesFailATSPage() {
-  redirect("/how-to-pass-ats#common-resume-mistakes-fail-ats");
+  redirect("/resume-guides/ats-resume-template#common-resume-mistakes-fail-ats");
   return (
     <main className="min-h-screen bg-white text-slate-900">
       {/* Hero */}
@@ -205,7 +205,7 @@ export default function CommonResumeMistakesFailATSPage() {
                 </Link>
               </li>
               <li>
-                <Link href="/how-to-pass-ats" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/resume-guides/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   How to Pass ATS Screening
                 </Link>
               </li>

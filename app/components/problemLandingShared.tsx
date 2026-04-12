@@ -362,11 +362,11 @@ export function TopicClusterCallout({ className = "" }: { className?: string }) 
           Compare your resume with a job description
         </Link>{" "}
         in one paste on the JD checker, free. Read{" "}
-        <Link href="/how-to-pass-ats#how-ats-scans-resumes" className={b}>
+        <Link href="/resume-guides/ats-resume-template#how-ats-scans-resumes" className={b}>
           how ATS scans resumes
         </Link>
         ,{" "}
-        <Link href="/how-to-pass-ats" className={b}>
+        <Link href="/resume-guides/ats-resume-template" className={b}>
           how to pass ATS
         </Link>
         , or{" "}
@@ -397,7 +397,7 @@ export function GuidesFooterLinks() {
           </Link>
         </li>
         <li>
-          <Link href="/how-to-pass-ats" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+          <Link href="/resume-guides/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
             How to pass ATS screening
           </Link>
         </li>

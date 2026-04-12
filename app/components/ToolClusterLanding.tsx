@@ -250,7 +250,7 @@ export function ToolClusterLanding({ config }: Props) {
             </li>
             <li>
               <Link
-                href="/how-to-pass-ats"
+                href="/resume-guides/ats-resume-template"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 How to pass ATS systems

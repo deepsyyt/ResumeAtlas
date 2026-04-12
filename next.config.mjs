@@ -169,9 +169,29 @@ const nextConfig = {
         },
       ]);
     });
+
+    /**
+     * Roles with a dedicated `/{role}-resume-example` page: the `/{role}` hub is noindex with canonical
+     * pointing at the example URL, so browsers and bookmarks should land on the example path (301).
+     */
+    const standaloneRoleHubToResumeExampleRedirects =
+      RESUME_EXAMPLE_STANDALONE_ROLES.flatMap((role) => [
+        {
+          source: `/${role}`,
+          destination: `/${role}-resume-example`,
+          permanent: true,
+        },
+        {
+          source: `/${role}/`,
+          destination: `/${role}-resume-example`,
+          permanent: true,
+        },
+      ]);
+
     return [
       ...resumeBulletCanonicalRedirects,
       ...roleHubRedirects,
+      ...standaloneRoleHubToResumeExampleRedirects,
       ...resumeGuideTopicRedirects,
       {
         source: "/resume-vs-job-description-checker",
@@ -195,22 +215,32 @@ const nextConfig = {
       },
       {
         source: "/how-ats-scans-resumes",
-        destination: "/how-to-pass-ats#how-ats-scans-resumes",
+        destination: "/resume-guides/ats-resume-template#how-ats-scans-resumes",
         permanent: true,
       },
       {
         source: "/how-ats-scans-resumes/",
-        destination: "/how-to-pass-ats#how-ats-scans-resumes",
+        destination: "/resume-guides/ats-resume-template#how-ats-scans-resumes",
         permanent: true,
       },
       {
         source: "/common-resume-mistakes-fail-ats",
-        destination: "/how-to-pass-ats#common-resume-mistakes-fail-ats",
+        destination: "/resume-guides/ats-resume-template#common-resume-mistakes-fail-ats",
         permanent: true,
       },
       {
         source: "/common-resume-mistakes-fail-ats/",
-        destination: "/how-to-pass-ats#common-resume-mistakes-fail-ats",
+        destination: "/resume-guides/ats-resume-template#common-resume-mistakes-fail-ats",
+        permanent: true,
+      },
+      {
+        source: "/how-to-pass-ats",
+        destination: "/resume-guides/ats-resume-template",
+        permanent: true,
+      },
+      {
+        source: "/how-to-pass-ats/",
+        destination: "/resume-guides/ats-resume-template",
         permanent: true,
       },
       {
@@ -258,20 +288,15 @@ const nextConfig = {
         destination: "/ats-resume-checker#ats-compatibility-check",
         permanent: true,
       },
-      // Retired thin /resume-guides/* — consolidate to main ATS guide for GSC (301).
+      // /resume-guides hub → canonical ATS template guide (specific page is a real route).
       {
         source: "/resume-guides",
-        destination: "/how-to-pass-ats",
+        destination: "/resume-guides/ats-resume-template",
         permanent: true,
       },
       {
         source: "/resume-guides/",
-        destination: "/how-to-pass-ats",
-        permanent: true,
-      },
-      {
-        source: "/resume-guides/:path*",
-        destination: "/how-to-pass-ats",
+        destination: "/resume-guides/ats-resume-template",
         permanent: true,
       },
       {

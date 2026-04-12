@@ -6,6 +6,10 @@ export type InternalLink = { path: string; label: string };
 export const CHECK_RESUME_AGAINST_JD_PATH =
   "/check-resume-against-job-description" as const;
 
+/** Canonical ATS guide: template/format/examples (legacy `/how-to-pass-ats` redirects here). */
+export const ATS_RESUME_TEMPLATE_GUIDE_PATH =
+  "/resume-guides/ats-resume-template" as const;
+
 /** Same tool with in-page form anchor (use for CTAs that should scroll to the checker). */
 export const CHECK_RESUME_AGAINST_JD_FORM_HREF =
   `${CHECK_RESUME_AGAINST_JD_PATH}#ats-checker-form` as const;
@@ -42,7 +46,10 @@ const ARTICLE_LINKS: InternalLink[] = [
   },
   { path: "/resume-keyword-scanner", label: "Resume keyword scanner" },
   { path: "/ats-resume-checker", label: "ATS resume checker" },
-  { path: "/how-to-pass-ats", label: "How to Pass ATS Screening" },
+  {
+    path: ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    label: "ATS resume template & format guide",
+  },
   {
     path: "/customize-resume-without-lying",
     label: "Customize resume without lying",
@@ -99,14 +106,14 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/ats-resume-checker",
     "/resume-keyword-scanner",
     "/customize-resume-without-lying",
-    "/how-to-pass-ats",
-    "/how-to-pass-ats",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/data-scientist-resume-keywords",
     "/software-engineer-resume-keywords",
     "/data-scientist-resume-guide",
     "/software-engineer-resume-guide",
   ],
-  "/how-to-pass-ats": [
+  [ATS_RESUME_TEMPLATE_GUIDE_PATH]: [
     CHECK_RESUME_AGAINST_JD_PATH,
     "/customize-resume-without-lying",
     "/resume-examples",
@@ -119,8 +126,8 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     CHECK_RESUME_AGAINST_JD_PATH,
     "/ats-resume-checker",
     "/resume-keyword-scanner",
-    "/how-to-pass-ats",
-    "/how-to-pass-ats",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/software-engineer-resume-keywords",
     "/data-scientist-resume-keywords",
   ],
@@ -129,8 +136,8 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/data-scientist-resume-bullet-points",
     "/data-scientist-resume-guide",
     "/customize-resume-without-lying",
-    "/how-to-pass-ats",
-    "/how-to-pass-ats",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/machine-learning-engineer-resume-keywords",
     "/resume-examples",
   ],
@@ -139,8 +146,8 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/resume-score-checker",
     "/resume-keyword-scanner",
     "/ats-compatibility-check",
-    "/how-to-pass-ats",
-    "/how-to-pass-ats",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/customize-resume-without-lying",
     "/software-engineer-resume-keywords",
   ],
@@ -149,16 +156,16 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/ats-resume-checker-free",
     "/resume-keyword-scanner",
     "/ats-compatibility-check",
-    "/how-to-pass-ats",
-    "/how-to-pass-ats",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/data-scientist-resume-keywords",
     "/customize-resume-without-lying",
   ],
   "/resume-keyword-scanner": [
     CHECK_RESUME_AGAINST_JD_PATH,
     "/ats-resume-checker",
-    "/how-to-pass-ats",
-    "/how-to-pass-ats",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/software-engineer-resume-keywords",
     "/software-engineer-resume-guide",
   ],
@@ -167,8 +174,8 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/ats-resume-checker-free",
     "/resume-score-checker",
     "/resume-keyword-scanner",
-    "/how-to-pass-ats",
-    "/how-to-pass-ats",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/data-analyst-resume-keywords",
     "/customize-resume-without-lying",
   ],
@@ -197,10 +204,10 @@ function getSemanticPathsFor(currentPath: string): string[] {
       CHECK_RESUME_AGAINST_JD_PATH,
       mergedGuidePath,
       "/customize-resume-without-lying",
-      "/how-to-pass-ats",
-      "/how-to-pass-ats",
+      ATS_RESUME_TEMPLATE_GUIDE_PATH,
+      ATS_RESUME_TEMPLATE_GUIDE_PATH,
       "/resume-examples",
-      "/how-to-pass-ats",
+      ATS_RESUME_TEMPLATE_GUIDE_PATH,
       "/customize-resume-without-lying",
       "/resume-keyword-scanner",
     ].filter((p) => PATH_BY_PATH[p] != null);
@@ -217,10 +224,10 @@ function getSemanticPathsFor(currentPath: string): string[] {
       CHECK_RESUME_AGAINST_JD_PATH,
       atsKeywordPath,
       "/customize-resume-without-lying",
-      "/how-to-pass-ats",
+      ATS_RESUME_TEMPLATE_GUIDE_PATH,
       "/resume-examples",
-      "/how-to-pass-ats",
-      "/how-to-pass-ats",
+      ATS_RESUME_TEMPLATE_GUIDE_PATH,
+      ATS_RESUME_TEMPLATE_GUIDE_PATH,
       "/resume-keyword-scanner",
     ].filter((p) => PATH_BY_PATH[p] != null);
   }

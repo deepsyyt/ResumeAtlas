@@ -240,7 +240,7 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
             <ul className="mt-2 space-y-1 text-sm">
               <li>
                 <Link
-                  href="/how-to-pass-ats#how-ats-scans-resumes"
+                  href="/resume-guides/ats-resume-template#how-ats-scans-resumes"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   How ATS Systems Scan Resumes
@@ -248,7 +248,7 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
               </li>
               <li>
                 <Link
-                  href="/how-to-pass-ats#common-resume-mistakes-fail-ats"
+                  href="/resume-guides/ats-resume-template#common-resume-mistakes-fail-ats"
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   Common Resume Mistakes That Fail ATS

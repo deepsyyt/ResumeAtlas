@@ -320,7 +320,7 @@ export function ATSResumeCheckerFreeLanding() {
             </li>
             <li>
               <Link
-                href="/how-to-pass-ats#how-ats-scans-resumes"
+                href="/resume-guides/ats-resume-template#how-ats-scans-resumes"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 Learn how ATS systems scan resumes

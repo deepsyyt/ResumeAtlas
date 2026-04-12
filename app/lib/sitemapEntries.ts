@@ -9,6 +9,7 @@ import {
   publicPathForBulletDetail,
   RESUME_BULLET_LEVELS,
 } from "@/app/lib/resumeBulletPointContent";
+import { ROLE_ATS_PATH } from "@/app/lib/roleAtsTemplateConfig";
 
 const LEGAL_PATHS = [
   "/contact",
@@ -32,12 +33,13 @@ function priorityForPath(pathname: string): number {
   if (pathname.startsWith("/problems/")) return 0.92;
   if (pathname.startsWith("/how-ats-")) return 0.92;
   if (
-    pathname === "/how-to-pass-ats" ||
+    pathname === "/resume-guides/ats-resume-template" ||
     pathname === "/common-resume-mistakes-fail-ats" ||
     pathname === "/customize-resume-without-lying"
   ) {
     return 0.85;
   }
+  if (pathname.startsWith("/ats-resume-template-")) return 0.84;
   if (pathname.endsWith("-resume-guide")) return 0.84;
   if (pathname.endsWith("-resume-example")) return 0.84;
   if (
@@ -100,11 +102,20 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     });
   }
   entries.push({
-    url: `${base}/how-to-pass-ats`,
+    url: `${base}/resume-guides/ats-resume-template`,
     lastModified: new Date("2026-03-09"),
     changeFrequency: "monthly" as const,
-    priority: priorityForPath("/how-to-pass-ats"),
+    priority: priorityForPath("/resume-guides/ats-resume-template"),
   });
+  const roleAtsTemplateLastMod = new Date("2026-04-12");
+  for (const path of Object.values(ROLE_ATS_PATH)) {
+    entries.push({
+      url: `${base}${path}`,
+      lastModified: roleAtsTemplateLastMod,
+      changeFrequency: "monthly" as const,
+      priority: priorityForPath(path),
+    });
+  }
   entries.push({
     url: `${base}/customize-resume-without-lying`,
     lastModified: new Date("2026-04-02"),
