@@ -154,9 +154,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
   "data-scientist": {
     roleName: "Data Scientist",
     metaTitle:
-      "40+ Data Scientist Resume Bullet Points (Entry, Junior, Senior – Copy & Paste) | ResumeAtlas",
+      "Data Scientist Resume Bullet Points (2026 Examples That Get Interviews) | ResumeAtlas",
     metaDescription:
-      "40+ data scientist resume bullet points you can copy and adapt. Entry-level, junior, and senior examples—plus check your resume for ATS keyword gaps vs any job description, free.",
+      "Real data scientist resume bullet points used in 2026 hiring. Copy-ready examples + ATS-friendly phrasing for entry, junior, and senior roles.",
     keywords: [
       "data scientist resume bullet points",
       "data scientist resume bullets",
@@ -177,7 +177,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     roleKeywordDensity:
       "Strong data scientist resume bullet points should include tools like Python, SQL, machine learning, and A/B testing—plus metrics that prove business impact, not just model accuracy.",
     introIntentStack:
-      "Data scientist resume bullet points should match how you actually work: entry-level, junior, or senior—and the ATS keywords in each job posting. This hub gives copy-ready resume bullet points for every level, plus free tools to scan for missing keywords and compare your resume to the job description before you apply.",
+      "These data scientist resume bullet points reflect what hiring teams expect in 2026, including measurable impact, clear ownership, and ATS-friendly phrasing. Data scientist resume bullet points should match how you actually work: entry-level, junior, or senior—and the ATS keywords in each job posting. This hub gives copy-ready resume bullet points for every level, plus free tools to scan for missing keywords and compare your resume to the job description before you apply.",
     snippetDefinition: {
       h2: "What Are Good Data Scientist Resume Bullet Points?",
       line1:
@@ -296,9 +296,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
   "software-engineer": {
     roleName: "Software Engineer",
     metaTitle:
-      "40+ Software Engineer Resume Bullet Points (Entry, Junior, Senior – Copy & Paste) | ResumeAtlas",
+      "Software Engineer Resume Bullet Points (2026 Examples That Get Interviews) | ResumeAtlas",
     metaDescription:
-      "40+ software engineer resume bullet points to copy and adapt—entry, junior, senior. APIs, reliability, scale—then compare your resume to a job description and fix ATS keyword gaps, free.",
+      "Real software engineer resume bullet points used in 2026 hiring. Copy-ready examples + ATS-friendly phrasing for entry, junior, and senior roles.",
     keywords: [
       "software engineer resume bullet points",
       "software developer resume bullets",
@@ -319,7 +319,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     roleKeywordDensity:
       "Strong software engineer resume bullet points should name your stack (TypeScript, React, Node, cloud), reliability signals (tests, SLOs, latency), and measurable outcomes hiring managers can verify.",
     introIntentStack:
-      "Software engineer resume bullet points need to match your level—entry-level, junior, or senior—and the ATS keywords in each posting. This hub links full example pages for every stage, plus free tools to find missing keywords and compare your resume to the job description.",
+      "These software engineer resume bullet points reflect what hiring teams expect in 2026, including measurable impact, clear ownership, and ATS-friendly phrasing. Software engineer resume bullet points need to match your level—entry-level, junior, or senior—and the ATS keywords in each posting. This hub links full example pages for every stage, plus free tools to find missing keywords and compare your resume to the job description.",
     snippetDefinition: {
       h2: "What Are Good Software Engineer Resume Bullet Points?",
       line1:
@@ -440,7 +440,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     metaTitle:
       "40+ Product Manager Resume Bullet Points (Entry, Junior, Senior – Copy & Paste) | ResumeAtlas",
     metaDescription:
-      "40+ product manager resume bullet points you can copy—APM, mid-level, senior. Discovery, metrics, roadmaps—then compare your resume to a job description and fix ATS gaps, free.",
+      "Real product manager resume bullet points used in 2026 hiring. Copy-ready examples + ATS-friendly phrasing for APM, mid-level, and senior roles.",
     keywords: [
       "product manager resume bullet points",
       "APM resume bullets",
@@ -461,7 +461,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     roleKeywordDensity:
       "Strong product manager resume bullet points should weave in discovery, metrics, roadmaps, and stakeholder outcomes—using terms that match each job description’s domain (B2B SaaS, marketplace, platform, etc.).",
     introIntentStack:
-      "Product manager resume bullet points should match your stage: entry-level, junior, or senior PM—and the ATS keywords in each job posting. This hub routes you to full example pages for every level, with tools to scan for missing keywords and compare your resume to the job description.",
+      "These product manager resume bullet points reflect what hiring teams expect in 2026, including measurable impact, clear ownership, and ATS-friendly phrasing. Product manager resume bullet points should match your stage: entry-level, junior, or senior PM—and the ATS keywords in each job posting. This hub routes you to full example pages for every level, with tools to scan for missing keywords and compare your resume to the job description.",
     snippetDefinition: {
       h2: "What Are Good Product Manager Resume Bullet Points?",
       line1:

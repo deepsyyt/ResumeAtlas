@@ -67,8 +67,14 @@ export function roleResumeExampleListMeta(role: RoleSlug): { title: string; desc
 
 export function roleResumeKeywordsHubMeta(role: RoleSlug): { title: string; description: string } {
   const { roleName, metaDescription } = KEYWORD_PAGES[role];
-  const title = `${roleName} Resume Keywords for ATS & Job Descriptions${RESUME_ATLAS_TITLE_SUFFIX}`;
-  const description = `${metaDescription} Keyword themes reflect common ${CONTENT_FRESHNESS_YEAR} hiring language—browse by category, then validate wording against a real posting or run ResumeAtlas’s resume keyword scan.`;
+  const title =
+    role === "devops-engineer"
+      ? `DevOps Resume Keywords (${CONTENT_FRESHNESS_YEAR} ATS Phrases That Get Interviews)${RESUME_ATLAS_TITLE_SUFFIX}`
+      : `${roleName} Resume Keywords for ATS & Job Descriptions${RESUME_ATLAS_TITLE_SUFFIX}`;
+  const description =
+    role === "devops-engineer"
+      ? `Real DevOps resume keywords used in ${CONTENT_FRESHNESS_YEAR} hiring. ATS-friendly skills, tools, and action verbs recruiters search for - grouped by role and experience level.`
+      : `${metaDescription} Keyword themes reflect common ${CONTENT_FRESHNESS_YEAR} hiring language—browse by category, then validate wording against a real posting or run ResumeAtlas’s resume keyword scan.`;
   return { title, description };
 }
 

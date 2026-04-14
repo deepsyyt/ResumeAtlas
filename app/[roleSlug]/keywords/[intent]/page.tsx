@@ -73,6 +73,9 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
   const relatedIntents = getRelatedKeywordIntents(intent);
   const content = getKeywordIntentContent(role, intent);
   const resumeTopicPath = intentToResumeTopicPath(role, intent);
+  const exactIntentAnswerLine = `${roleConfig.roleName} ${intentLabel.toLowerCase()} include keywords like ${content.clusters[0]?.keywords
+    ?.slice(0, 3)
+    .join(", ") || roleConfig.roleName}, used in context across summary, skills, and experience bullets for ATS matching.`;
 
   return (
     <main className="min-h-screen bg-white text-slate-900">
@@ -99,6 +102,7 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
             {roleConfig.roleName} Resume Keywords ({intentLabel} + ATS Examples)
           </h1>
           <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed">{content.intro}</p>
+          <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed">{exactIntentAnswerLine}</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
