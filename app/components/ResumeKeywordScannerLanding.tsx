@@ -31,8 +31,7 @@ export function ResumeKeywordScannerLanding() {
             {TOOL_CLUSTER_KEYWORD_SCANNER.h1}
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Find missing resume keywords against a real job description, close skill gaps with
-            truthful edits, and improve ATS keyword coverage before you apply.
+            {TOOL_CLUSTER_KEYWORD_SCANNER.intro}
           </p>
         </div>
       </section>

@@ -292,12 +292,12 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
           <p className="mt-2 text-sm text-slate-600">
             {d.projectsSectionSubcopy ??
               (d.entryProjectsSectionTitle
-                ? "Grouped as academic, internship, and personal-style work—swap in your real project names and metrics."
+                ? "Grouped as academic, internship, and personal-style work - swap in your real project names and metrics."
                 : level === "entry-level"
-                  ? "2–3 project blocks — typical for internships and new grads."
+                  ? "2-3 project blocks - typical for internships and new grads."
                   : level === "junior"
-                    ? "Four project blocks — mid-level IC scope."
-                    : `Five project blocks plus ${leadershipCount} leadership lines — senior / staff-style scope.`)}
+                    ? "Four project blocks - mid-level IC scope."
+                    : `Five project blocks plus ${leadershipCount} leadership lines - senior / staff-style scope.`)}
           </p>
           {d.realismLine ? (
             <p className="mt-3 text-sm leading-relaxed text-slate-600">{d.realismLine}</p>
@@ -393,7 +393,7 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
               </p>
             ) : (
               <p className="mt-2 text-sm text-slate-600">
-                Ten lines you can split across summary and experience—only what matches your real scope.
+                Ten lines you can split across summary and experience - only what matches your real scope.
               </p>
             )}
             {d.leadershipSnippet ? (
@@ -417,7 +417,7 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
             ) : null}
             <p className="mt-4 text-sm text-slate-600">
               {leadershipCount} leadership resume bullet point examples you can split across summary and
-              experience—keep only lines that match your real scope.
+              experience - keep only lines that match your real scope.
             </p>
             <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
               {d.leadershipBullets.map((line, i) => (
@@ -466,7 +466,7 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
               Explore Resume Bullet Points for Other Roles
             </h2>
             <p className="mt-2 text-sm text-slate-600">
-              Same entry-level structure for other tracks—compare wording and keywords.
+              Same entry-level structure for other tracks - compare wording and keywords.
             </p>
             <ul className="mt-4 space-y-2 text-sm">
               {RESUME_BULLET_ROLES.filter((r) => r !== role).map((r) => {
@@ -493,7 +493,7 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
               Junior resume bullet points for other roles
             </h2>
             <p className="mt-2 text-sm text-slate-600">
-              Compare mid-level wording and keywords across tracks—then tailor to your posting.
+              Compare mid-level wording and keywords across tracks - then tailor to your posting.
             </p>
             <ul className="mt-4 space-y-2 text-sm">
               {RESUME_BULLET_ROLES.filter((r) => r !== role).map((r) => {
@@ -520,7 +520,7 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
               Senior resume bullet points for other roles
             </h2>
             <p className="mt-2 text-sm text-slate-600">
-              Compare leadership and project language across tracks—then tailor to your posting.
+              Compare leadership and project language across tracks - then tailor to your posting.
             </p>
             <ul className="mt-4 space-y-2 text-sm">
               {RESUME_BULLET_ROLES.filter((r) => r !== role).map((r) => {

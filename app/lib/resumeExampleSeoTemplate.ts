@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
+import {
+  CONTENT_FRESHNESS_YEAR,
+  CONTENT_LAST_UPDATED_LABEL,
+} from "@/app/lib/contentFreshness";
 import { getSiteUrl } from "@/app/lib/siteUrl";
+
+const RESUME_ATLAS_BRAND_TITLE_SUFFIX = " | ResumeAtlas" as const;
 export type FaqSchemaEntity = {
   "@type": "Question";
   name: string;
@@ -25,9 +31,9 @@ export const RESUME_EXAMPLE_SERP_VARIANTS: Record<
 > = {
   "data-analyst": [
     {
-      title: `Data Analyst Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR} + ATS Keywords + Template)`,
+      title: `Data Analyst Resume Example (${CONTENT_FRESHNESS_YEAR} Example + Template)`,
       description:
-        "ATS-friendly data analyst resume example with a copy-paste template, metric-driven bullets, and keyword ideas. Free ATS resume check, then match your resume to any job description on ResumeAtlas.",
+        `Updated ${CONTENT_LAST_UPDATED_LABEL}: ATS-friendly data analyst resume example with a copy-paste template, metric-driven bullets, and keyword ideas aligned with ${CONTENT_FRESHNESS_YEAR} hiring. Free ATS resume check, then match your resume to any job description on ResumeAtlas.`,
     },
     {
       title: `Data Analyst Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR}): Match Resume to Job Description`,
@@ -42,9 +48,9 @@ export const RESUME_EXAMPLE_SERP_VARIANTS: Record<
   ],
   "product-manager": [
     {
-      title: `Product Manager Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR} + ATS Keywords + Template)`,
+      title: `Product Manager Resume Example (${CONTENT_FRESHNESS_YEAR} Resume Example + Guide)`,
       description:
-        "Product manager resume example with a copy-paste template, launch and metric bullets, and ATS-friendly structure. Free ATS check, then compare your resume to every job description on ResumeAtlas.",
+        `Updated ${CONTENT_LAST_UPDATED_LABEL}: product manager resume example with a copy-paste template, launch and metric bullets, and ATS-friendly structure for ${CONTENT_FRESHNESS_YEAR} PM hiring. Free ATS check, then compare your resume to every job description on ResumeAtlas.`,
     },
     {
       title: `Product Manager Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR}): Roadmaps, Metrics, Launches`,
@@ -89,13 +95,15 @@ export function buildResumeExampleMetadata(
   const { title, description } = pickResumeExampleSerpVariant(pageKey, variantIndex);
   const url = `${getSiteUrl()}${canonicalPath}`;
 
+  const documentTitle = `${title}${RESUME_ATLAS_BRAND_TITLE_SUFFIX}`;
+
   return {
-    title,
+    title: documentTitle,
     description,
     robots: { index: true, follow: true },
     alternates: { canonical: url },
     openGraph: {
-      title,
+      title: documentTitle,
       description,
       url,
       siteName: "ResumeAtlas",

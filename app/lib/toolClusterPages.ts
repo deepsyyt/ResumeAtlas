@@ -5,6 +5,11 @@ import {
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
 } from "@/app/lib/internalLinks";
+import {
+  CLUSTER_ATS_CHECKER_TOOL_COPY,
+  CLUSTER_JD_MATCH_TOOL_COPY,
+  CLUSTER_KEYWORD_SCANNER_TOOL_COPY,
+} from "@/app/lib/canonicalIntentClusters";
 
 export type ToolClusterFaqItem = { question: string; answer: string };
 
@@ -145,35 +150,10 @@ export function toolClusterBreadcrumbSchema(config: ToolClusterPageConfig) {
 
 export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   path: CHECK_RESUME_AGAINST_JD_PATH,
-  breadcrumbName: "Check resume against job description",
+  breadcrumbName: "Match resume to job description",
   clusterLinkAnchor: RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
-  titleAbsolute:
-    "Check Resume Against Job Description (Free ATS Match + Keyword Gaps)",
-  description:
-    "Check your resume against a job description: see ATS-style match, missing keywords, and weak sections—then fix alignment before you apply. Free, instant, no signup.",
-  ogTitle: "Check Resume Against Job Description (Free ATS Match + Keyword Gaps)",
-  ogDescription:
-    "Check resume vs job description: missing keywords, match estimate, and fixes. Free, no signup.",
-  twitterTitle: "Check Resume Against Job Description",
-  twitterDescription: "ATS match + keyword gaps vs the JD—free.",
-  h1: "Check Your Resume Against the Job Description (Free ATS Match + Gaps)",
-  intro:
-    "Paste your resume and the exact job description to check alignment in seconds—missing keywords, skill gaps, and the edits most likely to improve shortlist odds.",
-  topStripStrong: "Paste your resume and job description to get results instantly.",
-  webAppName: "Check resume against job description",
-  webAppDescription:
-    "Check your resume against a job description for keyword gaps, match-style feedback, and ATS alignment before you apply.",
-  ctaAnchor: "Check why my resume gets rejected",
-  differentiatorHeading: "Why Match Your Resume to the Job Description (Not a Generic Resume)",
-  differentiatorBody: [
-    "Employers and ATS tools compare your resume to the exact job description for that role. A generic resume that never references the posting’s skills, tools, or outcomes will almost always score lower than one that mirrors the same language—honestly and specifically.",
-    "This page focuses on resume–job description alignment: you paste both texts so the analysis can highlight gaps recruiters and filters care about for that single application.",
-  ],
-  serpVariantsParagraph:
-    "People also search for resume and job description comparison, resume JD match, job description keyword checker, and ATS resume review against a posting. This free tool gives you a practical read on how your resume lines up with the role you are targeting—before you spend time on rewrites.",
-  howItWorksHeading: "How resume-to-JD matching works",
-  whyMatchHeading: "Why tailoring to each job description increases interview odds",
-  resultsHeading: "What to expect in your match report",
+  ...CLUSTER_JD_MATCH_TOOL_COPY,
+  ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   exampleJobRequires: "Python, SQL, stakeholder communication, and experimentation.",
   exampleResumeContains: "Python, dashboards, and ad-hoc analysis.",
   exampleMissing: "SQL depth, experimentation, and stakeholder-facing outcomes.",
@@ -184,7 +164,7 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
     {
       question: "What does it mean to match a resume to a job description?",
       answer:
-        "It means aligning your resume with the skills and keywords mentioned in the job posting to improve ATS compatibility.",
+        "It means comparing your resume to one specific posting so you can tailor: add evidence where keywords are missing, rewrite bullets for fit, and show outcomes the JD cares about—honestly. For a missing-keyword list only, use the resume keyword scanner; for layout and parsing risk without a JD, use the ATS checker.",
     },
     {
       question: "Why is ATS matching important?",
@@ -208,32 +188,8 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
   path: "/ats-resume-checker",
   breadcrumbName: "ATS Resume Checker",
   clusterLinkAnchor: "ATS resume checker",
-  titleAbsolute: "Why Your Resume Is Getting Rejected by ATS (Check Now)",
-  description:
-    "Why your resume is getting rejected by ATS: test parsing, formatting, and section structure, then fix the issues that block screening. Paste-only, free, no signup.",
-  ogTitle: "Why Your Resume Is Getting Rejected by ATS (Check Now)",
-  ogDescription:
-    "Check ATS compatibility: parsing, section structure, formatting signals, and an instant score. Not the same as matching a specific job description.",
-  twitterTitle: "Why Your Resume Is Getting Rejected by ATS",
-  twitterDescription: "Check ATS parsing, formatting, and structure—free. No signup.",
-  h1: "Why Your Resume Is Getting Rejected by ATS (Check Now)",
-  intro:
-    "Check if your resume passes applicant tracking systems: parsing, formatting, section structure, and an ATS compatibility score — without focusing on a single job posting.",
-  topStripStrong: "Paste your resume below to get your ATS score in seconds.",
-  webAppName: "ATS Resume Checker",
-  webAppDescription:
-    "Estimate whether ATS software can read your resume cleanly: structure, parsing-friendly layout, and compatibility scoring. Optional job description for extra keyword overlap.",
+  ...CLUSTER_ATS_CHECKER_TOOL_COPY,
   ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
-  differentiatorHeading: "What This ATS Check Actually Measures",
-  differentiatorBody: [
-    "This scan emphasizes how applicant tracking systems ingest your resume: whether sections and bullets parse cleanly, whether headings look machine-readable, and whether the document avoids patterns that often break parsers (dense columns, unusual separators, heavy decoration).",
-    "It is intentionally different from “does this resume match this job description?” — that deeper keyword alignment lives on the job description checker when you paste a posting.",
-  ],
-  serpVariantsParagraph:
-    "People search for ATS resume checker, check ATS compatibility, applicant tracking system resume test, ATS resume scanner, and free ATS resume checker online. This page targets ATS readability and parsing; for resume vs a specific job description, use the JD matcher tool.",
-  howItWorksHeading: "How this free ATS resume checker works",
-  whyMatchHeading: "Why ATS readability matters before keyword tuning",
-  resultsHeading: "What your ATS check reports",
   exampleJobRequires: "N/A (ATS readability-first scan).",
   exampleResumeContains: "Dense formatting, mixed bullet styles, and unclear section labels.",
   exampleMissing: "Standard headings and clean parser-friendly structure.",
@@ -333,32 +289,8 @@ export const TOOL_CLUSTER_KEYWORD_SCANNER: ToolClusterPageConfig = {
   path: "/resume-keyword-scanner",
   breadcrumbName: "Resume Keyword Scanner",
   clusterLinkAnchor: "resume keyword scanner",
-  titleAbsolute: "Find Missing Keywords in Your Resume (ATS Fix Tool)",
-  description:
-    "Find missing keywords in your resume vs a job description. See skill gaps and improve ATS keyword coverage with truthful edits. Free, instant, no signup.",
-  ogTitle: "Find Missing Keywords in Your Resume (ATS Fix Tool)",
-  ogDescription:
-    "Find missing keywords, identify skill gaps, and improve ATS keyword coverage. Paste resume + job description.",
-  twitterTitle: "Find Missing Keywords in Your Resume",
-  twitterDescription: "Spot missing keywords and skill gaps vs the posting—instantly.",
-  h1: "Find Missing Keywords in Your Resume (ATS Fix Tool)",
-  intro:
-    "Scan your resume to find missing keywords, identify skill gaps, and improve how your profile lines up with applicant tracking systems—before you apply.",
-  topStripStrong: "Paste your resume to find missing keywords instantly.",
-  webAppName: "Resume Keyword Scanner",
-  webAppDescription:
-    "Compare your resume to a job posting to detect missing keywords, skill gaps, and weak keyword coverage.",
+  ...CLUSTER_KEYWORD_SCANNER_TOOL_COPY,
   ctaAnchor: "Scan my resume for missing keywords",
-  differentiatorHeading: "Keyword Gaps vs Full Resume Matching",
-  differentiatorBody: [
-    "This entry focuses on what is missing: skills and terms from the job description that do not show up clearly in your resume. It is built for gap detection and keyword coverage—not a full ATS formatting audit (use the ATS checker) or a deep role-fit narrative (use the job description matcher).",
-    "Paste your resume and the posting text so the scan can compare the two. Use the lists to add honest evidence in bullets and skills—projects, tools, and outcomes—not a block of disconnected buzzwords.",
-  ],
-  serpVariantsParagraph:
-    "Related searches include resume keyword analysis, ATS keyword scanner, resume keyword checker, keyword optimization for resume, missing keywords resume, and job description keyword gap. This page targets keyword and skill gaps versus a specific posting—not generic keyword clouds.",
-  howItWorksHeading: "How resume keyword scanning works",
-  whyMatchHeading: "Why keyword coverage affects shortlist rate",
-  resultsHeading: "What keyword-gap results show",
   exampleJobRequires: "Machine learning, SQL, A/B testing, and stakeholder communication.",
   exampleResumeContains: "Python, data analysis, dashboards.",
   exampleMissing: "A/B testing language, SQL depth, and stakeholder terms.",

@@ -196,8 +196,8 @@ export type RoleSlug =
   | "full-stack-developer";
 
 /**
- * Roles with `app/{role}-resume-example/page.tsx`. The `/{role}` hub should use the same canonical
- * URL so the resume-example page is the single primary URL for “resume example” intent.
+ * Roles with a consolidated `/{role}-resume-example` page (patterns + full sample appendix). The
+ * `/{role}` hub should canonical to that URL so one page owns “example + walkthrough” intent.
  */
 export const ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE: readonly RoleSlug[] = [
   "data-analyst",
@@ -284,7 +284,7 @@ export const KEYWORD_PAGES: Record<RoleSlug, KeywordsConfig> = {
   },
 };
 
-/** Inline sample copy still defined on `/{role}` for legacy/redirect traffic; internal links use the merged guide. */
+/** Inline sample copy still defined on `/{role}` for legacy/redirect traffic; internal links use the merged example page. */
 export function resumePageConfigForRole(role: RoleSlug): ResumePageConfig | undefined {
   const key = `${role}-resume-example` as ResumeSlug;
   return RESUME_PAGES[key];
@@ -293,14 +293,14 @@ export function resumePageConfigForRole(role: RoleSlug): ResumePageConfig | unde
 /** Fragment for the embedded sample card on the role hub (direct visits / legacy bookmarks only). */
 export const RESUME_SAMPLE_HASH = "#resume-sample" as const;
 
-/** Prefer the merged role resume guide (indexed) over the broad `/{role}` hub (noindex). */
+/** Prefer the merged role resume example (indexed) over the broad `/{role}` hub (noindex). */
 export function roleResumeSamplePath(role: RoleSlug): string {
-  return `/${role}-resume-guide#bullet-points`;
+  return `/${role}-resume-example#bullet-points`;
 }
 
 /**
- * Public URL for “resume example” intent: dedicated `/{role}-resume-example` when it exists;
- * otherwise the merged guide sample anchor (same as {@link roleResumeSamplePath}).
+ * Public URL for “resume example” intent: consolidated `/{role}-resume-example` for standalone roles;
+ * otherwise the merged page sample anchor (same as {@link roleResumeSamplePath}).
  */
 export function resumeExamplePublicPath(role: RoleSlug): string {
   for (const r of ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE) {

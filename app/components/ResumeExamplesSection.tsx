@@ -11,11 +11,11 @@ export function ResumeExamplesSection() {
   const items = Object.entries(RESUME_PAGES).slice(0, 6);
   const seoDeepDiveLinks = [
     {
-      href: "/data-scientist-resume-guide#bullet-points",
+      href: "/data-scientist-resume-example#bullet-points",
       label: "Data Scientist resume bullet points",
     },
     {
-      href: "/software-engineer-resume-guide#skills",
+      href: "/software-engineer-resume-example#skills",
       label: "Software Engineer resume skills",
     },
   ];

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { ATS_RESUME_TEMPLATE_GUIDE_PATH } from "@/app/lib/internalLinks";
+import { CLUSTER_ATS_GUIDE_METADATA } from "@/app/lib/canonicalIntentClusters";
 import { AtsResumeTemplateGuide } from "./atsResumeTemplateGuide";
 
+const g = CLUSTER_ATS_GUIDE_METADATA;
+
 export const metadata: Metadata = {
-  title: "ATS Resume Template (Free Examples + Format That Passes ATS) | ResumeAtlas",
-  description:
-    "Copy-paste ATS resume templates, real-format examples, and the exact ATS-friendly layout recruiters and parsers prefer—then run your resume against any job description for free.",
+  title: g.title,
+  description: g.description,
   keywords: [
     "ATS resume template",
     "ATS resume format",
@@ -25,11 +27,11 @@ export const metadata: Metadata = {
     canonical: ATS_RESUME_TEMPLATE_GUIDE_PATH,
   },
   openGraph: {
-    title: "ATS Resume Template (Free Examples + Format That Passes ATS) | ResumeAtlas",
-    description:
-      "Copy-paste templates, ATS resume format rules, sample resume text, and a free checker—match your resume to any job description.",
+    title: g.ogTitle,
+    description: g.ogDescription,
     type: "article",
-    url: ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    url: g.openGraphUrl,
+    siteName: "ResumeAtlas",
   },
 };
 

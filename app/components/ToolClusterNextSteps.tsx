@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const ROLE_GUIDES: { href: string; label: string }[] = [
-  { href: "/data-scientist-resume-guide", label: "Data Scientist resume guide" },
-  { href: "/software-engineer-resume-guide", label: "Software Engineer resume guide" },
-  { href: "/product-manager-resume-guide", label: "Product Manager resume guide" },
-  { href: "/data-analyst-resume-guide", label: "Data Analyst resume guide" },
+  { href: "/data-scientist-resume-example", label: "Data Scientist resume example" },
+  { href: "/software-engineer-resume-example", label: "Software Engineer resume example" },
+  { href: "/product-manager-resume-example", label: "Product Manager resume example" },
+  { href: "/data-analyst-resume-example", label: "Data Analyst resume example" },
 ];
 
 const KEYWORD_GUIDES: { href: string; label: string }[] = [

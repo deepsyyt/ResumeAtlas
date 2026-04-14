@@ -237,7 +237,7 @@ export default function OptimizePage() {
           try {
             window.localStorage.setItem(OPTIMIZE_CACHE_KEY, serialized);
           } catch {
-            // quota — session cache still helps for same-tab reload
+            // quota - session cache still helps for same-tab reload
           }
         }
       } catch (e) {

@@ -10,6 +10,11 @@ import {
 import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import {
+  absoluteCanonicalUrl,
+  roleResumeKeywordsHubMeta,
+  roleResumeKeywordsPath,
+} from "@/app/lib/searchIntentSeo";
+import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
@@ -19,13 +24,21 @@ type PageParams = {
 };
 
 export function generateMetadata({ params }: { params: PageParams }): Metadata {
-  const config = KEYWORD_PAGES[params.role];
-  if (!config) return {};
+  if (!KEYWORD_PAGES[params.role]) return {};
+  const { title, description } = roleResumeKeywordsHubMeta(params.role);
+  const path = roleResumeKeywordsPath(params.role);
+  const canonicalAbs = absoluteCanonicalUrl(path);
   return {
-    title: `${config.h1} (2025 Guide) | ResumeAtlas`,
-    description: config.metaDescription,
-    alternates: {
-      canonical: `/${params.role}-resume-keywords`,
+    title,
+    description,
+    alternates: { canonical: canonicalAbs },
+    robots: { index: true, follow: true },
+    openGraph: {
+      title,
+      description,
+      url: canonicalAbs,
+      siteName: "ResumeAtlas",
+      type: "website",
     },
   };
 }
@@ -37,8 +50,8 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
   const roleSlug = params.role;
   const roleContent = ROLE_CONTENT_MAP[roleSlug];
   const resumeSamplePath = roleResumeSamplePath(roleSlug);
-  const mergedGuidePath = `/${roleSlug}-resume-guide`;
-  const skillsSeoPath = `/${roleSlug}-resume-guide#skills`;
+  const mergedGuidePath = `/${roleSlug}-resume-example`;
+  const skillsSeoPath = `/${roleSlug}-resume-example#skills`;
   const canonicalBase = getSiteUrl();
 
   const faqSchema = {

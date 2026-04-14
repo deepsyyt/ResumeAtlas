@@ -43,17 +43,17 @@ const faqItems = [
   {
     question: "Is it okay to change wording in my resume?",
     answer:
-      "Yes. Rewriting bullets for clarity and alignment with the role is not lying—it is standard practice. You are still describing the same work; you are making it easier for recruiters and ATS to see the fit.",
+      "Yes. Rewriting bullets for clarity and alignment with the role is not lying - it is standard practice. You are still describing the same work; you are making it easier for recruiters and ATS to see the fit.",
   },
   {
     question: "Can I use keywords from the job description?",
     answer:
-      "Yes—when they accurately reflect what you have done. Mirror the employer’s language for skills, tools, and outcomes you genuinely have. Do not claim tools or responsibilities you have not used.",
+      "Yes - when they accurately reflect what you have done. Mirror the employer’s language for skills, tools, and outcomes you genuinely have. Do not claim tools or responsibilities you have not used.",
   },
   {
     question: "Do I need a different resume for every job?",
     answer:
-      "You do not need a completely new resume each time. A tailored version for each serious application usually performs better than one generic document, because alignment—not length—is what gets you shortlisted.",
+      "You do not need a completely new resume each time. A tailored version for each serious application usually performs better than one generic document, because alignment - not length - is what gets you shortlisted.",
   },
   {
     question: "What if I don’t have all the required skills?",
@@ -135,7 +135,7 @@ export default function CustomizeResumeWithoutLyingPage() {
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
             If you have ever stared at a job description and wondered whether
-            tailoring your resume crosses an ethical line—you are not alone.
+            tailoring your resume crosses an ethical line - you are not alone.
             Here is how to align your real experience with what employers ask
             for, without exaggeration.
           </p>
@@ -146,7 +146,7 @@ export default function CustomizeResumeWithoutLyingPage() {
             {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
           </Link>
           <p className="mx-auto mt-3 max-w-lg text-xs text-slate-500 sm:text-sm">
-            Paste your resume and a real posting—see gaps and keyword alignment
+            Paste your resume and a real posting - see gaps and keyword alignment
             in seconds.
           </p>
         </div>
@@ -159,7 +159,7 @@ export default function CustomizeResumeWithoutLyingPage() {
           </h2>
           <p className="text-sm leading-relaxed text-slate-700 sm:text-base">
             Most people hit the same wall:{" "}
-            <em>Am I supposed to change things—or am I just lying?</em> You do
+            <em>Am I supposed to change things - or am I just lying?</em> You do
             not need to lie to customize your resume. You need to{" "}
             <strong className="text-slate-900">
               align what you have already done with what the job requires
@@ -186,7 +186,7 @@ export default function CustomizeResumeWithoutLyingPage() {
             >
               find missing keywords in resume
             </Link>{" "}
-            versus the posting, run a keyword scan before you submit—so you
+            versus the posting, run a keyword scan before you submit - so you
             edit with evidence, not guesswork.
           </p>
         </section>
@@ -198,11 +198,11 @@ export default function CustomizeResumeWithoutLyingPage() {
           <p className="mt-2 text-sm text-slate-700 sm:text-base">
             Many candidates either copy keywords blindly, rewrite bullets at
             random, or add skills they do not have. That is how resumes start
-            to feel fake—and still do not get shortlisted.
+            to feel fake - and still do not get shortlisted.
           </p>
           <p className="mt-4 rounded-xl border border-amber-100 bg-white/80 px-4 py-3 text-sm font-medium text-slate-800 sm:text-base">
             The real issue is usually simpler: your resume is not aligned with
-            the job description—not that your experience is weak.
+            the job description - not that your experience is weak.
           </p>
         </section>
 
@@ -221,21 +221,21 @@ export default function CustomizeResumeWithoutLyingPage() {
           <ol className="mt-6 space-y-8">
             <li>
               <h3 className="text-lg font-semibold text-slate-900">
-                Step 1 — Understand what the job actually needs
+                Step 1 - Understand what the job actually needs
               </h3>
               <p className="mt-2 text-sm text-slate-700 sm:text-base">
                 Read the posting like a checklist: recurring skills, must-have
                 tools, and responsibilities that show up more than once. Those
-                signals are what your resume should reflect—in your summary,
+                signals are what your resume should reflect - in your summary,
                 skills, and bullets.
               </p>
             </li>
             <li>
               <h3 className="text-lg font-semibold text-slate-900">
-                Step 2 — Match your existing experience
+                Step 2 - Match your existing experience
               </h3>
               <p className="mt-2 text-sm text-slate-700 sm:text-base">
-                You rarely need new experience—you need better emphasis. Reorder
+                You rarely need new experience - you need better emphasis. Reorder
                 bullets so the most relevant wins sit first, drop or shorten
                 work that does not support this role, and use terminology that
                 honestly describes work you already did.
@@ -243,7 +243,7 @@ export default function CustomizeResumeWithoutLyingPage() {
             </li>
             <li>
               <h3 className="text-lg font-semibold text-slate-900">
-                Step 3 — Align keywords naturally
+                Step 3 - Align keywords naturally
               </h3>
               <p className="mt-2 text-sm text-slate-700 sm:text-base">
                 Avoid keyword stuffing. Replace vague phrases with specific tools
@@ -301,7 +301,7 @@ export default function CustomizeResumeWithoutLyingPage() {
           <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
             Instead of manually “matching” every line, compare your resume
             directly with the posting. ResumeAtlas highlights missing keywords,
-            skill gaps, and misalignment—so you know what to fix while keeping
+            skill gaps, and misalignment - so you know what to fix while keeping
             your experience truthful.
           </p>
           <Link
@@ -319,7 +319,7 @@ export default function CustomizeResumeWithoutLyingPage() {
           <p className="mt-3 text-sm text-slate-700 sm:text-base">
             Recruiters and ATS systems reward relevance, clarity, and alignment
             more than clever formatting. When your resume clearly reflects the
-            requirements in the posting, you do not need to exaggerate—you need
+            requirements in the posting, you do not need to exaggerate - you need
             to be specific.
           </p>
         </section>
@@ -357,7 +357,7 @@ export default function CustomizeResumeWithoutLyingPage() {
           </h2>
           <p className="mt-2 text-sm text-slate-700 sm:text-base">
             You do not need a fake resume to get interviews. You need a resume
-            that matches what the job is asking for—with specifics you can stand
+            that matches what the job is asking for - with specifics you can stand
             behind.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">

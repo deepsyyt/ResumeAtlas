@@ -6,24 +6,27 @@ import {
   ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE,
   resumeExamplePublicPath,
 } from "@/app/lib/seoPages";
+import { LastUpdated } from "@/app/components/LastUpdated";
 import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
+import { CLUSTER_RESUME_EXAMPLES_INDEX_METADATA } from "@/app/lib/canonicalIntentClusters";
+import { CONTENT_FRESHNESS_YEAR, CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 
+const hub = CLUSTER_RESUME_EXAMPLES_INDEX_METADATA;
+
 export const metadata: Metadata = {
-  title: "Resume Examples by Role (ATS-Friendly Templates) | ResumeAtlas",
-  description:
-    "Browse ATS-friendly resume examples by role: copy-paste templates, sample bullets, and full pages for product manager and data analyst. Scale your resume to any job description.",
+  title: hub.title,
+  description: hub.description,
   alternates: {
-    canonical: "/resume-examples",
+    canonical: hub.path,
   },
   openGraph: {
-    title: "Resume Examples by Role (ATS-Friendly) | ResumeAtlas",
-    description:
-      "Resume examples and templates for top roles. Full dedicated pages for product manager and data analyst; more roles link to merged guides.",
-    url: `${getSiteUrl()}/resume-examples`,
+    title: hub.ogTitle,
+    description: hub.ogDescription,
+    url: hub.openGraphUrl,
     siteName: "ResumeAtlas",
     type: "website",
   },
@@ -63,13 +66,15 @@ export default function ResumeExamplesIndexPage() {
       <section className="border-b border-slate-200 bg-slate-50/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 text-center">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
-            Resume Examples Hub
+            Resume examples by role
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-            One place to jump into ATS-friendly resume examples by role. Full dedicated pages (template,
-            preview, FAQ) ship first for high-intent roles; every role below links to the best URL for that
-            job family.
+            Examples here track common {CONTENT_FRESHNESS_YEAR} role titles and keyword patterns - each card
+            links to that role’s canonical sample page (one primary URL per role, not thin duplicates). For
+            ATS layout rules read the template guide; to compare your text to a posting, use the free
+            resume-to-job-description matcher.
           </p>
+          <LastUpdated className="mx-auto mt-3 max-w-2xl text-center text-xs text-slate-500" label={CONTENT_LAST_UPDATED_LABEL} />
           <Link
             href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
@@ -118,7 +123,7 @@ export default function ResumeExamplesIndexPage() {
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link
-                href="/data-scientist-resume-guide#bullet-points"
+                href="/data-scientist-resume-example#bullet-points"
                 className="text-sky-700 hover:underline"
               >
                 Data Scientist resume bullet points
@@ -126,7 +131,7 @@ export default function ResumeExamplesIndexPage() {
             </li>
             <li>
               <Link
-                href="/software-engineer-resume-guide#skills"
+                href="/software-engineer-resume-example#skills"
                 className="text-sky-700 hover:underline"
               >
                 Software Engineer resume skills

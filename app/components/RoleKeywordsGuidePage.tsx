@@ -17,6 +17,10 @@ import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
+import {
+  roleResumeKeywordsHubMeta,
+  stripResumeAtlasTitleSuffix,
+} from "@/app/lib/searchIntentSeo";
 
 type PageParams = { role: RoleSlug };
 
@@ -26,8 +30,9 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
   const roleSlug = params.role;
   const roleContent = ROLE_CONTENT_MAP[roleSlug];
   const resumeSamplePath = roleResumeSamplePath(roleSlug);
-  const mergedGuidePath = `/${roleSlug}-resume-guide`;
+  const mergedGuidePath = `/${roleSlug}-resume-example`;
   const canonicalBase = getSiteUrl().replace(/\/$/, "");
+  const keywordHubTitle = stripResumeAtlasTitleSuffix(roleResumeKeywordsHubMeta(roleSlug).title);
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -71,7 +76,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
       {
         "@type": "ListItem",
         position: 1,
-        name: `${config.roleName} Resume Guide`,
+        name: `${config.roleName} resume example (full page)`,
         item: `${canonicalBase}${mergedGuidePath}`,
       },
       {
@@ -92,19 +97,20 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               href={mergedGuidePath}
               className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
             >
-              {config.roleName} Resume Guide
+              {config.roleName} resume example
             </Link>
             <span className="mx-1.5 text-slate-400">/</span>
             <span>Keywords (complete guide)</span>
           </nav>
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
-              Top Missing Keywords in {config.roleName} Resumes (Check Yours)
+              {keywordHubTitle}
             </h1>
             <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-              This guide maps the most important ATS keywords for {config.roleName.toLowerCase()} resumes:
-              core terms, technical skills, tools, action language, projects, and summary patterns. Pick a
-              category below, then mirror the job description where it matches your real experience.
+              This hub maps high-intent {config.roleName.toLowerCase()} resume keywords for ATS and recruiters:
+              core terms, technical skills, tools, action verbs, projects, and summary patterns. Pick a
+              category below, then mirror the job description where it matches your real experience—before
+              you run a resume keyword scan or compare your resume to that posting.
             </p>
             <p className="mt-3 text-sm text-slate-600 max-w-2xl mx-auto">
               For this role, ATS scans usually reward specific tooling such as{" "}
@@ -202,7 +208,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           <ul className="mt-4 space-y-2 text-sm">
             <li>
               <Link
-                href={`/${roleSlug}-resume-guide#projects`}
+                href={`/${roleSlug}-resume-example#projects`}
                 className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
               >
                 {config.roleName} resume projects →
@@ -218,7 +224,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             </li>
             <li>
               <Link
-                href={`/${roleSlug}-resume-guide#skills`}
+                href={`/${roleSlug}-resume-example#skills`}
                 className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
               >
                 {config.roleName} resume skills examples →

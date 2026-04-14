@@ -261,7 +261,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       },
     ],
     relatedSearches: [
-      { label: "data scientist resume summary examples", href: "/data-scientist-resume-guide" },
+      { label: "data scientist resume summary examples", href: "/data-scientist-resume-example" },
       { label: "data scientist resume projects", href: "/data-scientist-resume-bullet-points-entry-level" },
       { label: "machine learning resume bullet points", href: "/data-scientist-resume-bullet-points" },
       { label: "resume bullet points for freshers", href: "/data-scientist-resume-bullet-points-entry-level" },
@@ -403,7 +403,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       },
     ],
     relatedSearches: [
-      { label: "software engineer resume summary examples", href: "/software-engineer-resume-guide" },
+      { label: "software engineer resume summary examples", href: "/software-engineer-resume-example" },
       { label: "software engineer resume projects", href: "/software-engineer-resume-bullet-points-entry-level" },
       { label: "backend engineer resume bullet points", href: "/software-engineer-resume-bullet-points" },
       { label: "resume bullet points for freshers", href: "/software-engineer-resume-bullet-points-entry-level" },
@@ -545,7 +545,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       },
     ],
     relatedSearches: [
-      { label: "product manager resume summary examples", href: "/product-manager-resume-guide" },
+      { label: "product manager resume summary examples", href: "/product-manager-resume-example" },
       { label: "product manager resume projects", href: "/product-manager-resume-bullet-points-entry-level" },
       { label: "APM resume bullet points", href: "/product-manager-resume-bullet-points-entry-level" },
       { label: "resume bullet points for freshers", href: "/product-manager-resume-bullet-points-entry-level" },

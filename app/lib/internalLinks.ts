@@ -10,6 +10,10 @@ export const CHECK_RESUME_AGAINST_JD_PATH =
 export const ATS_RESUME_TEMPLATE_GUIDE_PATH =
   "/resume-guides/ats-resume-template" as const;
 
+/** Work experience section: format, samples, and query-aligned examples (single canonical hub). */
+export const RESUME_WORK_EXPERIENCE_GUIDE_PATH =
+  "/resume-guides/resume-work-experience-examples" as const;
+
 /** Same tool with in-page form anchor (use for CTAs that should scroll to the checker). */
 export const CHECK_RESUME_AGAINST_JD_FORM_HREF =
   `${CHECK_RESUME_AGAINST_JD_PATH}#ats-checker-form` as const;
@@ -51,6 +55,10 @@ const ARTICLE_LINKS: InternalLink[] = [
     label: "ATS resume template & format guide",
   },
   {
+    path: RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    label: "Resume work experience examples & format",
+  },
+  {
     path: "/customize-resume-without-lying",
     label: "Customize resume without lying",
   },
@@ -72,7 +80,7 @@ const ARTICLE_LINKS: InternalLink[] = [
 const RESUME_EXAMPLE_LINKS: InternalLink[] = (Object.keys(KEYWORD_PAGES) as RoleSlug[]).map(
   (role) => {
     const page = RESUME_PAGES[`${role}-resume-example` as keyof typeof RESUME_PAGES];
-    return { path: `/${role}-resume-guide`, label: page.h1 };
+    return { path: `/${role}-resume-example`, label: page.h1 };
   }
 );
 
@@ -110,17 +118,28 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/data-scientist-resume-keywords",
     "/software-engineer-resume-keywords",
-    "/data-scientist-resume-guide",
-    "/software-engineer-resume-guide",
+    "/data-scientist-resume-example",
+    "/software-engineer-resume-example",
   ],
   [ATS_RESUME_TEMPLATE_GUIDE_PATH]: [
     CHECK_RESUME_AGAINST_JD_PATH,
     "/customize-resume-without-lying",
     "/resume-examples",
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
     "/software-engineer-resume-keywords",
-    "/software-engineer-resume-guide",
-    "/data-scientist-resume-guide",
+    "/software-engineer-resume-example",
+    "/data-scientist-resume-example",
     "/resume-keyword-scanner",
+  ],
+  [RESUME_WORK_EXPERIENCE_GUIDE_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    "/resume-examples",
+    "/data-analyst-resume-example",
+    "/product-manager-resume-example",
+    "/customize-resume-without-lying",
+    "/resume-keyword-scanner",
+    "/ats-resume-checker",
   ],
   "/customize-resume-without-lying": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -134,7 +153,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   "/data-scientist-resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,
     "/data-scientist-resume-bullet-points",
-    "/data-scientist-resume-guide",
+    "/data-scientist-resume-example",
     "/customize-resume-without-lying",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
@@ -167,7 +186,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/software-engineer-resume-keywords",
-    "/software-engineer-resume-guide",
+    "/software-engineer-resume-example",
   ],
   "/ats-compatibility-check": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -199,7 +218,7 @@ function getSemanticPathsFor(currentPath: string): string[] {
   const atsKeywordMatch = normalized.match(/^\/([a-z0-9-]+)-resume-keywords$/);
   if (atsKeywordMatch) {
     const role = atsKeywordMatch[1];
-    const mergedGuidePath = `/${role}-resume-guide`;
+    const mergedGuidePath = `/${role}-resume-example`;
     return [
       CHECK_RESUME_AGAINST_JD_PATH,
       mergedGuidePath,

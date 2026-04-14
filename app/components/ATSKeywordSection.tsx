@@ -7,11 +7,11 @@ export function ATSKeywordSection() {
   const items = Object.entries(KEYWORD_PAGES).slice(0, 6);
   const seoContentLinks = [
     {
-      href: "/data-scientist-resume-guide#summary",
+      href: "/data-scientist-resume-example#summary",
       label: "Data Scientist resume summary examples",
     },
     {
-      href: "/product-manager-resume-guide#bullet-points",
+      href: "/product-manager-resume-example#bullet-points",
       label: "Product Manager resume responsibilities",
     },
   ];

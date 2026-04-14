@@ -171,7 +171,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
             </Link>
           </div>
           <p className="mt-3 max-w-xl text-xs text-slate-500">
-            Paste resume + job description to see overlap and gaps—before you rewrite bullets blind.
+            Paste resume + job description to see overlap and gaps - before you rewrite bullets blind.
           </p>
 
           <ul className="mt-6 space-y-2.5 rounded-xl border border-slate-200 bg-white/80 px-4 py-4 text-sm leading-snug text-slate-800 shadow-sm sm:text-[15px]">
@@ -212,7 +212,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
           <p className="mt-5 text-xs font-medium uppercase tracking-wide text-slate-500">{hub.authorityLine}</p>
 
           <p className="mt-6 text-sm leading-relaxed text-slate-700">
-            Compared to the posting, many resumes lose keyword overlap first—so run a scan to{" "}
+            Compared to the posting, many resumes lose keyword overlap first - so run a scan to{" "}
             <Link
               href="/resume-keyword-scanner#ats-checker-form"
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
@@ -226,7 +226,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
             >
               compare your resume with this job description
             </Link>{" "}
-            to see exact gaps—not guesswork. If screening feels random,{" "}
+            to see exact gaps - not guesswork. If screening feels random,{" "}
             <Link
               href="/resume-guides/ats-resume-template"
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
@@ -274,7 +274,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-slate-700">{hub.previewSectionIntro}</p>
           <p className="mt-2 text-xs text-slate-500">
-            Crawlable HTML (collapsed by default)—full per-level banks live on entry-level, junior, and senior pages.
+            Crawlable HTML (collapsed by default) - full per-level banks live on entry-level, junior, and senior pages.
           </p>
           <details className="mt-4 group rounded-2xl border border-slate-200 bg-white shadow-sm open:shadow-md">
             <summary className="cursor-pointer list-none rounded-2xl px-4 py-4 text-sm font-semibold text-slate-900 sm:px-5 sm:py-4 [&::-webkit-details-marker]:hidden">
@@ -339,7 +339,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
                 Full examples by level (40+ lines each path)
               </h2>
               <p className="mt-2 text-sm text-slate-600">
-                Each page expands into project-wise blocks—deeper than this hub preview.
+                Each page expands into project-wise blocks - deeper than this hub preview.
               </p>
             </div>
           </div>
@@ -391,7 +391,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-amber-950/90">
             Even strong lines fail if the posting’s keywords and themes are missing. Compare your resume to{" "}
-            <strong>this</strong> job description—not a generic checklist—then fix gaps before you hit submit.
+            <strong>this</strong> job description - not a generic checklist - then fix gaps before you hit submit.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
@@ -439,7 +439,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
             </li>
             <li>
               <Link
-                href={`/${role}-resume-guide`}
+                href={`/${role}-resume-example`}
                 className="block rounded-xl border border-white bg-white p-4 text-sm font-medium text-sky-800 shadow-sm transition hover:border-sky-200"
               >
                 Full {hub.roleName} resume guide (summary, skills, projects) →
@@ -477,7 +477,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
             Related Resume Bullet Point Searches
           </h2>
           <p className="mt-2 text-sm text-slate-600">
-            Common next searches—most link to deeper guides or level-specific example pages on ResumeAtlas.
+            Common next searches - most link to deeper guides or level-specific example pages on ResumeAtlas.
           </p>
           <ul className="mt-5 space-y-2">
             {hub.relatedSearches.map((item) => (

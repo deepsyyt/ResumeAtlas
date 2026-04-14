@@ -16,6 +16,10 @@ import {
   type RoleKeywordIntent,
 } from "@/app/lib/roleSeo";
 import { NOINDEX_ROLE_KEYWORD_INTENT_PAGES } from "@/app/lib/roleClusterIndexPolicy";
+import {
+  absoluteCanonicalUrl,
+  roleResumeKeywordIntentMeta,
+} from "@/app/lib/searchIntentSeo";
 
 type PageParams = {
   roleSlug: RoleSlug;
@@ -26,7 +30,7 @@ function intentToResumeTopicPath(
   role: RoleSlug,
   intent: RoleKeywordIntent
 ): string {
-  const guidePath = `/${role}-resume-guide`;
+  const guidePath = `/${role}-resume-example`;
   if (intent === "core-keywords") return `${guidePath}#skills`;
   if (intent === "action-verbs") return `${guidePath}#bullet-points`;
   if (intent === "summary") return `${guidePath}#summary`;
@@ -42,11 +46,17 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
   const intent = params.intent;
   const intentLabel = keywordIntentLabel(intent);
   const content = getKeywordIntentContent(params.roleSlug, intent);
+  const { title, description } = roleResumeKeywordIntentMeta(
+    params.roleSlug,
+    intentLabel,
+    content.metaDescription
+  );
+  const path = `/${params.roleSlug}/keywords/${intent}`;
   return {
-    title: `${roleConfig.roleName} Resume Keywords (${intentLabel} + Examples)`,
-    description: content.metaDescription,
+    title,
+    description,
     alternates: {
-      canonical: `/${params.roleSlug}/keywords/${intent}`,
+      canonical: absoluteCanonicalUrl(path),
     },
     ...(NOINDEX_ROLE_KEYWORD_INTENT_PAGES
       ? { robots: { index: false, follow: true } as const }
@@ -181,10 +191,10 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
           <ul className="mt-3 list-disc pl-5 space-y-1 text-sm text-slate-700">
             <li>
               <Link
-                href={`/${role}-resume-guide`}
+                href={`/${role}-resume-example`}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
-                {roleConfig.roleName} resume guide (all sections)
+                {roleConfig.roleName} resume example (all sections)
               </Link>
             </li>
             <li>

@@ -253,17 +253,17 @@ export function ProblemConversionPage({ config }: Props) {
             </p>
             <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-slate-700">
               <li>
-                <Link href="/software-engineer-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/software-engineer-resume-example#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Software Engineer resume skills
                 </Link>
               </li>
               <li>
-                <Link href="/data-scientist-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/data-scientist-resume-example#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Data Scientist resume skills
                 </Link>
               </li>
               <li>
-                <Link href="/product-manager-resume-guide#summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/product-manager-resume-example#summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Product Manager resume summary
                 </Link>
               </li>
@@ -281,7 +281,7 @@ export function ProblemConversionPage({ config }: Props) {
                 <strong>If you&apos;re a Software Engineer:</strong> missing delivery keywords like
                 APIs, CI/CD, reliability, or latency can lower match.
                 <span className="ml-1">
-                  <Link href="/software-engineer-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix skills</Link>
+                  <Link href="/software-engineer-resume-example#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix skills</Link>
                   {" · "}
                   <Link href="/software-engineer/keywords/technical-skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Engineer keywords</Link>
                 </span>
@@ -290,7 +290,7 @@ export function ProblemConversionPage({ config }: Props) {
                 <strong>If you&apos;re a Data Scientist:</strong> resumes often miss SQL + experiment
                 language or model evaluation metrics.
                 <span className="ml-1">
-                  <Link href="/data-scientist-resume-guide#projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix projects</Link>
+                  <Link href="/data-scientist-resume-example#projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix projects</Link>
                   {" · "}
                   <Link href="/data-scientist/keywords/core-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Scientist keywords</Link>
                 </span>
@@ -299,7 +299,7 @@ export function ProblemConversionPage({ config }: Props) {
                 <strong>If you&apos;re a Product Manager:</strong> no quantified outcome language
                 (activation, retention, revenue) is a common blocker.
                 <span className="ml-1">
-                  <Link href="/product-manager-resume-guide#summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix summary</Link>
+                  <Link href="/product-manager-resume-example#summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix summary</Link>
                   {" · "}
                   <Link href="/product-manager/keywords/projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">PM keywords</Link>
                 </span>

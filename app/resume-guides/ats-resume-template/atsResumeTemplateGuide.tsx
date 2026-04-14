@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { LastUpdated } from "@/app/components/LastUpdated";
+import { CONTENT_FRESHNESS_YEAR, CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
 import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
-import { ROLE_ATS_PATH } from "@/app/lib/roleAtsTemplateConfig";
 import { CopyResumeBlock } from "./CopyResumeBlock";
 import { ResumeTemplatePreviewCard } from "./ResumeTemplatePreviewCard";
 import {
@@ -132,18 +133,20 @@ export function AtsResumeTemplateGuide() {
               Copy-paste ATS resume templates · ATS format rules · sample resume text
             </p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              ATS resume template (free examples + format guide)
+              ATS resume template ({CONTENT_FRESHNESS_YEAR} format + examples & layout guide)
             </h1>
             <p className="mx-auto mt-3 max-w-2xl text-base text-slate-600 sm:text-lg">
-              Start with plain-text layouts that parse cleanly in applicant tracking systems—then
-              tailor keywords to each job. Each card below shows a{" "}
-              <strong>mini resume preview</strong> plus buttons to copy the full plain text or jump
-              to the section-order checklist.
+              These ATS-friendly templates reflect hiring patterns and formatting expectations in{" "}
+              {CONTENT_FRESHNESS_YEAR}. This guide focuses on structure and parser-safe layout—section order,
+              headings, dates, and copy-paste examples that applicant tracking systems and recruiters handle
+              well. Each card below shows a <strong>mini resume preview</strong> plus buttons to copy the full
+              plain text or jump to the section-order checklist.
             </p>
             <p className="mx-auto mt-3 max-w-xl text-center text-xs text-slate-500 sm:text-sm">
-              Typical flow: paste your draft, align keywords to the posting, run a free check—often
-              under five minutes once your master resume is ready.
+              When you are ready to compare your draft to a real posting, use ResumeAtlas’s free
+              resume-to-job-description matcher; for missing terms only, use the keyword scanner.
             </p>
+            <LastUpdated className="mx-auto mt-4 text-center text-xs text-slate-500" label={CONTENT_LAST_UPDATED_LABEL} />
           </div>
 
           <div className="mx-auto mt-8 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -250,7 +253,7 @@ export function AtsResumeTemplateGuide() {
                 href="/product-manager-resume-example"
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
-                ATS resume template for product manager
+                ATS resume example for product manager
               </Link>{" "}
               — PM-oriented bullets, roadmap language, and outcomes.
             </li>
@@ -262,26 +265,19 @@ export function AtsResumeTemplateGuide() {
             </li>
             <li>
               <Link
-                href={ROLE_ATS_PATH["data-analyst"]}
+                href="/resume-guides/resume-work-experience-examples"
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
-                ATS resume template — data analyst (dedicated page)
-              </Link>
+                Resume work experience examples (format + bullets)
+              </Link>{" "}
+              — how to list jobs, dates, and impact for ATS and recruiters.
             </li>
             <li>
               <Link
-                href={ROLE_ATS_PATH["product-manager"]}
+                href="/ats-resume-template-software-engineer"
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
-                ATS resume template — product manager (dedicated page)
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={ROLE_ATS_PATH["software-engineer"]}
-                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-              >
-                ATS resume template — software engineer (dedicated page)
+                ATS resume template — software engineer (keyword strip + starter text)
               </Link>
             </li>
           </ul>

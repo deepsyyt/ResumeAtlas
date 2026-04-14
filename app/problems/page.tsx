@@ -105,7 +105,7 @@ export default function ProblemsHubPage() {
             Pick your situation
           </h2>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            Three high-intent angles—each links to the same workflow: compare resume and job description, fix gaps,
+            Three high-intent angles - each links to the same workflow: compare resume and job description, fix gaps,
             download.
           </p>
           <TopicClusterCallout className="mt-5" />

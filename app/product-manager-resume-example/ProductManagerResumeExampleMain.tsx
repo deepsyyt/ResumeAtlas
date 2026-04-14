@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ResumeExampleSeoFunnel } from "@/app/components/ResumeExampleSeoFunnel";
 import {
@@ -14,7 +13,6 @@ import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
 } from "@/app/lib/internalLinks";
 import {
-  buildResumeExampleMetadata,
   DEFAULT_SEO_SAMPLE_BULLETS,
   DEFAULT_TOP_ATS_KEYWORDS,
   getResumeExampleSerpTitle,
@@ -28,34 +26,6 @@ const ROLE = "Product Manager";
 const JD_CHECK_HREF = CHECK_RESUME_AGAINST_JD_FORM_HREF;
 const KEYWORD_SCANNER_HREF = "/resume-keyword-scanner";
 const ATS_CHECKER_HREF = "/ats-resume-checker";
-
-const CANONICAL_PATH = "/product-manager-resume-example";
-
-export const metadata: Metadata = {
-  ...buildResumeExampleMetadata(CANONICAL_PATH, "product-manager"),
-  keywords: [
-    "resume for product manager",
-    "product management resume examples",
-    "product lead resume",
-    "sample resume product manager",
-    "resume for product management",
-    "product manager resume",
-    "data product manager resume",
-    "product management resume",
-    "resume of product manager",
-    "product manager resume examples",
-    "api product manager resume",
-    "product manager resume sample",
-    "product manager resume templates",
-    "sample product manager resume",
-    "product manager resumes",
-    "product manager resume template",
-    "b2b product manager resume",
-    "sample product manager resumes",
-    "PM resume example",
-    "ATS resume example",
-  ],
-};
 
 const COPY_PASTE_TEMPLATE = `ALEX RIVERA
 Product Manager
@@ -157,37 +127,38 @@ const copyPasteItemListSchema = {
   })),
 } as const;
 
-export default function ProductManagerResumeExamplePage() {
+export function ProductManagerResumeExampleMain({ omitHero = false }: { omitHero?: boolean }) {
   const goodResumeLines = goodResumeSnippet("product-manager", "Product Manager");
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
-      {/* 1. Hero */}
-      <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
-        <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-          <h1 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            {getResumeExampleSerpTitle("product-manager")}
-          </h1>
-          <ResumeExampleSeoIntro role={ROLE} />
-          <p className="mt-3 text-sm font-medium text-slate-500">
-            Takes 10 seconds • No signup required
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-            <Link
-              href={JD_CHECK_HREF}
-              className="inline-flex justify-center rounded-xl bg-slate-900 px-6 py-3.5 text-center text-base font-semibold text-white transition hover:bg-slate-800"
-            >
-              Optimize this resume for a job description
-            </Link>
-            <Link
-              href={KEYWORD_SCANNER_HREF}
-              className="inline-flex justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center text-base font-semibold text-slate-900 transition hover:bg-slate-50"
-            >
-              Find missing keywords in your resume
-            </Link>
+    <div className={omitHero ? "bg-white text-slate-900" : "min-h-screen bg-white text-slate-900"}>
+      {!omitHero ? (
+        <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
+          <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+            <h1 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+              {getResumeExampleSerpTitle("product-manager")}
+            </h1>
+            <ResumeExampleSeoIntro role={ROLE} />
+            <p className="mt-3 text-sm font-medium text-slate-500">
+              Takes 10 seconds • No signup required
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <Link
+                href={JD_CHECK_HREF}
+                className="inline-flex justify-center rounded-xl bg-slate-900 px-6 py-3.5 text-center text-base font-semibold text-white transition hover:bg-slate-800"
+              >
+                Optimize this resume for a job description
+              </Link>
+              <Link
+                href={KEYWORD_SCANNER_HREF}
+                className="inline-flex justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center text-base font-semibold text-slate-900 transition hover:bg-slate-50"
+              >
+                Find missing keywords in your resume
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       <div className="mx-auto max-w-3xl space-y-14 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         <div className="space-y-4">

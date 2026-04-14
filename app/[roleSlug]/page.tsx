@@ -14,6 +14,7 @@ import {
 import { roleToProblemLinkLabel, roleToProblemPath } from "@/app/lib/roleSeo";
 import { goodResumeSnippet } from "@/app/lib/roleHubSeo";
 import { getSiteUrl } from "@/app/lib/siteUrl";
+import { absoluteCanonicalUrl, roleResumeExamplePath } from "@/app/lib/searchIntentSeo";
 
 type PageParams = {
   roleSlug: string;
@@ -23,22 +24,23 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
   const roleConfig = KEYWORD_PAGES[params.roleSlug as keyof typeof KEYWORD_PAGES];
   if (!roleConfig) return {};
   const rn = roleConfig.roleName;
-  const siteUrl = getSiteUrl().replace(/\/$/, "");
   const role = params.roleSlug as RoleSlug;
   const standaloneExample =
     ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE.includes(role);
-  const canonicalPath = standaloneExample
-    ? `/${role}-resume-example`
-    : `/${params.roleSlug}`;
+  const canonicalAbs = standaloneExample
+    ? absoluteCanonicalUrl(roleResumeExamplePath(role))
+    : absoluteCanonicalUrl(`/${params.roleSlug}`);
   return {
     title: `${rn} Resume Not Getting Interviews? (ATS + JD Fix) | ResumeAtlas`,
-    description: `If your ${rn.toLowerCase()} resume is not getting interviews, fix keyword gaps, ATS readability, and job-description alignment—then validate against a real posting.`,
+    description:
+      `${rn} resume hub: open the canonical ${rn.toLowerCase()} resume example for structure and sample bullets, ` +
+      `the ${rn.toLowerCase()} resume keywords hub for posting-aligned phrasing, or paste resume + one job description into ResumeAtlas’s free matcher.`,
     // Standalone `/{role}-resume-example` is the indexed URL; hub duplicates canonical to avoid competing URLs.
     robots: standaloneExample
       ? { index: false, follow: true }
       : { index: true, follow: true },
     alternates: {
-      canonical: `${siteUrl}${canonicalPath}`,
+      canonical: canonicalAbs,
     },
   };
 }
@@ -57,7 +59,7 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
   const canonicalBase = getSiteUrl();
   const rolePath = `/${role}`;
   const atsKeywordsPath = `/${role}-resume-keywords`;
-  const resumeGuidePath = `/${role}-resume-guide`;
+  const resumeGuidePath = `/${role}-resume-example`;
   const skillsPath = `${resumeGuidePath}#skills`;
   const summaryPath = `${resumeGuidePath}#summary`;
   const projectsPath = `${resumeGuidePath}#projects`;
@@ -121,7 +123,7 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
 
   const topReasonsItems = [
     `Weak overlap between your ${roleLower} resume and the job description (ATS filters before humans see you).`,
-    "Impact buried below the fold—recruiters skim the top third first.",
+    "Impact buried below the fold - recruiters skim the top third first.",
     "Skills listed without proof in bullets (tools mentioned once, never tied to outcomes).",
     "Formatting ATS struggles to parse (multi-column layouts, icons, or key text in images).",
     "One generic resume sent to every role instead of mirroring each posting’s language.",
@@ -149,7 +151,7 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
           </h1>
           <p className="mt-4 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
             If interviews have gone quiet, your resume is still the first gate: most applications fail
-            on keyword match, buried metrics, or ATS-unfriendly structure—before a human reads a line.
+            on keyword match, buried metrics, or ATS-unfriendly structure - before a human reads a line.
           </p>
           <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
             Use this hub to spot gaps, then run a real posting through ResumeAtlas to see what’s
@@ -323,8 +325,8 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
                 1. Start with a complete {roleLower} resume example
               </h2>
               <p className="mt-2 text-sm sm:text-base text-slate-700">
-                Use this ATS-friendly sample for structure—section order, bullet style, and balance
-                of responsibilities and impact—then replace with your own experience.
+                Use this ATS-friendly sample for structure - section order, bullet style, and balance
+                of responsibilities and impact - then replace with your own experience.
               </p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 space-y-3 text-sm sm:text-base text-slate-800">

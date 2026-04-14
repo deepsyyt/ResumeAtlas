@@ -20,8 +20,8 @@ const RESUME_BULLET_ROLES = [
 ];
 
 /**
- * Roles that have a dedicated indexed `app/{role}-resume-example/page.tsx`.
- * They must NOT use the legacy redirect from `/{role}-resume-example` → `/{role}` (role hub is noindex).
+ * Roles with consolidated `/{role}-resume-example` (patterns + sample appendix).
+ * Their `/{role}` hub is noindex and redirects here so one URL owns the cluster.
  */
 const RESUME_EXAMPLE_STANDALONE_ROLES = ["data-analyst", "product-manager"];
 
@@ -47,14 +47,14 @@ const nextConfig = {
         source: "/:roleSlug-resume-keywords/",
         destination: "/:roleSlug/keywords",
       },
-      // Canonical resume guide moved to `/{role}-resume-guide` (served by existing `/{role}/resume-guide` page).
+      // Canonical merged role page: `/{role}-resume-example` → `/{role}/resume-example`
       {
-        source: "/:roleSlug-resume-guide",
-        destination: "/:roleSlug/resume-guide",
+        source: "/:roleSlug-resume-example",
+        destination: "/:roleSlug/resume-example",
       },
       {
-        source: "/:roleSlug-resume-guide/",
-        destination: "/:roleSlug/resume-guide",
+        source: "/:roleSlug-resume-example/",
+        destination: "/:roleSlug/resume-example",
       },
       ...RESUME_BULLET_ROLES.flatMap((role) => [
         {
@@ -82,22 +82,7 @@ const nextConfig = {
   },
   async redirects() {
     const roleHubRedirects = ROLE_SLUGS.flatMap((role) => {
-      const legacyResumeExampleRedirects = RESUME_EXAMPLE_STANDALONE_ROLES.includes(role)
-        ? []
-        : [
-            {
-              source: `/${role}-resume-example`,
-              destination: `/${role}`,
-              permanent: true,
-            },
-            {
-              source: `/${role}-resume-example/`,
-              destination: `/${role}`,
-              permanent: true,
-            },
-          ];
       return [
-        ...legacyResumeExampleRedirects,
         {
           source: `/${role}/resume`,
           destination: `/${role}`,
@@ -159,20 +144,19 @@ const nextConfig = {
       return topics.flatMap((topic) => [
         {
           source: `/${role}/resume/${topic}`,
-          destination: `/${role}-resume-guide#${topic}`,
+          destination: `/${role}-resume-example#${topic}`,
           permanent: true,
         },
         {
           source: `/${role}/resume/${topic}/`,
-          destination: `/${role}-resume-guide#${topic}`,
+          destination: `/${role}-resume-example#${topic}`,
           permanent: true,
         },
       ]);
     });
 
     /**
-     * Roles with a dedicated `/{role}-resume-example` page: the `/{role}` hub is noindex with canonical
-     * pointing at the example URL, so browsers and bookmarks should land on the example path (301).
+     * Roles with a consolidated example page: `/{role}` hub → `/{role}-resume-example` (canonical owner).
      */
     const standaloneRoleHubToResumeExampleRedirects =
       RESUME_EXAMPLE_STANDALONE_ROLES.flatMap((role) => [
@@ -188,10 +172,38 @@ const nextConfig = {
         },
       ]);
 
+    const resumeGuideToExampleRedirects = ROLE_SLUGS.flatMap((role) => [
+      {
+        source: `/${role}-resume-guide`,
+        destination: `/${role}-resume-example`,
+        permanent: true,
+      },
+      {
+        source: `/${role}-resume-guide/`,
+        destination: `/${role}-resume-example`,
+        permanent: true,
+      },
+    ]);
+
+    const resumeTemplateToExampleRedirects = ROLE_SLUGS.flatMap((role) => [
+      {
+        source: `/${role}-resume-template`,
+        destination: `/${role}-resume-example`,
+        permanent: true,
+      },
+      {
+        source: `/${role}-resume-template/`,
+        destination: `/${role}-resume-example`,
+        permanent: true,
+      },
+    ]);
+
     return [
       ...resumeBulletCanonicalRedirects,
+      ...resumeTemplateToExampleRedirects,
       ...roleHubRedirects,
       ...standaloneRoleHubToResumeExampleRedirects,
+      ...resumeGuideToExampleRedirects,
       ...resumeGuideTopicRedirects,
       {
         source: "/resume-vs-job-description-checker",
@@ -297,6 +309,26 @@ const nextConfig = {
       {
         source: "/resume-guides/",
         destination: "/resume-guides/ats-resume-template",
+        permanent: true,
+      },
+      {
+        source: "/ats-resume-template-data-analyst",
+        destination: "/data-analyst-resume-example",
+        permanent: true,
+      },
+      {
+        source: "/ats-resume-template-data-analyst/",
+        destination: "/data-analyst-resume-example",
+        permanent: true,
+      },
+      {
+        source: "/ats-resume-template-product-manager",
+        destination: "/product-manager-resume-example",
+        permanent: true,
+      },
+      {
+        source: "/ats-resume-template-product-manager/",
+        destination: "/product-manager-resume-example",
         permanent: true,
       },
       {

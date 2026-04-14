@@ -59,7 +59,7 @@ export default function ATSKeywordsIndexPage() {
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link
-                href="/data-scientist-resume-guide#summary"
+                href="/data-scientist-resume-example#summary"
                 className="text-sky-700 hover:underline"
               >
                 Data Scientist resume summary examples
@@ -67,7 +67,7 @@ export default function ATSKeywordsIndexPage() {
             </li>
             <li>
               <Link
-                href="/product-manager-resume-guide#bullet-points"
+                href="/product-manager-resume-example#bullet-points"
                 className="text-sky-700 hover:underline"
               >
                 Product Manager resume responsibilities

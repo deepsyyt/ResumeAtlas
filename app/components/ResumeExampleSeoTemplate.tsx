@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CONTENT_FRESHNESS_YEAR } from "@/app/lib/contentFreshness";
 import {
   resumeExamplePublicPath,
   type RoleSlug,
@@ -16,9 +17,9 @@ const EXPLORE_MORE_ROLES: readonly FooterRole[] = [
 export function ResumeExampleSeoIntro({ role }: { role: string }) {
   return (
     <p className="mt-3 max-w-2xl text-base text-slate-600 sm:text-lg">
-      Use this {role.toLowerCase()} resume example to pass ATS screening and get more interviews. This guide
-      includes real examples, keywords, and formatting tips. You can also analyze your resume instantly with our
-      free ATS checker.
+      These patterns reflect how recruiters and ATS screens weight {role.toLowerCase()} resumes in{" "}
+      {CONTENT_FRESHNESS_YEAR} hiring—plain-text structure, proof in bullets, and honest keyword use. Use this
+      example to tighten your draft, then run our free ATS checker or compare your resume to a job description.
     </p>
   );
 }

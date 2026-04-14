@@ -32,8 +32,7 @@ export function ATSResumeCheckerFreeLanding() {
             {TOOL_CLUSTER_ATS_FREE.h1}
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Get an instant ATS score from your pasted resume, surface parser-breaking formatting
-            risks, and fix readability issues before recruiters or filters skip your profile.
+            {TOOL_CLUSTER_ATS_FREE.intro}
           </p>
         </div>
       </section>

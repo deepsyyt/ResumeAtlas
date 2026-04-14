@@ -1041,7 +1041,7 @@ export default function SeoSlugPage({ params }: PageProps) {
 
   const resumeSamplePath = roleResumeSamplePath(role);
   const atsKeywordPath = `/${role}-resume-keywords`;
-  const roleMergedGuidePath = `/${role}-resume-guide`;
+  const roleMergedGuidePath = `/${role}-resume-example`;
   const canonicalBase = getSiteUrl();
   const currentPath = `/${role}/resume/${topic}`;
   const keywordTopicPath = `/${role}/keywords/${

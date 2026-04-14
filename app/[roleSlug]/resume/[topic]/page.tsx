@@ -6,6 +6,7 @@ import SeoSlugPage, {
 import type { RoleSlug } from "@/app/lib/seoPages";
 import type { ResumeSeoTopic as Topic } from "@/app/lib/resumeTopicTypes";
 import { isRoleResumeTopicIndexed } from "@/app/lib/roleClusterIndexPolicy";
+import { absoluteCanonicalUrl, roleResumeExamplePath } from "@/app/lib/searchIntentSeo";
 
 type PageParams = {
   roleSlug: RoleSlug;
@@ -47,12 +48,13 @@ export async function generateMetadata({
           : params.topic === "projects"
             ? "projects"
             : null;
+  const exampleBase = absoluteCanonicalUrl(roleResumeExamplePath(params.roleSlug));
   return {
     ...existing,
     alternates: {
       canonical: mergedAnchor
-        ? `/${params.roleSlug}-resume-guide#${mergedAnchor}`
-        : `/${params.roleSlug}/resume/${params.topic}`,
+        ? `${exampleBase}#${mergedAnchor}`
+        : absoluteCanonicalUrl(`/${params.roleSlug}/resume/${params.topic}`),
     },
     ...(indexed
       ? {}
