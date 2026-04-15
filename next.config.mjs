@@ -88,6 +88,16 @@ const nextConfig = {
           destination: `/${role}`,
           permanent: true,
         },
+        {
+          source: `/${role}/resume-example`,
+          destination: `/${role}-resume-example`,
+          permanent: true,
+        },
+        {
+          source: `/${role}/resume-example/`,
+          destination: `/${role}-resume-example`,
+          permanent: true,
+        },
       {
         source: `/${role}/resume/`,
         destination: `/${role}`,

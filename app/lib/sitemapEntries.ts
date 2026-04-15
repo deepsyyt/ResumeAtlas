@@ -1,8 +1,11 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/app/lib/siteUrl";
-import { KEYWORD_PAGES, type RoleSlug } from "@/app/lib/seoPages";
+import {
+  KEYWORD_PAGES,
+  ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE,
+  type RoleSlug,
+} from "@/app/lib/seoPages";
 import { INDEXED_PROBLEM_SLUGS } from "@/app/lib/problemPages";
-import { INDEXED_ROLE_RESUME_TOPICS } from "@/app/lib/roleClusterIndexPolicy";
 import {
   RESUME_BULLET_ROLES,
   publicPathForBulletHub,
@@ -60,16 +63,9 @@ function priorityForPath(pathname: string): number {
   return 0.65;
 }
 
-function generateRoleResumeTopicPaths(): string[] {
-  const roles = Object.keys(KEYWORD_PAGES) as RoleSlug[];
-  const paths: string[] = [];
-  for (const role of roles) {
-    for (const topic of INDEXED_ROLE_RESUME_TOPICS) {
-      paths.push(`/${role}/resume/${topic}`);
-    }
-  }
-  return paths;
-}
+const STANDALONE_RESUME_EXAMPLE_ROLE_SET = new Set<RoleSlug>(
+  ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE
+);
 
 /** Full sitemap entries (same composition as legacy app/sitemap.ts). */
 export function getAllSitemapEntries(): MetadataRoute.Sitemap {
@@ -172,12 +168,14 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
   const roleHubLastMod = new Date("2026-04-09");
   for (const { slug } of Object.values(KEYWORD_PAGES)) {
     const roleHubPath = `/${slug}`;
-    entries.push({
-      url: `${base}${roleHubPath}`,
-      lastModified: roleHubLastMod,
-      changeFrequency: "monthly" as const,
-      priority: priorityForPath(roleHubPath),
-    });
+    if (!STANDALONE_RESUME_EXAMPLE_ROLE_SET.has(slug)) {
+      entries.push({
+        url: `${base}${roleHubPath}`,
+        lastModified: roleHubLastMod,
+        changeFrequency: "monthly" as const,
+        priority: priorityForPath(roleHubPath),
+      });
+    }
     const resumeGuidePath = `/${slug}-resume-example`;
     entries.push({
       url: `${base}${resumeGuidePath}`,
@@ -193,15 +191,6 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     changeFrequency: "weekly" as const,
     priority: priorityForPath("/resume-examples"),
   });
-
-  for (const path of generateRoleResumeTopicPaths()) {
-    entries.push({
-      url: `${base}${path}`,
-      lastModified: roleResumeKeywordLastMod,
-      changeFrequency: "monthly" as const,
-      priority: priorityForPath(path),
-    });
-  }
 
   const problemsHubLastMod = new Date("2026-03-25");
   // `/problems` hub is intentionally low-demand (noindex set on the page).
