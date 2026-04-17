@@ -210,7 +210,7 @@ export default function OptimizePage() {
           throw new Error(
             typeof errBody.error === "string"
               ? errBody.error
-              : "No optimization credits. Buy credits on the home page to continue."
+              : "No optimizations available. Buy a pack on the home page to continue."
           );
         }
         if (!res.ok) throw new Error("Optimization failed");

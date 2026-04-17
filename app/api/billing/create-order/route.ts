@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "You still have optimization credits. Use them before buying more.",
+            "You still have optimizations available. Use them before buying another pack.",
           code: "CREDITS_REMAINING",
         },
         { status: 409 }

@@ -82,6 +82,24 @@ export function ResumeKeywordScannerLanding() {
         </div>
       </section>
 
+      <section className="border-b border-indigo-200 bg-indigo-50/40">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
+            Query intent this page owns
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
+            This URL is built for searches like "resume keyword scanner", "resume keyword checker",
+            "job description keyword finder", and "resume keyword analyzer". It is focused on
+            keyword gap detection versus one pasted posting, not full ATS formatting audits.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm text-slate-700">
+            <li>Use this page to find missing terms and weak coverage fast.</li>
+            <li>Use ATS checker for parser and formatting compatibility.</li>
+            <li>Use resume-vs-JD matcher for full narrative fit and section priorities.</li>
+          </ul>
+        </div>
+      </section>
+
       <HomeClient variant="toolOnly" analysisMode="keywordScanner" />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
@@ -170,6 +188,54 @@ export function ResumeKeywordScannerLanding() {
             <li>Your resume may not be shortlisted</li>
             <li>Recruiters may never see your profile</li>
             <li>Your experience may be undervalued</li>
+          </ul>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Role-specific keyword examples (quick map)
+          </h2>
+          <div className="mt-4 space-y-4 text-sm sm:text-base text-slate-700">
+            <div>
+              <h3 className="font-semibold text-slate-900">Software engineer</h3>
+              <p className="mt-1">
+                API design, CI/CD, test coverage, latency, incident response, cloud platform terms.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">Data scientist</h3>
+              <p className="mt-1">
+                SQL, experimentation, model evaluation, feature engineering, stakeholder communication.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">Product manager</h3>
+              <p className="mt-1">
+                roadmap ownership, prioritization, activation/retention metrics, cross-functional execution.
+              </p>
+            </div>
+          </div>
+          <p className="mt-4 text-sm text-slate-700">
+            For deeper role-level vocabulary, browse{" "}
+            <Link
+              href="/ats-keywords"
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              ATS keyword guides by role
+            </Link>
+            .
+          </p>
+        </section>
+
+        <section className="rounded-2xl border border-amber-200 bg-amber-50/40 p-5 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
+            Common mistakes with keyword scanners
+          </h2>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
+            <li>Chasing every keyword without matching your real experience.</li>
+            <li>Adding terms in skills but not proving them in bullets/projects.</li>
+            <li>Using one scanner output for every posting instead of per-job tailoring.</li>
+            <li>Ignoring synonym variants used in the target posting.</li>
           </ul>
         </section>
 
@@ -272,6 +338,14 @@ export function ResumeKeywordScannerLanding() {
             <li>
               <Link href="/ats-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 Role-based keyword guides
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/resume-guides/resume-skills-examples"
+                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                Resume skills examples & format
               </Link>
             </li>
           </ul>

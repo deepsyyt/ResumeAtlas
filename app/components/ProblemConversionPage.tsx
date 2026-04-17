@@ -215,6 +215,24 @@ export function ProblemConversionPage({ config }: Props) {
             </Link>
           </div>
         </section>
+
+        <section className="mt-4 rounded-2xl border border-indigo-200 bg-indigo-50/40 p-4 sm:p-5">
+          <h2 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
+            30-second diagnosis flow (use this order)
+          </h2>
+          <ol className="mt-3 list-decimal pl-5 space-y-1.5 text-sm text-slate-700">
+            <li>
+              Compare your resume with one target job description to find true relevance gaps.
+            </li>
+            <li>Fix top missing requirements first (not cosmetic edits).</li>
+            <li>
+              Run keyword scan for weak coverage and then clean ATS formatting before reapplying.
+            </li>
+          </ol>
+          <p className="mt-3 text-sm text-slate-700">
+            This avoids the common trap of rewriting blindly without posting-level alignment.
+          </p>
+        </section>
       </div>
 
       {/* 2. Visual proof (intent-based emphasis) */}
@@ -389,6 +407,41 @@ export function ProblemConversionPage({ config }: Props) {
               </li>
             ))}
           </ol>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Questions people ask before fixing this problem
+          </h2>
+          <div className="mt-4 space-y-4 text-sm sm:text-base text-slate-700">
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                Why am I getting impressions but no interview calls?
+              </h3>
+              <p className="mt-1">
+                Usually because your resume has partial overlap with the posting but weak evidence in
+                top sections. Improve alignment and proof, not just formatting.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                Should I use one resume for all applications?
+              </h3>
+              <p className="mt-1">
+                A single master file is fine, but each application should have a tailored version for
+                summary, core skills, and first bullets.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                What should I fix first for fastest improvement?
+              </h3>
+              <p className="mt-1">
+                Start with must-have requirements from the JD, then strengthen proof bullets, then
+                clean ATS readability issues.
+              </p>
+            </div>
+          </div>
         </section>
 
         <section aria-labelledby="resumeatlas-seo">

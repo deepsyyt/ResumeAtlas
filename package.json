@@ -5,6 +5,7 @@
   "scripts": {
     "db:migrate": "node scripts/run-migrations.mjs",
     "db:verify": "node scripts/verify-db-tables.mjs",
+    "credits:grant": "node scripts/grant-credits-by-email.mjs",
     "dev": "next dev",
     "clean:next": "node -e \"const fs=require('fs');for(const d of['.next','nextbuild']){try{fs.rmSync(d,{recursive:true,force:true});}catch(e){}}\"",
     "dev:clean": "npm run clean:next && next dev",

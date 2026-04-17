@@ -49,10 +49,10 @@ export const CLUSTER_HOME_METADATA = {
 /** Resume ↔ this job description (tailor / compare / match). */
 export const CLUSTER_JD_MATCH_TOOL_COPY = {
   titleAbsolute:
-    "Match Resume to Job Description — Free Compare, Score & Keyword Gaps | ResumeAtlas",
+    "Match Resume to Job Description (Free) - Compare, Score & Fix Gaps (2026) | ResumeAtlas",
   description:
-    "Compare your resume to a specific job description: estimated match, missing keywords, and section-level gaps for that posting—then tailor before you apply. Free, instant, paste-only—built for how modern postings and hiring workflows parse long JDs. Use this for resume–JD alignment; use the keyword scanner for gap lists only; use the ATS checker for parser/format risk.",
-  ogTitle: "Match Resume to Job Description (Free) | ResumeAtlas",
+    "Match your resume to a specific job description and get an estimated match score, missing keywords, and section-level fixes in minutes. Free, instant, no signup. Built for long, modern postings and real ATS screening in 2026 hiring workflows.",
+  ogTitle: "Match Resume to Job Description (Free, 2026) | ResumeAtlas",
   ogDescription:
     "Resume vs job description: match-style feedback for the posting you paste—built for long, modern JDs—free, no signup.",
   twitterTitle: "Match resume to job description (free)",
@@ -80,10 +80,11 @@ export const CLUSTER_JD_MATCH_TOOL_COPY = {
 
 /** Missing keywords vs a pasted posting (gap list intent). */
 export const CLUSTER_KEYWORD_SCANNER_TOOL_COPY = {
-  titleAbsolute: "Resume Keyword Scanner — Missing Keywords vs Job Description | ResumeAtlas",
+  titleAbsolute:
+    "Resume Keyword Scanner (Free) - Find Missing Keywords vs Job Description (2026) | ResumeAtlas",
   description:
-    "Scan your resume against a job description to find missing keywords and weak coverage for that posting—not a full narrative fit report. Free, instant, paste-only; tuned for current job-posting language and long JDs. For end-to-end resume vs JD alignment, use the job description matcher; for ATS layout and parsing, use the ATS checker.",
-  ogTitle: "Resume Keyword Scanner (Free) | ResumeAtlas",
+    "Scan your resume against a job description and find missing keywords, weak coverage, and ATS-relevant term gaps for that posting. Free, instant, and no signup. Built for long JDs, job-description keyword finder workflows, and resume keyword checker intent in 2026 hiring.",
+  ogTitle: "Resume Keyword Scanner (Free, 2026) - Missing Keywords Finder | ResumeAtlas",
   ogDescription:
     "Find missing resume keywords vs a real job posting—skill gaps and ATS keyword coverage—instantly.",
   twitterTitle: "Resume keyword scanner (free)",
@@ -109,10 +110,11 @@ export const CLUSTER_KEYWORD_SCANNER_TOOL_COPY = {
 
 /** ATS readability / parse / score (posting optional). */
 export const CLUSTER_ATS_CHECKER_TOOL_COPY = {
-  titleAbsolute: "ATS Resume Checker — Format, Parsing & Compatibility Score | ResumeAtlas",
+  titleAbsolute:
+    "ATS Resume Checker (Free) - Format, Parsing & Compatibility Score (2026) | ResumeAtlas",
   description:
-    "Check whether your resume is ATS-friendly: parsing, section structure, formatting risks, and a compatibility-style score—without requiring a job description. Built for modern parsing patterns used in current hiring systems; optional posting adds keyword overlap. For resume vs a specific JD as the main task, use the job description matcher.",
-  ogTitle: "ATS Resume Checker (Free) | ResumeAtlas",
+    "Check if your resume is ATS-friendly with parsing, section-structure, and formatting-risk diagnostics plus a compatibility-style score. Free and no signup. Built for modern ATS parsing behavior in 2026 hiring systems; optional JD adds keyword overlap.",
+  ogTitle: "ATS Resume Checker (Free, 2026) | ResumeAtlas",
   ogDescription:
     "ATS-friendly resume check: parsing, structure, formatting signals—instant, free, paste-only—aligned with how current ATS ingest resumes.",
   twitterTitle: "ATS resume checker (free)",
@@ -139,7 +141,7 @@ export const CLUSTER_ATS_CHECKER_TOOL_COPY = {
 /** Long-form: templates, layout, how ATS reads resumes (education, not interactive product). */
 export const CLUSTER_ATS_GUIDE_METADATA = {
   path: ATS_RESUME_TEMPLATE_GUIDE_PATH,
-  title: `ATS Resume Template (${CONTENT_FRESHNESS_YEAR} Format + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`,
+  title: `ATS Resume Template (${CONTENT_FRESHNESS_YEAR}) - Best ATS Format + Examples${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
     `ATS resume template (${CONTENT_FRESHNESS_YEAR}): copy-paste examples, section order, parser-safe layout, and how applicant tracking systems read resumes. Last updated ${CONTENT_LAST_UPDATED_LABEL}. For live resume vs a job description matching, use ResumeAtlas’s free checker; for keyword gap lists, use the keyword scanner.`,
   ogTitle: `ATS Resume Template (${CONTENT_FRESHNESS_YEAR} Format + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`,
@@ -151,7 +153,7 @@ export const CLUSTER_ATS_GUIDE_METADATA = {
 /** Long-form: experience section only (not full resume template hub). */
 export const CLUSTER_WORK_EXPERIENCE_METADATA = {
   path: RESUME_WORK_EXPERIENCE_GUIDE_PATH,
-  title: `Resume Work Experience Examples & Format (Jobs, Dates, Bullets)${RESUME_ATLAS_TITLE_SUFFIX}`,
+  title: `Resume Work Experience Examples (${CONTENT_FRESHNESS_YEAR}) - Format, Jobs, Dates & Bullets${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
     `How to write the work experience section for ${CONTENT_FRESHNESS_YEAR} applications: where it goes, what jobs to list, dates and titles, and bullet examples recruiters skim fast—plus ATS-safe plain text layout. Updated ${CONTENT_LAST_UPDATED_LABEL}. For full resume layout and ATS template rules, use the ATS resume guide; for matching a posting, use the job description tool.`,
   ogTitle: `Resume Work Experience Examples & Format${RESUME_ATLAS_TITLE_SUFFIX}`,

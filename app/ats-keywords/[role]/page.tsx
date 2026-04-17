@@ -23,6 +23,12 @@ type PageParams = {
   role: RoleSlug;
 };
 
+const ROLES_WITH_BULLET_HUB = new Set<RoleSlug>([
+  "data-scientist",
+  "software-engineer",
+  "product-manager",
+]);
+
 export function generateMetadata({ params }: { params: PageParams }): Metadata {
   if (!KEYWORD_PAGES[params.role]) return {};
   const { title, description } = roleResumeKeywordsHubMeta(params.role);
@@ -160,6 +166,37 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
           </p>
         </section>
 
+        <section className="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-5 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
+            Query intent this page covers
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700">
+            This hub is optimized for searches like "{roleSlug.replace(/-/g, " ")} resume
+            keywords", "ATS-friendly {roleSlug.replace(/-/g, " ")} skills", and "{roleSlug.replace(
+              /-/g,
+              " "
+            )} keyword list". Use it to identify wording, then validate against a specific posting.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm text-slate-700">
+            <li>Need full resume-vs-JD alignment? Use the job description matcher.</li>
+            <li>Need parser and formatting checks? Use the ATS checker.</li>
+          </ul>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="inline-flex rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+            </Link>
+            <Link
+              href="/ats-resume-checker#ats-checker-form"
+              className="inline-flex rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+            >
+              Check if your resume is ATS-friendly
+            </Link>
+          </div>
+        </section>
+
         <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 sm:p-6">
           <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
             {config.roleName} keyword context
@@ -173,6 +210,22 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
             {roleContent.examplePhrases.slice(0, 2).map((phrase) => (
               <li key={phrase}>{phrase}</li>
             ))}
+          </ul>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            High-intent {config.roleName.toLowerCase()} keyword queries
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700">
+            Most users arrive via short-head and long-tail variants. Align your resume wording to
+            these query patterns and then validate against the exact posting.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
+            <li>{config.roleName.toLowerCase()} resume keywords</li>
+            <li>{config.roleName.toLowerCase()} ATS keywords</li>
+            <li>{config.roleName.toLowerCase()} skills for resume</li>
+            <li>{config.roleName.toLowerCase()} keyword list for job descriptions</li>
           </ul>
         </section>
 
@@ -230,6 +283,18 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
           </ul>
         </section>
 
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Mistakes that hurt ranking and ATS match
+          </h2>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
+            <li>Listing tools with no proof in experience bullets.</li>
+            <li>Using generic skills that do not match the posting language.</li>
+            <li>Overstuffing keywords instead of showing role-specific outcomes.</li>
+            <li>Ignoring synonyms used in target postings (for example, A/B testing vs experimentation).</li>
+          </ul>
+        </section>
+
         {/* CTA + related guides */}
         <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
@@ -283,6 +348,16 @@ export default function ATSKeywordsRolePage({ params }: { params: PageParams }) 
                   {config.roleName} resume skills examples
                 </Link>
               </li>
+              {ROLES_WITH_BULLET_HUB.has(roleSlug) ? (
+                <li>
+                  <Link
+                    href={`/${roleSlug}-resume-bullet-points`}
+                    className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                  >
+                    {config.roleName} resume bullet points
+                  </Link>
+                </li>
+              ) : null}
             </ul>
           </div>
         </section>

@@ -39,10 +39,6 @@ export type OptimizeConversionModalProps = {
 
 const STARTER_PACK_ID = "starter" satisfies CreditPackageId;
 
-/** Illustrative before/after for the proof block (not the user’s live score). */
-const PROOF_ATS_BEFORE = 60;
-const PROOF_ATS_AFTER = "80+";
-
 export function OptimizeConversionModal({
   open,
   onClose,
@@ -64,10 +60,7 @@ export function OptimizeConversionModal({
   const priceLabel = starter
     ? formatCreditPackPrice(starter.razorpayAmount, starter.currency)
     : "N/A";
-  const keywordLine =
-    missingKeywordCount > 0
-      ? `Missing ${missingKeywordCount} keyword${missingKeywordCount === 1 ? "" : "s"}. We’ll fix them instantly.`
-      : "We’ll align keywords and bullets to this posting instantly";
+  const benefitsSummary = "Get ready to apply with a role-aligned resume in seconds.";
 
   const busy = isBusy || isStartingGoogleAuth;
 
@@ -75,7 +68,7 @@ export function OptimizeConversionModal({
     if (isStartingGoogleAuth) return "Signing in with Google…";
     if (busy) return "Starting…";
     if (!isLoggedIn) return "Sign in to continue";
-    if (hasOptimizationCredits) return "Fix the resume now";
+    if (hasOptimizationCredits) return "Pay and unlock optimization";
     return "Pay and unlock optimization";
   })();
 
@@ -106,13 +99,13 @@ export function OptimizeConversionModal({
             aria-live="polite"
           >
             <p className="text-sm font-semibold text-emerald-950">
-              {packName}: +{granted} credit{granted === 1 ? "" : "s"} added to your account.
+              {packName}: +{granted} optimization run{granted === 1 ? "" : "s"} added to your account.
             </p>
             <p className="mt-2 text-sm text-slate-700 leading-snug">
               You now have{" "}
-              <span className="font-semibold tabular-nums text-slate-900">{balance}</span> credit
-              {balance === 1 ? "" : "s"} available. Each successful optimization for one job description uses 1
-              credit; nothing is charged if optimization does not complete.
+              <span className="font-semibold tabular-nums text-slate-900">{balance}</span> optimization run
+              {balance === 1 ? "" : "s"} available. Each successful optimization for one job description uses 1 run;
+              nothing is charged if optimization does not complete.
             </p>
             <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button
@@ -161,77 +154,45 @@ export function OptimizeConversionModal({
           id="optimize-conversion-title"
           className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900"
         >
-          Still trying to fix your resume manually?
+          Fix your resume for this job in one click
         </h2>
         <p className="mt-2 text-sm text-slate-600 leading-snug">
-          We can optimize it for this job in one click: keywords, bullets, ATS format.
+          Better keywords, stronger bullets, and ATS-ready formatting.
         </p>
 
-        <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50/90 p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+        <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">
             Your likely result after optimization
           </p>
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <div className="rounded-lg border border-slate-200 bg-white px-3 py-2.5">
-              <p className="text-[11px] font-medium text-slate-500">Before</p>
-              <p className="mt-0.5 text-lg font-semibold tabular-nums text-slate-800">
-                ATS score {PROOF_ATS_BEFORE}
-              </p>
-            </div>
-            <div className="rounded-lg border border-emerald-200 bg-emerald-50/90 px-3 py-2.5">
-              <p className="text-[11px] font-medium text-emerald-800">After</p>
-              <p className="mt-0.5 text-lg font-semibold tabular-nums text-emerald-900">
-                ATS score {PROOF_ATS_AFTER}
-              </p>
-            </div>
-          </div>
-          <ul className="mt-3 space-y-1.5 text-sm text-slate-700">
+          <p className="mt-2 text-sm font-semibold text-slate-900">
+            Interview-ready resume + higher ATS score
+          </p>
+          <ul className="mt-2.5 space-y-1 text-sm text-slate-700">
             <li className="flex gap-2">
               <span aria-hidden>+</span>
-              <span>Added missing keywords</span>
+              <span>Add missing keywords</span>
             </li>
             <li className="flex gap-2">
               <span aria-hidden>+</span>
-              <span>Rewritten bullet points</span>
+              <span>Rewrite weak bullet points</span>
             </li>
             <li className="flex gap-2">
               <span aria-hidden>+</span>
-              <span>Improved impact &amp; clarity</span>
+              <span>Improve impact &amp; clarity</span>
+            </li>
+            <li className="flex gap-2">
+              <span aria-hidden>+</span>
+              <span>Rewrite summary for this exact role</span>
             </li>
           </ul>
         </div>
 
-        <p className="mt-4 text-sm font-medium text-slate-800">{keywordLine}</p>
-
-        <ul className="mt-4 space-y-2 text-sm text-slate-700">
-          <li className="flex gap-2">
-            <span className="text-emerald-600 font-bold" aria-hidden>
-              ✓
-            </span>
-            Fix missing ATS keywords automatically
-          </li>
-          <li className="flex gap-2">
-            <span className="text-emerald-600 font-bold" aria-hidden>
-              ✓
-            </span>
-            Rewrite weak bullet points
-          </li>
-          <li className="flex gap-2">
-            <span className="text-emerald-600 font-bold" aria-hidden>
-              ✓
-            </span>
-            Improve score for this exact job
-          </li>
-        </ul>
-
         <div className="mt-5 rounded-xl border-2 border-slate-900 bg-white p-4 sm:p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Recommended</p>
-          <p className="mt-1 text-base font-semibold text-slate-900">
-            Optimize this resume for {priceLabel}
-          </p>
-          <p className="mt-1.5 text-xs text-slate-500">One-time optimization for this job</p>
-          <p className="mt-3 text-sm text-slate-700 leading-snug">
-            You’ve already tried improving it. We’ll fix everything in one click.
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Most users choose this</p>
+          <p className="mt-1 text-3xl font-bold tracking-tight text-slate-900">{priceLabel}</p>
+          <p className="mt-1 text-lg font-semibold text-slate-900">Optimize this resume now</p>
+          <p className="mt-2.5 text-xs text-slate-500">
+            One-time payment • Instant download • No subscription
           </p>
 
           {localError ? (

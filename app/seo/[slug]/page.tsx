@@ -12,6 +12,7 @@ import {
   CHECK_RESUME_AGAINST_JD_PATH,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
+import { CONTENT_FRESHNESS_YEAR } from "@/app/lib/contentFreshness";
 
 type SeoTopicConfig = {
   topic: Topic;
@@ -850,12 +851,17 @@ export function generateMetadata({ params }: PageProps): Metadata {
   const roleContent = ROLE_CONTENT_MAP[role];
   const topicPhrase = topicToKeywordPhrase(topic);
 
-  const title = `${roleName} Resume ${topicPhrase} (Examples + ATS Tips)`;
+  const title =
+    topic === "bullet-points"
+      ? `${roleName} Resume Bullet Points (${CONTENT_FRESHNESS_YEAR} Examples + ATS Keywords)`
+      : `${roleName} Resume ${topicPhrase} (${CONTENT_FRESHNESS_YEAR} Examples + ATS Tips)`;
   const description =
     topic === "projects"
       ? `Explore ATS-optimized project examples for ${roleName.toLowerCase()} resumes. Includes real projects, impact-focused bullets, and tips to showcase your work effectively.`
       : topic === "experience-examples"
       ? `Explore ATS-optimized experience examples for ${roleName.toLowerCase()} resumes. Includes ready-to-use bullets, guidance, and tips to improve your work history section.`
+      : topic === "bullet-points"
+      ? `Use ${CONTENT_FRESHNESS_YEAR} ${roleName.toLowerCase()} resume bullet point examples with ATS keywords, measurable outcomes, and copy-ready lines aligned to job descriptions.`
       : `Explore ATS-optimized ${topicPhrase.toLowerCase()} for ${roleName.toLowerCase()} resumes. Includes real examples, tips, and templates to improve your resume and pass ATS screening.`;
 
   return {

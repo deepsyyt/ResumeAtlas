@@ -17,7 +17,7 @@ export function UsageBadge({ usage }: UsageBadgeProps) {
   if (remaining > 0 || reserved > 0) {
     return (
       <span className="inline-flex items-center rounded-lg bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-800">
-        Credits: {remaining}
+        Resume optimizations: {remaining}
         {reserved > 0 ? ` (${reserved} in use)` : ""}
       </span>
     );
@@ -25,7 +25,7 @@ export function UsageBadge({ usage }: UsageBadgeProps) {
 
   return (
     <span className="inline-flex items-center rounded-lg bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800">
-      No optimization credits — buy a pack to tailor your resume
+      No optimizations left — buy a pack to tailor your resume
     </span>
   );
 }

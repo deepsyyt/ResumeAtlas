@@ -5,6 +5,7 @@ import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+  RESUME_SKILLS_GUIDE_PATH,
   RESUME_WORK_EXPERIENCE_GUIDE_PATH,
 } from "@/app/lib/internalLinks";
 import { CLUSTER_WORK_EXPERIENCE_METADATA } from "@/app/lib/canonicalIntentClusters";
@@ -207,6 +208,53 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
 
         <section className="space-y-4 text-slate-700">
           <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">
+            Mistakes to avoid in work experience (ATS + recruiter skim)
+          </h2>
+          <ul className="list-disc space-y-2 pl-5 text-sm sm:text-base">
+            <li>
+              <strong>No outcomes:</strong> bullets like “responsible for” without numbers or impact
+              are easy to skip.
+            </li>
+            <li>
+              <strong>Keyword mismatch:</strong> if the posting repeats SQL, experimentation, or
+              roadmap terms, mirror honest wording from the target JD.
+            </li>
+            <li>
+              <strong>Overly dense blocks:</strong> 8–10 bullets per role reduce readability; keep
+              the strongest proof first.
+            </li>
+            <li>
+              <strong>Inconsistent chronology:</strong> mixed date formats and unclear timelines hurt
+              ATS parsing confidence.
+            </li>
+          </ul>
+        </section>
+
+        <section className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 sm:p-6">
+          <h2 className="text-lg font-semibold text-slate-900 sm:text-xl">
+            Tailor this section to one job description
+          </h2>
+          <p className="mt-2 text-sm text-slate-700 sm:text-base">
+            The fastest way to improve interview odds is to compare your experience bullets against
+            one real posting and fix gaps in order of impact.
+          </p>
+          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-slate-700 sm:text-base">
+            <li>Map each must-have requirement to one proof bullet in your experience section.</li>
+            <li>Add missing keywords only where you have truthful evidence.</li>
+            <li>Reorder bullets so the most relevant outcomes appear first.</li>
+          </ul>
+          <div className="mt-4">
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+            </Link>
+          </div>
+        </section>
+
+        <section className="space-y-4 text-slate-700">
+          <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">
             Role-specific example pages on ResumeAtlas
           </h2>
           <p className="text-sm leading-relaxed sm:text-base">
@@ -236,6 +284,38 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 More resume examples by role
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={RESUME_SKILLS_GUIDE_PATH}
+                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Resume skills examples & format
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/software-engineer-resume-bullet-points"
+                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Software engineer resume bullet points
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/product-manager-resume-bullet-points"
+                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Product manager resume bullet points
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/data-scientist-resume-bullet-points"
+                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Data scientist resume bullet points
               </Link>
             </li>
           </ul>

@@ -168,38 +168,38 @@ export function ResumeOptimizationPanel({
             </p>
           </div>
 
-          <div className="col-span-1 grid grid-cols-1 gap-2 sm:col-span-2 sm:grid-cols-2 lg:col-span-12 lg:grid-cols-5">
-            <div className="isolate flex min-h-[4.75rem] min-w-0 flex-col items-center justify-center gap-1 rounded-md border border-violet-200 bg-violet-50/60 px-2 py-2 text-center">
-              <p className="w-full text-[9px] font-semibold leading-tight text-violet-900 sm:text-[10px]">
+          <div className="col-span-1 grid grid-cols-2 gap-2 sm:col-span-2 md:grid-cols-3 lg:col-span-12">
+            <div className="isolate flex min-h-[5.25rem] min-w-0 flex-col items-center justify-center gap-1.5 rounded-md border border-violet-200 bg-violet-50/60 px-2.5 py-2.5 text-center">
+              <p className="w-full text-[10px] font-semibold leading-snug text-violet-900">
                 Rewritten bullets
               </p>
-              <p className="text-base font-bold leading-none text-violet-900 tabular-nums">{bulletImprovements}</p>
+              <p className="text-lg font-bold leading-none text-violet-900 tabular-nums">{bulletImprovements}</p>
             </div>
-            <div className="isolate flex min-h-[4.75rem] min-w-0 flex-col items-center justify-center gap-1 rounded-md border border-amber-200 bg-amber-50/70 px-2 py-2 text-center">
-              <p className="w-full text-[9px] font-semibold leading-tight text-amber-950 sm:text-[10px]">
+            <div className="isolate flex min-h-[5.25rem] min-w-0 flex-col items-center justify-center gap-1.5 rounded-md border border-amber-200 bg-amber-50/70 px-2.5 py-2.5 text-center">
+              <p className="w-full text-[10px] font-semibold leading-snug text-amber-950">
                 New bullets
               </p>
-              <p className="text-base font-bold leading-none text-amber-950 tabular-nums">{bulletsAdded}</p>
+              <p className="text-lg font-bold leading-none text-amber-950 tabular-nums">{bulletsAdded}</p>
             </div>
-            <div className="isolate flex min-h-[4.75rem] min-w-0 flex-col items-center justify-center gap-1 rounded-md border border-sky-200 bg-sky-50/60 px-2 py-2 text-center">
-              <p className="w-full text-[9px] font-semibold leading-tight text-sky-900 sm:text-[10px]">
+            <div className="isolate flex min-h-[5.25rem] min-w-0 flex-col items-center justify-center gap-1.5 rounded-md border border-sky-200 bg-sky-50/60 px-2.5 py-2.5 text-center">
+              <p className="w-full text-[10px] font-semibold leading-snug text-sky-900">
                 Keywords added
               </p>
-              <p className="text-base font-bold leading-none text-sky-900 tabular-nums">{kwCount}</p>
+              <p className="text-lg font-bold leading-none text-sky-900 tabular-nums">{kwCount}</p>
             </div>
-            <div className="isolate flex min-h-[4.75rem] min-w-0 flex-col items-center justify-center gap-1 rounded-md border border-emerald-200 bg-emerald-50/60 px-2 py-2 text-center">
-              <p className="w-full text-[9px] font-semibold leading-tight text-emerald-900 sm:text-[10px]">
+            <div className="isolate flex min-h-[5.25rem] min-w-0 flex-col items-center justify-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50/60 px-2.5 py-2.5 text-center">
+              <p className="w-full text-[10px] font-semibold leading-snug text-emerald-900">
                 Quantified impacts
               </p>
-              <p className="text-base font-bold leading-none text-emerald-900 tabular-nums">
+              <p className="text-lg font-bold leading-none text-emerald-900 tabular-nums">
                 {quantifiedAchievements}
               </p>
             </div>
-            <div className="isolate flex min-h-[4.75rem] min-w-0 flex-col items-center justify-center gap-1 rounded-md border border-indigo-200 bg-indigo-50/60 px-2 py-2 text-center sm:col-span-2 lg:col-span-1">
-              <p className="w-full text-[9px] font-semibold leading-tight text-indigo-950 sm:text-[10px]">
+            <div className="isolate flex min-h-[5.25rem] min-w-0 flex-col items-center justify-center gap-1.5 rounded-md border border-indigo-200 bg-indigo-50/60 px-2.5 py-2.5 text-center sm:col-span-2 md:col-span-3">
+              <p className="w-full text-[10px] font-semibold leading-snug text-indigo-950">
                 Summary optimized
               </p>
-              <p className="text-base font-bold leading-none text-indigo-950 tabular-nums">{summaryMetric}</p>
+              <p className="text-lg font-bold leading-none text-indigo-950 tabular-nums">{summaryMetric}</p>
             </div>
           </div>
 

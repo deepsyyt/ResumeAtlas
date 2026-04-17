@@ -7,9 +7,17 @@ import {
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "How ATS Systems Scan Resumes – Complete Guide | ResumeAtlas",
+  title: "How ATS Systems Scan Resumes (2026): Parsing, Keywords, and Score Signals | ResumeAtlas",
   description:
-    "Learn how Applicant Tracking Systems scan and rank resumes: parsing, keyword matching, formatting rules, and scoring. Get your resume past ATS with this complete guide.",
+    "Learn how ATS systems scan and rank resumes in 2026: parsing, keyword matching, formatting rules, and score signals recruiters use. See what causes ATS rejections and how to fix it fast.",
+  keywords: [
+    "how ATS scans resumes",
+    "best resume format for ATS",
+    "ATS resume format",
+    "ATS parsing resume example",
+    "resume rejected by ATS what to do",
+    "ATS compatibility",
+  ],
   alternates: {
     canonical: "/how-ats-scans-resumes",
   },

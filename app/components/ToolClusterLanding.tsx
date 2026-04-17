@@ -10,6 +10,11 @@ import {
   toolClusterFaqSchema,
   toolClusterWebApplicationSchema,
 } from "@/app/lib/toolClusterPages";
+import {
+  ATS_RESUME_TEMPLATE_GUIDE_PATH,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PATH,
+} from "@/app/lib/internalLinks";
 
 type Props = {
   config: ToolClusterPageConfig;
@@ -83,6 +88,44 @@ export function ToolClusterLanding({ config }: Props) {
         <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
             {config.serpVariantsParagraph}
+          </p>
+        </section>
+
+        <section className="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Choose the right page for your intent
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
+            Ranking improves when each URL has one clear job. Use this page for the intent it owns,
+            then branch to adjacent tools only when needed.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
+            <li>
+              <strong>Resume vs JD matcher:</strong> compare fit to one posting and prioritize edits.
+            </li>
+            <li>
+              <strong>Keyword scanner:</strong> isolate missing terms and weak keyword coverage.
+            </li>
+            <li>
+              <strong>ATS checker:</strong> diagnose parsing, structure, and formatting risk.
+            </li>
+          </ul>
+          <p className="mt-3 text-sm text-slate-700">
+            Need full ATS format rules? Read the{" "}
+            <Link
+              href={ATS_RESUME_TEMPLATE_GUIDE_PATH}
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              ATS resume template guide
+            </Link>
+            . Need role examples before you tailor? Start with{" "}
+            <Link
+              href="/resume-examples"
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              resume examples by role
+            </Link>
+            .
           </p>
         </section>
 
@@ -257,6 +300,59 @@ export function ToolClusterLanding({ config }: Props) {
               </Link>
             </li>
           </ul>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Quick answers before you apply
+          </h2>
+          <div className="mt-4 space-y-4 text-sm sm:text-base text-slate-700">
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                Should I tailor my resume for every job?
+              </h3>
+              <p className="mt-1">
+                Yes. Keep a master resume, then tailor summary, top bullets, and skills to each
+                posting so ATS and recruiters see direct fit.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                What is the fastest way to improve shortlist rate?
+              </h3>
+              <p className="mt-1">
+                Compare resume vs one real job description, fix missing requirements first, then
+                tighten ATS readability. This sequence usually creates the biggest lift.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                Which page should I use first?
+              </h3>
+              <p className="mt-1">
+                If you have a target posting, start with{" "}
+                <Link
+                  href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  the resume vs job description checker
+                </Link>
+                . If not, run ATS structure checks first and then tune keywords.
+              </p>
+            </div>
+          </div>
+          {path !== CHECK_RESUME_AGAINST_JD_PATH ? (
+            <p className="mt-4 text-sm text-slate-700">
+              For posting-specific match diagnostics, use{" "}
+              <Link
+                href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                check resume against job description
+              </Link>
+              .
+            </p>
+          ) : null}
         </section>
 
         <ToolClusterNextSteps />

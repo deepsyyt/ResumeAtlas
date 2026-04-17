@@ -5,6 +5,7 @@ import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+  RESUME_SKILLS_GUIDE_PATH,
 } from "@/app/lib/internalLinks";
 import { CopyResumeBlock } from "./CopyResumeBlock";
 import { ResumeTemplatePreviewCard } from "./ResumeTemplatePreviewCard";
@@ -226,6 +227,32 @@ export function AtsResumeTemplateGuide() {
           </p>
         </section>
 
+        <section className="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-5 sm:p-6">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Fast-start path (10-minute version)
+          </h2>
+          <ol className="mt-3 list-decimal pl-5 space-y-2 text-sm sm:text-base text-slate-700">
+            <li>Copy one template and keep a single-column layout.</li>
+            <li>Adjust summary, skills, and top 3 bullets for one target posting.</li>
+            <li>Run a JD comparison to find missing requirement coverage.</li>
+            <li>Fix high-impact gaps, then export a text-based PDF or DOCX.</li>
+          </ol>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="inline-flex rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+            </Link>
+            <Link
+              href="/resume-keyword-scanner"
+              className="inline-flex rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+            >
+              Find missing keywords in your resume
+            </Link>
+          </div>
+        </section>
+
         <section
           id="ats-resume-template-examples"
           className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"
@@ -271,6 +298,15 @@ export function AtsResumeTemplateGuide() {
                 Resume work experience examples (format + bullets)
               </Link>{" "}
               — how to list jobs, dates, and impact for ATS and recruiters.
+            </li>
+            <li>
+              <Link
+                href={RESUME_SKILLS_GUIDE_PATH}
+                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Resume skills examples (ATS-friendly section guide)
+              </Link>{" "}
+              — how to write a skills section that matches postings.
             </li>
             <li>
               <Link
@@ -553,105 +589,49 @@ export function AtsResumeTemplateGuide() {
           </ul>
         </section>
 
-        <section>
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            2. Match the Job Description with Keywords
+            Apply this ATS template to a real job posting
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            ATS compare your resume to the <strong>exact job description</strong> for the role.
-            That means your wording matters. To align with the posting:
+            The template gives structure; ranking and shortlist probability improve when you adapt it
+            to one posting. Keep this sequence:
           </p>
-          <ul className="mt-3 list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
+          <ol className="mt-3 list-decimal pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
             <li>
-              Highlight the same <strong>skills, tools, and responsibilities</strong> where they are
-              genuinely part of your experience.
+              <strong>Mirror critical posting language:</strong> place must-have skills in summary,
+              skills, and top bullets where truthful.
             </li>
             <li>
-              Use the employer&apos;s language. If they say &quot;stakeholder management&quot; or
-              &quot;Python&quot;, use those exact phrases.
+              <strong>Use impact bullets:</strong> action + scope + measurable result beats vague
+              responsibility lines.
             </li>
             <li>
-              Place key terms in your <strong>summary, skills list, and bullets</strong>, not just
-              in one section.
-            </li>
-          </ul>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            This doesn&apos;t mean copying the posting word‑for‑word. It means describing your real
-            work in a way that clearly maps to what the role is asking for.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            3. Use Impact-Focused Bullets
-          </h2>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            ATS and recruiters both prefer <strong>specific, outcome‑driven bullets</strong> over
-            vague responsibilities. A good pattern is:
-          </p>
-          <p className="mt-2 text-slate-700 text-sm sm:text-base">
-            <strong>Action verb + what you did + measurable result.</strong>
-          </p>
-          <ul className="mt-3 list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
-            <li>
-              Weak: &quot;Responsible for running reports.&quot; <br />
-              Strong: &quot;Automated weekly revenue reports in SQL and Excel, saving the finance
-              team 5 hours per week.&quot;
+              <strong>Tighten skills section:</strong> group by category and keep only interview-safe
+              tools.
             </li>
             <li>
-              Weak: &quot;Helped improve onboarding.&quot; <br />
-              Strong: &quot;Redesigned onboarding emails and in‑app prompts, increasing day‑7
-              activation by 9%.&quot;
+              <strong>Export safe file types:</strong> text-based PDF or DOCX; avoid scanned/image
+              files and password protection.
             </li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            4. Optimize Your Skills Section
-          </h2>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            Many recruiters and ATS scans look first at your <strong>Skills</strong> or{" "}
-            <strong>Technical Skills</strong> section. Make it easy to parse:
-          </p>
-          <ul className="mt-3 list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
-            <li>Group skills by category (e.g. Languages, Frameworks, Tools).</li>
-            <li>List only tools you&apos;d be comfortable being interviewed on.</li>
-            <li>
-              Reflect the role you want. If you&apos;re moving toward data roles, emphasize SQL,
-              Python, and analytics tools.
-            </li>
-          </ul>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            For role‑specific keyword ideas, see the{" "}
+          </ol>
+          <p className="mt-4 text-sm text-slate-700">
+            Need role-specific skill wording? See{" "}
             <Link
-              href="/data-scientist-resume-keywords"
-              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              href={RESUME_SKILLS_GUIDE_PATH}
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
-              ATS keywords for Data Scientist
-            </Link>{" "}
-            guide or other keyword pages in the navigation.
+              resume skills examples
+            </Link>
+            . Need requirement-level matching? Use{" "}
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+            </Link>
+            .
           </p>
-        </section>
-
-        <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            5. Use a Safe File Type for ATS
-          </h2>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            Most ATS handle <strong>.docx</strong> and text‑based <strong>PDF</strong> files well.
-            However:
-          </p>
-          <ul className="mt-3 list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
-            <li>
-              Avoid scanned PDFs or designs exported as a single image. ATS can&apos;t read the
-              text.
-            </li>
-            <li>
-              Don&apos;t password‑protect your file or use unusual encodings that might block
-              parsing.
-            </li>
-          </ul>
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 sm:p-8">
@@ -688,6 +668,14 @@ export function AtsResumeTemplateGuide() {
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   ATS resume keywords examples
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={RESUME_SKILLS_GUIDE_PATH}
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  Resume skills examples guide
                 </Link>
               </li>
               <li>

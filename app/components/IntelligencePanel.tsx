@@ -105,13 +105,13 @@ export function IntelligencePanel({
           <div className="absolute inset-0 rounded-xl bg-slate-100/90 backdrop-blur-sm z-10 flex items-center justify-center">
             <div className="text-center p-4">
               <p className="text-sm font-medium text-slate-700">
-                Buy optimization credits to unlock full Intelligence insights for your resume.
+                Buy a resume optimization pack to unlock full Intelligence insights for your resume.
               </p>
               <a
                 href="#ats-checker-form"
                 className="mt-3 inline-block rounded-full bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition"
               >
-                Buy credits
+                Buy a pack
               </a>
             </div>
           </div>

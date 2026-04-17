@@ -33,7 +33,7 @@ export function LimitModal({
         <p className="text-slate-800 font-medium">{message}</p>
         {!isQuotaAnonymous && !isQuotaUser && (
           <p className="mt-2 text-sm text-slate-500">
-            Sign in with Google if needed, then buy optimization credits from the dashboard to continue.
+            Sign in with Google if needed, then buy a resume optimization pack from the dashboard to continue.
           </p>
         )}
         {isQuotaUser && (

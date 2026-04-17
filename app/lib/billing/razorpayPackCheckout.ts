@@ -56,7 +56,10 @@ export async function openRazorpayPackCheckout({
   checkoutTrigger = "pack_button",
 }: OpenRazorpayPackCheckoutParams): Promise<PackCheckoutResult> {
   if (isLoggedIn && creditsRemaining > 0) {
-    return { status: "error", message: "Use your current optimization credits before buying more." };
+    return {
+      status: "error",
+      message: "Use your current optimizations before buying another pack.",
+    };
   }
   try {
     await loadRazorpayScript();
@@ -88,7 +91,9 @@ export async function openRazorpayPackCheckout({
         return {
           status: "error",
           message:
-            typeof data.error === "string" ? data.error : "Use your credits before buying more.",
+            typeof data.error === "string"
+              ? data.error
+              : "Use your available optimizations before buying another pack.",
         };
       }
       return {
@@ -144,7 +149,7 @@ export async function openRazorpayPackCheckout({
         currency,
         order_id: data.orderId,
         name: "ResumeAtlas",
-        description: `${data.credits ?? ""} optimization credit(s)`,
+        description: `${data.credits ?? ""} resume optimization${data.credits === 1 ? "" : "s"}`,
         ...(Object.keys(prefill).length > 0 ? { prefill } : {}),
         theme: { color: "#0f172a" },
         handler: async (response: {

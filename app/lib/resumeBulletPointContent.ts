@@ -154,9 +154,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
   "data-scientist": {
     roleName: "Data Scientist",
     metaTitle:
-      "Data Scientist Resume Bullet Points (2026 Examples That Get Interviews) | ResumeAtlas",
+      "40+ Data Scientist Resume Bullet Points (Entry, Junior, Senior - 2026) | ResumeAtlas",
     metaDescription:
-      "Real data scientist resume bullet points used in 2026 hiring. Copy-ready examples + ATS-friendly phrasing for entry, junior, and senior roles.",
+      "40+ data scientist resume bullet points for entry-level, junior, and senior roles. ATS-friendly, copy-ready examples with Python, SQL, ML, and measurable outcomes for 2026 hiring.",
     keywords: [
       "data scientist resume bullet points",
       "data scientist resume bullets",
@@ -164,7 +164,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       "ATS keywords data science",
       "machine learning resume bullets",
     ],
-    h1: "Data Scientist Resume Bullets That Sound Credible",
+    h1: "40+ Data Scientist Resume Bullet Points You Can Adapt Fast",
     heroSubheadline:
       "Project-wise examples by career stage—entry, junior, and senior. No fluff: metrics, tools, and scope you can defend in an interview.",
     aboveFoldBullets: [
@@ -296,9 +296,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
   "software-engineer": {
     roleName: "Software Engineer",
     metaTitle:
-      "Software Engineer Resume Bullet Points (2026 Examples That Get Interviews) | ResumeAtlas",
+      "40+ Software Engineer Resume Bullet Points (Entry, Junior, Senior - 2026) | ResumeAtlas",
     metaDescription:
-      "Real software engineer resume bullet points used in 2026 hiring. Copy-ready examples + ATS-friendly phrasing for entry, junior, and senior roles.",
+      "40+ software engineer resume bullet points for entry-level, junior, and senior roles. ATS-friendly, copy-ready examples with stack, scale, reliability, and measurable outcomes for 2026 hiring.",
     keywords: [
       "software engineer resume bullet points",
       "software developer resume bullets",
@@ -306,7 +306,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       "ATS software engineer keywords",
       "resume lines for engineers",
     ],
-    h1: "Software Engineer Resume Bullets Hiring Managers Actually Read",
+    h1: "40+ Software Engineer Resume Bullet Points Hiring Teams Read",
     heroSubheadline:
       "Shipped features, reliability work, and scale—broken out by level so your bullets match the job you want, not a generic template.",
     aboveFoldBullets: [
@@ -438,9 +438,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
   "product-manager": {
     roleName: "Product Manager",
     metaTitle:
-      "40+ Product Manager Resume Bullet Points (Entry, Junior, Senior – Copy & Paste) | ResumeAtlas",
+      "40+ Product Manager Resume Bullet Points (APM, Mid, Senior - 2026) | ResumeAtlas",
     metaDescription:
-      "Real product manager resume bullet points used in 2026 hiring. Copy-ready examples + ATS-friendly phrasing for APM, mid-level, and senior roles.",
+      "40+ product manager resume bullet points for APM, mid-level, and senior PM roles. ATS-friendly, copy-ready examples with discovery, roadmap, metrics, and business outcomes for 2026 hiring.",
     keywords: [
       "product manager resume bullet points",
       "APM resume bullets",
@@ -448,9 +448,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       "product manager ATS keywords",
       "resume statements product management",
     ],
-    h1: "Product Manager Resume Bullets Tied to Outcomes",
+    h1: "40+ Product Manager Resume Bullet Points Tied to Outcomes",
     heroSubheadline:
-      "Discovery, prioritization, and measurable launches—by level—so you do not sound like a feature list with no business impact.",
+      "Discovery, prioritization, and measurable launches by level - so you avoid generic feature lists and show business impact fast.",
     aboveFoldBullets: [
       "Ran 18 customer discovery interviews; synthesized themes into a roadmap backlog that lifted trial-to-paid by 2.1%.",
       "Reprioritized roadmap using SQL-backed cohort retention and funnel metrics; fixed SMB churn concentrated in onboarding.",

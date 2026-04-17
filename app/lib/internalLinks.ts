@@ -14,6 +14,10 @@ export const ATS_RESUME_TEMPLATE_GUIDE_PATH =
 export const RESUME_WORK_EXPERIENCE_GUIDE_PATH =
   "/resume-guides/resume-work-experience-examples" as const;
 
+/** Skills section guide: examples, ATS-safe formatting, and keyword alignment. */
+export const RESUME_SKILLS_GUIDE_PATH =
+  "/resume-guides/resume-skills-examples" as const;
+
 /** Same tool with in-page form anchor (use for CTAs that should scroll to the checker). */
 export const CHECK_RESUME_AGAINST_JD_FORM_HREF =
   `${CHECK_RESUME_AGAINST_JD_PATH}#ats-checker-form` as const;
@@ -59,6 +63,10 @@ const ARTICLE_LINKS: InternalLink[] = [
     label: "Resume work experience examples & format",
   },
   {
+    path: RESUME_SKILLS_GUIDE_PATH,
+    label: "Resume skills examples & format",
+  },
+  {
     path: "/customize-resume-without-lying",
     label: "Customize resume without lying",
   },
@@ -74,6 +82,14 @@ const ARTICLE_LINKS: InternalLink[] = [
   {
     path: "/product-manager-resume-bullet-points",
     label: "Product manager resume bullet examples",
+  },
+  {
+    path: "/problems/resume-vs-job-description",
+    label: "Resume vs job description mismatch",
+  },
+  {
+    path: "/backend-developer/resume/bullet-points",
+    label: "Backend developer resume bullet points",
   },
 ];
 
@@ -134,6 +150,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   [RESUME_WORK_EXPERIENCE_GUIDE_PATH]: [
     CHECK_RESUME_AGAINST_JD_PATH,
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    RESUME_SKILLS_GUIDE_PATH,
     "/resume-examples",
     "/data-analyst-resume-example",
     "/product-manager-resume-example",
@@ -184,9 +201,34 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     CHECK_RESUME_AGAINST_JD_PATH,
     "/ats-resume-checker",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    RESUME_SKILLS_GUIDE_PATH,
     "/software-engineer-resume-keywords",
     "/software-engineer-resume-example",
+    "/problems/resume-vs-job-description",
+    "/data-scientist-resume-keywords",
+  ],
+  "/ats-resume-checker": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/resume-keyword-scanner",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    RESUME_SKILLS_GUIDE_PATH,
+    "/problems/resume-vs-job-description",
+    "/software-engineer-resume-bullet-points",
+    "/product-manager-resume-bullet-points",
+    "/data-scientist-resume-bullet-points",
+  ],
+  "/problems/resume-vs-job-description": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/resume-keyword-scanner",
+    "/ats-resume-checker",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    RESUME_SKILLS_GUIDE_PATH,
+    "/software-engineer-resume-bullet-points",
+    "/product-manager-resume-bullet-points",
+    "/data-scientist-resume-bullet-points",
+    "/backend-developer/resume/bullet-points",
   ],
   "/ats-compatibility-check": [
     CHECK_RESUME_AGAINST_JD_PATH,

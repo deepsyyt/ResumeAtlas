@@ -1543,8 +1543,8 @@ export async function POST(request: Request) {
         {
           error:
             reserved.code === "NO_CREDITS"
-              ? "No optimization credits remaining. Buy credits to continue tailoring your resume."
-              : "Unable to reserve a credit. Try again.",
+              ? "No optimizations remaining. Buy a pack to continue tailoring your resume."
+              : "Unable to reserve an optimization run. Try again.",
           code: reserved.code,
         },
         { status: 403 }

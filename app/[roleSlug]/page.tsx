@@ -15,6 +15,7 @@ import { roleToProblemLinkLabel, roleToProblemPath } from "@/app/lib/roleSeo";
 import { goodResumeSnippet } from "@/app/lib/roleHubSeo";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { absoluteCanonicalUrl, roleResumeExamplePath } from "@/app/lib/searchIntentSeo";
+import { CONTENT_FRESHNESS_YEAR } from "@/app/lib/contentFreshness";
 
 type PageParams = {
   roleSlug: string;
@@ -31,10 +32,9 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
     ? absoluteCanonicalUrl(roleResumeExamplePath(role))
     : absoluteCanonicalUrl(`/${params.roleSlug}`);
   return {
-    title: `${rn} Resume Not Getting Interviews? (ATS + JD Fix) | ResumeAtlas`,
+    title: `${rn} Resume Guide (${CONTENT_FRESHNESS_YEAR}): Examples, Keywords & ATS Fixes | ResumeAtlas`,
     description:
-      `${rn} resume hub: open the canonical ${rn.toLowerCase()} resume example for structure and sample bullets, ` +
-      `the ${rn.toLowerCase()} resume keywords hub for posting-aligned phrasing, or paste resume + one job description into ResumeAtlas’s free matcher.`,
+      `${rn} resume guide for ${CONTENT_FRESHNESS_YEAR}: section-by-section examples, ATS keywords, bullet patterns, and posting-specific resume-vs-job-description fixes. Use ResumeAtlas free tools to improve match quality before you apply.`,
     // Standalone `/{role}-resume-example` is the indexed URL; hub duplicates canonical to avoid competing URLs.
     robots: standaloneExample
       ? { index: false, follow: true }
@@ -147,11 +147,12 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
       <section className="border-b border-slate-200 bg-slate-50/60">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16 text-center">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
-            {roleName} Resume Not Getting Interviews? Fix Keywords &amp; ATS
+            {roleName} Resume Guide: Examples, Keywords &amp; ATS Fixes
           </h1>
           <p className="mt-4 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
-            If interviews have gone quiet, your resume is still the first gate: most applications fail
-            on keyword match, buried metrics, or ATS-unfriendly structure - before a human reads a line.
+            Build a stronger {roleLower} resume with clear examples, posting-aligned keywords, and
+            ATS-friendly structure. This hub helps you move from generic drafts to role-matched
+            applications that are easier to shortlist.
           </p>
           <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
             Use this hub to spot gaps, then run a real posting through ResumeAtlas to see what’s

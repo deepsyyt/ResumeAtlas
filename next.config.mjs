@@ -23,7 +23,11 @@ const RESUME_BULLET_ROLES = [
  * Roles with consolidated `/{role}-resume-example` (patterns + sample appendix).
  * Their `/{role}` hub is noindex and redirects here so one URL owns the cluster.
  */
-const RESUME_EXAMPLE_STANDALONE_ROLES = ["data-analyst", "product-manager"];
+const RESUME_EXAMPLE_STANDALONE_ROLES = [
+  "data-analyst",
+  "frontend-developer",
+  "product-manager",
+];
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -144,6 +148,40 @@ const nextConfig = {
       },
     ]);
 
+    // Keep bullet-point intent on the dedicated bullet hubs for supported roles.
+    const resumeBulletLegacyTopicRedirects = RESUME_BULLET_ROLES.flatMap((role) => [
+      {
+        source: `/${role}/resume/bullet-points`,
+        destination: `/${role}-resume-bullet-points`,
+        permanent: true,
+      },
+      {
+        source: `/${role}/resume/bullet-points/`,
+        destination: `/${role}-resume-bullet-points`,
+        permanent: true,
+      },
+      {
+        source: `/${role}/resume/bullet-points-entry-level`,
+        destination: `/${role}-resume-bullet-points-entry-level`,
+        permanent: true,
+      },
+      {
+        source: `/${role}/resume/bullet-points-entry-level/`,
+        destination: `/${role}-resume-bullet-points-entry-level`,
+        permanent: true,
+      },
+      {
+        source: `/${role}/resume/bullet-points-senior`,
+        destination: `/${role}-resume-bullet-points-senior`,
+        permanent: true,
+      },
+      {
+        source: `/${role}/resume/bullet-points-senior/`,
+        destination: `/${role}-resume-bullet-points-senior`,
+        permanent: true,
+      },
+    ]);
+
     const resumeGuideTopicRedirects = ROLE_SLUGS.flatMap((role) => {
       const topics = [
         "bullet-points",
@@ -210,6 +248,7 @@ const nextConfig = {
 
     return [
       ...resumeBulletCanonicalRedirects,
+      ...resumeBulletLegacyTopicRedirects,
       ...resumeTemplateToExampleRedirects,
       ...roleHubRedirects,
       ...standaloneRoleHubToResumeExampleRedirects,

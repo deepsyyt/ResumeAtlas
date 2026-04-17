@@ -1063,42 +1063,43 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
   "how-to-tailor-resume-to-job-description": {
     slug: "how-to-tailor-resume-to-job-description",
     primaryKeyword: "how to tailor resume to job description",
-    metaTitle: "How to Tailor Resume to Job Description (Step by Step) | ResumeAtlas",
+    metaTitle:
+      "How to Tailor Resume to Job Description (2026): Step-by-Step ATS Method | ResumeAtlas",
     metaDescription:
-      "Learn how to tailor resume to job description: extract keywords, align bullets, reorder sections, and verify gaps with ResumeAtlas before you apply.",
-    h1: "How to Tailor a Resume to a Job Description (Without Starting From Scratch Every Time)",
+      "Learn how to tailor your resume to a job description in 2026: extract required keywords, map must-haves to proof bullets, reorder for relevance, and validate ATS gaps before you apply.",
+    h1: "How to Tailor Your Resume to a Job Description (Fast, Honest, Repeatable)",
     hook: [
-      "Knowing how to tailor resume to job description work saves hours and raises reply rates. The goal is not fraud - it is translation: show the overlap between your real experience and this employer’s language.",
-      "Use this as a repeatable method whenever you ask how to tailor resume to job description for a new posting.",
+      "Tailoring is not rewriting from zero. It is a structured match process: map one posting's must-haves to your real evidence and make relevance obvious in the top half of your resume.",
+      "Use this method for every new application when you search how to tailor resume to job description, compare resume to job posting, or optimize resume for ATS screening.",
     ],
     rootCauses: {
       heading: "Why tailoring beats a generic file",
       intro:
-        "Untailored resumes fail on overlap and clarity.",
+        "Generic resumes lose on relevance before recruiters read deeply.",
       bullets: [
         {
-          title: "Resume not aligned to job description",
-          text: "Readers want fast proof of fit.",
+          title: "Weak requirement-to-proof mapping",
+          text: "Recruiters need to see each must-have mapped to concrete evidence fast.",
         },
         {
-          title: "Missing keywords",
-          text: "Easy to fix once you know how to tailor resume to job description systematically.",
+          title: "Missing required keywords",
+          text: "Important role terms never appear in summary, skills, or top bullets.",
         },
         {
-          title: "Generic resume",
-          text: "One story for all roles dilutes each application.",
+          title: "One-size-fits-all story",
+          text: "The same resume for every role hides your strongest job-specific fit.",
         },
         {
-          title: "Weak bullets",
-          text: "Tailoring forces stronger proof.",
+          title: "Bullets without outcomes",
+          text: "Claims are not backed by measurable business or delivery impact.",
         },
         {
-          title: "ATS",
-          text: "Overlap improves estimated match.",
+          title: "ATS ranking drag",
+          text: "Low overlap with posting language reduces shortlist probability.",
         },
         {
-          title: "Role mismatch perception",
-          text: "Tailoring adds bridging language.",
+          title: "Unclear seniority or domain fit",
+          text: "Missing bridge language makes your background look off-target.",
         },
       ],
     },
@@ -1106,44 +1107,44 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
       heading: "Mistakes",
       intro: "When learning how to tailor resume to job description, avoid:",
       bullets: [
-        "Copying the posting verbatim.",
-        "Changing job titles to fake fit.",
-        "Tailoring only the summary and leaving bullets generic.",
+        "Copying job description text word-for-word without proof.",
+        "Changing titles or scope to fake fit.",
+        "Editing summary only and leaving core bullets unchanged.",
       ],
     },
     whatWorks: {
       heading: "Step-by-step: how to tailor resume to job description",
       steps: [
         {
-          title: "Read the posting twice",
-          body: "Mark must-haves vs nice-to-haves.",
+          title: "Extract must-haves in 5 minutes",
+          body: "Mark required skills, tools, ownership terms, and outcomes from the posting.",
         },
         {
-          title: "Extract keywords",
-          body: "Tools, methods, domains, soft skills.",
+          title: "Build a keyword map",
+          body: "Group terms into tools, methods, domain language, and communication signals.",
         },
         {
-          title: "Align experience",
-          body: "For each must-have, ensure one bullet references it if true.",
+          title: "Map each requirement to proof",
+          body: "For every must-have, add one truthful bullet or skill line showing evidence.",
         },
         {
-          title: "Reorder sections and bullets",
-          body: "Most relevant first.",
+          title: "Reorder for relevance",
+          body: "Move the most role-relevant bullets and skills into the top half of the resume.",
         },
         {
-          title: "Quantify impact",
-          body: "Add metrics next to tailored claims.",
+          title: "Quantify outcomes",
+          body: "Attach clear metrics, scope, or quality impact to tailored claims.",
         },
         {
-          title: "Final pass",
-          body: "Read as the hiring manager: would you shortlist this person?",
+          title: "Validate ATS and skim-read",
+          body: "Run a JD match check, then skim your resume in 30 seconds for clarity and fit.",
         },
       ],
     },
     resumeAtlas: {
       heading: "ResumeAtlas speeds up how to tailor resume to job description",
       paragraphs: [
-        "Paste the posting and your resume to see likely gaps and alignment feedback. You still write the truth - the tool shows where the JD and your draft diverge.",
+        "Paste one posting and your resume to get keyword gaps, requirement mismatch signals, and priority fixes. You still control wording and truthfulness; ResumeAtlas highlights where your draft diverges from the JD.",
       ],
     },
     benefits: {
@@ -1160,20 +1161,20 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
       heading: "Example",
       beforeTitle: "Before",
       before:
-        "Candidate unsure how to tailor resume to job description for a “staff engineer” post.",
+        "Candidate applies to a senior backend role with a generic engineer resume and gets no replies.",
       afterTitle: "After",
       after:
-        "Summary cites mentoring, RFCs, and on-call - terms from the posting - with matching bullets.",
+        "Summary and top bullets are rewritten around APIs, CI/CD reliability, on-call ownership, and impact metrics used in the posting.",
     },
     cta: {
       heading: "Tailor the next application",
-      body: "Use ResumeAtlas on one JD, apply the gap list, then submit.",
+      body: "Use one real job description in ResumeAtlas, apply the highest-impact gap fixes, and submit a targeted resume version.",
     },
     faq: [
       {
         question: "How to tailor a resume quickly?",
         answer:
-          "Thirty focused minutes on summary, skills, and three bullets often beats rewriting everything.",
+          "Use a 30-minute pass: extract must-have terms, update summary/skills, rewrite top 3 bullets with proof, and validate match before sending.",
       },
       {
         question: "Can I use one resume for all jobs?",
@@ -1183,7 +1184,7 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
       {
         question: "Do ATS scores matter?",
         answer:
-          "They help you see if tailoring improved overlap.",
+          "They are directional. Use ATS-style scores to compare versions and confirm that tailoring improved overlap with the posting.",
       },
       {
         question: "Why am I not getting interviews?",
@@ -1202,13 +1203,14 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
   "resume-vs-job-description": {
     slug: "resume-vs-job-description",
     primaryKeyword: "resume vs job description",
-    metaTitle: "Resume vs Job Description Mismatch? Find Gaps and Fix Them Fast | ResumeAtlas",
+    metaTitle:
+      "Resume vs Job Description Checker (2026): Compare, Match Keywords & Fix Gaps | ResumeAtlas",
     metaDescription:
-      "Understand resume vs job description alignment: what employers compare, how to map keywords, and how ResumeAtlas shows likely gaps for a specific posting.",
-    h1: "Resume vs Job Description - What Employers Actually Compare in the First 30 Seconds",
+      "Compare your resume to a specific job description and see where alignment breaks: keyword gaps, weak evidence, and ordering mistakes. Learn a practical 2026 framework to tailor honestly before you apply.",
+    h1: "Resume vs Job Description: How to Compare, Match Keywords, and Improve Fit",
     hook: [
-      "Thinking in terms of resume vs job description helps you stop treating the resume as a biography. It is an argument that you fit this spec.",
-      "Use this page whenever you compare resume vs job description mentally and feel unsure what to change.",
+      "Treat resume vs job description as a side-by-side matching exercise, not a generic writing task. You are proving fit to one posting, fast.",
+      "Use this page when you are unsure which bullets to rewrite first, which keywords matter most, and how to improve ATS alignment without keyword stuffing.",
     ],
     rootCauses: {
       heading: "Why resume vs job description alignment matters",

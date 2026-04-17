@@ -38,6 +38,7 @@ function priorityForPath(pathname: string): number {
   if (
     pathname === "/resume-guides/ats-resume-template" ||
     pathname === "/resume-guides/resume-work-experience-examples" ||
+    pathname === "/resume-guides/resume-skills-examples" ||
     pathname === "/common-resume-mistakes-fail-ats" ||
     pathname === "/customize-resume-without-lying"
   ) {
@@ -84,6 +85,12 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     changeFrequency: "weekly" as const,
     priority: priorityForPath("/check-resume-against-job-description"),
   });
+  entries.push({
+    url: `${base}/tools`,
+    lastModified: new Date("2026-03-31"),
+    changeFrequency: "weekly" as const,
+    priority: priorityForPath("/tools"),
+  });
   const toolClusterLastMod = new Date("2026-03-29");
   const toolClusterPaths = [
     "/ats-resume-checker",
@@ -97,19 +104,27 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
       priority: priorityForPath(p),
     });
   }
+  // Keep guide cluster freshness aligned after tiered SEO updates.
+  const guideClusterLastMod = new Date("2026-04-17");
   entries.push({
     url: `${base}/resume-guides/ats-resume-template`,
-    lastModified: new Date("2026-03-09"),
+    lastModified: guideClusterLastMod,
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/resume-guides/ats-resume-template"),
   });
   entries.push({
     url: `${base}/resume-guides/resume-work-experience-examples`,
-    lastModified: new Date("2026-04-12"),
+    lastModified: guideClusterLastMod,
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/resume-guides/resume-work-experience-examples"),
   });
-  const roleAtsTemplateLastMod = new Date("2026-04-12");
+  entries.push({
+    url: `${base}/resume-guides/resume-skills-examples`,
+    lastModified: guideClusterLastMod,
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/resume-guides/resume-skills-examples"),
+  });
+  const roleAtsTemplateLastMod = guideClusterLastMod;
   for (const path of Object.values(ROLE_ATS_PATH)) {
     entries.push({
       url: `${base}${path}`,

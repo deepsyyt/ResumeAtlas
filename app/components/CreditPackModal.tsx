@@ -63,6 +63,8 @@ export function CreditPackModal({
 }: CreditPackModalProps) {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [showBundles, setShowBundles] = useState(false);
+  const trackedPrimaryViewRef = useRef(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState<{
     packName: string;
     creditsAdded: number;
@@ -74,6 +76,8 @@ export function CreditPackModal({
       setLocalError(null);
       setCheckoutLoading(null);
       setCheckoutSuccess(null);
+      setShowBundles(false);
+      trackedPrimaryViewRef.current = false;
     }
   }, [open]);
 
@@ -82,6 +86,13 @@ export function CreditPackModal({
     gtagEvent("billing_payment_modal_open", { event_category: "billing" });
     void logBillingEvent("billing_payment_modal_open");
   }, [open]);
+
+  useEffect(() => {
+    if (!open || checkoutSuccess || (isLoggedIn && creditsRemaining > 0)) return;
+    if (trackedPrimaryViewRef.current) return;
+    trackedPrimaryViewRef.current = true;
+    gtagEvent("pricing_primary_view", { event_category: "billing" });
+  }, [open, checkoutSuccess, isLoggedIn, creditsRemaining]);
 
   const getAuthHeaders = useCallback(async () => {
     const supabase = createClient();
@@ -114,8 +125,16 @@ export function CreditPackModal({
         });
         if (result.status === "paid") {
           const pkg = getCreditPackage(packageId);
+          const displayPackName =
+            packageId === "starter"
+              ? "Optimize this resume"
+              : packageId === "jobseeker"
+                ? "5 Optimizations"
+                : packageId === "power"
+                  ? "15 Optimizations"
+                  : pkg?.name ?? pkgMeta?.name ?? "Optimization pack";
           setCheckoutSuccess({
-            packName: pkg?.name ?? pkgMeta?.name ?? "Credit pack",
+            packName: displayPackName,
             creditsAdded: result.creditsGranted,
             balance: result.creditsRemaining,
           });
@@ -143,9 +162,38 @@ export function CreditPackModal({
     setCheckoutSuccess(null);
   }, []);
 
+  const handlePackageClick = useCallback(
+    (pid: CreditPackageId, pricingEvent: string) => {
+      const selectedPack = getCreditPackage(pid);
+      gtagEvent(pricingEvent, { event_category: "billing", package_id: pid });
+      gtagEvent("billing_credit_pack_checkout_click", {
+        event_category: "billing",
+        package_id: pid,
+        credits: selectedPack?.credits ?? 0,
+        pack_name: selectedPack?.name ?? pid,
+        next_step: isLoggedIn ? "razorpay" : "google_auth",
+      });
+      void logBillingEvent("billing_credit_pack_checkout_click", {
+        package_id: pid,
+        credits: selectedPack?.credits ?? 0,
+        pack_name: selectedPack?.name ?? pid,
+        next_step: isLoggedIn ? "razorpay" : "google_auth",
+      });
+      if (!isLoggedIn) {
+        void onStartGoogleAuthForPackage(pid);
+        return;
+      }
+      void runCheckout(pid, "pack_button");
+    },
+    [isLoggedIn, onStartGoogleAuthForPackage, runCheckout]
+  );
+
   if (!open) return null;
 
   const packs = listCreditPackages();
+  const starterPack = packs.find((p) => p.id === "starter") ?? null;
+  const fivePack = packs.find((p) => p.id === "jobseeker") ?? null;
+  const fifteenPack = packs.find((p) => p.id === "power") ?? null;
   const showStart = isLoggedIn && creditsRemaining > 0;
   const showPurchasePacks = !isLoggedIn || creditsRemaining === 0;
   const busy = isBusy || checkoutLoading !== null || isStartingGoogleAuth;
@@ -185,6 +233,15 @@ export function CreditPackModal({
               ? "Start optimization"
               : "Unlock resume optimization"}
         </h2>
+        <div className="absolute right-6 top-6">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+          >
+            Close
+          </button>
+        </div>
 
         {checkoutSuccess ? (
           <div
@@ -193,7 +250,7 @@ export function CreditPackModal({
             aria-live="polite"
           >
             <p className="text-sm font-semibold text-emerald-950">
-              {checkoutSuccess.packName}: +{checkoutSuccess.creditsAdded} credit
+              {checkoutSuccess.packName}: +{checkoutSuccess.creditsAdded} optimization run
               {checkoutSuccess.creditsAdded === 1 ? "" : "s"} added to your account.
             </p>
             <p className="mt-2 text-sm text-slate-700">
@@ -201,8 +258,8 @@ export function CreditPackModal({
               <span className="font-semibold tabular-nums text-slate-900">
                 {checkoutSuccess.balance}
               </span>{" "}
-              credit{checkoutSuccess.balance === 1 ? "" : "s"} available. Each successful optimization for one job
-              description uses 1 credit; nothing is charged if optimization does not complete.
+              optimization run{checkoutSuccess.balance === 1 ? "" : "s"} available. Each successful optimization for
+              one job description uses 1 run; nothing is charged if optimization does not complete.
             </p>
             <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button
@@ -225,15 +282,19 @@ export function CreditPackModal({
           </div>
         ) : (
           <>
-        <p className="mt-2 text-sm text-slate-600">
-          {showStart
-            ? "You have credits ready. One credit is used when optimization runs successfully for this job description."
-            : "Sign in to save your credits and download optimized resumes. ATS analysis stays free. Optimization uses credits."}
-        </p>
-        <p className="mt-1 text-xs text-slate-500">
-          1 credit = one tailored resume optimization for one job description. Credits are deducted only when
-          optimization completes successfully.
-        </p>
+            {!showPurchasePacks && (
+              <>
+                <p className="mt-2 text-sm text-slate-600">
+                  {showStart
+                    ? "You are ready to optimize. One run is used when this resume is successfully optimized for this job description."
+                    : "Sign in to save your optimization balance and download optimized resumes. ATS analysis stays free."}
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  1 run = one tailored resume optimization for one job description. Runs are deducted only when
+                  optimization completes successfully.
+                </p>
+              </>
+            )}
           </>
         )}
 
@@ -246,7 +307,7 @@ export function CreditPackModal({
         {!checkoutSuccess && showStart && (
           <div className="mt-5">
             <p className="text-sm font-medium text-slate-700">
-              Balance: <span className="tabular-nums text-slate-900">{creditsRemaining}</span> credit
+              Balance: <span className="tabular-nums text-slate-900">{creditsRemaining}</span> optimization run
               {creditsRemaining === 1 ? "" : "s"}
             </p>
             <button
@@ -258,70 +319,126 @@ export function CreditPackModal({
               {isBusy ? "Starting…" : "Start optimization"}
             </button>
             <p className="mt-3 text-xs text-slate-500">
-              You can buy more credits only after these are used (balance reaches zero).
+              You can buy another pack after these are used (balance reaches zero).
             </p>
           </div>
         )}
 
         {!checkoutSuccess && showPurchasePacks && (
         <div className={showStart ? "mt-8 border-t border-slate-200 pt-6" : "mt-6"}>
-          <h3 className="text-sm font-semibold text-slate-900">Buy optimization credits</h3>
-          <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            {packs.map((p) => {
-              const pid = p.id as CreditPackageId;
-              const loading = checkoutLoading === pid;
-              return (
-                <div
-                  key={p.id}
-                  className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 flex flex-col"
-                >
-                  <p className="text-sm font-semibold text-slate-900">{p.name}</p>
-                  <p className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">
-                    {formatCreditPackPrice(p.razorpayAmount, p.currency)}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-600">
-                    {p.credits} credit{p.credits === 1 ? "" : "s"}
-                  </p>
-                  <p className="mt-2 text-[11px] text-slate-500 leading-snug">
-                    {packs[0]?.currency === "USD"
-                      ? "Charged in US dollars at Razorpay checkout (taxes as applicable)."
-                      : "Same amount at Razorpay checkout (taxes as applicable)."}
-                  </p>
-                  <button
-                    type="button"
-                    disabled={busy && !loading}
-                    onClick={() => {
-                      gtagEvent("billing_credit_pack_checkout_click", {
-                        event_category: "billing",
-                        package_id: pid,
-                        credits: p.credits,
-                        pack_name: p.name,
-                        next_step: isLoggedIn ? "razorpay" : "google_auth",
-                      });
-                      void logBillingEvent("billing_credit_pack_checkout_click", {
-                        package_id: pid,
-                        credits: p.credits,
-                        pack_name: p.name,
-                        next_step: isLoggedIn ? "razorpay" : "google_auth",
-                      });
-                      if (!isLoggedIn) {
-                        void onStartGoogleAuthForPackage(pid);
-                        return;
-                      }
-                      void runCheckout(pid, "pack_button");
-                    }}
-                    className="mt-auto pt-4 w-full rounded-lg bg-white border border-slate-300 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition disabled:opacity-60"
-                  >
-                    {loading
-                      ? "Opening checkout…"
-                      : isStartingGoogleAuth
-                        ? "Signing in…"
-                        : `Continue with ${p.credits} credit${p.credits === 1 ? "" : "s"}`}
-                  </button>
+          <h2 className="text-2xl font-semibold text-center mb-2">
+            Get an interview-ready, ATS-optimized resume in one click
+          </h2>
+          <p className="text-center text-gray-600 mb-6">
+            Instant ATS improvements, stronger bullets, downloadable resume.
+          </p>
+
+          {starterPack ? (
+            <div className="border rounded-2xl p-6 shadow-sm max-w-md mx-auto bg-white">
+              <div className="text-sm text-gray-500 mb-1">Most popular</div>
+              <div className="text-3xl font-bold mb-1">
+                {formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)}
+              </div>
+              <div className="text-gray-600 mb-4">
+                Optimize this resume (1 job description)
+              </div>
+
+              <ul className="space-y-2 text-sm mb-6">
+                <li>✔ Add missing ATS keywords</li>
+                <li>✔ Rewrite weak bullet points</li>
+                <li>✔ Rewrite summary for this role</li>
+                <li>✔ Improve score for this job</li>
+                <li>✔ Download PDF + editable file</li>
+              </ul>
+
+              <button
+                type="button"
+                disabled={busy && checkoutLoading !== "starter"}
+                onClick={() => handlePackageClick("starter", "pricing_primary_click")}
+                className="w-full bg-black text-white rounded-xl py-3 font-medium disabled:opacity-60"
+              >
+                {checkoutLoading === "starter"
+                  ? "Opening checkout…"
+                  : isStartingGoogleAuth
+                    ? "Signing in…"
+                    : "Pay and optimise resume now"}
+              </button>
+
+              <p className="text-xs text-center text-gray-500 mt-3">
+                One-time payment • Secure checkout • No subscription
+              </p>
+            </div>
+          ) : null}
+
+          {(fivePack || fifteenPack) && (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = !showBundles;
+                  setShowBundles(next);
+                  if (next) {
+                    gtagEvent("pricing_bundles_expand", { event_category: "billing" });
+                  }
+                }}
+                className="mt-5 text-sm underline text-gray-600 block mx-auto"
+              >
+                Applying to multiple jobs? View bundles
+              </button>
+
+              {showBundles && (
+                <div className="grid md:grid-cols-2 gap-4 mt-6 max-w-3xl mx-auto">
+                  {fivePack ? (
+                    <div className="border rounded-xl p-5">
+                      <h3 className="font-semibold mb-1">5 Optimizations</h3>
+                      <div className="text-2xl font-bold mb-2">
+                        {formatCreditPackPrice(fivePack.razorpayAmount, fivePack.currency)}
+                      </div>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Best for active job search
+                      </p>
+                      <button
+                        type="button"
+                        disabled={busy && checkoutLoading !== "jobseeker"}
+                        onClick={() => handlePackageClick("jobseeker", "pricing_bundle_5_click")}
+                        className="w-full rounded-lg bg-slate-900 py-2 text-white hover:bg-slate-800 transition disabled:opacity-60"
+                      >
+                        {checkoutLoading === "jobseeker"
+                          ? "Opening checkout…"
+                          : isStartingGoogleAuth
+                            ? "Signing in…"
+                            : "Pay and get 5 optimizations"}
+                      </button>
+                    </div>
+                  ) : null}
+
+                  {fifteenPack ? (
+                    <div className="border rounded-xl p-5">
+                      <h3 className="font-semibold mb-1">15 Optimizations</h3>
+                      <div className="text-2xl font-bold mb-2">
+                        {formatCreditPackPrice(fifteenPack.razorpayAmount, fifteenPack.currency)}
+                      </div>
+                      <p className="text-sm text-gray-600 mb-4">
+                        For multiple roles &amp; iterations
+                      </p>
+                      <button
+                        type="button"
+                        disabled={busy && checkoutLoading !== "power"}
+                        onClick={() => handlePackageClick("power", "pricing_bundle_15_click")}
+                        className="w-full rounded-lg bg-slate-900 py-2 text-white hover:bg-slate-800 transition disabled:opacity-60"
+                      >
+                        {checkoutLoading === "power"
+                          ? "Opening checkout…"
+                          : isStartingGoogleAuth
+                            ? "Signing in…"
+                            : "Pay and get 15 optimizations"}
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
-              );
-            })}
-          </div>
+              )}
+            </>
+          )}
         </div>
         )}
 
@@ -394,25 +511,16 @@ export function CreditPackModal({
 
         {!checkoutSuccess && !isLoggedIn && (
           <p className="mt-4 text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
-            Pick a pack to continue. We&apos;ll send you to Google sign-in and return you here to choose your pack again before checkout.
+            Choose an option to continue. We&apos;ll send you to Google sign-in and return you here before checkout.
           </p>
         )}
 
         {!checkoutSuccess && isLoggedIn && creditsRemaining === 0 && (
           <p className="mt-4 text-xs text-slate-600">
-            You&apos;ve used all your optimization credits. Buy more to keep tailoring your resume for new jobs.
+            You&apos;ve used all available optimizations. Buy another pack to keep tailoring your resume for new jobs.
           </p>
         )}
 
-        <div className="mt-6 flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
-          >
-            Close
-          </button>
-        </div>
       </div>
     </div>
   );

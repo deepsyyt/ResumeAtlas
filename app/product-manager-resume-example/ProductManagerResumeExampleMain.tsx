@@ -367,6 +367,36 @@ export function ProductManagerResumeExampleMain({ omitHero = false }: { omitHero
           </p>
         </section>
 
+        <section className="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-5 sm:p-6">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Product manager query intent this page targets
+          </h2>
+          <p className="mt-2 text-sm text-slate-700 sm:text-base">
+            This page is designed for high-intent searches like "product manager resume example",
+            "product manager resume template", and "product manager resume examples". It combines an
+            ATS-friendly sample with role-specific bullet guidance and conversion-focused links.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm text-slate-700 sm:text-base">
+            <li>Use this page for structure and example language.</li>
+            <li>Use JD matcher for posting-specific tailoring before each application.</li>
+            <li>Use keyword scanner to patch weak role-term coverage quickly.</li>
+          </ul>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link
+              href={JD_CHECK_HREF}
+              className="inline-flex rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              Optimize for this job description
+            </Link>
+            <Link
+              href={KEYWORD_SCANNER_HREF}
+              className="inline-flex rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+            >
+              Scan missing PM keywords
+            </Link>
+          </div>
+        </section>
+
         {/* 5. Common mistakes */}
         <section>
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">

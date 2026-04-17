@@ -32,6 +32,7 @@ export type ToolClusterPageConfig = {
   topStripStrong: string;
   webAppName: string;
   webAppDescription: string;
+  keywords?: string[];
   faq: ToolClusterFaqItem[];
   /** Primary button + final CTA link text */
   ctaAnchor: string;
@@ -61,6 +62,8 @@ export function buildToolClusterMetadata(config: ToolClusterPageConfig): Metadat
   return {
     title: { absolute: config.titleAbsolute },
     description: config.description,
+    keywords: config.keywords,
+    robots: { index: true, follow: true },
     alternates: { canonical: absolutePageUrl },
     openGraph: {
       title: config.ogTitle,
@@ -160,6 +163,16 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   exampleScoreLine: "Estimated match score: 66% before targeted edits.",
   exampleFixLine:
     "Fix first: add one SQL project bullet and one experiment-impact bullet where truthful.",
+  keywords: [
+    "match resume to job description",
+    "resume vs job description checker",
+    "compare resume to job posting",
+    "tailor resume to job description",
+    "resume job description match",
+    "resume matching tool",
+    "optimize resume for job description",
+    "job description and resume match",
+  ],
   faq: [
     {
       question: "What does it mean to match a resume to a job description?",
@@ -196,6 +209,16 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
   exampleScoreLine: "Estimated ATS readability score: 58% before formatting cleanup.",
   exampleFixLine:
     "Fix first: one-column layout, standard headings, and consistent bullet/date formatting.",
+  keywords: [
+    "ATS resume checker",
+    "ATS friendly resume check",
+    "resume ATS format",
+    "check resume for ATS compatibility",
+    "resume that will pass ATS",
+    "ATS system for resume",
+    "resume formatting for ATS",
+    "ATS resume format template",
+  ],
   faq: [
     {
       question: "What is an ATS resume checker?",
@@ -297,6 +320,16 @@ export const TOOL_CLUSTER_KEYWORD_SCANNER: ToolClusterPageConfig = {
   exampleScoreLine: "Keyword coverage estimate: 61% for the target posting.",
   exampleFixLine:
     "Fix first: add concrete SQL + experiment bullets tied to project outcomes.",
+  keywords: [
+    "resume keyword scanner",
+    "resume keyword checker",
+    "job description keyword finder",
+    "resume keyword analyzer",
+    "scanning resumes for keywords",
+    "keywords for resume scanners",
+    "cv keyword scanner",
+    "find keywords from job description",
+  ],
   faq: [
     {
       question: "What is a resume keyword scanner?",

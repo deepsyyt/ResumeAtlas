@@ -201,6 +201,7 @@ export type RoleSlug =
  */
 export const ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE: readonly RoleSlug[] = [
   "data-analyst",
+  "frontend-developer",
   "product-manager",
 ];
 
@@ -224,7 +225,7 @@ export const KEYWORD_PAGES: Record<RoleSlug, KeywordsConfig> = {
     roleName: "Data Scientist",
     h1: "ATS Keywords for Data Scientist Resumes",
     metaDescription:
-      "Key ATS keywords for data scientist resumes, including machine learning, experimentation, and Python tooling.",
+      "Data scientist resume keywords for ATS: machine learning, SQL, experimentation, Python tooling, and data science terms that improve job-description match.",
   },
   "software-engineer": {
     slug: "software-engineer",

@@ -238,6 +238,33 @@ export function ATSResumeCheckerFreeLanding() {
           </ul>
         </section>
 
+        <section className="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            ATS format resume template checklist (2026)
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
+            If you are searching for "ATS format resume", "best resume format for ATS systems", or
+            "ATS resume format template", this is the practical checklist to use before applying.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
+            <li>Use one-column reverse-chronological structure.</li>
+            <li>Keep section names standard: Summary, Experience, Skills, Education.</li>
+            <li>Keep bullets concise and evidence-driven (tool + scope + outcome).</li>
+            <li>Avoid tables, icons, text boxes, and image-only design elements.</li>
+            <li>Validate ATS compatibility before each high-priority application.</li>
+          </ul>
+          <p className="mt-3 text-sm text-slate-700">
+            Want posting-level alignment too? Then run{" "}
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              compare resume with job description
+            </Link>{" "}
+            after formatting cleanup.
+          </p>
+        </section>
+
         <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900">
             Real-world ATS proof example
