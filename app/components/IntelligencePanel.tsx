@@ -700,7 +700,7 @@ export function IntelligencePanel({
                   onClick={onOpenOptimizer}
                   className="w-full sm:w-auto sm:shrink-0 inline-flex items-center justify-center rounded-lg bg-slate-900 py-2 px-3.5 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[180px] sm:min-w-[200px]"
                 >
-                  Optimize Resume For This Job
+                  Unlock optimization for this resume
                 </button>
                 <p className="text-[10px] text-slate-500 text-center sm:text-right">
                   Adds missing keywords and strengthens bullets for this job.
@@ -942,7 +942,7 @@ export function IntelligencePanel({
                 onClick={onOpenOptimizer}
                 className="sm:shrink-0 w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-slate-900 py-2 px-3.5 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[180px]"
               >
-                Optimize Resume For This Job
+                Unlock optimization for this resume
               </button>
             )}
           </div>

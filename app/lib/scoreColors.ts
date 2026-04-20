@@ -51,7 +51,7 @@ export type ATSVerdictLines = { headline: string; subline: string };
 
 export function getATSVerdictLines(score: number): ATSVerdictLines {
   const s = Math.max(0, Math.min(100, Math.round(score)));
-  const cta = "Optimize Resume For This Job";
+  const cta = "Unlock optimization for this resume";
 
   if (s >= 88) {
     return {

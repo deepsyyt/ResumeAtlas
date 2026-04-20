@@ -361,7 +361,7 @@ export function CreditPackModal({
                   ? "Opening checkout…"
                   : isStartingGoogleAuth
                     ? "Signing in…"
-                    : "Pay and optimise resume now"}
+                    : "Unlock optimization for this resume"}
               </button>
 
               <p className="text-xs text-center text-gray-500 mt-3">

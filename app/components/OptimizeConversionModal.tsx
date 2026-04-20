@@ -67,9 +67,9 @@ export function OptimizeConversionModal({
   const primaryCtaLabel = (() => {
     if (isStartingGoogleAuth) return "Signing in with Google…";
     if (busy) return "Starting…";
-    if (!isLoggedIn) return "Sign in to continue";
-    if (hasOptimizationCredits) return "Pay and unlock optimization";
-    return "Pay and unlock optimization";
+    if (!isLoggedIn) return "Sign in to unlock optimization for this resume";
+    if (hasOptimizationCredits) return "Start optimization for this resume";
+    return "Unlock optimization for this resume";
   })();
 
   /** Lightweight success screen (aligned with CreditPackModal payment success). */
