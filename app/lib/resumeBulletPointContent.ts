@@ -601,7 +601,7 @@ function dsEntry(): ResumeBulletDetailCopy {
     noExperienceReassurance:
       "No experience? These bullet points are designed for projects, internships, and coursework.",
     queryBreadthLine:
-      "These resume bullet points are ideal for freshers, students, internship applicants, and candidates with no prior work experience.",
+      "These entry-level data scientist resume bullet points are for freshers, students, internship applicants, and candidates with no prior full-time experience.",
     studentIntentBlock: {
       h2: "Resume Bullet Points for Students (No Experience)",
       bullets: [
@@ -611,7 +611,7 @@ function dsEntry(): ResumeBulletDetailCopy {
       ],
     },
     intentStack:
-      "Looking for entry-level data scientist resume bullet points as a fresher, recent graduate, or internship applicant? These examples are designed to pass ATS screening and match job descriptions. Below are 20+ lines across academic, internship, and personal projects—edit with your real tools, metrics, and scope.",
+      "Looking for entry-level data scientist resume bullet points as a fresher, recent graduate, or internship applicant? This page is intentionally no-experience focused (projects, coursework, internship scope), not senior or staff ownership patterns. Use these examples to pass ATS screening and match job descriptions, then edit with your real tools, metrics, and scope.",
     exactMatchQueryLine:
       "If you are searching for entry-level data scientist resume bullet points, these examples are designed for freshers and students with no experience.",
     copyIntentLine:
@@ -855,7 +855,7 @@ function dsSenior(): ResumeBulletDetailCopy {
     ],
     h1: "Senior Data Scientist Resume Bullet Points",
     intentStack:
-      "Targeting senior or staff data scientist roles? These resume bullet points emphasize platform scale, trustworthy experimentation, and cross-functional leadership. Use them as patterns—then align every line to the posting’s keywords and scope.",
+      "Targeting senior or staff data scientist roles? These resume bullet points emphasize platform scale, experimentation systems, risk/governance context, and cross-functional leadership. This page is intentionally senior-level (strategy and ownership), not entry-level or junior execution copy. Use these as patterns—then align every line to the posting’s keywords and scope.",
     exactMatchQueryLine:
       "If you are searching for senior data scientist resume bullet points, these examples cover platform ML, experiments at scale, and leadership-style lines you can split across summary and experience.",
     copyIntentLine:
@@ -1646,7 +1646,7 @@ function pmSenior(): ResumeBulletDetailCopy {
     ],
     h1: "Senior Product Manager Resume Bullet Points",
     intentStack:
-      "Hiring for senior, group, or principal PM roles? These resume bullet points highlight portfolio bets, cross-org alignment, revenue and risk trade-offs, and executive communication—edit to match your true scope.",
+      "Hiring for senior, group, or principal PM roles? These resume bullet points highlight portfolio bets, cross-org alignment, enterprise/regulated trade-offs, and executive communication. This page is intentionally leadership-level PM content (strategy and org influence), not APM or mid-level delivery copy—edit to match your true scope.",
     exactMatchQueryLine:
       "If you are searching for senior product manager resume bullet points, these examples cover strategy, multi-team roadmaps, regulated launches, and leadership lines for summary or experience.",
     copyIntentLine:

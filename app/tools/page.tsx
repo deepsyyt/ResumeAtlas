@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   title: "Free Resume Tools | ResumeAtlas",
   description:
     "Free online resume tools: compare your resume with a job description, get ATS-style scores, and find missing keywords.",
+  robots: {
+    index: false,
+    follow: true,
+  },
   alternates: {
     canonical: toolsUrl,
   },

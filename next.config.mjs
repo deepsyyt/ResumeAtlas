@@ -388,7 +388,7 @@ const nextConfig = {
       {
         source:
           "/seo/:role-resume-:topic(skills|summary|responsibilities|projects|experience-examples)",
-        destination: "/:role/resume/:topic",
+        destination: "/:role-resume-example#:topic",
         permanent: true,
       },
       // Problems intent deduplication (keep only one pillar page per intent)
