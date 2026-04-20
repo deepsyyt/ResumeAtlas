@@ -32,9 +32,9 @@ const siteBase = () => getSiteUrl().replace(/\/$/, "");
 const abs = (path: string) => `${siteBase()}${path.startsWith("/") ? path : `/${path}`}`;
 
 export const CLUSTER_HOME_METADATA = {
-  title: `ResumeAtlas — Match Resume to Job Description, Keyword Scan & ATS Check${RESUME_ATLAS_TITLE_SUFFIX}`,
+  title: `ResumeAtlas: Match Resume to Job Description & ATS Check${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "ResumeAtlas: compare your resume to a job description, scan for missing keywords vs a posting, and check ATS-friendly formatting—free tools, paste text, no signup.",
+    "Compare your resume to a job description, find missing keywords, and check ATS-friendly formatting. Free resume tools, paste text, no signup.",
   canonicalPath: "/" as const,
   openGraph: {
     title: `ResumeAtlas — Resume vs Job Description + ATS Tools${RESUME_ATLAS_TITLE_SUFFIX}`,
@@ -81,9 +81,9 @@ export const CLUSTER_JD_MATCH_TOOL_COPY = {
 /** Missing keywords vs a pasted posting (gap list intent). */
 export const CLUSTER_KEYWORD_SCANNER_TOOL_COPY = {
   titleAbsolute:
-    "Resume Keyword Scanner (Free) - Find Missing Keywords vs Job Description (2026) | ResumeAtlas",
+    "Resume Keyword Scanner (Free) - Find Missing Keywords (2026) | ResumeAtlas",
   description:
-    "Scan your resume against a job description and find missing keywords, weak coverage, and ATS-relevant term gaps for that posting. Free, instant, and no signup. Built for long JDs, job-description keyword finder workflows, and resume keyword checker intent in 2026 hiring.",
+    "Scan your resume against a job description and find missing keywords, weak coverage, and ATS-relevant term gaps. Free, instant, and no signup.",
   ogTitle: "Resume Keyword Scanner (Free, 2026) - Missing Keywords Finder | ResumeAtlas",
   ogDescription:
     "Find missing resume keywords vs a real job posting—skill gaps and ATS keyword coverage—instantly.",
@@ -111,9 +111,9 @@ export const CLUSTER_KEYWORD_SCANNER_TOOL_COPY = {
 /** ATS readability / parse / score (posting optional). */
 export const CLUSTER_ATS_CHECKER_TOOL_COPY = {
   titleAbsolute:
-    "ATS Resume Checker (Free) - Format, Parsing & Compatibility Score (2026) | ResumeAtlas",
+    "ATS Resume Checker (Free) - ATS Compatibility Score (2026) | ResumeAtlas",
   description:
-    "Check if your resume is ATS-friendly with parsing, section-structure, and formatting-risk diagnostics plus a compatibility-style score. Free and no signup. Built for modern ATS parsing behavior in 2026 hiring systems; optional JD adds keyword overlap.",
+    "Check if your resume is ATS-friendly with parsing, section-structure, and formatting-risk diagnostics plus an ATS compatibility score. Free, no signup.",
   ogTitle: "ATS Resume Checker (Free, 2026) | ResumeAtlas",
   ogDescription:
     "ATS-friendly resume check: parsing, structure, formatting signals—instant, free, paste-only—aligned with how current ATS ingest resumes.",
@@ -141,7 +141,7 @@ export const CLUSTER_ATS_CHECKER_TOOL_COPY = {
 /** Long-form: templates, layout, how ATS reads resumes (education, not interactive product). */
 export const CLUSTER_ATS_GUIDE_METADATA = {
   path: ATS_RESUME_TEMPLATE_GUIDE_PATH,
-  title: `ATS Resume Template (${CONTENT_FRESHNESS_YEAR}) - Best ATS Format + Examples${RESUME_ATLAS_TITLE_SUFFIX}`,
+  title: `ATS Resume Template (${CONTENT_FRESHNESS_YEAR}) - ATS Format & Examples${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
     `ATS resume template (${CONTENT_FRESHNESS_YEAR}): copy-paste examples, section order, parser-safe layout, and how applicant tracking systems read resumes. Last updated ${CONTENT_LAST_UPDATED_LABEL}. For live resume vs a job description matching, use ResumeAtlas’s free checker; for keyword gap lists, use the keyword scanner.`,
   ogTitle: `ATS Resume Template (${CONTENT_FRESHNESS_YEAR} Format + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`,
@@ -153,9 +153,9 @@ export const CLUSTER_ATS_GUIDE_METADATA = {
 /** Long-form: experience section only (not full resume template hub). */
 export const CLUSTER_WORK_EXPERIENCE_METADATA = {
   path: RESUME_WORK_EXPERIENCE_GUIDE_PATH,
-  title: `Resume Work Experience Examples (${CONTENT_FRESHNESS_YEAR}) - Format, Jobs, Dates & Bullets${RESUME_ATLAS_TITLE_SUFFIX}`,
+  title: `Resume Work Experience Examples (${CONTENT_FRESHNESS_YEAR}) - Work History Section Format${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    `How to write the work experience section for ${CONTENT_FRESHNESS_YEAR} applications: where it goes, what jobs to list, dates and titles, and bullet examples recruiters skim fast—plus ATS-safe plain text layout. Updated ${CONTENT_LAST_UPDATED_LABEL}. For full resume layout and ATS template rules, use the ATS resume guide; for matching a posting, use the job description tool.`,
+    `How to write the work history section for ${CONTENT_FRESHNESS_YEAR} applications: where it goes, what jobs to list, dates and titles, and bullet examples recruiters skim fast—plus ATS-safe plain text layout. Work-experience intent only. Updated ${CONTENT_LAST_UPDATED_LABEL}. For skills-section formatting, use the resume skills guide; for full resume layout and ATS template rules, use the ATS resume guide.`,
   ogTitle: `Resume Work Experience Examples & Format${RESUME_ATLAS_TITLE_SUFFIX}`,
   ogDescription:
     `Sample work experience blocks and bullet patterns for ${CONTENT_FRESHNESS_YEAR} job searches—experience section only. Updated ${CONTENT_LAST_UPDATED_LABEL}.`,

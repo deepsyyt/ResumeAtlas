@@ -70,7 +70,7 @@ export function roleResumeKeywordsHubMeta(role: RoleSlug): { title: string; desc
   const title =
     role === "devops-engineer"
       ? `DevOps Resume Keywords (${CONTENT_FRESHNESS_YEAR} ATS Phrases That Get Interviews)${RESUME_ATLAS_TITLE_SUFFIX}`
-      : `${roleName} Resume Keywords (${CONTENT_FRESHNESS_YEAR}) - ATS Skills & Job Description Terms${RESUME_ATLAS_TITLE_SUFFIX}`;
+      : `${roleName} Resume Keywords (${CONTENT_FRESHNESS_YEAR}) - ATS Skills & Keywords${RESUME_ATLAS_TITLE_SUFFIX}`;
   const description =
     role === "devops-engineer"
       ? `Real DevOps resume keywords used in ${CONTENT_FRESHNESS_YEAR} hiring. ATS-friendly skills, tools, and action verbs recruiters search for - grouped by role and experience level.`

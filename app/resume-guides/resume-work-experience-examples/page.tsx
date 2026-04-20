@@ -115,7 +115,7 @@ export default function ResumeWorkExperienceExamplesPage() {
             Format · samples · ATS-safe layout
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
-            Resume work experience examples &amp; format (how to list jobs + bullets)
+            Resume work experience examples (work history section format + bullet examples)
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
             For current hiring cycles, lead with a plain-text experience block recruiters and ATS parsers can
@@ -150,6 +150,17 @@ export default function ResumeWorkExperienceExamplesPage() {
             <strong>Professional Experience</strong>, the job is the same: show titles, employers, dates,
             and a tight set of bullets that prove impact. That structure is also what ATS tools map into
             their “experience” fields - so keep it linear and text-first.
+          </p>
+          <p className="text-sm leading-relaxed sm:text-base">
+            This page is specifically for the <strong>work history section</strong>. For skills-list formatting
+            and skill wording, use the separate{" "}
+            <Link
+              href={RESUME_SKILLS_GUIDE_PATH}
+              className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              resume skills examples guide
+            </Link>
+            .
           </p>
           <p className="text-sm leading-relaxed sm:text-base">
             For layout rules that keep parsers happy (headings, columns, file types), pair this page with

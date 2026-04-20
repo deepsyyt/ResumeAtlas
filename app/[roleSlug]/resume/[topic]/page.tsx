@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import SeoSlugPage, {
-  generateMetadata as generateSeoMetadata,
-} from "@/app/seo/[slug]/page";
+import { notFound, permanentRedirect } from "next/navigation";
+import { generateMetadata as generateSeoMetadata } from "@/app/seo/[slug]/page";
 import type { RoleSlug } from "@/app/lib/seoPages";
 import type { ResumeSeoTopic as Topic } from "@/app/lib/resumeTopicTypes";
 import { isRoleResumeTopicIndexed } from "@/app/lib/roleClusterIndexPolicy";
@@ -27,6 +25,24 @@ function buildLegacySeoSlug(roleSlug: RoleSlug, topic: Topic): string {
     return `bullet-points-${roleSlug}-resume`;
   }
   return `${roleSlug}-resume-${topic}`;
+}
+
+function canonicalTargetForTopic(roleSlug: RoleSlug, topic: Topic): string {
+  const examplePath = roleResumeExamplePath(roleSlug);
+  switch (topic) {
+    case "skills":
+      return `${examplePath}#skills`;
+    case "summary":
+      return `${examplePath}#summary`;
+    case "projects":
+      return `${examplePath}#projects`;
+    case "bullet-points":
+    case "responsibilities":
+    case "experience-examples":
+      return `${examplePath}#bullet-points`;
+    default:
+      return examplePath;
+  }
 }
 
 export async function generateMetadata({
@@ -68,6 +84,5 @@ export default function RoleResumeTopicPage({ params }: { params: PageParams }) 
   if (!TOPICS.has(params.topic)) {
     notFound();
   }
-  const slug = buildLegacySeoSlug(params.roleSlug, params.topic);
-  return <SeoSlugPage params={{ slug }} />;
+  permanentRedirect(canonicalTargetForTopic(params.roleSlug, params.topic));
 }

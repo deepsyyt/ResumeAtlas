@@ -1204,9 +1204,9 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
     slug: "resume-vs-job-description",
     primaryKeyword: "resume vs job description",
     metaTitle:
-      "Resume vs Job Description Checker (2026): Compare, Match Keywords & Fix Gaps | ResumeAtlas",
+      "Resume vs Job Description (2026): Compare, Match Keywords & Fix Gaps | ResumeAtlas",
     metaDescription:
-      "Compare your resume to a specific job description and see where alignment breaks: keyword gaps, weak evidence, and ordering mistakes. Learn a practical 2026 framework to tailor honestly before you apply.",
+      "Compare your resume to a job description and see alignment gaps: missing keywords, weak evidence, and ordering mistakes. Practical 2026 framework to tailor honestly before applying.",
     h1: "Resume vs Job Description: How to Compare, Match Keywords, and Improve Fit",
     hook: [
       "Treat resume vs job description as a side-by-side matching exercise, not a generic writing task. You are proving fit to one posting, fast.",

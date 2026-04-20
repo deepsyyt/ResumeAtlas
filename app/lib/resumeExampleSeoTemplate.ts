@@ -48,9 +48,9 @@ export const RESUME_EXAMPLE_SERP_VARIANTS: Record<
   ],
   "product-manager": [
     {
-      title: `Product Manager Resume Example (${CONTENT_FRESHNESS_YEAR} Template + Real Metrics)`,
+      title: `Product Manager Resume Example (${CONTENT_FRESHNESS_YEAR}) - ATS Template + Metrics`,
       description:
-        `Updated ${CONTENT_LAST_UPDATED_LABEL}: product manager resume example with copy-paste template, roadmap and launch bullets, stakeholder language, and ATS-friendly format for ${CONTENT_FRESHNESS_YEAR} PM hiring. Free ATS check, then match your resume to a real job description on ResumeAtlas.`,
+        `Updated ${CONTENT_LAST_UPDATED_LABEL}: product manager resume example with ATS-friendly template, roadmap and launch bullets, and measurable outcomes for ${CONTENT_FRESHNESS_YEAR} PM hiring.`,
     },
     {
       title: `Product Manager Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR}): Roadmaps, Metrics, Launches`,

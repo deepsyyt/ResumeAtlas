@@ -14,9 +14,9 @@ const siteBase = getSiteUrl().replace(/\/$/, "");
 const pageUrl = `${siteBase}${PATH}`;
 
 export const metadata: Metadata = {
-  title: `Resume Skills Examples (${CONTENT_FRESHNESS_YEAR}) - ATS-Friendly Skills Section Guide | ResumeAtlas`,
+  title: `Resume Skills Examples (${CONTENT_FRESHNESS_YEAR}) - ATS Skills Section Guide | ResumeAtlas`,
   description:
-    `Use these ${CONTENT_FRESHNESS_YEAR} resume skills examples to build an ATS-friendly skills section that matches job descriptions. Includes technical, soft, and role-specific skill patterns plus formatting rules.`,
+    `Use these ${CONTENT_FRESHNESS_YEAR} resume skills examples to build an ATS-friendly skills section that matches job descriptions: technical, soft, and role-specific skill patterns plus formatting rules.`,
   alternates: { canonical: PATH },
   keywords: [
     "resume skills examples",
@@ -104,7 +104,7 @@ export default function ResumeSkillsExamplesPage() {
             Skills section format · ATS keywords · copy-ready patterns
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
-            Resume skills examples &amp; format (ATS-friendly section guide)
+            Resume skills examples (ATS-friendly skills section guide)
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
             Build a skills section recruiters can scan in seconds and ATS can parse cleanly. Use
@@ -146,6 +146,17 @@ export default function ResumeSkillsExamplesPage() {
           <p className="text-sm leading-relaxed sm:text-base">
             For ATS, clarity wins: plain text, standard wording, and terms that also appear in your
             experience section.
+          </p>
+          <p className="text-sm leading-relaxed sm:text-base">
+            This guide covers <strong>skills section wording and format</strong>. For work history ordering,
+            dates, and experience bullet structure, use{" "}
+            <Link
+              href="/resume-guides/resume-work-experience-examples"
+              className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              resume work experience examples
+            </Link>
+            .
           </p>
         </section>
 
