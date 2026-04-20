@@ -145,7 +145,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             <p className="mt-3 text-sm font-medium text-slate-800 max-w-2xl mx-auto">
               Check if your resume includes these keywords →{" "}
               <Link
-                href="/resume-keyword-scanner"
+                href="/resume-keyword-scanner#ats-checker-form"
                 className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 scan your resume for missing keywords
@@ -170,7 +170,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               </p>
             </div>
             <Link
-              href="/"
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
             >
               Scan my resume for missing keywords
@@ -399,7 +399,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             applying.
           </p>
           <Link
-            href="/"
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
           >
             Check my keyword gaps now

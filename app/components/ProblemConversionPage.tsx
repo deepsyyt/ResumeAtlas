@@ -301,7 +301,7 @@ export function ProblemConversionPage({ config }: Props) {
                 <span className="ml-1">
                   <Link href="/software-engineer-resume-example#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix skills</Link>
                   {" · "}
-                  <Link href="/software-engineer/keywords/technical-skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Engineer keywords</Link>
+                  <Link href="/software-engineer-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Engineer keywords</Link>
                 </span>
               </li>
               <li>
@@ -310,7 +310,7 @@ export function ProblemConversionPage({ config }: Props) {
                 <span className="ml-1">
                   <Link href="/data-scientist-resume-example#projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix projects</Link>
                   {" · "}
-                  <Link href="/data-scientist/keywords/core-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Scientist keywords</Link>
+                  <Link href="/data-scientist-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Scientist keywords</Link>
                 </span>
               </li>
               <li>
@@ -319,7 +319,7 @@ export function ProblemConversionPage({ config }: Props) {
                 <span className="ml-1">
                   <Link href="/product-manager-resume-example#summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix summary</Link>
                   {" · "}
-                  <Link href="/product-manager/keywords/projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">PM keywords</Link>
+                  <Link href="/product-manager-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">PM keywords</Link>
                 </span>
               </li>
             </ul>

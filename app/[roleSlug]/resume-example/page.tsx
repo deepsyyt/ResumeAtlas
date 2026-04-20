@@ -160,6 +160,45 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
             </Link>
           </div>
         </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white px-4 py-6 sm:px-6 sm:py-8">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Build stronger non-brand coverage for this role
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700 sm:text-base">
+            Use this example page as your core owner, then branch into keyword and bullet-point pages for
+            deeper intent coverage recruiters and ATS systems both scan.
+          </p>
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
+            <li>
+              <Link
+                href={`/${role}-resume-keywords`}
+                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                {config.roleName} resume keywords
+              </Link>{" "}
+              for tools, verbs, and summary terms.
+            </li>
+            <li>
+              <Link
+                href={`/${role}-resume-bullet-points`}
+                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                {config.roleName} resume bullet points
+              </Link>{" "}
+              for entry-level, junior, and senior wording patterns.
+            </li>
+            <li>
+              <Link
+                href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Compare your resume vs one job description
+              </Link>{" "}
+              before final edits.
+            </li>
+          </ul>
+        </section>
       </div>
 
       {role === "data-analyst" ? (

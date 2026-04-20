@@ -315,6 +315,22 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
             </li>
             <li>
               <Link
+                href="/data-scientist-resume-keywords"
+                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Data scientist resume keywords
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/devops-engineer-resume-keywords"
+                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                DevOps engineer resume keywords
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/product-manager-resume-bullet-points"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >

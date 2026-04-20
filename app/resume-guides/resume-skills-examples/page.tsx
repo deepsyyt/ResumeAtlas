@@ -259,6 +259,22 @@ export default function ResumeSkillsExamplesPage() {
                 Resume vs job description mismatch
               </Link>
             </li>
+            <li>
+              <Link
+                href="/data-scientist-resume-keywords"
+                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Data scientist resume keywords
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/devops-engineer-resume-keywords"
+                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                DevOps engineer resume keywords
+              </Link>
+            </li>
           </ul>
         </section>
 
