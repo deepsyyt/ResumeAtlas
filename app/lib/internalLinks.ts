@@ -56,7 +56,7 @@ const ARTICLE_LINKS: InternalLink[] = [
   { path: "/ats-resume-checker", label: "ATS resume checker" },
   {
     path: ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    label: "ATS resume template & format guide",
+    label: "ATS resume template",
   },
   {
     path: RESUME_WORK_EXPERIENCE_GUIDE_PATH,

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LastUpdated } from "@/app/components/LastUpdated";
+import { CLUSTER_ATS_GUIDE_METADATA } from "@/app/lib/canonicalIntentClusters";
 import { CONTENT_FRESHNESS_YEAR, CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
 import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
@@ -7,25 +7,20 @@ import {
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   RESUME_SKILLS_GUIDE_PATH,
 } from "@/app/lib/internalLinks";
+import { ATS_RESUME_TEMPLATE_DOCX_HREF, ATS_RESUME_TEMPLATE_TXT_HREF } from "@/app/lib/atsTemplateDownloads";
+import { getSiteUrl } from "@/app/lib/siteUrl";
+import { stripResumeAtlasTitleSuffix } from "@/app/lib/searchIntentSeo";
+import { AtsTemplateHeroPanel } from "./AtsTemplateHeroPanel";
+import { AtsTemplateJumpNav } from "./AtsTemplateJumpNav";
+import { AtsTemplateMobileStickyCta } from "./AtsTemplateMobileStickyCta";
 import { CopyResumeBlock } from "./CopyResumeBlock";
-import { ResumeTemplatePreviewCard } from "./ResumeTemplatePreviewCard";
 import {
-  PREVIEW_DATA_ANALYST,
   PREVIEW_GENERAL,
-  PREVIEW_PRODUCT_MANAGER,
 } from "./templatePreviewModels";
 import {
-  SNIPPET_DATA_ANALYST,
   SNIPPET_FULL_DATA_ANALYST_EXAMPLE,
   SNIPPET_GENERAL_FRESHER,
-  SNIPPET_PRODUCT_MANAGER,
 } from "./resumeTemplateSnippets";
-
-const PREVIEW_CARDS = [
-  { ...PREVIEW_GENERAL, plainText: SNIPPET_GENERAL_FRESHER },
-  { ...PREVIEW_DATA_ANALYST, plainText: SNIPPET_DATA_ANALYST },
-  { ...PREVIEW_PRODUCT_MANAGER, plainText: SNIPPET_PRODUCT_MANAGER },
-] as const;
 
 export const atsResumeTemplateFaqSchema = {
   "@context": "https://schema.org",
@@ -118,153 +113,142 @@ export const atsResumeTemplateFaqSchema = {
       acceptedAnswer: {
         "@type": "Answer",
         text:
-          "Good ATS keywords are the exact skills, tools, and responsibilities from the job description that match your real experience—placed in context across your summary, skills list, and bullets. Generic buzzwords without proof add little value; mirroring the posting honestly improves match scores.",
+          "Good ATS keywords are the exact skills, tools, and responsibilities from the job description that match your real experience - placed in context across your summary, skills list, and bullets. Generic buzzwords without proof add little value; mirroring the posting honestly improves match scores.",
       },
     },
   ],
 } as const;
 
+function atsGuideArticleJsonLd() {
+  const base = getSiteUrl().replace(/\/$/, "");
+  const url = `${base}${ATS_RESUME_TEMPLATE_GUIDE_PATH}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: stripResumeAtlasTitleSuffix(CLUSTER_ATS_GUIDE_METADATA.title),
+    description: CLUSTER_ATS_GUIDE_METADATA.description,
+    dateModified: "2026-04-15",
+    author: { "@type": "Organization", name: "ResumeAtlas" },
+    publisher: { "@type": "Organization", name: "ResumeAtlas" },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    url,
+    isAccessibleForFree: true,
+  };
+}
+
+function atsGuideBreadcrumbJsonLd() {
+  const base = getSiteUrl().replace(/\/$/, "");
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${base}/` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: stripResumeAtlasTitleSuffix(CLUSTER_ATS_GUIDE_METADATA.title),
+        item: `${base}${ATS_RESUME_TEMPLATE_GUIDE_PATH}`,
+      },
+    ],
+  };
+}
+
 export function AtsResumeTemplateGuide() {
+  const articleLd = atsGuideArticleJsonLd();
+  const breadcrumbLd = atsGuideBreadcrumbJsonLd();
+
   return (
-    <main className="min-h-screen bg-white text-slate-900">
-      <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <main className="min-h-screen bg-white pb-24 text-slate-900 lg:pb-0">
+      <section id="ats-template-hero" className="scroll-mt-28 border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
+        <div className="mx-auto max-w-6xl px-4 pb-8 pt-10 sm:px-6 sm:pb-10 sm:pt-14 lg:px-8">
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Copy-paste ATS resume templates · ATS format rules · sample resume text
+              Best ATS template resource · examples · format rules
             </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              ATS resume template ({CONTENT_FRESHNESS_YEAR} format + examples & layout guide)
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[2.35rem] lg:leading-tight">
+              ATS Resume Template (Free + ATS-Friendly Format for {CONTENT_FRESHNESS_YEAR})
             </h1>
-            <p className="mx-auto mt-3 max-w-2xl text-base text-slate-600 sm:text-lg">
-              These ATS-friendly templates reflect hiring patterns and formatting expectations in{" "}
-              {CONTENT_FRESHNESS_YEAR}. This guide focuses on structure and parser-safe layout—section order,
-              headings, dates, and copy-paste examples that applicant tracking systems and recruiters handle
-              well. Each card below shows a <strong>mini resume preview</strong> plus buttons to copy the full
-              plain text or jump to the section-order checklist.
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
+              Download ATS-friendly resume templates in Word / Google Docs, copy a plain-text version, and see
+              examples built to pass applicant tracking systems.
             </p>
             <p className="mx-auto mt-3 max-w-xl text-center text-xs text-slate-500 sm:text-sm">
-              When you are ready to compare your draft to a real posting, use ResumeAtlas’s free
-              resume-to-job-description matcher; for missing terms only, use the keyword scanner.
+              Updated {CONTENT_LAST_UPDATED_LABEL} · Used by job seekers · ATS-safe layouts
             </p>
-            <LastUpdated className="mx-auto mt-4 text-center text-xs text-slate-500" label={CONTENT_LAST_UPDATED_LABEL} />
           </div>
 
-          <div className="mx-auto mt-8 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {PREVIEW_CARDS.map((model) => (
-              <ResumeTemplatePreviewCard
-                key={model.cardTitle}
-                model={model}
-                structureHref={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#ats-resume-template`}
-              />
-            ))}
-          </div>
-
-          <p className="mx-auto mt-6 max-w-2xl text-center text-xs text-slate-500 sm:text-sm">
-            Replace every line with your real history. These are illustrative patterns only—not
-            claims about your background.
-          </p>
-
-          <div className="mt-8 flex justify-center">
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white shadow-md transition hover:bg-slate-800 hover:shadow-lg"
-            >
-              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
-            </Link>
-          </div>
+          <AtsTemplateHeroPanel
+            model={PREVIEW_GENERAL}
+            plainText={SNIPPET_GENERAL_FRESHER}
+            docxHref={ATS_RESUME_TEMPLATE_DOCX_HREF}
+            structureHref={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#ats-resume-template`}
+          />
         </div>
       </section>
 
-      <section className="border-b border-slate-200 bg-white py-10 sm:py-12">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8" id="why-this-ats-template-works">
+      <AtsTemplateJumpNav />
+
+      <div className="mx-auto max-w-3xl space-y-0 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
+        <section
+          id="ats-template-downloads"
+          className="scroll-mt-28 border-b border-slate-200 py-10"
+        >
+          <span id="ats-resume-free-download" className="sr-only">
+            Legacy anchor: free ATS resume template downloads
+          </span>
+          <span id="ats-resume-template-word-pdf" className="sr-only">
+            Downloads and export workflow anchor
+          </span>
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Why this ATS resume template actually works
+            Download ATS Resume Templates (Word + Google Docs)
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
-            Applicant Tracking Systems first <strong>parse</strong> your file into sections (summary,
-            experience, skills), then <strong>match tokens</strong> from your text against the job
-            description and role library. Fancy layouts often hide headings or skills from that
-            pipeline—so rankings suffer even when you are qualified. These templates prioritize{" "}
-            <strong>parser-safe structure</strong> first, then{" "}
-            <strong>keyword alignment you can prove</strong>.
-          </p>
-          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
-            <li>
-              <strong>Parsing:</strong> predictable headings and one column keep your experience in
-              the right buckets.
-            </li>
-            <li>
-              <strong>Keyword matching:</strong> tools like ResumeAtlas compare your resume text to
-              the <em>exact posting</em> so you see missing skills before you submit.
-            </li>
-            <li>
-              <strong>Scoring:</strong> higher overlap with required skills—stated honestly—usually
-              correlates with better ATS-style match scores.
-            </li>
-          </ul>
-          <div className="mt-6">
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
+            Grab the starter <strong>ATS resume template</strong> as a{" "}
+            <a className="font-medium text-sky-800 underline" href={ATS_RESUME_TEMPLATE_DOCX_HREF} download>
+              Word .docx
+            </a>{" "}
+            or{" "}
+            <a className="font-medium text-sky-800 underline" href={ATS_RESUME_TEMPLATE_TXT_HREF} download>
+              plain .txt
+            </a>
+            . Open a new{" "}
+            <a
+              className="font-medium text-sky-800 underline"
+              href="https://docs.google.com/document/create"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Match my resume to a job description (free)
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <div className="mx-auto max-w-3xl space-y-14 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
-        <section>
-          <p className="text-slate-700 text-sm sm:text-base">
-            Search intent for <strong>ATS resume templates</strong>,{" "}
-            <strong>resume templates for ATS systems</strong>, and{" "}
-            <strong>best resume format for ATS</strong> is practical: people want something they can
-            paste into Word or Google Docs, export as a text-based PDF, and submit without getting
-            filtered out. Below we pair <strong>ATS resume examples</strong> (including full sample
-            text) with <strong>ATS format rules</strong> and a free tool to match your resume to a job
-            description.
+              Google Doc
+            </a>
+            , paste, apply Heading 2 to section titles, then export a <strong>text-based PDF</strong> or .docx.
           </p>
-        </section>
-
-        <section className="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-5 sm:p-6">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Fast-start path (10-minute version)
-          </h2>
-          <ol className="mt-3 list-decimal pl-5 space-y-2 text-sm sm:text-base text-slate-700">
-            <li>Copy one template and keep a single-column layout.</li>
-            <li>Adjust summary, skills, and top 3 bullets for one target posting.</li>
-            <li>Run a JD comparison to find missing requirement coverage.</li>
-            <li>Fix high-impact gaps, then export a text-based PDF or DOCX.</li>
+          <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
+            <li>Download or copy the template you want.</li>
+            <li>Replace placeholder content with your real roles and metrics.</li>
+            <li>Keep one column and standard headings (Summary, Experience, Skills, Education).</li>
+            <li>Export a machine-readable file - never image-only PDFs.</li>
           </ol>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="inline-flex rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
-            >
-              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
-            </Link>
-            <Link
-              href="/resume-keyword-scanner"
-              className="inline-flex rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
-            >
-              Find missing keywords in your resume
-            </Link>
-          </div>
         </section>
 
         <section
           id="ats-resume-template-examples"
-          className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"
+          className="scroll-mt-28 border-b border-slate-200 py-10"
         >
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            ATS resume template examples (by role)
+            ATS Resume Examples That Pass Screening
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            For full on-site examples you can mirror for structure and keyword style, use our
-            walkthrough pages (same single-column, parser-safe patterns as the copy-paste blocks
-            above):
+            Start from the filled sample, then branch into role-specific walkthroughs - same single-column patterns
+            as the copy-paste cards above.
           </p>
+          <div className="mt-5 max-w-xl">
+            <CopyResumeBlock
+              eyebrow="Filled sample"
+              title="John Doe  -  Data Analyst (sample only)"
+              body={SNIPPET_FULL_DATA_ANALYST_EXAMPLE}
+            />
+          </div>
+          <p className="mt-8 text-sm font-semibold text-slate-900">More ATS resume examples (by role)</p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-700 text-sm sm:text-base">
             <li>
               <Link
@@ -273,7 +257,7 @@ export function AtsResumeTemplateGuide() {
               >
                 ATS resume example for data analyst
               </Link>{" "}
-              — section-by-section sample focused on analytics roles.
+               -  section-by-section sample focused on analytics roles.
             </li>
             <li>
               <Link
@@ -282,13 +266,13 @@ export function AtsResumeTemplateGuide() {
               >
                 ATS resume example for product manager
               </Link>{" "}
-              — PM-oriented bullets, roadmap language, and outcomes.
+               -  PM-oriented bullets, roadmap language, and outcomes.
             </li>
             <li>
               <Link href="/resume-examples" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
                 More resume examples by role
               </Link>{" "}
-              — browse other targets from one hub.
+               -  browse other targets from one hub.
             </li>
             <li>
               <Link
@@ -297,7 +281,7 @@ export function AtsResumeTemplateGuide() {
               >
                 Resume work experience examples (format + bullets)
               </Link>{" "}
-              — how to list jobs, dates, and impact for ATS and recruiters.
+               -  how to list jobs, dates, and impact for ATS and recruiters.
             </li>
             <li>
               <Link
@@ -306,14 +290,14 @@ export function AtsResumeTemplateGuide() {
               >
                 Resume skills examples (ATS-friendly section guide)
               </Link>{" "}
-              — how to write a skills section that matches postings.
+               -  how to write a skills section that matches postings.
             </li>
             <li>
               <Link
                 href="/ats-resume-template-software-engineer"
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
-                ATS resume template — software engineer (keyword strip + starter text)
+                ATS resume template  -  software engineer (keyword strip + starter text)
               </Link>
             </li>
           </ul>
@@ -321,7 +305,7 @@ export function AtsResumeTemplateGuide() {
             ATS resume example bullets (patterns by function)
           </h3>
           <p className="mt-2 text-sm text-slate-600 sm:text-base">
-            Use these as wording patterns—never copy metrics you cannot defend in an interview.
+            Use these as wording patterns - never copy metrics you cannot defend in an interview.
           </p>
           <ul className="mt-2 list-disc space-y-2 pl-5 text-slate-700 text-sm sm:text-base">
             <li>
@@ -338,42 +322,74 @@ export function AtsResumeTemplateGuide() {
           </ul>
         </section>
 
-        <section
-          id="ats-resume-template"
-          className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"
-        >
+        <section id="ats-resume-format" className="scroll-mt-28 border-b border-slate-200 py-10">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Resume templates for ATS systems: scannable section order
+            Best ATS Resume Format for 2026
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            There is no magic file that guarantees a hire. What works is an{" "}
-            <strong>ATS-optimized resume template</strong> in the sense of a{" "}
+            Queries like <strong>ATS format</strong>, <strong>resume formatting for ATS</strong>, and{" "}
+            <strong>best resume format for ATS</strong> all point to the same rule set: one column, plain
+            text, predictable headings. Fancy template packs often break parsing.
+          </p>
+          <p className="mt-2 text-slate-700 text-sm sm:text-base">
+            <strong className="text-slate-900">Format checklist:</strong> single column, standard section
+            titles (Summary, Experience, Skills, Education), no tables or skill icons in images, simple fonts
+            (Arial, Calibri, Inter) at 10.5–12pt.
+          </p>
+          <h3 className="mt-6 text-lg font-semibold text-slate-900">Layout rules (scannable, not pretty)</h3>
+          <ul className="mt-2 list-disc space-y-1.5 pl-5 text-slate-700 text-sm sm:text-base">
+            <li>
+              <strong>Single column</strong> for the full story: summary to education.
+            </li>
+            <li>
+              <strong>Standard section titles</strong>  -  avoid clever renames like &quot;My journey.&quot;
+            </li>
+            <li>
+              <strong>No tables, text boxes, or multi-column layouts</strong> for the main story.
+            </li>
+            <li>
+              <strong>Spell skills as text</strong>  -  not icons, graphics, or skill bubbles.
+            </li>
+          </ul>
+          <h3 className="mt-5 text-base font-semibold text-slate-900 sm:text-lg">Scannable body copy</h3>
+          <p className="mt-2 text-slate-700 text-sm sm:text-base">
+            Short summary, tight skills line, reverse-chronological roles with 3–6 bullets (tool + impact).
+            When in doubt, pick clarity over design for the file you submit online.
+          </p>
+        </section>
+
+        <section id="ats-resume-template" className="scroll-mt-28 border-b border-slate-200 py-10">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            ATS-Compliant Resume Template
+          </h2>
+          <p className="mt-3 text-slate-700 text-sm sm:text-base">
+            There is no magic file that guarantees a hire. What works is a{" "}
             <strong>predictable, single-column structure</strong> parsers and recruiters both
             understand. Build yours in Word or Google Docs using this order:
           </p>
           <ol className="mt-4 list-decimal pl-5 space-y-3 text-slate-700 text-sm sm:text-base">
             <li>
-              <strong className="text-slate-900">Contact</strong> — name, email, phone, city/state or
+              <strong className="text-slate-900">Contact</strong>  -  name, email, phone, city/state or
               “Remote”, LinkedIn or portfolio (plain text links).
             </li>
             <li>
-              <strong className="text-slate-900">Professional summary</strong> — 2–3 lines: role,
+              <strong className="text-slate-900">Professional summary</strong>  -  2–3 lines: role,
               years of experience, top skills that match the posting, one proof point.
             </li>
             <li>
-              <strong className="text-slate-900">Skills (scannable)</strong> — comma or line-separated
+              <strong className="text-slate-900">Skills (scannable)</strong>  -  comma or line-separated
               tools and skills the job uses (only what you can defend in an interview).
             </li>
             <li>
-              <strong className="text-slate-900">Work experience</strong> — reverse chronological;
+              <strong className="text-slate-900">Work experience</strong>  -  reverse chronological;
               each role: title, company, dates, then 3–6 bullets (action + scope + metric).
             </li>
             <li>
-              <strong className="text-slate-900">Education &amp; certifications</strong> — degree,
+              <strong className="text-slate-900">Education &amp; certifications</strong>  -  degree,
               field, school, year; certs that matter for the role.
             </li>
             <li>
-              <strong className="text-slate-900">Optional</strong> — projects or volunteer only if they
+              <strong className="text-slate-900">Optional</strong>  -  projects or volunteer only if they
               strengthen keyword match or story for this application.
             </li>
           </ol>
@@ -387,16 +403,15 @@ export function AtsResumeTemplateGuide() {
 
         <section
           id="how-ats-scans-resumes"
-          className="scroll-mt-24 rounded-2xl border border-slate-200 bg-slate-50/60 p-5 sm:p-6"
+          className="scroll-mt-28 border-b border-slate-200 py-10"
         >
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            How ATS Systems Scan Resumes
+            Resume Formatting for ATS Systems
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            When you apply online, your resume is usually processed by an{" "}
-            <strong>Applicant Tracking System (ATS)</strong> before a human sees it. ATS software
-            parses your resume, looks for keyword overlap with the job description, and then ranks
-            or filters candidates.
+            The <strong>resume format for applicant tracking systems</strong> is not about design - it is
+            about text extraction. When you apply online, your file is often parsed before a human reads it: sections,
+            then keyword overlap, then rank or filter rules.
           </p>
           <ul className="mt-3 list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
             <li>
@@ -423,11 +438,29 @@ export function AtsResumeTemplateGuide() {
         </section>
 
         <section
-          id="common-resume-mistakes-fail-ats"
-          className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"
+          id="how-to-make-resume-ats-friendly"
+          className="scroll-mt-28 border-b border-slate-200 py-10"
         >
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Common Resume Mistakes That Fail ATS
+            How to Make Your Resume ATS Friendly
+          </h2>
+          <p className="mt-3 text-sm text-slate-700 sm:text-base">
+            <strong className="text-slate-900">Do this before you apply:</strong>
+          </p>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
+            <li>Use one column and standard headings (Summary, Skills, Experience, Education).</li>
+            <li>Export a text-based PDF or .docx - never image-only scans.</li>
+            <li>Mirror the job description only where you can defend it in an interview.</li>
+            <li>Lead bullets with outcomes: verb + scope + measurable result.</li>
+          </ul>
+        </section>
+
+        <section
+          id="common-resume-mistakes-fail-ats"
+          className="scroll-mt-28 border-b border-slate-200 py-10"
+        >
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            ATS Mistakes That Fail Screening
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
             Most “ATS rejections” come from a small set of fixable issues. If you improve these
@@ -462,279 +495,23 @@ export function AtsResumeTemplateGuide() {
           </p>
         </section>
 
-        <section id="ats-resume-format" className="scroll-mt-24">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            ATS resume format (critical): best ATS resume format + ATS-friendly structure
-          </h2>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            Google clusters queries like <strong>ATS format</strong>,{" "}
-            <strong>resume formatting for ATS</strong>, and <strong>ATS resume design</strong> around
-            the same idea: parsers need predictable headings, one column, and plain text for core
-            content. Fancy marketing templates often hide keywords or break tables—bad for screening.
-          </p>
-
-          <h3 className="mt-6 text-lg font-semibold text-slate-900">Best ATS resume format (checklist)</h3>
-          <ul className="mt-2 list-disc space-y-2 pl-5 text-slate-700 text-sm sm:text-base">
-            <li>
-              <strong>Single column</strong> for the entire story (summary → skills → experience →
-              education).
-            </li>
-            <li>
-              <strong>Standard section titles</strong> recruiters and parsers expect: Summary,
-              Skills, Experience, Education (avoid clever renames like “My journey”).
-            </li>
-            <li>
-              <strong>No tables, text boxes, or multi-column layouts</strong> for the main narrative;
-              keep callouts minimal.
-            </li>
-            <li>
-              <strong>No icons or skill “bubbles”</strong> as images—spell skills as text.
-            </li>
-            <li>
-              <strong>Simple fonts</strong> (Arial, Calibri, Inter) and normal body sizes (10.5–12pt).
-            </li>
-          </ul>
-
-          <h3 className="mt-6 text-lg font-semibold text-slate-900">ATS-friendly structure (layout rules)</h3>
-          <p className="mt-2 text-slate-700 text-sm sm:text-base">
-            Think “scannable resume template”: short summary, tight skills line or block, reverse
-            chronological roles, each with 3–6 bullets that include tools + outcomes. White space is
-            fine; complexity is not.
-          </p>
-          <ul className="mt-2 list-disc space-y-2 pl-5 text-slate-700 text-sm sm:text-base">
-            <li>Use a single column instead of multiple columns or text boxes.</li>
-            <li>
-              Stick to standard headings like <strong>Work Experience</strong>,{" "}
-              <strong>Education</strong>, and <strong>Skills</strong>.
-            </li>
-            <li>Avoid images, icons, or tables for core content.</li>
-            <li>
-              Keep fonts simple (e.g. Arial, Calibri) and avoid heavy use of custom symbols.
-            </li>
-          </ul>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            When in doubt, choose clarity over design. You can always bring a visually polished
-            version to the interview.
-          </p>
-        </section>
-
-        <section
-          id="ats-resume-example-real"
-          className="scroll-mt-24 rounded-2xl border border-slate-200 bg-slate-50/60 p-5 sm:p-6"
-        >
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            ATS resume example (full sample text you can adapt)
-          </h2>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            Below is a longer <strong>ATS resume example</strong> for a data analyst-shaped profile.
-            Swap employers, metrics, and tools for your real experience—never invent outcomes.
-          </p>
-          <div className="mt-4 max-w-xl">
-            <CopyResumeBlock
-              eyebrow="Full example"
-              title="John Doe — Data Analyst (sample only)"
-              body={SNIPPET_FULL_DATA_ANALYST_EXAMPLE}
-            />
-          </div>
-        </section>
-
-        <section id="ats-resume-template-word-pdf" className="scroll-mt-24">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Turn these ATS resume templates into Word or PDF (honest workflow)
-          </h2>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            We don&apos;t host proprietary .docx downloads—many “free template files” online are
-            bloated or hide text from parsers. The highest-signal approach is to{" "}
-            <strong>paste plain text</strong> into Google Docs or Microsoft Word, apply headings
-            styles (Heading 2 for sections), then export a <strong>text-based PDF</strong> or .docx.
-            Avoid scanned/image PDFs.
-          </p>
-          <ol className="mt-3 list-decimal space-y-2 pl-5 text-slate-700 text-sm sm:text-base">
-            <li>Copy one of the templates above.</li>
-            <li>Paste into a blank document; set one column; map section titles to simple styles.</li>
-            <li>Proofread for truthful keywords vs the job description you are targeting.</li>
-            <li>Export PDF (or DOCX) and run it through ResumeAtlas before you apply.</li>
-          </ol>
-          <div className="mt-5">
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
-            >
-              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
-            </Link>
-          </div>
-        </section>
-
-        <section id="ats-optimization-tips" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            ATS optimization tips (keywords + layout + files)
-          </h2>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-700 text-sm sm:text-base">
-            <li>
-              <strong>Keywords from the job description</strong> belong in summary, skills, and
-              bullets—only where you can speak to them credibly.
-            </li>
-            <li>
-              <strong>Simple layout beats clever design</strong>: no columns/tables for core story,
-              no text baked into images.
-            </li>
-            <li>
-              <strong>File hygiene:</strong> text-based PDF or DOCX; never password-protect; avoid
-              scanned resumes.
-            </li>
-            <li>
-              <strong>Evidence beats adjectives:</strong> verbs + scope + measurable outcomes parse
-              well and read well to humans.
-            </li>
-          </ul>
-        </section>
-
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Apply this ATS template to a real job posting
-          </h2>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            The template gives structure; ranking and shortlist probability improve when you adapt it
-            to one posting. Keep this sequence:
-          </p>
-          <ol className="mt-3 list-decimal pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
-            <li>
-              <strong>Mirror critical posting language:</strong> place must-have skills in summary,
-              skills, and top bullets where truthful.
-            </li>
-            <li>
-              <strong>Use impact bullets:</strong> action + scope + measurable result beats vague
-              responsibility lines.
-            </li>
-            <li>
-              <strong>Tighten skills section:</strong> group by category and keep only interview-safe
-              tools.
-            </li>
-            <li>
-              <strong>Export safe file types:</strong> text-based PDF or DOCX; avoid scanned/image
-              files and password protection.
-            </li>
-          </ol>
-          <p className="mt-4 text-sm text-slate-700">
-            Need role-specific skill wording? See{" "}
-            <Link
-              href={RESUME_SKILLS_GUIDE_PATH}
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              resume skills examples
-            </Link>
-            . Need requirement-level matching? Use{" "}
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
-            </Link>
-            .
-          </p>
-        </section>
-
-        <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 sm:p-8">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Check If Your Resume Will Pass ATS
-          </h2>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            Instead of guessing, paste your resume and a job description into ResumeAtlas. You&apos;ll
-            see keyword coverage, ATS compatibility, and a clear to‑do list to improve your match
-            before you apply.
-          </p>
-          <Link
-            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-            className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
-          >
-            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
-          </Link>
-          <div className="mt-6 pt-6 border-t border-slate-200">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Related guides
-            </p>
-            <ul className="mt-2 space-y-1 text-sm">
-              <li>
-                <Link
-                  href={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#why-this-ats-template-works`}
-                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  Why this ATS resume template works
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#ats-resume-keywords-examples`}
-                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  ATS resume keywords examples
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={RESUME_SKILLS_GUIDE_PATH}
-                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  Resume skills examples guide
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#how-ats-scans-resumes`}
-                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  How ATS Systems Scan Resumes (anchor)
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#common-resume-mistakes-fail-ats`}
-                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  Common Resume Mistakes That Fail ATS (anchor)
-                </Link>
-              </li>
-              <li>
-                <Link href="/software-engineer-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  Software Engineer ATS keywords
-                </Link>
-              </li>
-              <li>
-                <Link href="/data-scientist-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  Data Scientist ATS keywords
-                </Link>
-              </li>
-              <li>
-                <Link href="/product-manager-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  Product Manager ATS keywords
-                </Link>
-              </li>
-              <li>
-                <Link href="/problems/resume-not-getting-interviews" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  Resume not getting interviews
-                </Link>
-              </li>
-              <li>
-                <Link href="/problems/ats-rejecting-my-resume" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  ATS rejecting my resume
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </section>
-
         <section
           id="ats-resume-keywords-examples"
-          className="scroll-mt-24 rounded-2xl border border-slate-200 bg-slate-50/70 p-5 sm:p-6"
+          className="scroll-mt-28 border-b border-slate-200 py-10"
         >
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            ATS resume keywords examples (skills + verbs)
+            ATS Keywords Examples
           </h2>
+          <p className="mt-3 text-sm text-slate-700 sm:text-base">
+            <strong className="text-slate-900">Optimization, compressed:</strong> put posting terms in
+            summary, skills, and bullets only where you can defend them. Simple layout wins over clever
+            design. Use text-based PDF or DOCX; evidence beats adjectives.
+          </p>
           <p className="mt-3 text-sm text-slate-700 sm:text-base">
             Clusters like <strong>resume keywords for ATS</strong> and{" "}
             <strong>ATS optimized resume keywords</strong> map to the same behavior: put the
             employer&apos;s required tools and responsibilities into plain text where you truly have
-            the experience—summary, skills, and bullets—not hidden in icons or graphics.
+            the experience - summary, skills, and bullets - not hidden in icons or graphics.
           </p>
           <h3 className="mt-5 text-base font-semibold text-slate-900 sm:text-lg">
             Example skill tokens (tailor per posting)
@@ -768,7 +545,31 @@ export function AtsResumeTemplateGuide() {
           </p>
         </section>
 
-        <section id="faq">
+        <section id="tailor-template-to-jd" className="scroll-mt-28 border-b border-slate-200 py-10">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Tailor Template to Job Description
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
+            Want to test this template against a real job posting? Paste your resume and the exact posting - ResumeAtlas
+            highlights missing requirements and weak keyword coverage so you edit with intent, not guesswork.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
+            >
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+            </Link>
+            <Link
+              href="/resume-keyword-scanner"
+              className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
+            >
+              Resume keyword scanner
+            </Link>
+          </div>
+        </section>
+
+        <section id="faq" className="scroll-mt-28 border-b border-slate-200 py-10">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             FAQ
           </h2>
@@ -788,12 +589,69 @@ export function AtsResumeTemplateGuide() {
               ))}
           </div>
         </section>
+
+        <section
+          id="ats-resume-checker-tool"
+          className="scroll-mt-28 border-b border-slate-200 bg-slate-50/60 py-10"
+        >
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            ATS resume checker (parsing + compatibility score)
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
+            After you format your file, run a quick machine-readability pass: section structure, bullets, dates, and
+            common parser traps - separate from matching a specific job description.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link
+              href="/ats-resume-checker"
+              className="inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
+            >
+              Open ATS resume checker
+            </Link>
+            <Link
+              href={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#ats-template-downloads`}
+              className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
+            >
+              Back to downloads
+            </Link>
+          </div>
+          <p className="mt-6 text-xs text-slate-500">
+            On this page:{" "}
+            <Link href={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#ats-template-copy-paste`} className="text-sky-800 underline">
+              ATS resume template
+            </Link>
+            {" · "}
+            <Link href={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#ats-resume-format`} className="text-sky-800 underline">
+              ATS resume format
+            </Link>
+            {" · "}
+            <Link href={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#ats-resume-template-examples`} className="text-sky-800 underline">
+              ATS resume examples
+            </Link>
+            {" · "}
+            <Link href={RESUME_SKILLS_GUIDE_PATH} className="text-sky-800 underline">
+              ATS friendly resume skills
+            </Link>
+          </p>
+        </section>
       </div>
+
+      <AtsTemplateMobileStickyCta docxHref={ATS_RESUME_TEMPLATE_DOCX_HREF} />
 
       <script
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(atsResumeTemplateFaqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
     </main>
   );

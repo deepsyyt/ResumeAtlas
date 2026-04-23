@@ -1,0 +1,23 @@
+JORDAN LEE
+Boston, MA · jordan.lee@email.com · (555) 010-0199 · linkedin.com/in/jordanlee
+
+SUMMARY
+Economics graduate targeting operations analytics roles. Internship-proven at turning messy operational data into weekly KPI packs, exec-ready Excel readouts, and SQL-backed answers for account managers—comfortable owning the loop from raw tables to clear stakeholder updates under tight deadlines.
+
+SKILLS
+SQL · Microsoft Excel · Google Sheets · Tableau (basics) · Python (pandas, introductory)
+
+EXPERIENCE
+Operations Analytics Intern · Acme Logistics · Jun 2023–Aug 2024
+• Built weekly KPI pack in Excel; reduced prep time from roughly 4 hours to under 90 minutes.
+• Joined and cleaned shipment-level tables (5k+ rows/week) for ad-hoc questions from account managers.
+
+PROJECTS
+Campus operations KPI dashboard (Tableau + SQL) · Academic project · team of 3
+• Modeled dining-hall traffic and staffing gaps from 18 months of facility logs; surfaced $120K annualized overtime risk and a staffing plan adopted by the student union board.
+
+Cohort retention capstone (Python + Excel) · Senior thesis · anonymized sample data
+• Segmented first-year retention drivers with logistic-style feature exploration; delivered a 12-slide readout and reproducible notebook the department reused for advising outreach.
+
+EDUCATION
+BS Economics · State University · May 2024

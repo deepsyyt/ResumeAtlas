@@ -11,7 +11,8 @@
     "dev:clean": "npm run clean:next && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "assets:ats-template": "node scripts/generate-ats-resume-assets.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
@@ -31,6 +32,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.20",
+    "docx": "^9.6.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
     "pg": "^8.20.0",

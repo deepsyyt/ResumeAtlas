@@ -141,12 +141,12 @@ export const CLUSTER_ATS_CHECKER_TOOL_COPY = {
 /** Long-form: templates, layout, how ATS reads resumes (education, not interactive product). */
 export const CLUSTER_ATS_GUIDE_METADATA = {
   path: ATS_RESUME_TEMPLATE_GUIDE_PATH,
-  title: `ATS Resume Template (${CONTENT_FRESHNESS_YEAR}) - ATS Format & Examples${RESUME_ATLAS_TITLE_SUFFIX}`,
+  title: `ATS Resume Template (Free Word Format + Examples That Pass ATS) ${CONTENT_FRESHNESS_YEAR}${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    `ATS resume template (${CONTENT_FRESHNESS_YEAR}): copy-paste examples, section order, parser-safe layout, and how applicant tracking systems read resumes. Last updated ${CONTENT_LAST_UPDATED_LABEL}. For live resume vs a job description matching, use ResumeAtlas’s free checker; for keyword gap lists, use the keyword scanner.`,
-  ogTitle: `ATS Resume Template (${CONTENT_FRESHNESS_YEAR} Format + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`,
+    "Free ATS resume template with Word downloads, examples, formatting rules, and keywords designed to pass applicant tracking systems.",
+  ogTitle: `ATS Resume Template (Free Word Format + Examples That Pass ATS) ${CONTENT_FRESHNESS_YEAR}${RESUME_ATLAS_TITLE_SUFFIX}`,
   ogDescription:
-    `${CONTENT_FRESHNESS_YEAR} ATS-friendly resume layout, templates, and examples—structure and format that parsers and recruiters handle well. Updated ${CONTENT_LAST_UPDATED_LABEL}.`,
+    "Free ATS resume template with Word downloads, examples, formatting rules, and keywords designed to pass applicant tracking systems.",
   openGraphUrl: abs(ATS_RESUME_TEMPLATE_GUIDE_PATH),
 };
 
