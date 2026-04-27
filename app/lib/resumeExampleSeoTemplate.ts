@@ -31,9 +31,9 @@ export const RESUME_EXAMPLE_SERP_VARIANTS: Record<
 > = {
   "data-analyst": [
     {
-      title: `Data Analyst Resume Example (${CONTENT_FRESHNESS_YEAR} Example + Template)`,
+      title: "Data Analyst Resume Example (ATS Template + Skills + Bullet Points) 2026",
       description:
-        `Updated ${CONTENT_LAST_UPDATED_LABEL}: ATS-friendly data analyst resume example with a copy-paste template, metric-driven bullets, and keyword ideas aligned with ${CONTENT_FRESHNESS_YEAR} hiring. Free ATS resume check, then match your resume to any job description on ResumeAtlas.`,
+        "Use this ATS-friendly data analyst resume example with SQL/Python skills, bullet points, and a copy-paste template that gets interviews.",
     },
     {
       title: `Data Analyst Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR}): Match Resume to Job Description`,

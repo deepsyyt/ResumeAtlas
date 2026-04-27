@@ -19,6 +19,10 @@ import {
   getCachedAnalysisResult,
   setCachedAnalysisResult,
 } from "@/app/lib/analysisResultCache";
+import {
+  parseAnthropicErrorType,
+  resolveAnthropicModelCandidates,
+} from "@/app/lib/anthropicModels";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 
@@ -188,9 +192,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "resumeText is required" }, { status: 400 });
     }
 
-    const model =
-      process.env.ANTHROPIC_MODEL?.trim() || "claude-3-haiku-20240307";
-    const cacheKey = buildAnalysisCacheKey(resumeText, jobDescription, model, {
+    const modelCandidates = resolveAnthropicModelCandidates();
+    const cacheModelKey = modelCandidates.join(",");
+    const cacheKey = buildAnalysisCacheKey(resumeText, jobDescription, cacheModelKey, {
       resumeOnly: jdEmpty,
     });
 
@@ -273,31 +277,55 @@ ${resumeText}
 JOB DESCRIPTION:
 ${jobDescription}`;
 
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: 1000,
-        temperature: 0,
-        top_p: 1,
-        system: jdEmpty ? SYSTEM_PROMPT_RESUME_ONLY : SYSTEM_PROMPT,
-        messages: [{ role: "user" as const, content: userContent }],
-      }),
-    });
+    let response: Response | null = null;
+    let responseText = "";
+    let selectedModel: string | null = null;
+    for (const candidateModel of modelCandidates) {
+      response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({
+          model: candidateModel,
+          max_tokens: 1000,
+          temperature: 0,
+          system: jdEmpty ? SYSTEM_PROMPT_RESUME_ONLY : SYSTEM_PROMPT,
+          messages: [{ role: "user" as const, content: userContent }],
+        }),
+      });
 
-    const responseText = await response.text();
-    if (!response.ok) {
-      console.error("[analyze] Anthropic error", response.status, responseText.slice(0, 300));
+      responseText = await response.text();
+      if (response.ok) {
+        selectedModel = candidateModel;
+        break;
+      }
+
+      const errorType = parseAnthropicErrorType(responseText);
+      const isModelUnavailable = response.status === 404 && errorType === "not_found_error";
+      console.error(
+        "[analyze] Anthropic error",
+        response.status,
+        `model=${candidateModel}`,
+        responseText.slice(0, 300)
+      );
+      if (!isModelUnavailable) {
+        break;
+      }
+    }
+
+    if (!response || !response.ok) {
+      const status = response?.status ?? 502;
       const friendly =
-        response.status === 529
+        status === 529
           ? "Our analysis service is temporarily overloaded. Please try again in a minute."
           : "Our analysis service is temporarily unavailable. Please try again shortly.";
       return NextResponse.json({ error: friendly }, { status: 502 });
+    }
+    if (selectedModel) {
+      console.info("[analyze] Anthropic model selected", selectedModel);
     }
 
     let data: { content?: unknown };

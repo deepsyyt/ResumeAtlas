@@ -1,81 +1,94 @@
 import Link from "next/link";
-import { ResumeExampleSeoFunnel } from "@/app/components/ResumeExampleSeoFunnel";
 import {
-  ResumeExampleAtsScoreCta,
-  ResumeExampleExploreMoreFooter,
-  ResumeExampleSeoBulletSamplesSection,
-  ResumeExampleSeoIntro,
-  ResumeExampleStandardFaqBlock,
-  ResumeExampleTopAtsKeywordsSection,
-} from "@/app/components/ResumeExampleSeoTemplate";
-import {
-  ATS_RESUME_TEMPLATE_GUIDE_PATH,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  RESUME_SKILLS_GUIDE_PATH,
 } from "@/app/lib/internalLinks";
-import {
-  DEFAULT_SEO_SAMPLE_BULLETS,
-  DEFAULT_TOP_ATS_KEYWORDS,
-  getResumeExampleSerpTitle,
-  mergeResumeExampleFaqSchema,
-  type FaqSchemaEntity,
-} from "@/app/lib/resumeExampleSeoTemplate";
-import { goodResumeSnippet } from "@/app/lib/roleHubSeo";
+import { mergeResumeExampleFaqSchema, type FaqSchemaEntity } from "@/app/lib/resumeExampleSeoTemplate";
 
-const ROLE = "Data Analyst";
-
-const JD_CHECK_HREF = CHECK_RESUME_AGAINST_JD_FORM_HREF;
-const KEYWORD_SCANNER_HREF = "/resume-keyword-scanner";
-const ATS_CHECKER_HREF = "/ats-resume-checker";
-
-const COPY_PASTE_TEMPLATE = `JORDAN CHEN
+const COPY_PASTE_TEMPLATE = `[YOUR NAME]
 Data Analyst
-San Francisco, CA | jordan.chen@email.com | linkedin.com/in/jordanchen
+[City, State] | [Email] | [LinkedIn]
 
 SUMMARY
-Data analyst with experience building dashboards, SQL pipelines, and experiment readouts for product and growth teams. Comfortable turning messy data into clear recommendations for stakeholders. Seeking a data analyst role where SQL, Python, and storytelling drive decisions.
+[1 line about years/industry] + [1 line about tools] + [1 line about business impact].
 
 SKILLS
-Python • SQL • Excel • Power BI • A/B Testing • Data Visualization • Statistical Testing
+SQL | Python | Excel | Tableau or Power BI | A/B Testing | ETL | Forecasting
 
 EXPERIENCE
+[Job Title] | [Company A] | [Dates]
+- [Action verb] [business process] using [tool], improving [metric] by [X%].
+- Built [dashboard/report] for [stakeholder], reducing [time/cost] by [X].
+- Partnered with [team] on [analysis/experiment], resulting in [outcome].
 
-Data Analyst | Northwind Analytics | 2022 - Present
-• Owned weekly KPI reporting for a B2B SaaS funnel; surfaced a 19% drop in trial-to-paid conversion and led a fix that recovered $340K ARR within two quarters.
-• Built SQL models and Power BI dashboards used by sales and CS leadership, cutting ad-hoc request time by ~6 hours per week.
-• Partnered with PMs on A/B tests: designed metrics, validated sample sizes, and summarized results for exec reviews.
+PROJECTS AT COMPANY A
+[Project Name]
+- Problem: [what needed fixing]
+- Approach: [SQL/Python/BI method]
+- Impact: [metric lifted, time saved, or cost reduced]
 
-Junior Data Analyst | Harbor Retail Co. | 2020 - 2022
-• Automated Excel reporting for 40+ stores; reduced manual compilation from 12 hours to 90 minutes per month.
-• Analyzed promotion and inventory data in SQL; helped reduce stockouts by 11% in a pilot region.
+[Job Title] | [Company B] | [Dates]
+- Owned [KPI/reporting area] across [team/function].
+- Improved data quality by [method], reducing [error/rework] by [X].
 
-PROJECTS
-
-Customer Churn Drivers: Python, SQL, Power BI
-Clustered at-risk accounts and built a Power BI story for sales; prioritized outreach list that correlated with a 7% lift in retention in a 90-day pilot.
-
-Marketing Attribution: SQL, Excel
-Mapped multi-touch journeys from raw event data; aligned with marketing on a simpler rule set that improved forecast accuracy vs. last-click by 14%.
+PROJECTS AT COMPANY B
+[Project Name]
+- Problem: [operational or growth issue]
+- Approach: [analysis + stakeholder collaboration]
+- Impact: [business result]
 
 EDUCATION
-B.S. Statistics, State University, 2020`;
+[Degree], [School], [Year]
 
-const faqLegacyEntities: FaqSchemaEntity[] = [
+CERTIFICATIONS (OPTIONAL)
+[Certification], [Year]`;
+
+const skillChips = [
+  "SQL",
+  "Python",
+  "Excel",
+  "Tableau",
+  "Power BI",
+  "A/B Testing",
+  "Dashboards",
+] as const;
+
+const topBullets = [
+  "Built Tableau dashboards that reduced weekly reporting time by 62% for GTM leadership.",
+  "Automated SQL reporting pipelines, saving 12 hours per week across analytics operations.",
+  "Improved signup conversion by 14% by identifying funnel drop-offs and prioritizing test ideas.",
+  "Standardized KPI definitions across teams, reducing reporting disputes and metric drift.",
+  "Partnered with product and finance to uncover billing anomalies and recover missed revenue.",
+  "Created cohort retention analysis in Python, identifying high-risk segments that informed lifecycle campaigns.",
+  "Designed experiment readouts with guardrail metrics, helping teams ship winning variants with lower rollback risk.",
+] as const;
+
+const faqEntities: FaqSchemaEntity[] = [
   {
     "@type": "Question",
-    name: "What is a good data analyst resume?",
+    name: "What should a data analyst resume include?",
     acceptedAnswer: {
       "@type": "Answer",
       text:
-        "A strong data analyst resume leads with measurable outcomes (revenue, conversion, time saved), names tools like SQL and Python in context, and mirrors the job description for the role you want, not a generic list of duties.",
+        "Include a short summary, job-matched skills, measurable experience bullets, and a clean ATS-friendly format with standard headings.",
     },
   },
   {
     "@type": "Question",
-    name: "How do I write a data analyst resume with no experience?",
+    name: "How long should a data analyst resume be?",
     acceptedAnswer: {
       "@type": "Answer",
       text:
-        "Use projects, coursework, and internships: show SQL or Python work, a dashboard or notebook, and clear metrics (even if the scale is small). Pair that with a tailored skills section and bullets that match the posting’s language.",
+        "One page for most early and mid-career applicants. Two pages can work if you have substantial relevant experience with measurable outcomes.",
+    },
+  },
+  {
+    "@type": "Question",
+    name: "Is SQL required for a data analyst resume?",
+    acceptedAnswer: {
+      "@type": "Answer",
+      text:
+        "For most data analyst roles, yes. SQL is one of the highest-signal skills for ATS and recruiter screening.",
     },
   },
   {
@@ -84,401 +97,208 @@ const faqLegacyEntities: FaqSchemaEntity[] = [
     acceptedAnswer: {
       "@type": "Answer",
       text:
-        "Use standard section headings, plain one-column layout, and include keywords from the job description where they match your real experience. Run a quick scan against the posting before you submit. Most ATS issues are fixable gaps, not mystery.",
+        "Use one-column layout, standard headings, and role-matched keywords that reflect your real experience. Focus on measurable outcomes in each bullet.",
     },
   },
 ];
 
-const faqPageSchema = mergeResumeExampleFaqSchema(ROLE, faqLegacyEntities);
-
-const copyPasteExampleBullets = [
-  "Owned weekly KPI reporting for a B2B SaaS funnel; surfaced a 19% drop in trial-to-paid conversion and led a fix that recovered $340K ARR within two quarters.",
-  "Built SQL models and Power BI dashboards for sales and CS leadership, cutting ad-hoc request time by ~6 hours per week.",
-  "Partnered with PMs on A/B tests: designed metrics, validated sample sizes, and summarized results for exec reviews.",
-];
-
-const copyPasteItemListSchema = {
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  name: "Data Analyst Resume Example (Copy & Paste)",
-  itemListElement: copyPasteExampleBullets.map((text, i) => ({
-    "@type": "ListItem",
-    position: i + 1,
-    name: text,
-  })),
-} as const;
+const faqPageSchema = mergeResumeExampleFaqSchema("Data Analyst", faqEntities);
 
 export function DataAnalystResumeExampleMain({ omitHero = false }: { omitHero?: boolean }) {
-  const goodResumeLines = goodResumeSnippet("data-analyst", "Data Analyst");
-
   return (
     <div className={omitHero ? "bg-white text-slate-900" : "min-h-screen bg-white text-slate-900"}>
+      {/* Sticky mobile CTA */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 p-3 backdrop-blur sm:hidden">
+        <Link
+          href="#resume-example"
+          className="block rounded-xl bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white"
+        >
+          View Resume Example
+        </Link>
+      </div>
+
       {!omitHero ? (
-        <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
-          <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-            <h1 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              {getResumeExampleSerpTitle("data-analyst")}
+        <section className="border-b border-slate-200 bg-slate-50/60">
+          <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+            <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+              Data Analyst Resume Example That Gets Interviews (2026)
             </h1>
-            <ResumeExampleSeoIntro role={ROLE} />
-            <p className="mt-3 text-sm font-medium text-slate-500">
-              Takes 10 seconds • No signup required
+            <p className="mt-3 max-w-2xl text-base text-slate-600 sm:text-lg">
+              ATS-friendly resume example with SQL/Python skills, bullet points, and copy-paste template.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <p className="mt-3 text-sm font-medium text-slate-500">Updated 2026 • ATS-Friendly • Real Metrics Examples</p>
+            <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href={JD_CHECK_HREF}
-                className="inline-flex justify-center rounded-xl bg-slate-900 px-6 py-3.5 text-center text-base font-semibold text-white transition hover:bg-slate-800"
+                href="#resume-example"
+                className="inline-flex rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
               >
-                Optimize this resume for a job description
+                View Resume Example
               </Link>
               <Link
-                href={KEYWORD_SCANNER_HREF}
-                className="inline-flex justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center text-base font-semibold text-slate-900 transition hover:bg-slate-50"
+                href="#template"
+                className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
               >
-                Find missing keywords in your resume
+                Copy Template
+              </Link>
+              <Link
+                href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+              >
+                Match to Job Description
               </Link>
             </div>
           </div>
         </section>
       ) : null}
 
-      <div className="mx-auto max-w-3xl space-y-14 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-        <div className="space-y-4">
-          <ResumeExampleTopAtsKeywordsSection role={ROLE} keywords={DEFAULT_TOP_ATS_KEYWORDS["data-analyst"]} />
-          <Link
-            href={KEYWORD_SCANNER_HREF}
-            className="inline-flex text-sm font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-          >
-            Scan my resume for missing keywords
-          </Link>
-        </div>
-
-        <ResumeExampleSeoBulletSamplesSection role={ROLE} bullets={DEFAULT_SEO_SAMPLE_BULLETS["data-analyst"]} />
-
-        <ResumeExampleAtsScoreCta />
-
-        <section aria-labelledby="resume-examples-h2" className="space-y-10">
-          <h2 id="resume-examples-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Resume Examples
+      <div className="mx-auto max-w-3xl space-y-10 px-4 py-8 pb-24 sm:px-6 sm:py-10 sm:pb-10 lg:px-8">
+        <section id="resume-example" aria-labelledby="resume-example-h2">
+          <h2 id="resume-example-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Data Analyst Resume Example
           </h2>
-
-          <div className="space-y-3">
-            <h3 id="da-copy-paste-heading" className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
-              Data Analyst Resume Example (Copy &amp; Paste)
-            </h3>
-            <p className="mt-3 text-sm text-slate-600 sm:text-base">
-              Metric-driven bullets recruiters and ATS both look for. Paste into your experience section
-              and rewrite with your own numbers.
-            </p>
-            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-800 sm:text-base">
-              {copyPasteExampleBullets.map((b) => (
-                <li key={b}>{b}</li>
-              ))}
-            </ul>
-          </div>
-
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h3 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
-            What is a good data analyst resume?
-          </h3>
-          <p className="mt-3 text-sm text-slate-700 sm:text-base">{goodResumeLines.line1}</p>
-          <p className="mt-2 text-sm text-slate-700 sm:text-base">{goodResumeLines.line2}</p>
-        </section>
-
-        <ResumeExampleSeoFunnel />
-
-        {/* 2. Full resume example */}
-        <div>
-          <h3 id="resume-preview-heading" className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
-            Full resume sample (ATS-friendly layout)
-          </h3>
           <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div className="border-b border-slate-100 bg-slate-50/80 px-5 py-4 sm:px-6">
+            <div className="border-b border-slate-100 bg-slate-50 px-5 py-4">
               <p className="text-center text-xs font-medium uppercase tracking-wider text-slate-500">
-                Resume preview (ATS-friendly layout)
+                ATS-friendly full resume preview
               </p>
             </div>
-            <div className="space-y-5 px-5 py-6 text-sm leading-relaxed text-slate-800 sm:px-8 sm:py-8 sm:text-[15px]">
-              <header className="text-center">
-                <p className="text-lg font-semibold tracking-tight text-slate-900">Jordan Chen</p>
-                <p className="mt-1 text-slate-700">Data Analyst</p>
-                <p className="mt-1 text-xs text-slate-500 sm:text-sm">
-                  San Francisco, CA · jordan.chen@email.com · linkedin.com/in/jordanchen
-                </p>
-              </header>
-
+            <div className="space-y-4 px-5 py-6 text-sm text-slate-800 sm:px-7">
+              <p className="text-lg font-semibold text-slate-900">Jordan Chen</p>
+              <p>Data Analyst | San Francisco, CA | jordan.chen@email.com</p>
               <div>
-                <h3 className="border-b border-slate-200 pb-1 text-xs font-bold uppercase tracking-wide text-slate-900">
-                  Summary
-                </h3>
-                <p className="mt-2 text-slate-700">
-                  Data analyst who turns messy data into clear recommendations for product and growth.
-                  Strong in SQL, Python, and dashboards; comfortable partnering with PMs on A/B tests and
-                  funnel analysis. Excited to align analysis with business goals and measurable impact.
+                <p className="font-semibold text-slate-900">Summary</p>
+                <p className="mt-1">
+                  Data analyst focused on SQL, dashboards, and experiment readouts that drive business decisions.
                 </p>
               </div>
-
               <div>
-                <h3 className="border-b border-slate-200 pb-1 text-xs font-bold uppercase tracking-wide text-slate-900">
-                  Skills
-                </h3>
-                <p className="mt-2 text-slate-700">
-                  Python · SQL · Excel · Power BI · A/B Testing · Data Visualization · Statistical Testing
-                </p>
+                <p className="font-semibold text-slate-900">Skills</p>
+                <p className="mt-1">Python, SQL, Excel, Power BI, A/B Testing, Data Visualization</p>
               </div>
-
               <div>
-                <h3 className="border-b border-slate-200 pb-1 text-xs font-bold uppercase tracking-wide text-slate-900">
-                  Experience
-                </h3>
-                <div className="mt-3 space-y-4">
-                  <div>
-                    <p className="font-semibold text-slate-900">
-                      Data Analyst · Northwind Analytics{" "}
-                      <span className="font-normal text-slate-600">(2022-Present)</span>
-                    </p>
-                    <ul className="mt-2 list-disc space-y-1.5 pl-5 text-slate-700">
-                      <li>
-                        Owned weekly KPI reporting for a B2B SaaS funnel; flagged a 19% trial-to-paid drop
-                        and supported a fix that recovered ~$340K ARR within two quarters.
-                      </li>
-                      <li>
-                        Built SQL-backed models and Power BI dashboards for sales and CS, saving ~6 hours
-                        of ad-hoc requests per week.
-                      </li>
-                      <li>
-                        Ran A/B tests with PMs: metrics, sample sizes, and exec-ready summaries, driving
-                        clearer product decisions.
-                      </li>
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-900">
-                      Junior Data Analyst · Harbor Retail Co.{" "}
-                      <span className="font-normal text-slate-600">(2020-2022)</span>
-                    </p>
-                    <ul className="mt-2 list-disc space-y-1.5 pl-5 text-slate-700">
-                      <li>
-                        Automated Excel reporting for 40+ stores; cut monthly reporting from 12 hours to
-                        about 90 minutes.
-                      </li>
-                      <li>
-                        Used SQL on promotion and inventory data to help reduce stockouts by 11% in a pilot
-                        region.
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="border-b border-slate-200 pb-1 text-xs font-bold uppercase tracking-wide text-slate-900">
-                  Projects
-                </h3>
-                <ul className="mt-2 list-disc space-y-1.5 pl-5 text-slate-700">
-                  <li>
-                    <span className="font-medium text-slate-900">Customer churn drivers</span>: Python,
-                    SQL, Power BI: prioritized at-risk accounts; pilot cohort showed ~7% retention lift in 90
-                    days.
-                  </li>
-                  <li>
-                    <span className="font-medium text-slate-900">Marketing attribution</span>: SQL,
-                    Excel: simplified multi-touch rules; improved forecast accuracy vs. last-click by 14%.
-                  </li>
+                <p className="font-semibold text-slate-900">Experience</p>
+                <p className="mt-2 font-medium text-slate-900">Data Analyst | Northwind Analytics | 2022-Present</p>
+                <ul className="mt-1 list-disc space-y-1.5 pl-5">
+                  <li>Recovered ~$340K ARR by identifying and fixing trial-to-paid drop-off.</li>
+                  <li>Cut ad-hoc reporting by ~6 hours/week through SQL and dashboard automation.</li>
                 </ul>
-              </div>
-
-              <div>
-                <h3 className="border-b border-slate-200 pb-1 text-xs font-bold uppercase tracking-wide text-slate-900">
-                  Education
-                </h3>
-                <p className="mt-2 text-slate-700">B.S. Statistics, State University, 2020</p>
+                <p className="mt-2 font-medium text-slate-900">Project: Churn Signal Model</p>
+                <ul className="mt-1 list-disc space-y-1.5 pl-5">
+                  <li>Built churn-risk segmentation pipeline (SQL + Python); pilot outreach improved retention by 7%.</li>
+                </ul>
+                <p className="mt-3 font-medium text-slate-900">Junior Data Analyst | Harbor Retail Co. | 2020-2022</p>
+                <ul className="mt-1 list-disc space-y-1.5 pl-5">
+                  <li>Reduced monthly reporting from 12 hours to 90 minutes through workflow automation.</li>
+                  <li>Improved stockout decisions by analyzing promotion and inventory datasets in SQL.</li>
+                </ul>
+                <p className="mt-2 font-medium text-slate-900">Project: Attribution Diagnostics</p>
+                <ul className="mt-1 list-disc space-y-1.5 pl-5">
+                  <li>Created Power BI attribution diagnostics dashboard; improved marketing forecast confidence.</li>
+                </ul>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* 3. Template */}
-        <div>
-          <h3 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
-            Data Analyst Resume Template (Copy-Paste)
-          </h3>
-          <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            Plain text, single column, standard headings. Easy for ATS to parse. Copy the block below
-            into Word or Google Docs and swap in your details.
-          </p>
-          <pre className="mt-4 max-h-[min(28rem,70vh)] overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs leading-relaxed text-slate-800 sm:p-5 sm:text-[13px]">
+        <section id="template" aria-labelledby="template-h2">
+          <h2 id="template-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Data Analyst Resume Template
+          </h2>
+          <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+            Fill-in template: replace every `[placeholder]` with your own details and metrics.
+          </div>
+          <pre className="mt-4 max-h-[22rem] overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs leading-relaxed text-slate-800 sm:text-sm">
             {COPY_PASTE_TEMPLATE}
           </pre>
-        </div>
-        </section>
-
-        {/* 4. Bullet point bridge */}
-        <section aria-labelledby="resume-bullet-points-h2">
-          <h2 id="resume-bullet-points-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Resume Bullet Points
-          </h2>
-          <p className="mt-3 text-sm text-slate-600 sm:text-base">
-            Strong bullets prove impact. Use numbers, tools, and scope, then tailor to each posting.
-          </p>
-          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
-            <li>
-              Automated SQL + Python reporting for a 12-person revenue team, reducing weekly prep from 8
-              hours to 2 while improving forecast accuracy.
-            </li>
-            <li>
-              Designed Power BI dashboards for funnel and cohort metrics; used by PM and exec staff in
-              weekly QBRs.
-            </li>
-            <li>
-              Analyzed A/B test results with statistical significance checks; recommended a ship that
-              lifted signup conversion by 6.3%.
-            </li>
-            <li>
-              Partnered with finance to reconcile billing anomalies in SQL, recovering $180K in missed
-              revenue recognition in one quarter.
-            </li>
-            <li>
-              Built Excel models for pricing scenarios; influenced a 4% margin improvement on a core SKU
-              bundle.
-            </li>
-            <li>
-              Documented data definitions and metric lineage in a shared wiki, cutting cross-team “what does
-              this number mean?” questions by roughly half.
-            </li>
+          <ul className="mt-4 list-disc space-y-1.5 pl-5 text-sm text-slate-700">
+            <li>Keep this to one page for most roles.</li>
+            <li>Use numbers in at least 2 bullets per role.</li>
+            <li>Mirror keywords from the target job description.</li>
           </ul>
-          <p className="mt-5 text-sm text-slate-600">
-            <Link
-              href="/data-scientist-resume-bullet-points"
-              className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-            >
-              See more data analyst-style bullet points
-            </Link>{" "}
-            (closest cluster on ResumeAtlas; many patterns overlap with analytics and experimentation
-            roles).
-          </p>
         </section>
 
-        {/* 5. Common mistakes */}
-        <section>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Common Mistakes in Data Analyst Resumes
+        <section id="skills" aria-labelledby="skills-h2">
+          <h2 id="skills-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Skills for Data Analyst Resume
           </h2>
-          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
-            <li>
-              <strong className="text-slate-900">No metrics</strong>: “Analyzed data” doesn’t tell
-              recruiters or ATS what changed. Tie work to outcomes.
-            </li>
-            <li>
-              <strong className="text-slate-900">Missing keywords</strong>: If the job asks for SQL,
-              Python, and experimentation, those words should appear where you truly have the experience.
-            </li>
-            <li>
-              <strong className="text-slate-900">Generic descriptions</strong>: One resume for every
-              application usually fails. Most resumes fail because they don&apos;t mirror the job
-              description.
-            </li>
-            <li>
-              <strong className="text-slate-900">Not matching job description</strong>: The posting is
-              your cheat sheet. Align skills and bullets without inventing experience.
-            </li>
+          <ul className="mt-4 grid grid-cols-2 gap-2 text-sm text-slate-700 sm:grid-cols-4 sm:text-base">
+            {skillChips.map((skill) => (
+              <li key={skill} className="list-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center">
+                {skill}
+              </li>
+            ))}
           </ul>
-          <Link
-            href="/problems/ats-rejecting-my-resume"
-            className="mt-6 inline-flex text-sm font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-          >
-            Fix why your resume is getting rejected
-          </Link>
-        </section>
-
-        {/* 6. Core conversion */}
-        <section className="rounded-2xl border border-slate-200 bg-slate-50/80 p-6 sm:p-8">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Check if Your Resume Matches the Job Description
-          </h2>
-          <p className="mt-3 text-sm text-slate-700 sm:text-base">
-            Most resumes fail because they don&apos;t match the job description. See exactly what&apos;s
-            missing: keywords, emphasis, and gaps. Fix them before you hit submit.
-          </p>
-          <Link
-            href={JD_CHECK_HREF}
-            className="mt-6 inline-flex rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 sm:text-base"
-          >
-            Optimize this resume for a job description
-          </Link>
-        </section>
-
-        {/* 7. ATS */}
-        <section>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            How to Make Your Resume ATS-Friendly
-          </h2>
-          <p className="mt-3 text-sm text-slate-700 sm:text-base">
-            Keep one column, standard headings (Summary, Experience, Education, Skills), and avoid
-            graphics-heavy layouts for core text. ATS tools parse simple text best; then humans skim for
-            impact and clarity.
-          </p>
-          <p className="mt-3 text-sm text-slate-700 sm:text-base">
-            Start from an{" "}
-            <Link
-              href={ATS_RESUME_TEMPLATE_GUIDE_PATH}
-              className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-            >
-              ATS resume template
-            </Link>{" "}
-            (copy-paste layouts + previews), then tighten your{" "}
-            <Link
-              href={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#ats-resume-format`}
-              className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-            >
-              ATS-friendly resume format
-            </Link>
-            . For a dedicated score pass, use the{" "}
-            <Link
-              href={ATS_CHECKER_HREF}
-              className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-            >
-              ATS resume checker
+          <p className="mt-3 text-sm text-slate-600">
+            Use only skills you can prove in your bullets. Need formatting help? See{" "}
+            <Link href={RESUME_SKILLS_GUIDE_PATH} className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              resume skills examples
             </Link>
             .
           </p>
         </section>
 
-        {/* 8. FAQ */}
-        <section id="faq">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Frequently Asked Questions
+        <section id="resume-bullet-points-h2" aria-labelledby="bullets-h2">
+          <h2 id="bullets-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Data Analyst Resume Bullet Points
           </h2>
-          <ResumeExampleStandardFaqBlock role={ROLE} />
-          <h3 className="mt-10 text-lg font-semibold tracking-tight text-slate-900">More answers</h3>
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
+            {topBullets.map((b) => (
+              <li key={b}>{b}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section aria-labelledby="mistakes-h2">
+          <h2 id="mistakes-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Common Data Analyst Resume Mistakes
+          </h2>
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
+            <li>Listing tools without outcomes or metrics.</li>
+            <li>Using generic bullets that do not match the posting language.</li>
+            <li>Dense formatting that ATS parsers struggle to read.</li>
+            <li>Submitting one resume version for every role.</li>
+          </ul>
+        </section>
+
+        <section id="faq" aria-labelledby="faq-h2">
+          <h2 id="faq-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            FAQ
+          </h2>
           <div className="mt-4 space-y-3">
-            {faqLegacyEntities.map((q) => (
-              <details
-                key={q.name}
-                className="group rounded-xl border border-slate-200 bg-white px-4 py-3"
-              >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
-                  <span className="text-sm font-semibold text-slate-900">{q.name}</span>
-                  <span className="text-xs text-slate-400 group-open:hidden">+</span>
-                  <span className="hidden text-xs text-slate-400 group-open:inline">−</span>
-                </summary>
+            {faqEntities.map((q) => (
+              <details key={q.name} className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                <summary className="cursor-pointer text-sm font-semibold text-slate-900">{q.name}</summary>
                 <p className="mt-2 text-sm text-slate-600">{q.acceptedAnswer.text}</p>
               </details>
             ))}
           </div>
         </section>
 
-        <ResumeExampleExploreMoreFooter currentRole="data-analyst" />
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Want to tailor this resume to a real job posting?
+          </h2>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link
+              href="/ats-resume-checker"
+              className="inline-flex rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              Analyze My Resume
+            </Link>
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+            >
+              Match to Job Description
+            </Link>
+          </div>
+        </section>
       </div>
 
       <script
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(copyPasteItemListSchema) }}
       />
     </div>
   );
