@@ -29,6 +29,7 @@ import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
 import { resolveProblemInterviewCallout } from "@/app/lib/problemInterviewCallout";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
+import { gtagEvent } from "@/app/lib/gtagClient";
 import { useRef } from "react";
 
 const homeFaqSchema = {
@@ -260,6 +261,9 @@ export default function HomeClient({
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLaunchingOptimize, setIsLaunchingOptimize] = useState(false);
   const [isStartingGoogleAuth, setIsStartingGoogleAuth] = useState(false);
+  const [authStartSource, setAuthStartSource] = useState<
+    "quota_modal" | "pricing_modal" | "conversion_modal" | null
+  >(null);
   const [lastInputs, setLastInputs] = useState<GenerateInputs | null>(null);
   /** Whether the last completed /api/analyze used a non-empty job description. */
   const [lastAnalysisUsedJd, setLastAnalysisUsedJd] = useState(true);
@@ -292,7 +296,16 @@ export default function HomeClient({
     let cancelled = false;
     const clearIfActive = () => {
       if (cancelled) return;
-      setIsStartingGoogleAuth(false);
+      setIsStartingGoogleAuth((prev) => {
+        if (prev) {
+          gtagEvent("auth_google_cancel_or_return", {
+            event_category: "auth",
+            source: authStartSource ?? "unknown",
+          });
+        }
+        return false;
+      });
+      setAuthStartSource(null);
     };
     const clearSoonIfVisible = () => {
       window.setTimeout(() => {
@@ -318,7 +331,7 @@ export default function HomeClient({
       window.removeEventListener("focus", clearSoonIfVisible);
       document.removeEventListener("visibilitychange", clearSoonIfVisible);
     };
-  }, [isStartingGoogleAuth]);
+  }, [isStartingGoogleAuth, authStartSource]);
 
   const refreshUsage = useCallback(async () => {
     const supabase = createClient();
@@ -343,8 +356,16 @@ export default function HomeClient({
     const supabase = createClient();
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setIsLoggedIn(!!session?.access_token);
+      if (event === "SIGNED_IN") {
+        gtagEvent("auth_google_success", {
+          event_category: "auth",
+          source: authStartSource ?? "unknown",
+        });
+        setIsStartingGoogleAuth(false);
+        setAuthStartSource(null);
+      }
       if (!session?.access_token) {
         try {
           window.sessionStorage.removeItem(LOGGED_IN_ANALYSIS_SUCCESS_COUNT_KEY);
@@ -430,7 +451,7 @@ export default function HomeClient({
     }
 
     return () => subscription.unsubscribe();
-  }, [refreshUsage]);
+  }, [refreshUsage, authStartSource]);
 
   useEffect(() => {
     if (openedOptimizerFromQueryRef.current) return;
@@ -649,8 +670,13 @@ export default function HomeClient({
 
   const handleStartGoogleAuthForQuota = useCallback(async () => {
     const supabase = createClient();
+    setAuthStartSource("quota_modal");
     setIsStartingGoogleAuth(true);
     setError(null);
+    gtagEvent("auth_google_start", {
+      event_category: "auth",
+      source: "quota_modal",
+    });
     try {
       const redirectTo = buildAuthCallbackRedirectTo("/");
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -665,8 +691,13 @@ export default function HomeClient({
         );
       }
     } catch (e) {
+      gtagEvent("auth_google_failed", {
+        event_category: "auth",
+        source: "quota_modal",
+      });
       setError(e instanceof Error ? e.message : "Sign-in failed");
       setIsStartingGoogleAuth(false);
+      setAuthStartSource(null);
     }
   }, []);
 
@@ -727,12 +758,20 @@ export default function HomeClient({
   }, [launchOptimizerFlow]);
 
   const handleStartGoogleAuthForPackage = useCallback(
-    async (packageId: CreditPackageId) => {
+    async (
+      packageId: CreditPackageId,
+      source: "pricing_modal" | "conversion_modal" = "pricing_modal"
+    ) => {
       void packageId;
       if (!lastInputs || !analyzeResult) return;
       const supabase = createClient();
+      setAuthStartSource(source);
       setIsStartingGoogleAuth(true);
       setError(null);
+      gtagEvent("auth_google_start", {
+        event_category: "auth",
+        source,
+      });
       try {
         if (typeof window !== "undefined") {
           writePostOauthAnalyzerSnapshot({
@@ -755,8 +794,13 @@ export default function HomeClient({
           );
         }
       } catch (e) {
+        gtagEvent("auth_google_failed", {
+          event_category: "auth",
+          source,
+        });
         setError(e instanceof Error ? e.message : "Sign-in failed");
         setIsStartingGoogleAuth(false);
+        setAuthStartSource(null);
       }
     },
     [lastInputs, lastJD, lastRoleLevel, analyzeResult]
@@ -773,7 +817,7 @@ export default function HomeClient({
     if (!lastInputs || !analyzeResult) return;
     if (!isLoggedIn) {
       closeOptimizeConversionModal();
-      await handleStartGoogleAuthForPackage("starter");
+      await handleStartGoogleAuthForPackage("starter", "conversion_modal");
       return;
     }
     const credits = usage?.creditsRemaining ?? 0;

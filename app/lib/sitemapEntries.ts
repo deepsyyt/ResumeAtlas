@@ -85,12 +85,6 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     changeFrequency: "weekly" as const,
     priority: priorityForPath("/check-resume-against-job-description"),
   });
-  entries.push({
-    url: `${base}/tools`,
-    lastModified: new Date("2026-03-31"),
-    changeFrequency: "weekly" as const,
-    priority: priorityForPath("/tools"),
-  });
   const toolClusterLastMod = new Date("2026-03-29");
   const toolClusterPaths = [
     "/ats-resume-checker",

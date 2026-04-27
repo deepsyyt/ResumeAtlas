@@ -14,6 +14,7 @@ import { createClient } from "@/app/lib/supabase/client";
 import type { Resume } from "@/app/types/resume";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import { sameResumeAndJob } from "@/app/lib/resumeJobFingerprint";
+import { gtagEvent } from "@/app/lib/gtagClient";
 
 const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
 const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
@@ -190,6 +191,11 @@ export default function OptimizePage() {
           headers["Authorization"] = `Bearer ${session.access_token}`;
         }
 
+        gtagEvent("optimize_started", {
+          event_category: "optimization",
+          user_state: session?.access_token ? "logged_in" : "anonymous",
+        });
+
         const res = await fetch("/api/optimize", {
           method: "POST",
           headers,
@@ -201,7 +207,6 @@ export default function OptimizePage() {
             structuredResume,
           }),
         });
-
         if (res.status === 401) {
           throw new Error("Sign in to run optimization. Return to the home page and open the credit modal.");
         }
@@ -220,6 +225,11 @@ export default function OptimizePage() {
           const nextEditable = resumeFromOptimizeResult(data);
           setResult(data);
           setEditableResume(nextEditable);
+          gtagEvent("optimize_success", {
+            event_category: "optimization",
+            score_before: parsed.analyzeResult.ats_score,
+            score_after: data.scoreAfter,
+          });
           window.sessionStorage.setItem("resumeatlas_optimize_done", "1");
           const cachePayload: OptimizeCacheV1 = {
             result: data,
@@ -243,6 +253,9 @@ export default function OptimizePage() {
       } catch (e) {
         if (cancelled || (e instanceof Error && e.name === "AbortError")) return;
         if (!cancelled) {
+          gtagEvent("optimize_failed", {
+            event_category: "optimization",
+          });
           setError(e instanceof Error ? e.message : "Something went wrong");
         }
       } finally {
@@ -353,20 +366,27 @@ export default function OptimizePage() {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+      gtagEvent("download_pdf_success", { event_category: "download" });
     } catch (e) {
+      gtagEvent("download_pdf_failed", { event_category: "download" });
       setError(e instanceof Error ? e.message : "Failed to download resume PDF.");
     }
   }, [editableResume, toPlainText]);
 
   const handleDownloadDocx = useCallback(() => {
-    const text = editableResume ? toPlainText(editableResume) : result?.optimizedResume ?? "";
-    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "resume-optimized.txt";
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const text = editableResume ? toPlainText(editableResume) : result?.optimizedResume ?? "";
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "resume-optimized.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+      gtagEvent("download_doc_success", { event_category: "download" });
+    } catch {
+      gtagEvent("download_doc_failed", { event_category: "download" });
+    }
   }, [editableResume, result?.optimizedResume, toPlainText]);
 
   if (!result && !error && (hydrating || optimizeInFlight)) {
