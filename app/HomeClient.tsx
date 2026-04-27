@@ -282,6 +282,44 @@ export default function HomeClient({
     if (!isLoggedIn && isLaunchingOptimize) setIsLaunchingOptimize(false);
   }, [isLoggedIn, isLaunchingOptimize]);
 
+  /**
+   * OAuth can be canceled/closed without throwing in some browser/provider paths.
+   * If user returns to this tab and no navigation happened, clear stuck "Signing in…" UI.
+   */
+  useEffect(() => {
+    if (!isStartingGoogleAuth || typeof window === "undefined") return;
+
+    let cancelled = false;
+    const clearIfActive = () => {
+      if (cancelled) return;
+      setIsStartingGoogleAuth(false);
+    };
+    const clearSoonIfVisible = () => {
+      window.setTimeout(() => {
+        if (!cancelled && document.visibilityState === "visible") {
+          setIsStartingGoogleAuth(false);
+        }
+      }, 300);
+    };
+
+    // Hard fallback in case provider flow silently stalls.
+    const timeoutId = window.setTimeout(() => {
+      if (document.visibilityState === "visible") {
+        clearIfActive();
+      }
+    }, 15000);
+
+    window.addEventListener("focus", clearSoonIfVisible);
+    document.addEventListener("visibilitychange", clearSoonIfVisible);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+      window.removeEventListener("focus", clearSoonIfVisible);
+      document.removeEventListener("visibilitychange", clearSoonIfVisible);
+    };
+  }, [isStartingGoogleAuth]);
+
   const refreshUsage = useCallback(async () => {
     const supabase = createClient();
     const {

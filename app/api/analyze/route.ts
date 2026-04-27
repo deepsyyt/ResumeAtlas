@@ -90,6 +90,20 @@ For experience alignment you MUST also output:
 - required_years_experience_max: number or null. Upper bound ONLY when the JD states a clear range (e.g. "10-15 years" -> 15, "3 to 7 years" -> 7). For a minimum only ("5+", "minimum 8 years", no upper cap), use null. If required_years_experience is null, this MUST be null.
 - resume_years_experience: number. Estimate total relevant years of experience from the resume (based on job dates and roles). Use a number (e.g. 7), not a range.
 - For experience_alignment scoring with a range: treat resume years within [required_years_experience, required_years_experience_max] as a strong match; below the range lower the score appropriately; above the max can remain high (candidate exceeds the stated range).
+- Use this strict rubric for experience_alignment (do not improvise):
+  - If required_years_experience is null -> experience_alignment MUST be 80.
+  - Minimum-only JD (no max):
+    - resume_years_experience >= required_years_experience -> score MUST be between 90 and 98.
+    - 1 year below minimum -> 70 to 79.
+    - 2 years below minimum -> 55 to 69.
+    - 3+ years below minimum -> 0 to 54.
+  - Range JD (required_years_experience and required_years_experience_max both present):
+    - Within range -> 90 to 98.
+    - Above max -> 90 to 98 (still strong; candidate exceeds range).
+    - 1 year below range min -> 70 to 79.
+    - 2 years below range min -> 55 to 69.
+    - 3+ years below range min -> 0 to 54.
+- Consistency rule: If your summary implies "meets", "within range", "above requirement", or "above range", experience_alignment MUST NOT be below 90.
 
 Also extract:
 - matched_skills: array of skill phrases from the JD that appear in the resume (with direct textual evidence as above)
@@ -161,6 +175,48 @@ function extractJson(raw: string): string {
   const end = str.lastIndexOf("}") + 1;
   if (start === -1 || end <= start) return raw;
   return str.slice(start, end);
+}
+
+function computeExperienceAlignmentScore(params: {
+  requiredMin: number | null;
+  requiredMax: number | null;
+  resumeYears: number;
+  llmScore: number;
+}): number {
+  const { requiredMin, requiredMax, resumeYears, llmScore } = params;
+  const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
+
+  // Neutral when JD does not state years.
+  if (requiredMin === null) return 80;
+
+  const max =
+    requiredMax !== null &&
+    typeof requiredMax === "number" &&
+    requiredMax >= requiredMin
+      ? requiredMax
+      : null;
+
+  if (resumeYears >= requiredMin) {
+    if (max !== null) {
+      if (resumeYears <= max) {
+        const width = Math.max(1, max - requiredMin);
+        const withinRangeProgress = (resumeYears - requiredMin) / width;
+        return clamp(90 + withinRangeProgress * 8);
+      }
+      // Exceeding an upper range is still a strong match, but not auto-100.
+      return clamp(93 + Math.min(5, resumeYears - max));
+    }
+    // Minimum-only requirement; exceeding minimum should remain strong.
+    return clamp(90 + Math.min(8, resumeYears - requiredMin));
+  }
+
+  // Below minimum requirement.
+  const gap = requiredMin - resumeYears;
+  if (gap <= 1) return 72;
+  if (gap <= 2) return 60;
+  if (gap <= 4) return 45;
+  // Keep very low only when materially under requirement.
+  return clamp(Math.min(35, llmScore));
 }
 
 export type AnalyzeRequestBody = {
@@ -409,7 +465,12 @@ ${jobDescription}`;
       ats_score: Math.max(0, Math.min(100, Math.round(result.ats_score))),
       keyword_coverage: repaired.keyword_coverage,
       semantic_similarity: Math.max(0, Math.min(100, Math.round(result.semantic_similarity))),
-      experience_alignment: Math.max(0, Math.min(100, Math.round(result.experience_alignment))),
+      experience_alignment: computeExperienceAlignmentScore({
+        requiredMin: requiredYears,
+        requiredMax: requiredYearsMax,
+        resumeYears,
+        llmScore: result.experience_alignment,
+      }),
       required_years_experience: requiredYears,
       required_years_experience_max: requiredYearsMax,
       resume_years_experience: resumeYears,

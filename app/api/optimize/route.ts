@@ -13,6 +13,7 @@ import {
   resumeDocumentToPlainText,
   type ResumeDocument,
 } from "@/app/lib/resumeDocument";
+import { resolveAnthropicModelCandidates } from "@/app/lib/anthropicModels";
 
 export type OptimizeRequestBody = {
   resumeText: string;
@@ -579,7 +580,6 @@ ${targetSkills.join(", ")}`;
       model,
       max_tokens: llm.expandMaxTokens,
       temperature: 0.2,
-      top_p: 1,
       system: systemPrompt,
       messages: [{ role: "user" as const, content: userPrompt }],
     }),
@@ -707,7 +707,6 @@ Cluster the target skills into intent clusters that best match the job descripti
         model,
         max_tokens: llm.intentMaxTokens,
         temperature: 0.2,
-        top_p: 1,
         system: SYSTEM,
         messages: [{ role: "user" as const, content: userPrompt }],
       }),
@@ -936,7 +935,6 @@ Return JSON: {"summary":"..."}`;
       model,
       max_tokens: 720,
       temperature: 0.35,
-      top_p: 1,
       system: SUMMARY_ONLY_SYSTEM,
       messages: [{ role: "user" as const, content: userPrompt }],
     }),
@@ -1025,7 +1023,6 @@ ${JSON.stringify(structuredResume, null, 2)}`;
       model,
       max_tokens: llm.recomposeMaxTokens,
       temperature: 0.4,
-      top_p: 1,
       system: RECOMPOSE_SYSTEM_PROMPT,
       messages: [{ role: "user" as const, content: userPrompt }],
     }),
@@ -1184,7 +1181,6 @@ QUANTIFY=${forceQuantified ? "true" : "false"}`;
       model,
       max_tokens: maxOutputTokens,
       temperature: 0,
-      top_p: 1,
       system: systemPrompt,
       messages: [{ role: "user" as const, content: userPrompt }],
     }),
@@ -1243,7 +1239,6 @@ Write one aligned bullet containing: ${skill}`;
       model,
       max_tokens: llm.generateBulletMaxTokens,
       temperature: 0,
-      top_p: 1,
       system: systemPrompt,
       messages: [{ role: "user" as const, content: userPrompt }],
     }),
@@ -1468,7 +1463,6 @@ OR
       model,
       max_tokens: maxOutputTokens,
       temperature: 0,
-      top_p: 1,
       system,
       messages: [{ role: "user" as const, content: user }],
     }),
@@ -1515,10 +1509,7 @@ export async function POST(request: Request) {
     userId = user.id;
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
-    const model =
-      process.env.ANTHROPIC_MODEL && process.env.ANTHROPIC_MODEL.trim().length > 0
-        ? process.env.ANTHROPIC_MODEL
-        : "claude-3-haiku-20240307";
+    const model = resolveAnthropicModelCandidates()[0] ?? "claude-haiku-4-5-20251001";
     const budget = getOptimizeLlmBudget();
 
     // If no structured resume is provided, do not attempt to rebuild from raw text.

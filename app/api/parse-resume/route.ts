@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { parseResumeToJSON } from "@/app/lib/resumeParser";
+import { resolveAnthropicModelCandidates } from "@/app/lib/anthropicModels";
 import type {
   ResumeDocument,
   ResumeExperience,
@@ -209,10 +210,7 @@ export async function POST(request: Request) {
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
-    const model =
-      process.env.ANTHROPIC_MODEL && process.env.ANTHROPIC_MODEL.trim().length > 0
-        ? process.env.ANTHROPIC_MODEL
-        : "claude-3-haiku-20240307";
+    const model = resolveAnthropicModelCandidates()[0] ?? "claude-haiku-4-5-20251001";
 
     if (!apiKey) {
       // Fallback to deterministic parser when LLM is not configured.
@@ -236,7 +234,6 @@ Return ONLY the JSON object described in the system prompt.`;
         model,
         max_tokens: 2000,
         temperature: 0,
-        top_p: 1,
         system: PARSER_SYSTEM_PROMPT,
         messages: [{ role: "user" as const, content: userPrompt }],
       }),
