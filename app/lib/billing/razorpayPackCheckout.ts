@@ -1,7 +1,7 @@
 import { createClient } from "@/app/lib/supabase/client";
 import { getCreditPackage, type CreditPackageId } from "@/app/lib/billing/packages";
 import { logBillingEvent } from "@/app/lib/billing/billingEventsClient";
-import { gtagEvent } from "@/app/lib/gtagClient";
+import { trackFunnelStep } from "@/app/lib/funnelTracking";
 
 declare global {
   interface Window {
@@ -41,6 +41,7 @@ export type OpenRazorpayPackCheckoutParams = {
   getAuthHeaders: () => Promise<HeadersInit>;
   onRefreshBalance?: () => void | Promise<void>;
   checkoutTrigger?: CheckoutTrigger;
+  funnelId?: string;
 };
 
 /**
@@ -54,6 +55,7 @@ export async function openRazorpayPackCheckout({
   getAuthHeaders,
   onRefreshBalance,
   checkoutTrigger = "pack_button",
+  funnelId,
 }: OpenRazorpayPackCheckoutParams): Promise<PackCheckoutResult> {
   if (isLoggedIn && creditsRemaining > 0) {
     return {
@@ -88,6 +90,7 @@ export async function openRazorpayPackCheckout({
     };
     if (!res.ok) {
       if (res.status === 409 && data.code === "CREDITS_REMAINING") {
+        trackFunnelStep("checkout_error", { package_id: packageId, reason: "credits_remaining" }, funnelId);
         return {
           status: "error",
           message:
@@ -96,30 +99,30 @@ export async function openRazorpayPackCheckout({
               : "Use your available optimizations before buying another pack.",
         };
       }
+      trackFunnelStep("checkout_error", { package_id: packageId, reason: "create_order_failed" }, funnelId);
       return {
         status: "error",
         message: typeof data.error === "string" ? data.error : "Could not start checkout",
       };
     }
     if (!data.orderId || !data.keyId) {
+      trackFunnelStep("checkout_error", { package_id: packageId, reason: "invalid_checkout_response" }, funnelId);
       return { status: "error", message: "Invalid checkout response" };
     }
 
     const amountMinor = Math.round(Number(data.amount));
     const currency = String(data.currency ?? "USD").toUpperCase();
     if (!Number.isFinite(amountMinor) || amountMinor <= 0) {
+      trackFunnelStep("checkout_error", { package_id: packageId, reason: "invalid_amount" }, funnelId);
       return { status: "error", message: "Invalid payment amount from server" };
     }
 
     const pkgMeta = getCreditPackage(packageId);
-    gtagEvent("billing_razorpay_checkout_opened", {
-      event_category: "billing",
-      package_id: packageId,
-      credits: pkgMeta?.credits ?? 0,
-      currency,
-      value: amountMinor / 100,
-      checkout_trigger: checkoutTrigger,
-    });
+    trackFunnelStep(
+      "checkout_opened",
+      { package_id: packageId, checkout_trigger: checkoutTrigger },
+      funnelId
+    );
     void logBillingEvent("billing_razorpay_checkout_opened", {
       package_id: packageId,
       credits: pkgMeta?.credits ?? 0,
@@ -174,6 +177,7 @@ export async function openRazorpayPackCheckout({
               creditsRemaining?: number;
             };
             if (!v.ok) {
+              trackFunnelStep("checkout_error", { package_id: packageId, reason: "verify_failed" }, funnelId);
               finish({
                 status: "error",
                 message: typeof vr.error === "string" ? vr.error : "Payment verification failed",
@@ -189,13 +193,7 @@ export async function openRazorpayPackCheckout({
               typeof vr.creditsRemaining === "number"
                 ? vr.creditsRemaining
                 : creditsRemaining + creditsAdded;
-            gtagEvent("billing_payment_success", {
-              event_category: "billing",
-              package_id: packageId,
-              credits: creditsAdded,
-              currency,
-              value: amountMinor / 100,
-            });
+            trackFunnelStep("checkout_paid", { package_id: packageId }, funnelId);
             void logBillingEvent("billing_payment_success", {
               package_id: packageId,
               credits: creditsAdded,
@@ -209,16 +207,14 @@ export async function openRazorpayPackCheckout({
               creditsRemaining: balance,
             });
           } catch {
+            trackFunnelStep("checkout_error", { package_id: packageId, reason: "verify_exception" }, funnelId);
             finish({ status: "error", message: "Verification failed" });
           }
         },
         modal: {
           ondismiss: () => {
             if (!razorpayReportedPaymentSuccess) {
-              gtagEvent("billing_razorpay_checkout_dismissed", {
-                event_category: "billing",
-                package_id: packageId,
-              });
+              trackFunnelStep("checkout_dismissed", { package_id: packageId }, funnelId);
               void logBillingEvent("billing_razorpay_checkout_dismissed", {
                 package_id: packageId,
               });
@@ -232,6 +228,7 @@ export async function openRazorpayPackCheckout({
 
     return result;
   } catch (e) {
+    trackFunnelStep("checkout_error", { package_id: packageId, reason: "checkout_exception" }, funnelId);
     return {
       status: "error",
       message: e instanceof Error ? e.message : "Checkout failed",

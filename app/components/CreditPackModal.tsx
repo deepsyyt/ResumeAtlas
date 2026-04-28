@@ -14,6 +14,8 @@ import {
 import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import { logBillingEvent } from "@/app/lib/billing/billingEventsClient";
 import { gtagEvent } from "@/app/lib/gtagClient";
+import { trackFunnelStep } from "@/app/lib/funnelTracking";
+import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
 
 export type CreditPackModalProps = {
   open: boolean;
@@ -27,6 +29,7 @@ export type CreditPackModalProps = {
   onStartGoogleAuthForPackage: (packageId: CreditPackageId) => void | Promise<void>;
   isStartingGoogleAuth?: boolean;
   isBusy?: boolean;
+  funnelId?: string;
 };
 
 const PREVIEW_SAMPLE_RESUME: ResumeDocument = {
@@ -60,6 +63,7 @@ export function CreditPackModal({
   onStartGoogleAuthForPackage,
   isStartingGoogleAuth = false,
   isBusy = false,
+  funnelId,
 }: CreditPackModalProps) {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -83,7 +87,6 @@ export function CreditPackModal({
 
   useEffect(() => {
     if (!open) return;
-    gtagEvent("billing_payment_modal_open", { event_category: "billing" });
     void logBillingEvent("billing_payment_modal_open");
   }, [open]);
 
@@ -91,7 +94,6 @@ export function CreditPackModal({
     if (!open || checkoutSuccess || (isLoggedIn && creditsRemaining > 0)) return;
     if (trackedPrimaryViewRef.current) return;
     trackedPrimaryViewRef.current = true;
-    gtagEvent("pricing_primary_view", { event_category: "billing" });
   }, [open, checkoutSuccess, isLoggedIn, creditsRemaining]);
 
   const getAuthHeaders = useCallback(async () => {
@@ -122,6 +124,7 @@ export function CreditPackModal({
           getAuthHeaders,
           onRefreshBalance,
           checkoutTrigger,
+          funnelId,
         });
         if (result.status === "paid") {
           const pkg = getCreditPackage(packageId);
@@ -147,32 +150,34 @@ export function CreditPackModal({
         setCheckoutLoading(null);
       }
     },
-    [getAuthHeaders, onRefreshBalance, creditsRemaining, isLoggedIn]
+    [getAuthHeaders, onRefreshBalance, creditsRemaining, isLoggedIn, funnelId]
   );
 
   const handleContinueToOptimization = useCallback(async () => {
     try {
+      gtagEvent(ANALYTICS_EVENTS.postPaymentStartOptimizationClick, {
+        event_category: "conversion",
+        source: "credit_pack_modal_payment_success",
+        funnel_id: funnelId,
+      });
+      trackFunnelStep(
+        "post_payment_start_optimization_click",
+        { source: "credit_pack_modal_payment_success" },
+        funnelId
+      );
       await onStartOptimization();
     } catch {
       /* parent sets error / modal state */
     }
-  }, [onStartOptimization]);
+  }, [onStartOptimization, funnelId]);
 
   const handleDismissSuccessOnly = useCallback(() => {
     setCheckoutSuccess(null);
   }, []);
 
   const handlePackageClick = useCallback(
-    (pid: CreditPackageId, pricingEvent: string) => {
+    (pid: CreditPackageId) => {
       const selectedPack = getCreditPackage(pid);
-      gtagEvent(pricingEvent, { event_category: "billing", package_id: pid });
-      gtagEvent("billing_credit_pack_checkout_click", {
-        event_category: "billing",
-        package_id: pid,
-        credits: selectedPack?.credits ?? 0,
-        pack_name: selectedPack?.name ?? pid,
-        next_step: isLoggedIn ? "razorpay" : "google_auth",
-      });
       void logBillingEvent("billing_credit_pack_checkout_click", {
         package_id: pid,
         credits: selectedPack?.credits ?? 0,
@@ -180,12 +185,14 @@ export function CreditPackModal({
         next_step: isLoggedIn ? "razorpay" : "google_auth",
       });
       if (!isLoggedIn) {
+        trackFunnelStep("pricing_auth_redirect", { package_id: pid }, funnelId);
         void onStartGoogleAuthForPackage(pid);
         return;
       }
+      trackFunnelStep("checkout_initiated", { package_id: pid, checkout_trigger: "pack_button" }, funnelId);
       void runCheckout(pid, "pack_button");
     },
-    [isLoggedIn, onStartGoogleAuthForPackage, runCheckout]
+    [isLoggedIn, onStartGoogleAuthForPackage, runCheckout, funnelId]
   );
 
   if (!open) return null;
@@ -354,7 +361,7 @@ export function CreditPackModal({
               <button
                 type="button"
                 disabled={busy && checkoutLoading !== "starter"}
-                onClick={() => handlePackageClick("starter", "pricing_primary_click")}
+              onClick={() => handlePackageClick("starter")}
                 className="w-full bg-black text-white rounded-xl py-3 font-medium disabled:opacity-60"
               >
                 {checkoutLoading === "starter"
@@ -377,9 +384,6 @@ export function CreditPackModal({
                 onClick={() => {
                   const next = !showBundles;
                   setShowBundles(next);
-                  if (next) {
-                    gtagEvent("pricing_bundles_expand", { event_category: "billing" });
-                  }
                 }}
                 className="mt-5 text-sm underline text-gray-600 block mx-auto"
               >
@@ -400,7 +404,7 @@ export function CreditPackModal({
                       <button
                         type="button"
                         disabled={busy && checkoutLoading !== "jobseeker"}
-                        onClick={() => handlePackageClick("jobseeker", "pricing_bundle_5_click")}
+                        onClick={() => handlePackageClick("jobseeker")}
                         className="w-full rounded-lg bg-slate-900 py-2 text-white hover:bg-slate-800 transition disabled:opacity-60"
                       >
                         {checkoutLoading === "jobseeker"
@@ -424,7 +428,7 @@ export function CreditPackModal({
                       <button
                         type="button"
                         disabled={busy && checkoutLoading !== "power"}
-                        onClick={() => handlePackageClick("power", "pricing_bundle_15_click")}
+                        onClick={() => handlePackageClick("power")}
                         className="w-full rounded-lg bg-slate-900 py-2 text-white hover:bg-slate-800 transition disabled:opacity-60"
                       >
                         {checkoutLoading === "power"

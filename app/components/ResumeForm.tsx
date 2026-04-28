@@ -8,6 +8,7 @@ import {
   JOB_DESCRIPTION_MAX_WORDS,
   RESUME_TEXT_MAX_WORDS,
 } from "@/app/lib/inputWordLimits";
+import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
 
 export const ROLE_LEVELS = ["Entry", "Mid", "Senior", "Leadership"] as const;
 
@@ -81,7 +82,7 @@ export function ResumeForm({
 
   const onSubmit = (data: GenerateInputs) => {
     if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("event", "analyze_resume_click", {
+      (window as any).gtag("event", ANALYTICS_EVENTS.analyzeClick, {
         event_category: "engagement",
         event_label: "Check resume against job free",
       });

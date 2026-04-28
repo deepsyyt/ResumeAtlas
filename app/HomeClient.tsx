@@ -30,6 +30,8 @@ import { resolveProblemInterviewCallout } from "@/app/lib/problemInterviewCallou
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
 import { gtagEvent } from "@/app/lib/gtagClient";
+import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
+import { getActiveFunnelId, setActiveFunnelId, startNewFunnel, trackFunnelStep } from "@/app/lib/funnelTracking";
 import { useRef } from "react";
 
 const homeFaqSchema = {
@@ -183,6 +185,11 @@ const ANALYZER_STATE_KEY = "resumeatlas_analyzer_state_v1";
 const POST_OAUTH_ANALYZER_KEY = "resumeatlas_post_oauth_analyze_v1";
 /** Successful logged-in analyses in this tab (sessionStorage). Upgrade modal on 2nd and 4th dashboard only. */
 const LOGGED_IN_ANALYSIS_SUCCESS_COUNT_KEY = "resumeatlas_logged_in_analysis_success_count";
+/** Guards auth-success analytics from generic session restore SIGNED_IN callbacks. */
+const AUTH_FLOW_PENDING_KEY = "resumeatlas_auth_flow_pending_v1";
+const AUTH_FLOW_SOURCE_KEY = "resumeatlas_auth_flow_source_v1";
+const AUTH_FLOW_ID_KEY = "resumeatlas_auth_flow_id_v1";
+const AUTH_FLOW_FUNNEL_ID_KEY = "resumeatlas_auth_flow_funnel_id_v1";
 
 function countMissingKeywordsForConversion(r: ATSAnalyzeResult): number {
   const req = r.missing_skills_required?.length ?? 0;
@@ -203,6 +210,7 @@ type AnalyzerStoredState = {
   lastRoleLevel: string;
   analyzeResult: ATSAnalyzeResult;
   savedAt: number;
+  funnelId?: string;
 };
 
 function writePostOauthAnalyzerSnapshot(state: AnalyzerStoredState) {
@@ -211,6 +219,60 @@ function writePostOauthAnalyzerSnapshot(state: AnalyzerStoredState) {
     window.sessionStorage.setItem(POST_OAUTH_ANALYZER_KEY, JSON.stringify(state));
   } catch {
     // ignore quota / private mode
+  }
+}
+
+function beginPendingAuthFlow(
+  source: "quota_modal" | "pricing_modal" | "conversion_modal",
+  funnelId?: string | null
+) {
+  if (typeof window === "undefined") return null;
+  const flowId = crypto.randomUUID();
+  try {
+    window.sessionStorage.setItem(AUTH_FLOW_PENDING_KEY, "1");
+    window.sessionStorage.setItem(AUTH_FLOW_SOURCE_KEY, source);
+    window.sessionStorage.setItem(AUTH_FLOW_ID_KEY, flowId);
+    if (funnelId) window.sessionStorage.setItem(AUTH_FLOW_FUNNEL_ID_KEY, funnelId);
+  } catch {
+    // ignore quota / private mode
+  }
+  return flowId;
+}
+
+function readPendingAuthFlow():
+  | {
+      source: "quota_modal" | "pricing_modal" | "conversion_modal";
+      flowId: string;
+      funnelId: string | null;
+    }
+  | null {
+  if (typeof window === "undefined") return null;
+  try {
+    if (window.sessionStorage.getItem(AUTH_FLOW_PENDING_KEY) !== "1") return null;
+    const source = window.sessionStorage.getItem(AUTH_FLOW_SOURCE_KEY);
+    const flowId = window.sessionStorage.getItem(AUTH_FLOW_ID_KEY);
+    const funnelId = window.sessionStorage.getItem(AUTH_FLOW_FUNNEL_ID_KEY);
+    if (
+      (source === "quota_modal" || source === "pricing_modal" || source === "conversion_modal") &&
+      flowId
+    ) {
+      return { source, flowId, funnelId };
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+function clearPendingAuthFlow() {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(AUTH_FLOW_PENDING_KEY);
+    window.sessionStorage.removeItem(AUTH_FLOW_SOURCE_KEY);
+    window.sessionStorage.removeItem(AUTH_FLOW_ID_KEY);
+    window.sessionStorage.removeItem(AUTH_FLOW_FUNNEL_ID_KEY);
+  } catch {
+    // ignore
   }
 }
 
@@ -268,6 +330,7 @@ export default function HomeClient({
   /** Whether the last completed /api/analyze used a non-empty job description. */
   const [lastAnalysisUsedJd, setLastAnalysisUsedJd] = useState(true);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [activeFunnelId, setActiveFunnelIdState] = useState<string | null>(null);
   const openedOptimizerFromQueryRef = useRef(false);
 
   /** Supabase can send PKCE `code` to Site URL root (`/?code=`) instead of `/auth/callback`. */
@@ -296,16 +359,29 @@ export default function HomeClient({
     let cancelled = false;
     const clearIfActive = () => {
       if (cancelled) return;
+      const pending = readPendingAuthFlow();
       setIsStartingGoogleAuth((prev) => {
         if (prev) {
-          gtagEvent("auth_google_cancel_or_return", {
+          const effectiveFunnelId = pending?.funnelId ?? activeFunnelId;
+          gtagEvent(ANALYTICS_EVENTS.authGoogleCancelOrReturn, {
             event_category: "auth",
-            source: authStartSource ?? "unknown",
+            source: pending?.source ?? authStartSource ?? "unknown",
+            auth_flow_id: pending?.flowId,
+            funnel_id: effectiveFunnelId ?? undefined,
           });
+          trackFunnelStep(
+            "auth_cancel_or_return",
+            {
+              source: pending?.source ?? authStartSource ?? "unknown",
+              auth_flow_id: pending?.flowId,
+            },
+            effectiveFunnelId
+          );
         }
         return false;
       });
       setAuthStartSource(null);
+      clearPendingAuthFlow();
     };
     const clearSoonIfVisible = () => {
       window.setTimeout(() => {
@@ -331,7 +407,7 @@ export default function HomeClient({
       window.removeEventListener("focus", clearSoonIfVisible);
       document.removeEventListener("visibilitychange", clearSoonIfVisible);
     };
-  }, [isStartingGoogleAuth, authStartSource]);
+  }, [isStartingGoogleAuth, authStartSource, activeFunnelId]);
 
   const refreshUsage = useCallback(async () => {
     const supabase = createClient();
@@ -359,10 +435,23 @@ export default function HomeClient({
     } = supabase.auth.onAuthStateChange((event, session) => {
       setIsLoggedIn(!!session?.access_token);
       if (event === "SIGNED_IN") {
-        gtagEvent("auth_google_success", {
-          event_category: "auth",
-          source: authStartSource ?? "unknown",
-        });
+        const pending = readPendingAuthFlow();
+        if (pending) {
+          const effectiveFunnelId = pending.funnelId ?? activeFunnelId;
+          gtagEvent(ANALYTICS_EVENTS.authGoogleSuccess, {
+            event_category: "auth",
+            source: pending.source,
+            auth_flow_id: pending.flowId,
+            funnel_id: effectiveFunnelId ?? undefined,
+          });
+          trackFunnelStep(
+            "auth_success",
+            { source: pending.source, auth_flow_id: pending.flowId },
+            effectiveFunnelId
+          );
+          if (effectiveFunnelId) setActiveFunnelIdState(effectiveFunnelId);
+          clearPendingAuthFlow();
+        }
         setIsStartingGoogleAuth(false);
         setAuthStartSource(null);
       }
@@ -376,6 +465,7 @@ export default function HomeClient({
       refreshUsage();
     });
     if (typeof window !== "undefined") {
+      setActiveFunnelIdState(getActiveFunnelId());
       let sid = window.sessionStorage.getItem("session_id");
       if (!sid) {
         sid = crypto.randomUUID();
@@ -394,12 +484,17 @@ export default function HomeClient({
             const ajd = typeof parsed.lastJD === "string" ? parsed.lastJD : undefined;
             const arl = typeof parsed.lastRoleLevel === "string" ? parsed.lastRoleLevel : undefined;
             const ar = parsed.analyzeResult as ATSAnalyzeResult | undefined;
+            const fid = typeof parsed.funnelId === "string" ? parsed.funnelId : null;
             if (li?.resumeText && ar?.ats_score !== undefined) {
               setLastInputs(li);
               setLastJD(ajd ?? li.jobDescription ?? "");
               setLastAnalysisUsedJd(!!(li.jobDescription ?? "").trim());
               if (arl) setLastRoleLevel(arl);
               setAnalyzeResult(ar);
+              if (fid) {
+                setActiveFunnelId(fid);
+                setActiveFunnelIdState(fid);
+              }
             }
             window.sessionStorage.removeItem(POST_OAUTH_ANALYZER_KEY);
           }
@@ -451,7 +546,7 @@ export default function HomeClient({
     }
 
     return () => subscription.unsubscribe();
-  }, [refreshUsage, authStartSource]);
+  }, [refreshUsage, authStartSource, activeFunnelId]);
 
   useEffect(() => {
     if (openedOptimizerFromQueryRef.current) return;
@@ -499,13 +594,15 @@ export default function HomeClient({
 
   const trackOptimizeAfterAnalysisClick = useCallback(() => {
     void logAnalysisEvent("optimize_after_analysis_clicked");
+    trackFunnelStep("optimize_after_analysis_click", undefined, activeFunnelId);
     if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("event", "ats_optimize_after_analysis_clicked", {
+      (window as any).gtag("event", ANALYTICS_EVENTS.optimizeAfterAnalysisClick, {
         event_category: "engagement",
         event_label: "Optimize resume clicked after analysis",
+        funnel_id: activeFunnelId ?? undefined,
       });
     }
-  }, [logAnalysisEvent]);
+  }, [logAnalysisEvent, activeFunnelId]);
 
   const getAuthHeaders = useCallback(async () => {
     const supabase = createClient();
@@ -541,11 +638,19 @@ export default function HomeClient({
       setLastInputs(normalizedInputs);
       setLastJD(inputs.jobDescription);
       setLastRoleLevel(roleLevel);
+      const funnelId = startNewFunnel("analyze_submit");
+      setActiveFunnelIdState(funnelId);
       void logAnalysisEvent("analyze_clicked");
+      trackFunnelStep(
+        "analyze_started",
+        { has_job_description: jdTrimmed ? "yes" : "no" },
+        funnelId
+      );
       if (typeof window !== "undefined" && (window as any).gtag) {
-        (window as any).gtag("event", "ats_analyze_started", {
+        (window as any).gtag("event", ANALYTICS_EVENTS.analyzeStarted, {
           event_category: "engagement",
           event_label: "Get ATS score free",
+          funnel_id: funnelId,
         });
       }
       try {
@@ -625,10 +730,12 @@ export default function HomeClient({
           }
         }
         void logAnalysisEvent("dashboard_generated");
+        trackFunnelStep("dashboard_generated", { ats_score: result.ats_score }, funnelId);
         if (typeof window !== "undefined" && (window as any).gtag) {
-          (window as any).gtag("event", "ats_dashboard_generated", {
+          (window as any).gtag("event", ANALYTICS_EVENTS.dashboardGenerated, {
             event_category: "engagement",
             event_label: "ATS dashboard result generated",
+            funnel_id: funnelId,
           });
         }
 
@@ -647,10 +754,15 @@ export default function HomeClient({
               if ((window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
                 (window as unknown as { gtag: (...a: unknown[]) => void }).gtag(
                   "event",
-                  "ats_optimize_conversion_modal_shown",
-                  { event_category: "engagement", analysis_count: next }
+                  ANALYTICS_EVENTS.optimizeConversionModalShown,
+                  {
+                    event_category: "engagement",
+                    analysis_count: next,
+                    funnel_id: funnelId,
+                  }
                 );
               }
+              trackFunnelStep("optimize_modal_shown", { analysis_count: next }, funnelId);
               setOptimizeConversionPaymentSuccess(false);
               setOptimizeConversionPaymentReceipt(null);
               setOptimizeConversionModalOpen(true);
@@ -673,10 +785,18 @@ export default function HomeClient({
     setAuthStartSource("quota_modal");
     setIsStartingGoogleAuth(true);
     setError(null);
-    gtagEvent("auth_google_start", {
+    const flowId = beginPendingAuthFlow("quota_modal", activeFunnelId);
+    gtagEvent(ANALYTICS_EVENTS.authGoogleStart, {
       event_category: "auth",
       source: "quota_modal",
+      auth_flow_id: flowId ?? undefined,
+      funnel_id: activeFunnelId ?? undefined,
     });
+    trackFunnelStep(
+      "auth_start",
+      { source: "quota_modal", auth_flow_id: flowId ?? undefined },
+      activeFunnelId
+    );
     try {
       const redirectTo = buildAuthCallbackRedirectTo("/");
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -691,15 +811,23 @@ export default function HomeClient({
         );
       }
     } catch (e) {
-      gtagEvent("auth_google_failed", {
+      gtagEvent(ANALYTICS_EVENTS.authGoogleFailed, {
         event_category: "auth",
         source: "quota_modal",
+        auth_flow_id: flowId ?? undefined,
+        funnel_id: activeFunnelId ?? undefined,
       });
+      trackFunnelStep(
+        "auth_failed",
+        { source: "quota_modal", auth_flow_id: flowId ?? undefined },
+        activeFunnelId
+      );
+      clearPendingAuthFlow();
       setError(e instanceof Error ? e.message : "Sign-in failed");
       setIsStartingGoogleAuth(false);
       setAuthStartSource(null);
     }
-  }, []);
+  }, [activeFunnelId]);
 
   const launchOptimizerFlow = useCallback(async () => {
     if (!lastInputs || !analyzeResult) return;
@@ -723,6 +851,7 @@ export default function HomeClient({
             resumeText,
             jobDescription,
             analyzeResult,
+            funnelId: activeFunnelId ?? undefined,
           });
           window.sessionStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
           window.localStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
@@ -743,6 +872,7 @@ export default function HomeClient({
       }).catch(() => {
         /* analytics only */
       });
+      trackFunnelStep("optimize_page_navigation", undefined, activeFunnelId);
       setCreditModalOpen(false);
       void refreshUsage();
       router.push("/optimize");
@@ -751,7 +881,7 @@ export default function HomeClient({
     } finally {
       setIsLaunchingOptimize(false);
     }
-  }, [lastInputs, analyzeResult, lastJD, router, refreshUsage]);
+  }, [lastInputs, analyzeResult, lastJD, router, refreshUsage, activeFunnelId]);
 
   const onCreditModalStartOptimize = useCallback(() => {
     return launchOptimizerFlow();
@@ -768,10 +898,18 @@ export default function HomeClient({
       setAuthStartSource(source);
       setIsStartingGoogleAuth(true);
       setError(null);
-      gtagEvent("auth_google_start", {
+      const flowId = beginPendingAuthFlow(source, activeFunnelId);
+      gtagEvent(ANALYTICS_EVENTS.authGoogleStart, {
         event_category: "auth",
         source,
+        auth_flow_id: flowId ?? undefined,
+        funnel_id: activeFunnelId ?? undefined,
       });
+      trackFunnelStep(
+        "auth_start",
+        { source, auth_flow_id: flowId ?? undefined },
+        activeFunnelId
+      );
       try {
         if (typeof window !== "undefined") {
           writePostOauthAnalyzerSnapshot({
@@ -780,6 +918,7 @@ export default function HomeClient({
             lastRoleLevel,
             analyzeResult,
             savedAt: Date.now(),
+            funnelId: activeFunnelId ?? undefined,
           });
         }
         const redirectTo = buildAuthCallbackRedirectTo("/?openOptimizer=1");
@@ -794,24 +933,33 @@ export default function HomeClient({
           );
         }
       } catch (e) {
-        gtagEvent("auth_google_failed", {
+        gtagEvent(ANALYTICS_EVENTS.authGoogleFailed, {
           event_category: "auth",
           source,
+          auth_flow_id: flowId ?? undefined,
+          funnel_id: activeFunnelId ?? undefined,
         });
+        trackFunnelStep(
+          "auth_failed",
+          { source, auth_flow_id: flowId ?? undefined },
+          activeFunnelId
+        );
+        clearPendingAuthFlow();
         setError(e instanceof Error ? e.message : "Sign-in failed");
         setIsStartingGoogleAuth(false);
         setAuthStartSource(null);
       }
     },
-    [lastInputs, lastJD, lastRoleLevel, analyzeResult]
+    [lastInputs, lastJD, lastRoleLevel, analyzeResult, activeFunnelId]
   );
 
   const handleConversionPrimaryAction = useCallback(async () => {
     setConversionModalError(null);
     void logAnalysisEvent("optimize_conversion_modal_fix_clicked");
     if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", "ats_optimize_conversion_modal_fix_clicked", {
+      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.optimizeConversionModalFixClick, {
         event_category: "engagement",
+        funnel_id: activeFunnelId ?? undefined,
       });
     }
     if (!lastInputs || !analyzeResult) return;
@@ -828,10 +976,12 @@ export default function HomeClient({
     }
     void logAnalysisEvent("upgrade_modal_pay");
     if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", "upgrade_modal_pay", {
+      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.upgradeModalPayClick, {
         event_category: "conversion",
+        funnel_id: activeFunnelId ?? undefined,
       });
     }
+    trackFunnelStep("checkout_initiated", { checkout_trigger: "conversion_modal" }, activeFunnelId);
     setConversionModalBusy(true);
     try {
       const result = await openRazorpayPackCheckout({
@@ -841,6 +991,7 @@ export default function HomeClient({
         getAuthHeaders,
         onRefreshBalance: refreshUsage,
         checkoutTrigger: "conversion_modal",
+        funnelId: activeFunnelId ?? undefined,
       });
       if (result.status === "paid") {
         await refreshUsage();
@@ -868,18 +1019,31 @@ export default function HomeClient({
     logAnalysisEvent,
     refreshUsage,
     usage?.creditsRemaining,
+    activeFunnelId,
   ]);
 
   const handleConversionFixResumeNow = useCallback(async () => {
     void logAnalysisEvent("optimize_conversion_modal_fix_resume_now_clicked");
     if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", "ats_optimize_conversion_modal_fix_resume_now", {
+      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.optimizeConversionModalFixResumeNow, {
         event_category: "engagement",
+        funnel_id: activeFunnelId ?? undefined,
+      });
+      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.postPaymentStartOptimizationClick, {
+        event_category: "conversion",
+        source: "optimize_conversion_modal_payment_success",
+        funnel_id: activeFunnelId ?? undefined,
       });
     }
+    trackFunnelStep("optimize_fix_resume_now_click", undefined, activeFunnelId);
+    trackFunnelStep(
+      "post_payment_start_optimization_click",
+      { source: "optimize_conversion_modal_payment_success" },
+      activeFunnelId
+    );
     closeOptimizeConversionModal();
     await launchOptimizerFlow();
-  }, [closeOptimizeConversionModal, launchOptimizerFlow, logAnalysisEvent]);
+  }, [closeOptimizeConversionModal, launchOptimizerFlow, logAnalysisEvent, activeFunnelId]);
 
   const handleResumeChange = useCallback((next: Resume) => {
     setResume(next);
@@ -1122,6 +1286,7 @@ export default function HomeClient({
                 analyzeResult && lastInputs && lastAnalysisUsedJd
                   ? () => {
                       void trackOptimizeAfterAnalysisClick();
+                      trackFunnelStep("credit_modal_opened", undefined, activeFunnelId);
                       closeOptimizeConversionModal();
                       setCreditModalOpen(true);
                     }
@@ -1145,6 +1310,7 @@ export default function HomeClient({
               onStartGoogleAuthForPackage={handleStartGoogleAuthForPackage}
               isStartingGoogleAuth={isStartingGoogleAuth}
               isBusy={isLaunchingOptimize}
+              funnelId={activeFunnelId ?? undefined}
             />
             <OptimizeConversionModal
               open={optimizeConversionModalOpen}
@@ -1152,12 +1318,12 @@ export default function HomeClient({
               onContinueManual={() => {
                 void logAnalysisEvent("optimize_conversion_modal_continue_manual");
                 if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-                  (window as unknown as { gtag: (...a: unknown[]) => void }).gtag(
-                    "event",
-                    "ats_optimize_conversion_modal_continue_manual",
-                    { event_category: "engagement" }
-                  );
+                  (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.optimizeConversionModalContinueManual, {
+                    event_category: "engagement",
+                    funnel_id: activeFunnelId ?? undefined,
+                  });
                 }
+                trackFunnelStep("optimize_continue_manual", undefined, activeFunnelId);
                 closeOptimizeConversionModal();
               }}
               onPrimaryAction={() => void handleConversionPrimaryAction()}
@@ -1258,7 +1424,7 @@ export default function HomeClient({
             <ul className="mt-2 space-y-0.5 text-sm text-slate-700 list-disc pl-5">
               <li>
                 <Link
-                  href="/resume-guides/ats-resume-template#how-ats-scans-resumes"
+                  href="/ats-resume-template#how-ats-scans"
                   className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   <span>↗</span>
@@ -1267,7 +1433,7 @@ export default function HomeClient({
               </li>
               <li>
                 <Link
-                  href="/resume-guides/ats-resume-template#common-resume-mistakes-fail-ats"
+                  href="/ats-resume-template#common-mistakes"
                   className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   <span>↗</span>
@@ -1406,12 +1572,12 @@ export default function HomeClient({
               </p>
               <ul className="mt-3 space-y-2 text-sm">
                 <li>
-                  <Link href="/resume-guides/ats-resume-template" className="text-sky-700 hover:underline">
+                  <Link href="/ats-resume-template" className="text-sky-700 hover:underline">
                     How to pass ATS screening
                   </Link>
                 </li>
                 <li>
-                  <Link href="/resume-guides/ats-resume-template#how-ats-scans-resumes" className="text-sky-700 hover:underline">
+                  <Link href="/ats-resume-template#how-ats-scans" className="text-sky-700 hover:underline">
                     How ATS scans resumes
                   </Link>
                 </li>
