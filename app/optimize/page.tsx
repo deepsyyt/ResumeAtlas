@@ -79,6 +79,7 @@ export default function OptimizePage() {
     if (typeof window === "undefined") return;
     let cancelled = false;
     const abortController = new AbortController();
+    let funnelIdForRun: string | null = null;
 
     (async () => {
       try {
@@ -110,6 +111,7 @@ export default function OptimizePage() {
         }
 
         if (parsed.funnelId) {
+          funnelIdForRun = parsed.funnelId;
           setActiveFunnelId(parsed.funnelId);
           trackFunnelStep("optimize_page_loaded", undefined, parsed.funnelId);
         }
@@ -256,7 +258,7 @@ export default function OptimizePage() {
       } catch (e) {
         if (cancelled || (e instanceof Error && e.name === "AbortError")) return;
         if (!cancelled) {
-          trackFunnelStep("optimize_failed", undefined, parsed.funnelId ?? null);
+          trackFunnelStep("optimize_failed", undefined, funnelIdForRun);
           setError(e instanceof Error ? e.message : "Something went wrong");
         }
       } finally {
