@@ -29,7 +29,7 @@ import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
 import { resolveProblemInterviewCallout } from "@/app/lib/problemInterviewCallout";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
-import { gtagEvent } from "@/app/lib/gtagClient";
+import { gtagEvent, gtagSetUserId } from "@/app/lib/gtagClient";
 import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
 import { getActiveFunnelId, setActiveFunnelId, startNewFunnel, trackFunnelStep } from "@/app/lib/funnelTracking";
 import { useRef } from "react";
@@ -190,6 +190,9 @@ const AUTH_FLOW_PENDING_KEY = "resumeatlas_auth_flow_pending_v1";
 const AUTH_FLOW_SOURCE_KEY = "resumeatlas_auth_flow_source_v1";
 const AUTH_FLOW_ID_KEY = "resumeatlas_auth_flow_id_v1";
 const AUTH_FLOW_FUNNEL_ID_KEY = "resumeatlas_auth_flow_funnel_id_v1";
+const AUTH_FLOW_STARTED_AT_KEY = "resumeatlas_auth_flow_started_at_v1";
+const AUTH_FLOW_SUCCESS_TRACKED_PREFIX = "resumeatlas_auth_flow_success_tracked_v1_";
+const AUTH_FLOW_MAX_AGE_MS = 15 * 60 * 1000;
 
 function countMissingKeywordsForConversion(r: ATSAnalyzeResult): number {
   const req = r.missing_skills_required?.length ?? 0;
@@ -232,6 +235,7 @@ function beginPendingAuthFlow(
     window.sessionStorage.setItem(AUTH_FLOW_PENDING_KEY, "1");
     window.sessionStorage.setItem(AUTH_FLOW_SOURCE_KEY, source);
     window.sessionStorage.setItem(AUTH_FLOW_ID_KEY, flowId);
+    window.sessionStorage.setItem(AUTH_FLOW_STARTED_AT_KEY, String(Date.now()));
     if (funnelId) window.sessionStorage.setItem(AUTH_FLOW_FUNNEL_ID_KEY, funnelId);
   } catch {
     // ignore quota / private mode
@@ -252,6 +256,12 @@ function readPendingAuthFlow():
     const source = window.sessionStorage.getItem(AUTH_FLOW_SOURCE_KEY);
     const flowId = window.sessionStorage.getItem(AUTH_FLOW_ID_KEY);
     const funnelId = window.sessionStorage.getItem(AUTH_FLOW_FUNNEL_ID_KEY);
+    const startedAtRaw = window.sessionStorage.getItem(AUTH_FLOW_STARTED_AT_KEY);
+    const startedAt = startedAtRaw ? Number(startedAtRaw) : NaN;
+    if (!Number.isFinite(startedAt) || Date.now() - startedAt > AUTH_FLOW_MAX_AGE_MS) {
+      clearPendingAuthFlow();
+      return null;
+    }
     if (
       (source === "quota_modal" || source === "pricing_modal" || source === "conversion_modal") &&
       flowId
@@ -271,6 +281,25 @@ function clearPendingAuthFlow() {
     window.sessionStorage.removeItem(AUTH_FLOW_SOURCE_KEY);
     window.sessionStorage.removeItem(AUTH_FLOW_ID_KEY);
     window.sessionStorage.removeItem(AUTH_FLOW_FUNNEL_ID_KEY);
+    window.sessionStorage.removeItem(AUTH_FLOW_STARTED_AT_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+function hasTrackedAuthFlowSuccess(flowId: string | null): boolean {
+  if (typeof window === "undefined" || !flowId) return false;
+  try {
+    return window.sessionStorage.getItem(`${AUTH_FLOW_SUCCESS_TRACKED_PREFIX}${flowId}`) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markAuthFlowSuccessTracked(flowId: string | null): void {
+  if (typeof window === "undefined" || !flowId) return;
+  try {
+    window.sessionStorage.setItem(`${AUTH_FLOW_SUCCESS_TRACKED_PREFIX}${flowId}`, "1");
   } catch {
     // ignore
   }
@@ -332,6 +361,19 @@ export default function HomeClient({
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [activeFunnelId, setActiveFunnelIdState] = useState<string | null>(null);
   const openedOptimizerFromQueryRef = useRef(false);
+  const optimizeClickLockedRef = useRef(false);
+  const activeFunnelIdRef = useRef<string | null>(null);
+  const authStartSourceRef = useRef<
+    "quota_modal" | "pricing_modal" | "conversion_modal" | null
+  >(null);
+
+  useEffect(() => {
+    activeFunnelIdRef.current = activeFunnelId;
+  }, [activeFunnelId]);
+
+  useEffect(() => {
+    authStartSourceRef.current = authStartSource;
+  }, [authStartSource]);
 
   /** Supabase can send PKCE `code` to Site URL root (`/?code=`) instead of `/auth/callback`. */
   useEffect(() => {
@@ -362,17 +404,17 @@ export default function HomeClient({
       const pending = readPendingAuthFlow();
       setIsStartingGoogleAuth((prev) => {
         if (prev) {
-          const effectiveFunnelId = pending?.funnelId ?? activeFunnelId;
+          const effectiveFunnelId = pending?.funnelId ?? activeFunnelIdRef.current;
           gtagEvent(ANALYTICS_EVENTS.authGoogleCancelOrReturn, {
             event_category: "auth",
-            source: pending?.source ?? authStartSource ?? "unknown",
+            source: pending?.source ?? authStartSourceRef.current ?? "unknown",
             auth_flow_id: pending?.flowId,
             funnel_id: effectiveFunnelId ?? undefined,
           });
           trackFunnelStep(
             "auth_cancel_or_return",
             {
-              source: pending?.source ?? authStartSource ?? "unknown",
+              source: pending?.source ?? authStartSourceRef.current ?? "unknown",
               auth_flow_id: pending?.flowId,
             },
             effectiveFunnelId
@@ -407,7 +449,7 @@ export default function HomeClient({
       window.removeEventListener("focus", clearSoonIfVisible);
       document.removeEventListener("visibilitychange", clearSoonIfVisible);
     };
-  }, [isStartingGoogleAuth, authStartSource, activeFunnelId]);
+  }, [isStartingGoogleAuth]);
 
   const refreshUsage = useCallback(async () => {
     const supabase = createClient();
@@ -415,6 +457,7 @@ export default function HomeClient({
       data: { session },
     } = await supabase.auth.getSession();
     const token = session?.access_token ?? null;
+    gtagSetUserId(session?.user?.id ?? null);
     setIsLoggedIn(!!token);
     const [u, q] = await Promise.all([fetchUsage(token), fetchAnalysisQuota(token)]);
     setUsage(u);
@@ -434,21 +477,25 @@ export default function HomeClient({
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       setIsLoggedIn(!!session?.access_token);
+      gtagSetUserId(session?.user?.id ?? null);
       if (event === "SIGNED_IN") {
         const pending = readPendingAuthFlow();
         if (pending) {
-          const effectiveFunnelId = pending.funnelId ?? activeFunnelId;
-          gtagEvent(ANALYTICS_EVENTS.authGoogleSuccess, {
-            event_category: "auth",
-            source: pending.source,
-            auth_flow_id: pending.flowId,
-            funnel_id: effectiveFunnelId ?? undefined,
-          });
-          trackFunnelStep(
-            "auth_success",
-            { source: pending.source, auth_flow_id: pending.flowId },
-            effectiveFunnelId
-          );
+          const effectiveFunnelId = pending.funnelId ?? activeFunnelIdRef.current;
+          if (!hasTrackedAuthFlowSuccess(pending.flowId)) {
+            gtagEvent(ANALYTICS_EVENTS.kpiLoginSuccess, {
+              event_category: "auth",
+              source: pending.source,
+              auth_flow_id: pending.flowId,
+              funnel_id: effectiveFunnelId ?? undefined,
+            });
+            trackFunnelStep(
+              "auth_success",
+              { source: pending.source, auth_flow_id: pending.flowId },
+              effectiveFunnelId
+            );
+            markAuthFlowSuccessTracked(pending.flowId);
+          }
           if (effectiveFunnelId) setActiveFunnelIdState(effectiveFunnelId);
           clearPendingAuthFlow();
         }
@@ -546,7 +593,7 @@ export default function HomeClient({
     }
 
     return () => subscription.unsubscribe();
-  }, [refreshUsage, authStartSource, activeFunnelId]);
+  }, [refreshUsage]);
 
   useEffect(() => {
     if (openedOptimizerFromQueryRef.current) return;
@@ -593,10 +640,15 @@ export default function HomeClient({
   );
 
   const trackOptimizeAfterAnalysisClick = useCallback(() => {
+    if (optimizeClickLockedRef.current) return;
+    optimizeClickLockedRef.current = true;
+    window.setTimeout(() => {
+      optimizeClickLockedRef.current = false;
+    }, 1200);
     void logAnalysisEvent("optimize_after_analysis_clicked");
     trackFunnelStep("optimize_after_analysis_click", undefined, activeFunnelId);
     if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("event", ANALYTICS_EVENTS.optimizeAfterAnalysisClick, {
+      (window as any).gtag("event", ANALYTICS_EVENTS.kpiOptimizeClicked, {
         event_category: "engagement",
         event_label: "Optimize resume clicked after analysis",
         funnel_id: activeFunnelId ?? undefined,
@@ -646,13 +698,6 @@ export default function HomeClient({
         { has_job_description: jdTrimmed ? "yes" : "no" },
         funnelId
       );
-      if (typeof window !== "undefined" && (window as any).gtag) {
-        (window as any).gtag("event", ANALYTICS_EVENTS.analyzeStarted, {
-          event_category: "engagement",
-          event_label: "Get ATS score free",
-          funnel_id: funnelId,
-        });
-      }
       try {
         const headers = await getAuthHeaders();
         const res = await fetch("/api/analyze", {
@@ -732,7 +777,7 @@ export default function HomeClient({
         void logAnalysisEvent("dashboard_generated");
         trackFunnelStep("dashboard_generated", { ats_score: result.ats_score }, funnelId);
         if (typeof window !== "undefined" && (window as any).gtag) {
-          (window as any).gtag("event", ANALYTICS_EVENTS.dashboardGenerated, {
+          (window as any).gtag("event", ANALYTICS_EVENTS.kpiDashboardGenerated, {
             event_category: "engagement",
             event_label: "ATS dashboard result generated",
             funnel_id: funnelId,
@@ -1029,7 +1074,7 @@ export default function HomeClient({
         event_category: "engagement",
         funnel_id: activeFunnelId ?? undefined,
       });
-      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.postPaymentStartOptimizationClick, {
+      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.kpiPostPaymentStartOptimizationClick, {
         event_category: "conversion",
         source: "optimize_conversion_modal_payment_success",
         funnel_id: activeFunnelId ?? undefined,

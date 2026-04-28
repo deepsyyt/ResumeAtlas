@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm, Controller } from "react-hook-form";
+import { useRef } from "react";
 import type { Resume } from "@/app/types/resume";
 import {
   countWords,
@@ -68,6 +69,7 @@ export function ResumeForm({
   onLoginForMoreScans,
   isLoggingInForMoreScans = false,
 }: ResumeFormProps) {
+  const lastAnalyzeClickAtRef = useRef(0);
   const isAtsCompliance = analysisMode === "atsCompliance";
   const isKeywordScanner = analysisMode === "keywordScanner";
   const { register, handleSubmit, control } = useForm<GenerateInputs>({
@@ -81,8 +83,11 @@ export function ResumeForm({
   });
 
   const onSubmit = (data: GenerateInputs) => {
+    const now = Date.now();
+    if (now - lastAnalyzeClickAtRef.current < 1200) return;
+    lastAnalyzeClickAtRef.current = now;
     if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("event", ANALYTICS_EVENTS.analyzeClick, {
+      (window as any).gtag("event", ANALYTICS_EVENTS.kpiAnalyzeButtonClick, {
         event_category: "engagement",
         event_label: "Check resume against job free",
       });

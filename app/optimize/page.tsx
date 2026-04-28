@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { ResumeOptimizationPanel } from "@/app/components/ResumeOptimizationPanel";
 import { StructuredResume } from "@/app/components/StructuredResume";
@@ -15,6 +15,8 @@ import type { Resume } from "@/app/types/resume";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import { sameResumeAndJob } from "@/app/lib/resumeJobFingerprint";
 import { setActiveFunnelId, trackFunnelStep } from "@/app/lib/funnelTracking";
+import { gtagEvent } from "@/app/lib/gtagClient";
+import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
 
 const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
 const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
@@ -66,6 +68,8 @@ export default function OptimizePage() {
   const [optimizeInFlight, setOptimizeInFlight] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editableResume, setEditableResume] = useState<ResumeDocument | null>(null);
+  const lastPdfDownloadAtRef = useRef(0);
+  const lastEditableDownloadAtRef = useRef(0);
 
   const toPlainText = useCallback((doc: ResumeDocument) => resumeDocumentToPlainText(doc), []);
 
@@ -230,6 +234,12 @@ export default function OptimizePage() {
           const nextEditable = resumeFromOptimizeResult(data);
           setResult(data);
           setEditableResume(nextEditable);
+          gtagEvent(ANALYTICS_EVENTS.kpiOptimizationSuccess, {
+            event_category: "conversion",
+            score_before: parsed.analyzeResult.ats_score,
+            score_after: data.scoreAfter,
+            funnel_id: parsed.funnelId,
+          });
           trackFunnelStep(
             "optimize_success",
             { score_before: parsed.analyzeResult.ats_score, score_after: data.scoreAfter },
@@ -304,6 +314,9 @@ export default function OptimizePage() {
   }, [result, editableResume, input]);
 
   const handleDownloadPdf = useCallback(async () => {
+    const now = Date.now();
+    if (now - lastPdfDownloadAtRef.current < 1200) return;
+    lastPdfDownloadAtRef.current = now;
     try {
       if (!editableResume) {
         setError("No optimized resume available to download.");
@@ -369,12 +382,18 @@ export default function OptimizePage() {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+      gtagEvent(ANALYTICS_EVENTS.kpiDownloadPdf, {
+        event_category: "conversion",
+      });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to download resume PDF.");
     }
   }, [editableResume, toPlainText]);
 
   const handleDownloadDocx = useCallback(() => {
+    const now = Date.now();
+    if (now - lastEditableDownloadAtRef.current < 1200) return;
+    lastEditableDownloadAtRef.current = now;
     try {
       const text = editableResume ? toPlainText(editableResume) : result?.optimizedResume ?? "";
       const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
@@ -384,6 +403,9 @@ export default function OptimizePage() {
       a.download = "resume-optimized.txt";
       a.click();
       URL.revokeObjectURL(url);
+      gtagEvent(ANALYTICS_EVENTS.kpiDownloadEditableFile, {
+        event_category: "conversion",
+      });
     } catch {
       // no-op
     }

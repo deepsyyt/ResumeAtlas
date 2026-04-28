@@ -1,6 +1,3 @@
-import { gtagEvent } from "@/app/lib/gtagClient";
-import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
-
 const ACTIVE_FUNNEL_ID_KEY = "resumeatlas_active_funnel_id_v1";
 
 export function getActiveFunnelId(): string | null {
@@ -33,12 +30,12 @@ export function trackFunnelStep(
   params?: Record<string, string | number | undefined>,
   explicitFunnelId?: string | null
 ): void {
-  const funnelId = explicitFunnelId ?? getActiveFunnelId();
-  gtagEvent(ANALYTICS_EVENTS.funnelStep, {
-    event_category: "conversion_funnel",
-    funnel_step: step,
-    funnel_id: funnelId ?? undefined,
-    ...params,
-  });
+  void step;
+  void params;
+  void explicitFunnelId;
+  // Disabled intentionally: `conv_funnel_step` created noisy GA4 event tables
+  // and diluted button-level conversion event reporting.
+  // Keep this helper as a no-op for backwards compatibility across callers.
+  return;
 }
 

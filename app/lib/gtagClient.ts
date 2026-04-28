@@ -10,3 +10,13 @@ export function gtagEvent(
   if (typeof g !== "function") return;
   g("event", name, params);
 }
+
+/**
+ * Sets or clears GA4 user_id so unique-user metrics map to app accounts.
+ */
+export function gtagSetUserId(userId: string | null): void {
+  if (typeof window === "undefined") return;
+  const g = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+  if (typeof g !== "function") return;
+  g("set", "user_id", userId);
+}

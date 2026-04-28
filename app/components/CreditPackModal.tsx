@@ -69,6 +69,8 @@ export function CreditPackModal({
   const [localError, setLocalError] = useState<string | null>(null);
   const [showBundles, setShowBundles] = useState(false);
   const trackedPrimaryViewRef = useRef(false);
+  const lastPricingCardClickAtRef = useRef(0);
+  const postPaymentStartLockedRef = useRef(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState<{
     packName: string;
     creditsAdded: number;
@@ -83,12 +85,16 @@ export function CreditPackModal({
       setShowBundles(false);
       trackedPrimaryViewRef.current = false;
     }
-  }, [open]);
+  }, [open, funnelId]);
 
   useEffect(() => {
     if (!open) return;
     void logBillingEvent("billing_payment_modal_open");
-  }, [open]);
+    gtagEvent(ANALYTICS_EVENTS.kpiPaymentModalOpened, {
+      event_category: "conversion",
+      funnel_id: funnelId,
+    });
+  }, [open, funnelId]);
 
   useEffect(() => {
     if (!open || checkoutSuccess || (isLoggedIn && creditsRemaining > 0)) return;
@@ -154,8 +160,10 @@ export function CreditPackModal({
   );
 
   const handleContinueToOptimization = useCallback(async () => {
+    if (postPaymentStartLockedRef.current) return;
+    postPaymentStartLockedRef.current = true;
     try {
-      gtagEvent(ANALYTICS_EVENTS.postPaymentStartOptimizationClick, {
+      gtagEvent(ANALYTICS_EVENTS.kpiPostPaymentStartOptimizationClick, {
         event_category: "conversion",
         source: "credit_pack_modal_payment_success",
         funnel_id: funnelId,
@@ -168,6 +176,10 @@ export function CreditPackModal({
       await onStartOptimization();
     } catch {
       /* parent sets error / modal state */
+    } finally {
+      window.setTimeout(() => {
+        postPaymentStartLockedRef.current = false;
+      }, 1200);
     }
   }, [onStartOptimization, funnelId]);
 
@@ -177,12 +189,22 @@ export function CreditPackModal({
 
   const handlePackageClick = useCallback(
     (pid: CreditPackageId) => {
+      const now = Date.now();
+      if (busy || now - lastPricingCardClickAtRef.current < 1000) return;
+      lastPricingCardClickAtRef.current = now;
       const selectedPack = getCreditPackage(pid);
       void logBillingEvent("billing_credit_pack_checkout_click", {
         package_id: pid,
         credits: selectedPack?.credits ?? 0,
         pack_name: selectedPack?.name ?? pid,
         next_step: isLoggedIn ? "razorpay" : "google_auth",
+      });
+      gtagEvent(ANALYTICS_EVENTS.kpiPricingCardClick, {
+        event_category: "conversion",
+        package_id: pid,
+        pack_name: selectedPack?.name ?? pid,
+        next_step: isLoggedIn ? "razorpay" : "google_auth",
+        funnel_id: funnelId,
       });
       if (!isLoggedIn) {
         trackFunnelStep("pricing_auth_redirect", { package_id: pid }, funnelId);
@@ -192,7 +214,7 @@ export function CreditPackModal({
       trackFunnelStep("checkout_initiated", { package_id: pid, checkout_trigger: "pack_button" }, funnelId);
       void runCheckout(pid, "pack_button");
     },
-    [isLoggedIn, onStartGoogleAuthForPackage, runCheckout, funnelId]
+    [busy, isLoggedIn, onStartGoogleAuthForPackage, runCheckout, funnelId]
   );
 
   if (!open) return null;
