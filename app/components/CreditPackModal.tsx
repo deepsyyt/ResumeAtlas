@@ -190,7 +190,7 @@ export function CreditPackModal({
   const handlePackageClick = useCallback(
     (pid: CreditPackageId) => {
       const now = Date.now();
-      if (busy || now - lastPricingCardClickAtRef.current < 1000) return;
+      if (isBusy || checkoutLoading !== null || isStartingGoogleAuth || now - lastPricingCardClickAtRef.current < 1000) return;
       lastPricingCardClickAtRef.current = now;
       const selectedPack = getCreditPackage(pid);
       void logBillingEvent("billing_credit_pack_checkout_click", {
@@ -214,7 +214,7 @@ export function CreditPackModal({
       trackFunnelStep("checkout_initiated", { package_id: pid, checkout_trigger: "pack_button" }, funnelId);
       void runCheckout(pid, "pack_button");
     },
-    [busy, isLoggedIn, onStartGoogleAuthForPackage, runCheckout, funnelId]
+    [isBusy, checkoutLoading, isStartingGoogleAuth, isLoggedIn, onStartGoogleAuthForPackage, runCheckout, funnelId]
   );
 
   if (!open) return null;
