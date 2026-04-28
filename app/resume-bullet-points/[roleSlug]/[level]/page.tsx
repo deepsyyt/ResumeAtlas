@@ -27,11 +27,7 @@ function parseLevel(raw: string): ResumeBulletLevel | null {
 }
 
 export function generateStaticParams(): { roleSlug: ResumeBulletRole; level: ResumeBulletLevel }[] {
-  const roles: ResumeBulletRole[] = [
-    "data-scientist",
-    "software-engineer",
-    "product-manager",
-  ];
+  const roles: ResumeBulletRole[] = [...RESUME_BULLET_ROLES];
   const out: { roleSlug: ResumeBulletRole; level: ResumeBulletLevel }[] = [];
   for (const roleSlug of roles) {
     for (const level of RESUME_BULLET_LEVELS) {

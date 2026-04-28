@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/ats-keywords",
   },
+  robots: { index: false, follow: true },
 };
 
 export default function ATSKeywordsIndexPage() {

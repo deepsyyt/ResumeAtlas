@@ -8,7 +8,7 @@
  * | Resume ↔ JD   | /check-resume-against-job-description |
  * | Keyword gaps  | /resume-keyword-scanner |
  * | ATS read/score | /ats-resume-checker |
- * | ATS layout guide | /resume-guides/ats-resume-template |
+ * | ATS layout guide | /ats-resume-template |
  * | Work history section | /resume-guides/resume-work-experience-examples |
  * | Role examples index | /resume-examples |
  *
@@ -141,10 +141,10 @@ export const CLUSTER_ATS_CHECKER_TOOL_COPY = {
 /** Long-form: templates, layout, how ATS reads resumes (education, not interactive product). */
 export const CLUSTER_ATS_GUIDE_METADATA = {
   path: ATS_RESUME_TEMPLATE_GUIDE_PATH,
-  title: `ATS Resume Template (Free Word Format + Examples That Pass ATS) ${CONTENT_FRESHNESS_YEAR}${RESUME_ATLAS_TITLE_SUFFIX}`,
+  title: `ATS Resume Template That Passes Screening (Free + Copyable, ${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
     "Free ATS resume template with Word downloads, examples, formatting rules, and keywords designed to pass applicant tracking systems.",
-  ogTitle: `ATS Resume Template (Free Word Format + Examples That Pass ATS) ${CONTENT_FRESHNESS_YEAR}${RESUME_ATLAS_TITLE_SUFFIX}`,
+  ogTitle: `ATS Resume Template That Passes Screening (Free + Copyable, ${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
   ogDescription:
     "Free ATS resume template with Word downloads, examples, formatting rules, and keywords designed to pass applicant tracking systems.",
   openGraphUrl: abs(ATS_RESUME_TEMPLATE_GUIDE_PATH),

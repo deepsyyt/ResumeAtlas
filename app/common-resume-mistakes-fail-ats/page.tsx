@@ -11,8 +11,9 @@ export const metadata: Metadata = {
   description:
     "Avoid the resume mistakes that make ATS reject you: missing keywords, poor formatting, generic descriptions, and no measurable achievements. Fix them before you apply.",
   alternates: {
-    canonical: "/common-resume-mistakes-fail-ats",
+    canonical: "/ats-resume-template",
   },
+  robots: { index: false, follow: true },
 };
 
 const faqSchema = {
@@ -50,7 +51,7 @@ const faqSchema = {
 };
 
 export default function CommonResumeMistakesFailATSPage() {
-  redirect("/resume-guides/ats-resume-template#common-resume-mistakes-fail-ats");
+  redirect("/ats-resume-template#common-mistakes");
   return (
     <main className="min-h-screen bg-white text-slate-900">
       {/* Hero */}
@@ -205,7 +206,7 @@ export default function CommonResumeMistakesFailATSPage() {
                 </Link>
               </li>
               <li>
-                <Link href="/resume-guides/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   How to Pass ATS Screening
                 </Link>
               </li>

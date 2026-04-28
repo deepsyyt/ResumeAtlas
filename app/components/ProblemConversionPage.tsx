@@ -329,15 +329,15 @@ export function ProblemConversionPage({ config }: Props) {
             </p>
             <p className="mt-3 text-sm text-slate-700">
               ATS guide links:{" "}
-              <Link href="/resume-guides/ats-resume-template#how-ats-scans-resumes" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/ats-resume-template#how-ats-scans" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 how ATS scans resumes
               </Link>
               {" · "}
-              <Link href="/resume-guides/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 how to pass ATS
               </Link>
               {" · "}
-              <Link href="/resume-guides/ats-resume-template#common-resume-mistakes-fail-ats" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/ats-resume-template#common-mistakes" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 common ATS mistakes
               </Link>
             </p>

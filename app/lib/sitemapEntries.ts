@@ -36,7 +36,7 @@ function priorityForPath(pathname: string): number {
   if (pathname.startsWith("/problems/")) return 0.92;
   if (pathname.startsWith("/how-ats-")) return 0.92;
   if (
-    pathname === "/resume-guides/ats-resume-template" ||
+    pathname === "/ats-resume-template" ||
     pathname === "/resume-guides/resume-work-experience-examples" ||
     pathname === "/resume-guides/resume-skills-examples" ||
     pathname === "/common-resume-mistakes-fail-ats" ||
@@ -101,10 +101,10 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
   // Keep guide cluster freshness aligned after tiered SEO updates.
   const guideClusterLastMod = new Date("2026-04-17");
   entries.push({
-    url: `${base}/resume-guides/ats-resume-template`,
+    url: `${base}/ats-resume-template`,
     lastModified: guideClusterLastMod,
     changeFrequency: "monthly" as const,
-    priority: priorityForPath("/resume-guides/ats-resume-template"),
+    priority: priorityForPath("/ats-resume-template"),
   });
   entries.push({
     url: `${base}/resume-guides/resume-work-experience-examples`,
@@ -162,7 +162,7 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     });
   }
 
-  const roleResumeKeywordLastMod = new Date();
+  const roleResumeKeywordLastMod = new Date("2026-04-17");
   for (const { slug } of Object.values(KEYWORD_PAGES)) {
     const path = `/${slug}-resume-keywords`;
     entries.push({

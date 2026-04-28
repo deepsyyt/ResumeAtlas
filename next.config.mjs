@@ -14,6 +14,8 @@ const ROLE_SLUGS = [
 
 /** Role slugs with resume bullet hub + level pages (`app/lib/resumeBulletPointContent.ts`). */
 const RESUME_BULLET_ROLES = [
+  "data-analyst",
+  "business-analyst",
   "data-scientist",
   "software-engineer",
   "product-manager",
@@ -276,32 +278,32 @@ const nextConfig = {
       },
       {
         source: "/how-ats-scans-resumes",
-        destination: "/resume-guides/ats-resume-template#how-ats-scans-resumes",
+        destination: "/ats-resume-template#how-ats-scans",
         permanent: true,
       },
       {
         source: "/how-ats-scans-resumes/",
-        destination: "/resume-guides/ats-resume-template#how-ats-scans-resumes",
+        destination: "/ats-resume-template#how-ats-scans",
         permanent: true,
       },
       {
         source: "/common-resume-mistakes-fail-ats",
-        destination: "/resume-guides/ats-resume-template#common-resume-mistakes-fail-ats",
+        destination: "/ats-resume-template#common-mistakes",
         permanent: true,
       },
       {
         source: "/common-resume-mistakes-fail-ats/",
-        destination: "/resume-guides/ats-resume-template#common-resume-mistakes-fail-ats",
+        destination: "/ats-resume-template#common-mistakes",
         permanent: true,
       },
       {
         source: "/how-to-pass-ats",
-        destination: "/resume-guides/ats-resume-template",
+        destination: "/ats-resume-template",
         permanent: true,
       },
       {
         source: "/how-to-pass-ats/",
-        destination: "/resume-guides/ats-resume-template",
+        destination: "/ats-resume-template",
         permanent: true,
       },
       {
@@ -349,15 +351,25 @@ const nextConfig = {
         destination: "/ats-resume-checker#ats-compatibility-check",
         permanent: true,
       },
-      // /resume-guides hub → canonical ATS template guide (specific page is a real route).
+      // /resume-guides hub + legacy canonical path → /ats-resume-template.
+      {
+        source: "/resume-guides/ats-resume-template",
+        destination: "/ats-resume-template",
+        permanent: true,
+      },
+      {
+        source: "/resume-guides/ats-resume-template/",
+        destination: "/ats-resume-template",
+        permanent: true,
+      },
       {
         source: "/resume-guides",
-        destination: "/resume-guides/ats-resume-template",
+        destination: "/ats-resume-template",
         permanent: true,
       },
       {
         source: "/resume-guides/",
-        destination: "/resume-guides/ats-resume-template",
+        destination: "/ats-resume-template",
         permanent: true,
       },
       {

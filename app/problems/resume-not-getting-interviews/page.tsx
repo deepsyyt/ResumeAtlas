@@ -211,13 +211,13 @@ export default function ResumeNotGettingInterviewsLandingPage() {
           <p className="mt-3 text-sm text-slate-700">
             Related ATS guides:{" "}
             <Link
-              href="/resume-guides/ats-resume-template#how-ats-scans-resumes"
+              href="/ats-resume-template#how-ats-scans"
               className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
             >
               how ATS scans resumes
             </Link>
             {" · "}
-            <Link href="/resume-guides/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+            <Link href="/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
               how to pass ATS
             </Link>
           </p>
@@ -524,7 +524,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Guides and tools</p>
             <ul className="mt-2 space-y-1 text-sm">
               <li>
-                <Link href="/resume-guides/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   How to pass ATS screening
                 </Link>
               </li>

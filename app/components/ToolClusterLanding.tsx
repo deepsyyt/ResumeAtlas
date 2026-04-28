@@ -22,6 +22,7 @@ type Props = {
 
 export function ToolClusterLanding({ config }: Props) {
   const path = config.path;
+  const isKeywordScanner = path === "/resume-keyword-scanner";
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -69,6 +70,19 @@ export function ToolClusterLanding({ config }: Props) {
         </div>
       </section>
 
+      {isKeywordScanner ? (
+        <section className="border-b border-slate-200 bg-emerald-50/50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 text-center">
+            <p className="text-sm sm:text-base font-semibold text-slate-900">
+              Scan resume keywords against job description in seconds.
+            </p>
+            <p className="mt-1 text-xs sm:text-sm text-slate-700">
+              See missing terms first, then decide what to rewrite before you apply.
+            </p>
+          </div>
+        </section>
+      ) : null}
+
       <section className="border-b border-slate-200 bg-sky-50/40">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
           <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
@@ -90,6 +104,38 @@ export function ToolClusterLanding({ config }: Props) {
             {config.serpVariantsParagraph}
           </p>
         </section>
+
+        {isKeywordScanner ? (
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+              Sample keyword gap report
+            </h2>
+            <p className="mt-2 text-sm sm:text-base text-slate-700">
+              Typical output from one real posting comparison:
+            </p>
+            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Missing keywords example
+              </p>
+              <ul className="mt-2 list-disc pl-5 space-y-1.5 text-sm text-slate-700">
+                <li>SQL window functions</li>
+                <li>A/B testing</li>
+                <li>Stakeholder communication</li>
+                <li>Experiment design</li>
+              </ul>
+              <p className="mt-3 text-sm text-slate-700">
+                Coverage estimate: <strong className="text-slate-900">61%</strong> before edits.
+              </p>
+              <p className="mt-1 text-sm text-slate-700">
+                First fix: add one SQL-impact bullet and one experiment result line where truthful.
+              </p>
+            </div>
+            <p className="mt-4 text-sm text-slate-700">
+              Trust proof: this scanner uses the exact posting text you paste, not a generic keyword
+              list.
+            </p>
+          </section>
+        ) : null}
 
         <section className="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-5 sm:p-6">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
@@ -189,6 +235,33 @@ export function ToolClusterLanding({ config }: Props) {
           </ol>
         </section>
 
+        <section className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            Fix these first for the fastest shortlist lift
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700">
+            Most resumes improve faster when edits are sequenced by impact, not by aesthetics.
+          </p>
+          <ol className="mt-3 list-decimal pl-5 space-y-2 text-sm sm:text-base text-slate-700">
+            <li>
+              Add missing must-have requirements from the posting where truthful (skills, tools, domain
+              terms).
+            </li>
+            <li>
+              Rewrite 2-3 top bullets to show outcomes (scope + metric), not responsibilities.
+            </li>
+            <li>
+              Tighten section clarity for ATS parsing: standard headings, one-column flow, consistent dates.
+            </li>
+            <li>
+              Then optimize wording for relevance and confidence, without inflating claims.
+            </li>
+          </ol>
+          <p className="mt-3 text-sm text-slate-600">
+            This order usually beats design-only edits or random keyword stuffing.
+          </p>
+        </section>
+
         <section>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             {config.whyMatchHeading}
@@ -205,6 +278,48 @@ export function ToolClusterLanding({ config }: Props) {
             By comparing your resume directly with a job description, you can increase keyword
             alignment, improve ATS compatibility, and boost your chances of being shortlisted.
           </p>
+        </section>
+
+        <section className="rounded-2xl border border-amber-200 bg-amber-50/60 p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            When this page is the wrong tool
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700">
+            Use this page only when you have one specific job posting. Otherwise, start with the correct
+            intent page to avoid low-signal edits.
+          </p>
+          <ul className="mt-3 list-disc pl-5 space-y-2 text-sm sm:text-base text-slate-700">
+            <li>
+              No target posting yet? Start with{" "}
+              <Link
+                href="/ats-resume-checker"
+                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                ATS resume checker
+              </Link>{" "}
+              for structure and readability risk.
+            </li>
+            <li>
+              Need only missing terms list? Use{" "}
+              <Link
+                href="/resume-keyword-scanner"
+                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                resume keyword scanner
+              </Link>
+              .
+            </li>
+            <li>
+              Need role-specific wording patterns first? Open{" "}
+              <Link
+                href="/resume-examples"
+                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                resume examples by role
+              </Link>
+              .
+            </li>
+          </ul>
         </section>
 
         <section>
@@ -293,7 +408,7 @@ export function ToolClusterLanding({ config }: Props) {
             </li>
             <li>
               <Link
-                href="/resume-guides/ats-resume-template"
+                href="/ats-resume-template"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 How to pass ATS systems
@@ -386,6 +501,24 @@ export function ToolClusterLanding({ config }: Props) {
             {config.ctaAnchor}
           </a>
         </section>
+
+        {isKeywordScanner ? (
+          <section className="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-5 sm:p-6 text-center">
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+              Ready to optimize after keyword scan?
+            </h2>
+            <p className="mt-2 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto">
+              Run the scanner above, close high-signal gaps, then unlock optimization for JD-aligned
+              rewrite suggestions and downloadable output.
+            </p>
+            <a
+              href="#ats-checker-form"
+              className="mt-5 inline-flex rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition"
+            >
+              Scan keywords and continue to optimization
+            </a>
+          </section>
+        ) : null}
 
         <RelatedResumeGuidesSection
           currentPath={path}

@@ -19,7 +19,7 @@ export function normalizePathname(pathname: string): string {
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
 
 const ATS_CALLOUT_PATHS = new Set<string>([
-  "/resume-guides/ats-resume-template",
+  "/ats-resume-template",
   ...TOOL_CLUSTER_PATHS_FOR_OAUTH,
 ]);
 

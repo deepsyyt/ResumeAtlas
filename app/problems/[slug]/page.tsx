@@ -37,13 +37,11 @@ export function generateMetadata({
 }): Metadata {
   const config = PROBLEM_PAGES[params.slug as ProblemSlug];
   if (!config) return {};
-  const hasExamples = Boolean(config.scenario?.before && config.scenario?.after);
   const isIndexedProblem = (INDEXED_PROBLEM_SLUGS as readonly string[]).includes(params.slug);
-  const normalizedTitle = config.metaTitle.replace(/\s*\(Examples \+ Fixes\)\s*$/i, "").trim();
   const siteUrl = getSiteUrl().replace(/\/$/, "");
   const path = `/problems/${params.slug}`;
   return {
-    title: hasExamples ? `${normalizedTitle} (Examples + Fixes)` : `${normalizedTitle} (Why + Fix)`,
+    title: config.metaTitle,
     description: config.metaDescription,
     alternates: {
       canonical: `${siteUrl}${path}`,

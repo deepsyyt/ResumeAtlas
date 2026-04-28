@@ -103,9 +103,9 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
     slug: "applied-to-200-jobs-no-response",
     primaryKeyword: "applied to 200 jobs no response",
     metaTitle:
-      "Applied to 200 Jobs With No Response? Fix Your Resume Before You Apply Again | ResumeAtlas",
+      "Applied to 200 Jobs, No Response? Fix This | ResumeAtlas",
     metaDescription:
-      "If you applied to hundreds of jobs with no response, your resume may not match roles or ATS filters. Learn why mass applying fails and how to tailor before the next send.",
+      "If applications get ignored, your resume may be the blocker. Diagnose fit, keywords, and relevance quickly.",
     h1: "You Applied to 200 Jobs and Got No Response - Here’s What’s Likely Going Wrong",
     hook: [
       "You are not imagining it. When you have applied to 200 jobs with no response, the problem is rarely “bad luck” alone. Something in how you present fit - or how systems read your resume - is quietly filtering you out.",
@@ -243,9 +243,9 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
   "resume-not-getting-interviews": {
     slug: "resume-not-getting-interviews",
     primaryKeyword: "resume not getting interviews",
-    metaTitle: "Resume Not Getting Interviews? Fix It for This Job in Minutes | ResumeAtlas",
+    metaTitle: "Resume Not Getting Interviews? 7 Fast Fixes | ResumeAtlas",
     metaDescription:
-      "Compare your resume to a job description: missing keywords, weak bullets, ATS gaps, and AI-aligned rewrites while you keep full control. Free analysis, no login, export PDF or DOCX.",
+      "Find why your resume gets ignored and fix ATS issues, weak bullets, missing keywords, and positioning.",
     h1: "Your Resume Is Not Getting Interviews - Fix It for the Job You Want",
     hook: [
       "When your resume is not getting interviews, it is easy to assume you need a complete rewrite. Often the issue is narrower: your resume does not prove fit for each specific role, or systems cannot connect your experience to the posting.",
@@ -929,9 +929,9 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
   "missing-keywords-in-resume": {
     slug: "missing-keywords-in-resume",
     primaryKeyword: "missing keywords in resume",
-    metaTitle: "Missing Keywords in Resume? Find the Exact Gaps in One Scan | ResumeAtlas",
+    metaTitle: "Missing Resume Keywords? Find Gaps Fast | ResumeAtlas",
     metaDescription:
-      "Missing keywords in resume often cost interviews. Learn how to pull terms from the job description, place them credibly, and check gaps with ResumeAtlas.",
+      "See which keywords ATS may expect and how to add them naturally without stuffing your resume.",
     h1: "Missing Keywords in Resume - How to Find Them Without Turning Into a Word Salad",
     hook: [
       "If you have missing keywords in resume files compared to the posting, ATS and recruiters may assume you lack skills you actually have - you just never said them in the right place.",

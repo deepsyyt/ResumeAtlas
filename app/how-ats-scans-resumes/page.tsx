@@ -19,8 +19,9 @@ export const metadata: Metadata = {
     "ATS compatibility",
   ],
   alternates: {
-    canonical: "/how-ats-scans-resumes",
+    canonical: "/ats-resume-template",
   },
+  robots: { index: false, follow: true },
 };
 
 const faqSchema = {
@@ -58,7 +59,7 @@ const faqSchema = {
 };
 
 export default function HowATSScansResumesPage() {
-  redirect("/resume-guides/ats-resume-template#how-ats-scans-resumes");
+  redirect("/ats-resume-template#how-ats-scans");
   return (
     <main className="min-h-screen bg-white text-slate-900">
       {/* Hero */}
@@ -220,7 +221,7 @@ export default function HowATSScansResumesPage() {
                 </Link>
               </li>
               <li>
-                <Link href="/resume-guides/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/ats-resume-template" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   How to Pass ATS Screening
                 </Link>
               </li>

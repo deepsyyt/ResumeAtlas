@@ -237,7 +237,7 @@ export default function ResumeSkillsExamplesPage() {
             </li>
             <li>
               <Link
-                href="/resume-guides/ats-resume-template"
+                href="/ats-resume-template"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 ATS resume template guide

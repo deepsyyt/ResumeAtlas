@@ -68,6 +68,7 @@ export function buildToolClusterMetadata(config: ToolClusterPageConfig): Metadat
     openGraph: {
       title: config.ogTitle,
       description: config.ogDescription,
+      siteName: "ResumeAtlas",
       type: "website",
       url: absolutePageUrl,
       images: [
@@ -156,6 +157,10 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   breadcrumbName: "Match resume to job description",
   clusterLinkAnchor: RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
   ...CLUSTER_JD_MATCH_TOOL_COPY,
+  titleAbsolute:
+    "Check Resume Against Job Description (Free ATS Match Tool) | ResumeAtlas",
+  ogTitle: "Check Resume Against Job Description (Free ATS Match Tool)",
+  twitterTitle: "Check Resume Against Job Description (Free Tool)",
   ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   exampleJobRequires: "Python, SQL, stakeholder communication, and experimentation.",
   exampleResumeContains: "Python, dashboards, and ad-hoc analysis.",
@@ -192,7 +197,17 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
     {
       question: "How can I improve my resume score?",
       answer:
-        "You can improve your score by adding missing keywords, aligning your experience with the job requirements, and optimizing your resume structure.",
+        "Improve in this order: close must-have requirement gaps, rewrite top bullets with outcomes, and fix ATS readability issues. Prioritize high-impact edits first instead of broad rewrites.",
+    },
+    {
+      question: "Do I need to pay to use this page?",
+      answer:
+        "No. You can run the resume-vs-job-description check for free. Paid optimization is optional when you want fully rewritten, JD-aligned output and downloadable polished versions faster.",
+    },
+    {
+      question: "What if I do not have a target job description yet?",
+      answer:
+        "Use ATS readability and role-example pages first, then return here when you have one specific posting. This page is strongest for posting-specific gap diagnosis, not generic resume polishing.",
     },
   ],
 };
@@ -202,6 +217,9 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
   breadcrumbName: "ATS Resume Checker",
   clusterLinkAnchor: "ATS resume checker",
   ...CLUSTER_ATS_CHECKER_TOOL_COPY,
+  titleAbsolute: "ATS Resume Checker Free (Score + Fix Resume Issues) | ResumeAtlas",
+  ogTitle: "ATS Resume Checker Free (Score + Fix Resume Issues)",
+  twitterTitle: "ATS Resume Checker Free (Score + Fixes)",
   ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   exampleJobRequires: "N/A (ATS readability-first scan).",
   exampleResumeContains: "Dense formatting, mixed bullet styles, and unclear section labels.",
@@ -313,6 +331,9 @@ export const TOOL_CLUSTER_KEYWORD_SCANNER: ToolClusterPageConfig = {
   breadcrumbName: "Resume Keyword Scanner",
   clusterLinkAnchor: "resume keyword scanner",
   ...CLUSTER_KEYWORD_SCANNER_TOOL_COPY,
+  titleAbsolute: "Resume Keyword Scanner (Find Missing ATS Keywords Free) | ResumeAtlas",
+  ogTitle: "Resume Keyword Scanner (Find Missing ATS Keywords Free)",
+  twitterTitle: "Resume Keyword Scanner (Missing ATS Keywords)",
   ctaAnchor: "Scan my resume for missing keywords",
   exampleJobRequires: "Machine learning, SQL, A/B testing, and stakeholder communication.",
   exampleResumeContains: "Python, data analysis, dashboards.",

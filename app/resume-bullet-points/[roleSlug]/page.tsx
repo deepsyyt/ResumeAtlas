@@ -25,6 +25,8 @@ function levelAnchorId(level: string): string {
 
 export function generateStaticParams(): { roleSlug: ResumeBulletRole }[] {
   return [
+    { roleSlug: "data-analyst" },
+    { roleSlug: "business-analyst" },
     { roleSlug: "data-scientist" },
     { roleSlug: "software-engineer" },
     { roleSlug: "product-manager" },
@@ -228,7 +230,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
             </Link>{" "}
             to see exact gaps - not guesswork. If screening feels random,{" "}
             <Link
-              href="/resume-guides/ats-resume-template"
+              href="/ats-resume-template"
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
               check why your resume gets rejected by ATS
@@ -407,7 +409,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
               Find missing keywords in your {hub.roleName.toLowerCase()} resume
             </Link>
             <Link
-              href="/resume-guides/ats-resume-template"
+              href="/ats-resume-template"
               className="inline-flex items-center justify-center rounded-xl border border-amber-300/80 bg-white px-4 py-2.5 text-sm font-semibold text-amber-950 transition hover:bg-amber-50"
             >
               Check why your resume gets rejected by ATS
@@ -455,7 +457,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
             </li>
             <li>
               <Link
-                href="/resume-guides/ats-resume-template"
+                href="/ats-resume-template"
                 className="block rounded-xl border border-white bg-white p-4 text-sm font-medium text-sky-800 shadow-sm transition hover:border-sky-200"
               >
                 How to pass ATS screening →

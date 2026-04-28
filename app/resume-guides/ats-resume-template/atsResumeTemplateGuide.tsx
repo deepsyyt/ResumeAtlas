@@ -402,9 +402,12 @@ export function AtsResumeTemplateGuide() {
         </section>
 
         <section
-          id="how-ats-scans-resumes"
+          id="how-ats-scans"
           className="scroll-mt-28 border-b border-slate-200 py-10"
         >
+          <span id="how-ats-scans-resumes" className="sr-only">
+            Legacy anchor: how ATS scans resumes
+          </span>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Resume Formatting for ATS Systems
           </h2>
@@ -456,9 +459,12 @@ export function AtsResumeTemplateGuide() {
         </section>
 
         <section
-          id="common-resume-mistakes-fail-ats"
+          id="common-mistakes"
           className="scroll-mt-28 border-b border-slate-200 py-10"
         >
+          <span id="common-resume-mistakes-fail-ats" className="sr-only">
+            Legacy anchor: common ATS resume mistakes
+          </span>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             ATS Mistakes That Fail Screening
           </h2>

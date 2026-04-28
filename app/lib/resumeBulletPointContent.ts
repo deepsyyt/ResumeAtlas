@@ -2,6 +2,8 @@ import type { RoleSlug } from "@/app/lib/seoPages";
 
 /** Public URLs use `/{role}-resume-bullet-points*`; internal routes use `/resume-bullet-points/{role}/...`. */
 export const RESUME_BULLET_ROLES = [
+  "data-analyst",
+  "business-analyst",
   "data-scientist",
   "software-engineer",
   "product-manager",
@@ -151,12 +153,296 @@ export type ResumeBulletDetailCopy = {
 };
 
 const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
+  "data-analyst": {
+    roleName: "Data Analyst",
+    metaTitle:
+      "75 Data Analyst Resume Bullet Points With Metrics (2026) | ResumeAtlas",
+    metaDescription:
+      "40+ data analyst resume bullet points for entry-level, junior, and senior roles. ATS-friendly, copy-ready examples with SQL, dashboards, experimentation, and measurable outcomes.",
+    keywords: [
+      "data analyst resume bullet points",
+      "data analyst resume bullets",
+      "entry level data analyst resume",
+      "SQL resume bullet points",
+      "tableau resume bullet points",
+    ],
+    h1: "40+ Data Analyst Resume Bullet Points You Can Adapt Fast",
+    heroSubheadline:
+      "Project-wise examples by level - entry, junior, and senior. Use metrics, tools, and scope you can defend in interviews.",
+    aboveFoldBullets: [
+      "Built SQL + dashboard workflows for weekly business reviews; cut reporting turnaround from 2 days to 4 hours.",
+      "Analyzed funnel drop-offs with cohort SQL and event QA; identified fixes that improved activation by 11%.",
+      "Automated recurring KPI reporting in Power BI and reduced manual spreadsheet work by 10+ hours per month.",
+    ],
+    authorityLine:
+      "Used by analysts applying to operations, product analytics, and business intelligence roles.",
+    roleKeywordDensity:
+      "Strong data analyst resume bullet points should include SQL, dashboards, experimentation support, and quantified business outcomes recruiters can validate quickly.",
+    introIntentStack:
+      "These data analyst resume bullet points reflect current hiring expectations: measurable impact, clear ownership, and ATS-friendly phrasing. Data analyst resume bullet points should match your level (entry-level, junior, senior) and the exact language in each posting. This hub gives copy-ready bullet patterns plus tools to scan keyword gaps and compare your resume with the job description before you apply.",
+    snippetDefinition: {
+      h2: "What Are Good Data Analyst Resume Bullet Points?",
+      line1:
+        "Good data analyst resume bullet points combine core tools (SQL, Excel, Tableau/Power BI, experimentation support) with measurable business outcomes.",
+      line2:
+        "They should mirror ATS keywords from the posting naturally and stay interview-safe by using scope and metrics you can defend.",
+    },
+    paragraphs: [
+      "Recruiters and ATS look for practical analyst signals: SQL depth, dashboard ownership, reporting reliability, and outcome metrics tied to revenue, retention, or efficiency.",
+      "Use these bullets as templates, not scripts. Replace every metric, dataset size, and impact claim with your real work so your resume stays credible in interviews.",
+    ],
+    semanticVariation:
+      "These resume bullet points (also called resume lines or achievement statements) should show evidence, not adjectives. Evidence-based bullets improve both ATS match and recruiter trust.",
+    previewSectionIntro:
+      "Below are grouped preview bullets across analytics reporting, experimentation support, data quality, and business impact - then open entry-level, junior, or senior pages for full project-wise banks.",
+    previewSection: {
+      h2: "Data Analyst Resume Bullet Point Examples (Preview)",
+      groups: [
+        {
+          label: "Analytics reporting",
+          bullets: [
+            "Built weekly KPI dashboards in Power BI for growth, churn, and activation; reduced ad-hoc stakeholder requests by 35%.",
+            "Wrote reusable SQL views for sales and product metrics; improved consistency across five executive reports.",
+            "Automated spreadsheet-to-BI refresh workflows and cut reporting cycle time from 2 days to 4 hours.",
+            "Created cohort retention and funnel views used in monthly business reviews and roadmap prioritization.",
+          ],
+        },
+        {
+          label: "Experimentation support",
+          bullets: [
+            "Partnered with PMs to define A/B test metrics and guardrails; measured a signup-flow change that lifted conversion by 8%.",
+            "Analyzed test segments with SQL and confidence intervals; prevented rollout of a variant that hurt high-value cohorts.",
+            "Documented experiment assumptions and readouts in a shared template to improve decision quality across teams.",
+            "Built post-test dashboards that tracked impact decay and helped teams decide when to iterate.",
+          ],
+        },
+        {
+          label: "Data quality and tooling",
+          bullets: [
+            "Audited event tracking pipelines and fixed schema mismatches; raised trusted event coverage from 71% to 95%.",
+            "Introduced metric definitions and lineage notes for core KPIs to resolve recurring reporting conflicts.",
+            "Created data validation checks for daily loads and reduced silent data failures in key dashboards.",
+            "Worked with engineering on logging standards so downstream analytics stayed stable through releases.",
+          ],
+        },
+        {
+          label: "Business impact",
+          bullets: [
+            "Identified onboarding bottleneck via funnel analysis; recommended UX changes that improved activation by 11%.",
+            "Quantified ticket-resolution delays by segment and informed staffing changes that cut backlog by 22%.",
+            "Surfaced churn-risk patterns in cohort reports and supported retention campaigns tied to improved renewal rates.",
+            "Reduced manual report production time by 10+ hours monthly, freeing analyst time for deeper investigations.",
+          ],
+        },
+      ],
+    },
+    comparisonSection: {
+      title: "Why Most Resume Bullet Points Don't Work",
+      points: [
+        "Too generic: bullets omit SQL/tools and sound interchangeable across roles.",
+        "No metrics: claims like “improved reporting” without time saved, conversion lift, or cost impact are weak.",
+        "Missing ATS language: posting asks for dashboards, experimentation, and stakeholder reporting but resume hides those terms.",
+        "Wrong scope: bullets mix intern-level and senior-level ownership, making leveling look inconsistent.",
+      ],
+    },
+    faq: [
+      {
+        question: "Should data analyst resume bullets focus more on tools or outcomes?",
+        answer:
+          "Both. Tools (SQL, BI, Excel, experimentation support) establish role fit, while outcomes (time saved, conversion lift, churn reduction) prove impact. Balanced bullets perform better in ATS and recruiter screens.",
+      },
+      {
+        question: "Can I use the same data analyst bullets for every application?",
+        answer:
+          "No. Keep a master set, then tailor to each posting’s language and priorities. ATS and hiring teams reward matching skills and domain terms from the job description.",
+      },
+      {
+        question: "How do I check if my analyst resume matches a posting?",
+        answer:
+          "Compare your resume against the exact job description before applying. ResumeAtlas highlights missing keywords and weak coverage so you know what to edit first.",
+      },
+    ],
+    relatedSearches: [
+      { label: "data analyst resume summary examples", href: "/data-analyst-resume-example" },
+      { label: "entry-level data analyst resume bullet points", href: "/data-analyst-resume-bullet-points-entry-level" },
+      { label: "SQL resume bullet points", href: "/data-analyst-sql-resume-keywords" },
+      { label: "data analyst resume keywords", href: "/data-analyst-resume-keywords" },
+    ],
+    levelCards: {
+      "entry-level": {
+        hook: "Coursework, internships, and first dashboard/SQL projects with measurable outcomes.",
+        whatsInside: [
+          "Hands-on analyst project bullets for students and freshers",
+          "ATS-ready SQL + dashboard wording you can adapt quickly",
+          "Examples built for internship and no-experience transitions",
+        ],
+      },
+      junior: {
+        hook: "Ownership-level analyst bullets for recurring reporting, experiments, and cross-team insights.",
+        whatsInside: [
+          "Project blocks across funnel analysis, BI reporting, and experimentation",
+          "Mid-level ownership language without inflated scope",
+          "Patterns for stakeholder-facing analytics outcomes",
+        ],
+      },
+      senior: {
+        hook: "Senior analyst bullets for strategy influence, KPI systems, and cross-functional leadership.",
+        whatsInside: [
+          "Leadership-level analytics examples with business impact",
+          "Portfolio and prioritization signals for senior screens",
+          "Executive-friendly metrics framing without buzzword padding",
+        ],
+      },
+    },
+  },
+  "business-analyst": {
+    roleName: "Business Analyst",
+    metaTitle:
+      "75 Business Analyst Resume Bullet Points (ATS-Friendly) | ResumeAtlas",
+    metaDescription:
+      "40+ business analyst resume bullet points for entry-level, junior, and senior roles. ATS-friendly examples with requirements, process mapping, dashboards, and measurable outcomes.",
+    keywords: [
+      "business analyst resume bullet points",
+      "business analyst resume bullets",
+      "entry level business analyst resume",
+      "requirements gathering resume bullets",
+      "process improvement resume bullet points",
+    ],
+    h1: "40+ Business Analyst Resume Bullet Points You Can Adapt Fast",
+    heroSubheadline:
+      "Project-wise examples by level - entry, junior, and senior. Show requirements clarity, stakeholder alignment, and measurable impact.",
+    aboveFoldBullets: [
+      "Mapped current-to-future workflow with operations and cut manual approval steps from 9 to 5, reducing cycle time by 28%.",
+      "Gathered and translated requirements for a billing workflow release; reduced invoice dispute tickets by 19% post-launch.",
+      "Built Power BI reporting for SLA and backlog trends, enabling weekly management reviews with consistent KPI definitions.",
+    ],
+    authorityLine:
+      "Used by candidates applying to business analysis, operations analysis, and product-adjacent analyst roles.",
+    roleKeywordDensity:
+      "Strong business analyst resume bullet points should show requirements gathering, process mapping, stakeholder communication, and measurable business outcomes.",
+    introIntentStack:
+      "These business analyst resume bullet points reflect what hiring teams screen for: structured problem solving, requirement clarity, and execution impact. Business analyst resume bullet points should match your level (entry-level, junior, senior) and the language in each posting. This hub gives copy-ready patterns and links to tools for keyword gaps and job-description alignment before you apply.",
+    snippetDefinition: {
+      h2: "What Are Good Business Analyst Resume Bullet Points?",
+      line1:
+        "Good business analyst resume bullet points connect requirement work and process decisions to measurable outcomes like cycle-time reduction, error reduction, or SLA gains.",
+      line2:
+        "They should include ATS terms from the posting naturally - requirements, BRD/FRD, process mapping, stakeholder alignment - without inflated ownership.",
+    },
+    paragraphs: [
+      "Recruiters and ATS look for practical BA signals: discovery rigor, documentation quality, process understanding, and influence on delivery outcomes.",
+      "Use these bullets as templates only. Replace sample metrics and domain details with your real scope so your interview narrative remains credible.",
+    ],
+    semanticVariation:
+      "These resume bullet points (also called achievement statements) should prove value with evidence, not vague responsibility language.",
+    previewSectionIntro:
+      "Below are grouped preview bullets across requirements, process optimization, reporting, and business impact - then open entry-level, junior, or senior pages for full project-wise banks.",
+    previewSection: {
+      h2: "Business Analyst Resume Bullet Point Examples (Preview)",
+      groups: [
+        {
+          label: "Requirements and documentation",
+          bullets: [
+            "Facilitated discovery workshops with finance and support; translated inputs into clear user stories and acceptance criteria.",
+            "Authored BRD/FRD documents for a workflow modernization project and reduced rework from requirement ambiguity.",
+            "Maintained traceability matrix from business goals to release scope, improving QA coverage and launch confidence.",
+            "Created requirement change log and aligned stakeholders on scope decisions during sprint planning.",
+          ],
+        },
+        {
+          label: "Process mapping and optimization",
+          bullets: [
+            "Mapped as-is/to-be process for claims handling and identified bottlenecks that reduced turnaround time by 24%.",
+            "Analyzed approval workflow handoffs and removed duplicate checks, decreasing manual effort across teams.",
+            "Partnered with operations to standardize escalation paths and improved SLA adherence for high-priority requests.",
+            "Defined process KPIs and established weekly review cadence with functional owners.",
+          ],
+        },
+        {
+          label: "Reporting and insights",
+          bullets: [
+            "Built Power BI dashboards tracking backlog, SLA, and throughput for leadership planning meetings.",
+            "Developed SQL-based reporting views and reconciled metric differences between operations and finance.",
+            "Automated monthly reporting workbook updates and cut manual effort by 12+ hours per cycle.",
+            "Presented trend analyses with root-cause hypotheses and action recommendations to cross-functional stakeholders.",
+          ],
+        },
+        {
+          label: "Business impact",
+          bullets: [
+            "Supported launch readiness for billing workflow improvements that reduced invoice disputes by 19%.",
+            "Helped prioritize process fixes by impact and effort, improving on-time completion for critical initiatives.",
+            "Reduced requirement-related defects by introducing clearer acceptance criteria and validation checkpoints.",
+            "Improved stakeholder confidence in delivery estimates through structured requirement baselines.",
+          ],
+        },
+      ],
+    },
+    comparisonSection: {
+      title: "Why Most Resume Bullet Points Don't Work",
+      points: [
+        "Too generic: bullets say 'worked with stakeholders' without a decision, deliverable, or result.",
+        "No measurable outcomes: process work needs impact metrics, not activity lists.",
+        "Missing BA language: posting asks for requirements/process mapping but resume hides these signals.",
+        "Scope confusion: entry-level and senior ownership mixed together weakens credibility.",
+      ],
+    },
+    faq: [
+      {
+        question: "What should business analyst bullets emphasize most?",
+        answer:
+          "Emphasize requirement clarity, process improvement, and measurable outcomes. Tools matter, but hiring teams prioritize decision quality and business impact.",
+      },
+      {
+        question: "Can business analyst bullets include product and operations work together?",
+        answer:
+          "Yes, if accurate. Many BA roles span operations and product delivery. Keep each bullet explicit about context, stakeholders, and measurable results.",
+      },
+      {
+        question: "How do I tailor BA bullets for ATS?",
+        answer:
+          "Mirror posting terms like requirements, process mapping, stakeholder management, and KPI reporting where truthful. Then validate keyword coverage before applying.",
+      },
+    ],
+    relatedSearches: [
+      { label: "business analyst resume summary examples", href: "/business-analyst-resume-example" },
+      { label: "entry-level business analyst resume bullet points", href: "/business-analyst-resume-bullet-points-entry-level" },
+      { label: "business analyst resume keywords", href: "/business-analyst-resume-keywords" },
+      { label: "business analyst interview questions", href: "/data-analyst-interview-questions" },
+    ],
+    levelCards: {
+      "entry-level": {
+        hook: "Internships, coursework, and first requirement/process projects with clear business context.",
+        whatsInside: [
+          "Starter BA bullets for students and early-career candidates",
+          "Requirement and process wording that passes ATS screens",
+          "Examples tailored for low-experience but high-clarity profiles",
+        ],
+      },
+      junior: {
+        hook: "Ownership-level BA bullets for recurring analysis, cross-team delivery, and measurable process outcomes.",
+        whatsInside: [
+          "Project blocks across requirement delivery, reporting, and optimization",
+          "Mid-level scope language without over-claiming ownership",
+          "Business-impact framing hiring managers scan for quickly",
+        ],
+      },
+      senior: {
+        hook: "Senior BA bullets for strategic process change, KPI governance, and cross-functional influence.",
+        whatsInside: [
+          "Leadership-level BA examples tied to organizational outcomes",
+          "Governance and roadmap influence patterns for senior screens",
+          "Executive-ready impact language that stays interview-safe",
+        ],
+      },
+    },
+  },
   "data-scientist": {
     roleName: "Data Scientist",
     metaTitle:
-      "40+ Data Scientist Resume Bullet Points (Entry, Junior, Senior - 2026) | ResumeAtlas",
+      "75 Data Scientist Resume Bullet Points (2026) | ResumeAtlas",
     metaDescription:
-      "40+ data scientist resume bullet points for entry-level, junior, and senior roles. ATS-friendly, copy-ready examples with Python, SQL, ML, and measurable outcomes for 2026 hiring.",
+      "Copy strong data scientist bullet points with metrics for ML, analytics, experimentation, and business impact.",
     keywords: [
       "data scientist resume bullet points",
       "data scientist resume bullets",
@@ -296,9 +582,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
   "software-engineer": {
     roleName: "Software Engineer",
     metaTitle:
-      "40+ Software Engineer Resume Bullet Points (Entry, Junior, Senior - 2026) | ResumeAtlas",
+      "75 Software Engineer Resume Bullets + Metrics (2026) | ResumeAtlas",
     metaDescription:
-      "40+ software engineer resume bullet points for entry-level, junior, and senior roles. ATS-friendly, copy-ready examples with stack, scale, reliability, and measurable outcomes for 2026 hiring.",
+      "Copy ATS-friendly software engineer bullet points for backend, frontend, full stack, APIs, scale, and impact.",
     keywords: [
       "software engineer resume bullet points",
       "software developer resume bullets",
@@ -438,9 +724,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
   "product-manager": {
     roleName: "Product Manager",
     metaTitle:
-      "40+ Product Manager Resume Bullet Points (APM, Mid, Senior - 2026) | ResumeAtlas",
+      "75 Product Manager Resume Bullet Points That Win Interviews | ResumeAtlas",
     metaDescription:
-      "40+ product manager resume bullet points for APM, mid-level, and senior PM roles. ATS-friendly, copy-ready examples with discovery, roadmap, metrics, and business outcomes for 2026 hiring.",
+      "Copy PM bullet points for roadmap, growth, launches, experimentation, metrics, and cross-functional leadership.",
     keywords: [
       "product manager resume bullet points",
       "APM resume bullets",
@@ -578,6 +864,546 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     },
   },
 };
+
+function daEntry(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "20+ Entry-Level Data Analyst Resume Bullet Points (Freshers - Copy & Paste) | ResumeAtlas",
+    metaDescription:
+      "20+ entry-level data analyst resume bullet points for freshers, recent graduates, and internships: SQL, Excel, dashboard, and KPI examples with ATS-friendly wording.",
+    keywords: [
+      "entry level data analyst resume bullet points",
+      "data analyst resume bullet points for freshers",
+      "resume bullet points for data analyst internship",
+      "SQL resume bullet points entry level",
+      "power bi resume bullet points",
+    ],
+    h1: "20+ Entry-Level Data Analyst Resume Bullet Points (Freshers - Copy & Paste)",
+    noExperienceReassurance:
+      "No full-time experience yet? These examples are designed for coursework, internships, and portfolio analytics projects.",
+    intentStack:
+      "Looking for entry-level data analyst resume bullet points as a fresher, student, or internship candidate? These examples focus on SQL, dashboards, reporting hygiene, and measurable outcomes you can defend in interviews.",
+    snippetDefinition: {
+      h2: "What Are Good Entry-Level Data Analyst Resume Bullet Points?",
+      line1:
+        "Good entry-level data analyst resume bullet points name the tools you used (SQL, Excel, Power BI/Tableau) and tie work to a measurable output.",
+      line2:
+        "They should also mirror ATS keywords from the posting naturally while keeping scope honest for a fresher profile.",
+    },
+    aboveFoldBullets: [
+      "Built SQL queries (joins, CTEs, window functions) for weekly reporting in an internship and surfaced a 7% discrepancy in conversion tracking.",
+      "Created a Power BI dashboard for enrollment trends and reduced manual reporting time by ~6 hours/week for the ops team.",
+      "Analyzed funnel drop-offs in a coursework project and recommended UX changes linked to an 8% signup lift in simulation.",
+      "Standardized KPI definitions in a student analytics project and prevented recurring metric mismatches across two reports.",
+    ],
+    detailsIntroLine: "More entry-level data analyst bullet point examples:",
+    projectSemanticReinforcement:
+      "These entry-level data analyst resume bullet points reinforce SQL, dashboarding, data quality, and stakeholder reporting language hiring teams search for.",
+    endOfPageRecap:
+      "Use these as starter patterns, then tailor to each posting so your entry-level data analyst resume matches required skills and ATS terms.",
+    entryFaqExtra: {
+      question: "Can I use these bullet points if I only have projects and no full-time analyst role?",
+      answer:
+        "Yes. These examples are meant for internships, coursework, and portfolio projects. Keep claims specific and interview-safe by using your real tools and outcomes.",
+    },
+    intro:
+      "Entry-level analyst screening still rewards specificity. Show dataset context, tools, and impact (time saved, conversion change, data quality improvement) instead of generic statements.",
+    doubtLine:
+      "Template bullets alone are not enough. Tailor wording to each job description so ATS sees role-specific keywords and recruiters see relevance.",
+    entryProjectsSectionTitle: "Entry-Level Data Analyst Resume Bullet Points (Projects & Internships)",
+    commonMistakes: {
+      title: "Common Mistakes in Entry-Level Data Analyst Bullet Points",
+      points: [
+        "Tool-only bullets with no result (for example, 'used SQL' without outcome).",
+        "Generic wording that could fit any role, not analytics-specific work.",
+        "Missing ATS keywords from the posting (dashboarding, KPI reporting, experimentation support).",
+        "Inflated ownership that does not match fresher/intern scope.",
+      ],
+    },
+    projects: [
+      {
+        groupHeading: "Academic Projects",
+        groupIntro:
+          "Academic project bullets should show data cleaning, SQL logic, dashboarding, and business interpretation.",
+        name: "Course capstone: conversion analysis",
+        bullets: [
+          "Built a SQL-based funnel model from event exports and identified two high-friction steps linked to a simulated 8% signup improvement.",
+          "Created a Tableau storyboard for non-technical reviewers, summarizing cohort trends and confidence caveats in plain language.",
+          "Documented metric definitions and query assumptions so peers could reproduce results from raw CSV files.",
+          "Presented recommendations with effort-vs-impact scoring and defended trade-offs in final review.",
+        ],
+      },
+      {
+        groupHeading: "Internship Projects",
+        groupIntro:
+          "Internship bullets should emphasize recurring reporting, data QA, and cross-functional communication.",
+        name: "Weekly KPI reporting support",
+        bullets: [
+          "Wrote SQL joins and validation checks for weekly business reports and caught a 7% mismatch between CRM and analytics exports.",
+          "Automated a recurring Excel-to-Power BI refresh flow, reducing manual prep time by ~6 hours/week.",
+          "Maintained a KPI dictionary and aligned metric names across marketing and operations teams before leadership review.",
+          "Summarized findings in concise weekly notes so managers could act without digging through raw tables.",
+        ],
+      },
+      {
+        groupHeading: "Portfolio / Personal Projects",
+        groupIntro:
+          "Portfolio bullets prove practical analyst workflow when full-time experience is limited.",
+        name: "Public dataset dashboard project",
+        bullets: [
+          "Built an interactive Power BI dashboard on retail sales trends and highlighted underperforming segments with drill-down filters.",
+          "Used Python (pandas) for cleaning and feature derivation before loading modeled tables into BI layers.",
+          "Tracked assumptions and data-quality caveats in README notes to keep interpretations grounded.",
+          "Shared project insights with peers and incorporated feedback into a revised visualization structure.",
+        ],
+      },
+    ],
+  };
+}
+
+function daJunior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle: "Junior Data Analyst Resume Bullet Points (Mid-Level Examples) | ResumeAtlas",
+    metaDescription:
+      "Junior data analyst resume bullets for SQL reporting, dashboards, A/B test analysis, and stakeholder outcomes, plus ATS keyword guidance.",
+    h1: "Data Analyst Resume Bullet Points (Junior)",
+    intentStack:
+      "Junior analyst roles expect ownership of recurring reporting, experiment analysis, and stakeholder-ready insights. These bullets are written for that mid-level scope.",
+    snippetDefinition: {
+      h2: "What Are Good Junior Data Analyst Resume Bullet Points?",
+      line1:
+        "Good junior data analyst resume bullet points show end-to-end workflow: metric definition, SQL analysis, dashboard delivery, and business action.",
+      line2:
+        "They should include role-specific ATS terms from the posting while keeping claims aligned to real ownership.",
+    },
+    aboveFoldBullets: [
+      "Owned weekly product KPI reporting in SQL + Power BI and reduced leadership report turnaround by 60%.",
+      "Analyzed onboarding experiments with confidence intervals and helped prioritize a change that improved activation by 9%.",
+      "Partnered with engineering to fix event-tracking gaps and increased trusted dashboard coverage from 74% to 96%.",
+      "Built stakeholder-facing churn cohort views that informed retention playbooks for customer success teams.",
+    ],
+    projectSemanticReinforcement:
+      "These junior data analyst bullet points reinforce SQL, dashboard ownership, experimentation readouts, and business-facing analytics communication.",
+    endOfPageRecap:
+      "Junior analyst bullets should prove practical ownership and impact, then be tailored to each posting's domain language.",
+    juniorFaqExtra: {
+      question: "How are junior analyst bullets different from entry-level bullets?",
+      answer:
+        "Junior bullets should show stronger ownership, recurring systems, and clearer business impact - not only coursework or one-off projects.",
+    },
+    intro:
+      "Mid-level analyst screens look for reliable reporting systems and decisions influenced by analysis. Lead with outcomes and then show methods and tools.",
+    doubtLine:
+      "If your bullets sound generic or tool-only, ATS may still pass you but hiring managers will not see clear value. Tie work to decisions and results.",
+    projectsSectionTitle: "Junior Data Analyst Resume Bullet Points (Experience & Projects)",
+    commonMistakes: {
+      title: "Common Mistakes in Junior Data Analyst Bullet Points",
+      points: [
+        "Reporting activity without decision or outcome context.",
+        "No distinction between data extraction and insight generation.",
+        "Weak stakeholder language despite business-facing role requirements.",
+        "Missing experimentation and metric-governance terms from JD.",
+      ],
+    },
+    projects: [
+      {
+        name: "KPI reporting system ownership",
+        bullets: [
+          "Owned weekly KPI pack generation (SQL + BI) and cut prep time from 10 hours to 4 hours through reusable query layers.",
+          "Introduced quality checks for revenue and activation metrics, reducing post-review corrections by 70%.",
+        ],
+      },
+      {
+        name: "Experiment readout support",
+        bullets: [
+          "Partnered with PM to define experiment success metrics and analyzed A/B outcomes with confidence intervals before rollout decisions.",
+          "Flagged a segment-specific downside in test results that prevented a broad release likely to hurt high-value users.",
+        ],
+      },
+      {
+        name: "Data quality and event instrumentation",
+        bullets: [
+          "Worked with engineering on event schema fixes and improved trust in funnel dashboards used by growth and product teams.",
+          "Documented metric lineage to align analytics, marketing, and finance interpretations during weekly reviews.",
+        ],
+      },
+      {
+        name: "Stakeholder analytics delivery",
+        bullets: [
+          "Built churn and retention cohort views for customer success leadership and informed playbooks targeting at-risk segments.",
+          "Presented monthly analysis summaries with recommendations, trade-offs, and expected impact ranges.",
+        ],
+      },
+    ],
+  };
+}
+
+function daSenior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle: "Senior Data Analyst Resume Bullet Points (Lead / Strategic Examples) | ResumeAtlas",
+    metaDescription:
+      "Senior data analyst resume bullets for KPI architecture, cross-functional influence, forecasting, and leadership-level analytics outcomes.",
+    h1: "Senior Data Analyst Resume Bullet Points",
+    intentStack:
+      "Senior analyst roles require strategy influence, metric governance, and cross-functional alignment. These bullets are for lead-level analytics scope, not early-career reporting support.",
+    snippetDefinition: {
+      h2: "What Are Good Senior Data Analyst Resume Bullet Points?",
+      line1:
+        "Good senior data analyst resume bullet points show decisions you influenced at team or org level, backed by measurable outcomes.",
+      line2:
+        "They should include leadership-adjacent language from postings (stakeholder alignment, forecasting, KPI frameworks) where truthful.",
+    },
+    aboveFoldBullets: [
+      "Redesigned company KPI framework with finance and product leadership, reducing conflicting metric definitions across quarterly reviews.",
+      "Led forecasting and cohort analysis for planning cycles; improved demand forecast error by 16% versus prior quarter baseline.",
+      "Built executive analytics cadence for retention and expansion risk, informing prioritization tied to multi-million ARR segments.",
+      "Mentored analysts on SQL quality, experiment readouts, and stakeholder storytelling, improving consistency of cross-team reporting.",
+    ],
+    projectSemanticReinforcement:
+      "These senior data analyst bullet points reinforce metric governance, strategic insight delivery, and leadership-level analytics influence.",
+    endOfPageRecap:
+      "Senior analyst bullets should prove business influence and decision quality, not just dashboard production volume.",
+    seniorFaqExtra: {
+      question: "Should senior analyst bullets include leadership even without direct reports?",
+      answer:
+        "Yes. Leadership can mean owning KPI frameworks, influencing roadmap decisions, and mentoring analysts across teams, even without formal people management.",
+    },
+    intro:
+      "At senior level, hiring teams expect systems thinking: stable metrics, trusted decision support, and cross-functional influence over planning and execution.",
+    doubtLine:
+      "If your senior bullets only list tooling tasks, you look under-leveled. Show impact on decisions, prioritization, and business outcomes.",
+    projectsSectionTitle: "Senior Data Analyst Resume Bullet Points (Experience & Projects)",
+    commonMistakes: {
+      title: "Common Mistakes in Senior Data Analyst Bullet Points",
+      points: [
+        "Operational reporting bullets without strategic implications.",
+        "No mention of metric governance or cross-functional alignment.",
+        "Unclear business outcomes despite senior title.",
+        "Overstated leadership claims without concrete examples.",
+      ],
+    },
+    projects: [
+      {
+        name: "KPI architecture overhaul",
+        bullets: [
+          "Led redesign of KPI definitions across product and finance; eliminated recurring metric conflicts in executive reviews.",
+          "Implemented governance docs and ownership model so dashboard changes followed clear approval workflows.",
+        ],
+      },
+      {
+        name: "Forecasting and planning support",
+        bullets: [
+          "Developed cohort-based forecasting model for quarterly planning and improved forecast error by 16% vs prior quarter.",
+          "Partnered with operations and finance to align forecast assumptions with real pipeline and churn signals.",
+        ],
+      },
+      {
+        name: "Executive insight delivery",
+        bullets: [
+          "Built recurring executive readouts on retention and expansion risk that informed roadmap and GTM prioritization.",
+          "Translated analysis into decision options with downside scenarios and confidence bounds for leadership teams.",
+        ],
+      },
+      {
+        name: "Analytics quality and mentorship",
+        bullets: [
+          "Mentored junior analysts on SQL patterns, QA checks, and experiment interpretation, improving reporting consistency across squads.",
+          "Established lightweight review checklists that reduced last-minute dashboard corrections before leadership meetings.",
+        ],
+      },
+    ],
+    leadershipQueryBridge:
+      "If you are targeting lead or principal analyst paths, include leadership bullets that show influence over decisions and analytics standards.",
+    leadershipSectionTitle: "Leadership Resume Bullet Points for Senior Data Analysts",
+    leadershipSectionSubcopy:
+      "Leadership here means decision influence, metric governance, and cross-team analytics enablement - use only what matches your true scope.",
+    leadershipSnippet: {
+      h3: "What Counts as Leadership for Senior Analysts?",
+      line1:
+        "Leadership analyst bullets show how you shape KPI definitions, influence product or finance decisions, and improve analytics quality across teams.",
+      line2:
+        "They do not require direct reports; they require clear ownership and measurable organizational impact.",
+    },
+    leadershipBullets: [
+      "Defined cross-functional KPI taxonomy adopted across product, growth, and finance, reducing metric disputes in planning cycles.",
+      "Advised leadership on funnel trade-offs using cohort analysis that shifted roadmap sequencing toward higher-retention initiatives.",
+      "Built risk-monitoring views for expansion revenue segments and flagged at-risk cohorts before renewal windows.",
+      "Led analytics QA standards and reduced executive-dashboard corrections by implementing pre-review validation checks.",
+      "Mentored analysts on experiment interpretation and narrative framing, improving decision-readout quality in monthly reviews.",
+      "Partnered with engineering on event schema standards, improving long-term comparability of key growth metrics.",
+    ],
+  };
+}
+
+function baEntry(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "20+ Entry-Level Business Analyst Resume Bullet Points (Freshers - Copy & Paste) | ResumeAtlas",
+    metaDescription:
+      "20+ entry-level business analyst resume bullet points for freshers, students, and internship candidates: requirements, process mapping, reporting, and ATS-friendly wording.",
+    keywords: [
+      "entry level business analyst resume bullet points",
+      "business analyst fresher resume bullets",
+      "business analyst internship resume bullets",
+      "requirements gathering resume bullet points",
+      "process mapping resume bullet points",
+    ],
+    h1: "20+ Entry-Level Business Analyst Resume Bullet Points (Freshers - Copy & Paste)",
+    noExperienceReassurance:
+      "No full-time BA role yet? These examples are built for internship, coursework, and project-based experience.",
+    intentStack:
+      "Entry-level business analyst hiring favors structured thinking and clear communication. These bullet points focus on requirements, process analysis, and measurable improvements you can credibly explain.",
+    snippetDefinition: {
+      h2: "What Are Good Entry-Level Business Analyst Resume Bullet Points?",
+      line1:
+        "Good entry-level business analyst bullets show requirement clarity, process understanding, and concrete outputs like documentation, dashboards, or workflow improvements.",
+      line2:
+        "They should include ATS terms from postings - requirements, stakeholder communication, process mapping - without overstating ownership.",
+    },
+    aboveFoldBullets: [
+      "Documented requirement flows for a student operations project and reduced handoff confusion across two teams.",
+      "Mapped as-is/to-be process for support ticket routing and identified changes that improved resolution speed in simulation.",
+      "Built a KPI dashboard in Power BI for backlog and SLA trends used in weekly review sessions.",
+      "Prepared user stories and acceptance criteria for a prototype workflow release and improved testing alignment.",
+    ],
+    detailsIntroLine: "More entry-level business analyst bullet point examples:",
+    projectSemanticReinforcement:
+      "These entry-level business analyst resume bullet points reinforce requirement gathering, process mapping, reporting, and stakeholder communication terms ATS expects.",
+    endOfPageRecap:
+      "Use these as starter patterns, then tailor wording to each posting so your entry-level BA resume matches required skills and domain context.",
+    entryFaqExtra: {
+      question: "Can I use BA bullet points from coursework and internships?",
+      answer:
+        "Yes. Early-career BA resumes can rely on coursework, internships, and projects if they clearly show requirements, process thinking, and measurable outcomes.",
+    },
+    intro:
+      "For entry-level BA roles, specificity beats buzzwords. Show what you analyzed, what you documented, and what changed as a result.",
+    doubtLine:
+      "Template bullets alone will not convert. Tailor each bullet to job-description terms so ATS and recruiters both see role fit.",
+    entryProjectsSectionTitle: "Entry-Level Business Analyst Resume Bullet Points (Projects & Internships)",
+    commonMistakes: {
+      title: "Common Mistakes in Entry-Level Business Analyst Bullet Points",
+      points: [
+        "Listing tools without showing analysis or decision impact.",
+        "Generic stakeholder language with no deliverable or result.",
+        "Missing requirement/process keywords from target posting.",
+        "Inflated ownership that does not match fresher scope.",
+      ],
+    },
+    projects: [
+      {
+        groupHeading: "Academic Projects",
+        groupIntro:
+          "Academic BA bullets should show structure: requirement capture, workflow mapping, and measurable outcomes.",
+        name: "Course project: workflow redesign",
+        bullets: [
+          "Mapped as-is and to-be workflow for campus procurement and identified bottlenecks reducing simulated turnaround by 20%.",
+          "Documented requirement priorities and dependencies in a BRD-style format used by the project team.",
+          "Defined acceptance criteria for process-change scenarios and improved testing consistency.",
+          "Presented recommendation trade-offs to faculty panel with effort-impact scoring.",
+        ],
+      },
+      {
+        groupHeading: "Internship Projects",
+        groupIntro:
+          "Internship bullets should emphasize practical BA work: requirement documentation, reporting, and stakeholder updates.",
+        name: "Operations reporting and requirement support",
+        bullets: [
+          "Collected stakeholder inputs for weekly operations reporting and translated needs into dashboard requirements.",
+          "Built Power BI tracker for SLA/backlog trends and reduced manual status compilation by ~8 hours/month.",
+          "Maintained requirement change log and helped align scope between operations and engineering contacts.",
+          "Prepared concise weekly update summaries highlighting risks, blockers, and next actions.",
+        ],
+      },
+      {
+        groupHeading: "Portfolio / Personal Projects",
+        groupIntro:
+          "Portfolio bullets can prove BA fundamentals when paid experience is limited.",
+        name: "Self-driven process analysis case",
+        bullets: [
+          "Created end-to-end process map for a public service workflow and identified three high-friction handoff points.",
+          "Defined KPI set for throughput and cycle time tracking and visualized trends in a dashboard prototype.",
+          "Drafted user-story backlog with acceptance criteria for top-priority improvements.",
+          "Summarized recommendations with assumptions and risk notes to keep conclusions decision-ready.",
+        ],
+      },
+    ],
+  };
+}
+
+function baJunior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle: "Junior Business Analyst Resume Bullet Points (Mid-Level Examples) | ResumeAtlas",
+    metaDescription:
+      "Junior business analyst resume bullets for requirements, process improvements, reporting systems, and stakeholder delivery with ATS-ready wording.",
+    h1: "Business Analyst Resume Bullet Points (Junior)",
+    intentStack:
+      "Junior BA roles expect ownership of requirement cycles, process analysis, and stakeholder-facing updates. These examples are tuned for that scope.",
+    snippetDefinition: {
+      h2: "What Are Good Junior Business Analyst Resume Bullet Points?",
+      line1:
+        "Good junior BA bullets show problem framing, requirement quality, and implementation impact across teams.",
+      line2:
+        "They should mirror ATS terms from postings (requirements, process optimization, KPI reporting) while staying scope-accurate.",
+    },
+    aboveFoldBullets: [
+      "Owned requirement gathering for billing workflow enhancements and reduced requirement-related defects in UAT.",
+      "Mapped support escalation process and recommended changes that cut resolution cycle time by 23%.",
+      "Built recurring KPI reporting for backlog/SLA and improved weekly leadership visibility into operational risk.",
+      "Partnered with engineering and QA to maintain acceptance criteria quality across sprint cycles.",
+    ],
+    projectSemanticReinforcement:
+      "These junior business analyst bullet points reinforce requirement ownership, process optimization, reporting, and stakeholder communication language.",
+    endOfPageRecap:
+      "Junior BA bullets should prove delivery quality and measurable process outcomes, then align phrasing to each posting.",
+    juniorFaqExtra: {
+      question: "How do junior BA bullets differ from entry-level BA bullets?",
+      answer:
+        "Junior bullets should show stronger ownership of requirement cycles and measurable process outcomes, not only project participation.",
+    },
+    intro:
+      "Mid-level BA screening prioritizes execution reliability. Show how your requirements, analysis, and documentation improved delivery quality or business outcomes.",
+    doubtLine:
+      "If bullets only describe activity ('worked with team') without outcomes, they underperform in both ATS and hiring-manager review.",
+    projectsSectionTitle: "Junior Business Analyst Resume Bullet Points (Experience & Projects)",
+    commonMistakes: {
+      title: "Common Mistakes in Junior Business Analyst Bullet Points",
+      points: [
+        "Requirement tasks listed without quality or delivery impact.",
+        "Process-mapping bullets with no measurable improvement.",
+        "Weak stakeholder context for cross-functional work.",
+        "Missing domain terminology from target job descriptions.",
+      ],
+    },
+    projects: [
+      {
+        name: "Requirement lifecycle ownership",
+        bullets: [
+          "Led requirement capture for a workflow enhancement release and improved acceptance-criteria clarity across teams.",
+          "Maintained requirement traceability and reduced scope ambiguity during sprint planning.",
+        ],
+      },
+      {
+        name: "Process optimization initiative",
+        bullets: [
+          "Analyzed support escalation flow and implemented handoff improvements that reduced cycle time by 23%.",
+          "Defined process KPIs and established weekly monitoring cadence with operations leadership.",
+        ],
+      },
+      {
+        name: "Reporting and operational visibility",
+        bullets: [
+          "Built dashboard suite for backlog, SLA, and throughput metrics used in weekly leadership reviews.",
+          "Reconciled metric definitions across teams and reduced conflicting report interpretations.",
+        ],
+      },
+      {
+        name: "Cross-functional delivery support",
+        bullets: [
+          "Collaborated with engineering and QA to refine user stories and acceptance criteria before development kickoff.",
+          "Prepared release-readiness summaries with risks and dependencies for stakeholder alignment.",
+        ],
+      },
+    ],
+  };
+}
+
+function baSenior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle: "Senior Business Analyst Resume Bullet Points (Lead / Strategic Examples) | ResumeAtlas",
+    metaDescription:
+      "Senior business analyst resume bullets for strategy-aligned process transformation, KPI governance, and cross-functional leadership influence.",
+    h1: "Senior Business Analyst Resume Bullet Points",
+    intentStack:
+      "Senior BA roles require strategic process ownership, metric governance, and influence across product, operations, and leadership. These examples target that scope.",
+    snippetDefinition: {
+      h2: "What Are Good Senior Business Analyst Resume Bullet Points?",
+      line1:
+        "Good senior BA bullets show organization-level process and requirement influence tied to measurable outcomes.",
+      line2:
+        "They should include senior-level posting language such as governance, stakeholder alignment, and transformation initiatives where truthful.",
+    },
+    aboveFoldBullets: [
+      "Led enterprise process-standardization initiative across operations and finance, reducing exception handling volume by 26%.",
+      "Established KPI governance model and improved consistency of leadership reporting across quarterly planning cycles.",
+      "Directed requirement strategy for multi-team modernization release and reduced downstream rework from scope misalignment.",
+      "Mentored BA team on requirement quality and stakeholder communication, improving delivery predictability.",
+    ],
+    projectSemanticReinforcement:
+      "These senior business analyst bullet points reinforce strategic process transformation, governance, and cross-functional influence.",
+    endOfPageRecap:
+      "Senior BA bullets should show business-level influence and execution reliability, not only operational task lists.",
+    seniorFaqExtra: {
+      question: "Do senior BA bullets need direct people-management examples?",
+      answer:
+        "Not always. Senior BA leadership can be shown through governance ownership, cross-functional influence, and mentoring, even without formal direct reports.",
+    },
+    intro:
+      "Senior BA hiring prioritizes strategic clarity: how you shape requirements, improve systems, and influence business outcomes across teams.",
+    doubtLine:
+      "If senior bullets read like junior execution tasks, your profile can look under-leveled despite title progression.",
+    projectsSectionTitle: "Senior Business Analyst Resume Bullet Points (Experience & Projects)",
+    commonMistakes: {
+      title: "Common Mistakes in Senior Business Analyst Bullet Points",
+      points: [
+        "Task-level bullets with no strategic or cross-team impact.",
+        "No KPI governance or decision-support examples.",
+        "Overstated influence without concrete outcomes.",
+        "Missing change-management language for transformation roles.",
+      ],
+    },
+    projects: [
+      {
+        name: "Process transformation program",
+        bullets: [
+          "Led cross-functional process-standardization effort and reduced exception-handling workload by 26% across business units.",
+          "Built implementation roadmap with phased milestones and stakeholder accountability checkpoints.",
+        ],
+      },
+      {
+        name: "KPI governance and reporting quality",
+        bullets: [
+          "Defined KPI ownership and metric glossary standards used in leadership and planning reviews.",
+          "Improved reporting consistency by aligning definitions and refresh cadences across finance, operations, and product teams.",
+        ],
+      },
+      {
+        name: "Multi-team requirement strategy",
+        bullets: [
+          "Directed requirement baseline for a modernization release spanning multiple teams and reduced rework from ambiguous scope.",
+          "Established acceptance-quality reviews that improved launch readiness and defect prevention.",
+        ],
+      },
+      {
+        name: "BA capability uplift",
+        bullets: [
+          "Mentored BA team members on requirement writing, stakeholder facilitation, and impact-based reporting.",
+          "Introduced reusable templates for discovery notes and decision logs, improving analysis consistency.",
+        ],
+      },
+    ],
+    leadershipQueryBridge:
+      "For lead or principal BA paths, include leadership bullets that prove governance ownership and decision influence.",
+    leadershipSectionTitle: "Leadership Resume Bullet Points for Senior Business Analysts",
+    leadershipSectionSubcopy:
+      "Leadership BA bullets can show governance, transformation influence, and capability building - use only claims aligned to your actual scope.",
+    leadershipSnippet: {
+      h3: "What Counts as Leadership for Senior Business Analysts?",
+      line1:
+        "Leadership BA examples include owning KPI frameworks, shaping multi-team requirement decisions, and driving process-change outcomes.",
+      line2:
+        "You do not need direct reports to demonstrate leadership; you need clear cross-functional influence and measurable results.",
+    },
+    leadershipBullets: [
+      "Defined governance standards for requirement quality and improved downstream delivery predictability across teams.",
+      "Led quarterly process-review cadence with operations leaders and prioritized high-impact bottleneck removals.",
+      "Aligned finance, operations, and product stakeholders on KPI definitions used for executive planning decisions.",
+      "Drove remediation plan for recurring SLA breaches and improved on-time completion across critical workflows.",
+      "Mentored BA peers on facilitation and documentation standards, improving consistency of discovery outputs.",
+      "Introduced decision-log practice that reduced repeat debates and accelerated cross-functional alignment.",
+    ],
+  };
+}
 
 function dsEntry(): ResumeBulletDetailCopy {
   return {
@@ -1771,6 +2597,16 @@ const DETAIL: Record<
   ResumeBulletRole,
   Record<ResumeBulletLevel, () => ResumeBulletDetailCopy>
 > = {
+  "data-analyst": {
+    "entry-level": daEntry,
+    junior: daJunior,
+    senior: daSenior,
+  },
+  "business-analyst": {
+    "entry-level": baEntry,
+    junior: baJunior,
+    senior: baSenior,
+  },
   "data-scientist": {
     "entry-level": dsEntry,
     junior: dsJunior,

@@ -10,10 +10,10 @@ import { getSiteUrl } from "@/app/lib/siteUrl";
 const PATH = "/customize-resume-without-lying" as const;
 
 const title =
-  "How to Customize Resume Without Lying (Match Any Job Description Easily) | ResumeAtlas";
+  "Tailor Resume to Job Description Without Lying | ResumeAtlas";
 
 const description =
-  "Learn how to customize your resume for any job without lying. Find missing keywords, align your experience, and improve your chances of getting shortlisted.";
+  "Use truthful resume tailoring to match job descriptions, improve ATS fit, and increase interview chances fast.";
 
 const siteBase = getSiteUrl().replace(/\/$/, "");
 const pageUrl = `${siteBase}${PATH}`;
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "How to Customize Resume Without Lying (Match Any Job Description Easily)",
+      "How to Tailor Your Resume to a Job Description Without Lying",
     description,
     url: pageUrl,
     type: "article",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "How to Customize Resume Without Lying (Match Any Job Description Easily)",
+      "How to Tailor Your Resume to a Job Description Without Lying",
     description,
   },
 };
@@ -79,7 +79,7 @@ const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
   headline:
-    "How to Customize Resume Without Lying (Match Any Job Description Easily)",
+    "How to Tailor Your Resume to a Job Description Without Lying",
   description,
   author: {
     "@type": "Organization",
@@ -368,7 +368,7 @@ export default function CustomizeResumeWithoutLyingPage() {
               {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
             <Link
-              href="/resume-guides/ats-resume-template"
+              href="/ats-resume-template"
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
             >
               How to pass ATS screening
@@ -377,7 +377,7 @@ export default function CustomizeResumeWithoutLyingPage() {
           <ul className="mt-6 space-y-2 text-sm text-slate-600">
             <li>
               <Link
-                href="/resume-guides/ats-resume-template#how-ats-scans-resumes"
+                href="/ats-resume-template#how-ats-scans"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 How ATS scans resumes
@@ -385,7 +385,7 @@ export default function CustomizeResumeWithoutLyingPage() {
             </li>
             <li>
               <Link
-                href="/resume-guides/ats-resume-template"
+                href="/ats-resume-template"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 ATS-friendly resume format

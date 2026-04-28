@@ -8,7 +8,7 @@ export const CHECK_RESUME_AGAINST_JD_PATH =
 
 /** Canonical ATS guide: template/format/examples (legacy `/how-to-pass-ats` redirects here). */
 export const ATS_RESUME_TEMPLATE_GUIDE_PATH =
-  "/resume-guides/ats-resume-template" as const;
+  "/ats-resume-template" as const;
 
 /** Work experience section: format, samples, and query-aligned examples (single canonical hub). */
 export const RESUME_WORK_EXPERIENCE_GUIDE_PATH =
@@ -72,6 +72,14 @@ const ARTICLE_LINKS: InternalLink[] = [
   },
   { path: "/resume-examples", label: "Resume examples by role" },
   {
+    path: "/data-analyst-resume-bullet-points",
+    label: "Data analyst resume bullet examples",
+  },
+  {
+    path: "/business-analyst-resume-bullet-points",
+    label: "Business analyst resume bullet examples",
+  },
+  {
     path: "/data-scientist-resume-bullet-points",
     label: "Data scientist resume bullet examples",
   },
@@ -86,10 +94,6 @@ const ARTICLE_LINKS: InternalLink[] = [
   {
     path: "/problems/resume-vs-job-description",
     label: "Resume vs job description mismatch",
-  },
-  {
-    path: "/backend-developer/resume/bullet-points",
-    label: "Backend developer resume bullet points",
   },
 ];
 
@@ -131,7 +135,6 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/resume-keyword-scanner",
     "/customize-resume-without-lying",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/data-scientist-resume-keywords",
     "/software-engineer-resume-keywords",
     "/data-scientist-resume-example",
@@ -163,7 +166,6 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/ats-resume-checker",
     "/resume-keyword-scanner",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/software-engineer-resume-keywords",
     "/data-scientist-resume-keywords",
   ],
@@ -173,26 +175,14 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/data-scientist-resume-example",
     "/customize-resume-without-lying",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/machine-learning-engineer-resume-keywords",
     "/resume-examples",
   ],
-  "/ats-resume-checker-free": [
-    CHECK_RESUME_AGAINST_JD_PATH,
-    "/resume-score-checker",
-    "/resume-keyword-scanner",
-    "/ats-compatibility-check",
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    "/customize-resume-without-lying",
-    "/software-engineer-resume-keywords",
-  ],
   "/resume-score-checker": [
     CHECK_RESUME_AGAINST_JD_PATH,
-    "/ats-resume-checker-free",
+    "/ats-resume-checker",
     "/resume-keyword-scanner",
     "/ats-compatibility-check",
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/data-scientist-resume-keywords",
     "/customize-resume-without-lying",
@@ -228,14 +218,13 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/software-engineer-resume-bullet-points",
     "/product-manager-resume-bullet-points",
     "/data-scientist-resume-bullet-points",
-    "/backend-developer/resume/bullet-points",
+    "/business-analyst-resume-bullet-points",
   ],
   "/ats-compatibility-check": [
     CHECK_RESUME_AGAINST_JD_PATH,
-    "/ats-resume-checker-free",
+    "/ats-resume-checker",
     "/resume-score-checker",
     "/resume-keyword-scanner",
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/data-analyst-resume-keywords",
     "/customize-resume-without-lying",
@@ -266,10 +255,7 @@ function getSemanticPathsFor(currentPath: string): string[] {
       mergedGuidePath,
       "/customize-resume-without-lying",
       ATS_RESUME_TEMPLATE_GUIDE_PATH,
-      ATS_RESUME_TEMPLATE_GUIDE_PATH,
       "/resume-examples",
-      ATS_RESUME_TEMPLATE_GUIDE_PATH,
-      "/customize-resume-without-lying",
       "/resume-keyword-scanner",
     ].filter((p) => PATH_BY_PATH[p] != null);
   }
@@ -287,8 +273,6 @@ function getSemanticPathsFor(currentPath: string): string[] {
       "/customize-resume-without-lying",
       ATS_RESUME_TEMPLATE_GUIDE_PATH,
       "/resume-examples",
-      ATS_RESUME_TEMPLATE_GUIDE_PATH,
-      ATS_RESUME_TEMPLATE_GUIDE_PATH,
       "/resume-keyword-scanner",
     ].filter((p) => PATH_BY_PATH[p] != null);
   }
