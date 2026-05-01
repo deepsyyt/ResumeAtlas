@@ -155,6 +155,25 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
           {d.exactMatchQueryLine ? (
             <p className="mt-4 text-sm leading-relaxed text-slate-800 sm:text-base">{d.exactMatchQueryLine}</p>
           ) : null}
+          {role === "data-scientist" && level === "junior" ? (
+            <div className="mt-4 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+              Junior page intent: mid-level bullet examples only. For cross-level browsing, use{" "}
+              <Link
+                href={hubPath}
+                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                the full data scientist bullet hub
+              </Link>
+              . For full resume example/sample/template intent, use{" "}
+              <Link
+                href="/data-scientist-resume-example"
+                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                data scientist resume example
+              </Link>
+              .
+            </div>
+          ) : null}
           {d.copyIntentLine && d.aboveFoldBullets ? (
             <p className="mt-6 text-sm text-slate-600">{d.copyIntentLine}</p>
           ) : null}
@@ -565,7 +584,9 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
             </li>
             <li>
               <Link href={hubPath} className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                Back to {hub.roleName} resume bullet hub
+                {role === "data-scientist" && level === "junior"
+                  ? `Back to full ${hub.roleName} bullet hub (entry, junior, senior)`
+                  : `Back to ${hub.roleName} resume bullet hub`}
               </Link>
             </li>
           </ul>

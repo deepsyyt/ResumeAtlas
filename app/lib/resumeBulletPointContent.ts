@@ -1560,9 +1560,9 @@ function dsEntry(): ResumeBulletDetailCopy {
 function dsJunior(): ResumeBulletDetailCopy {
   return {
     metaTitle:
-      "Junior Data Scientist Resume Bullet Points (Mid-Level IC – Examples) | ResumeAtlas",
+      "Junior Data Scientist Resume Bullet Points (Mid-Level IC Examples + Projects) | ResumeAtlas",
     metaDescription:
-      "Junior / mid-level data scientist resume bullets: A/B tests, production models, Python, SQL, stakeholders—plus free ATS keyword scan and job description match.",
+      "Junior / mid-level data scientist resume bullet points with project-based examples for experiments, modeling, Python/SQL, and stakeholder-ready metrics.",
     keywords: [
       "junior data scientist resume bullet points",
       "mid level data scientist resume examples",
@@ -1574,7 +1574,7 @@ function dsJunior(): ResumeBulletDetailCopy {
     intentStack:
       "Mid-level data scientist roles expect owned analyses, trustworthy experiments, and stakeholder-ready metrics. These resume bullet points are built for that scope—edit every line to match your posting.",
     exactMatchQueryLine:
-      "If you are searching for junior data scientist resume bullet points, these examples cover experiments, modeling, analytics hygiene, and cross-functional work typical of a mid-level IC.",
+      "If you are searching for junior data scientist resume bullet points, these examples cover experiments, modeling, analytics hygiene, and cross-functional work typical of a mid-level IC (not a full resume template).",
     copyIntentLine:
       "Copy and adapt these lines (swap metrics, datasets, and tools for your real work).",
     examplesAboveFoldH2: "Examples of Junior Data Scientist Resume Bullet Points",
@@ -1607,7 +1607,7 @@ function dsJunior(): ResumeBulletDetailCopy {
       "Used by mid-level data scientists targeting product analytics, applied ML, and growth roles.",
     projectsSectionTitle: "Junior Data Scientist Resume Bullet Points (Experience & Projects)",
     projectsSectionSubcopy:
-      "Four project blocks—experiments, modeling, NLP assist, and metrics hygiene. Replace numbers with yours; mid-level screens reward clarity and defensible scope.",
+      "Four junior-only project blocks—experiments, modeling, NLP assist, and metrics hygiene. Replace numbers with yours; mid-level screens reward clarity and defensible scope.",
     realismLine:
       "These examples reflect common junior DS themes—swap in your real experiments, stacks, and business context.",
     projectSemanticReinforcement:
