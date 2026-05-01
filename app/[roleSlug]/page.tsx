@@ -54,6 +54,7 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
   const role = params.roleSlug as RoleSlug;
   const roleName = roleConfig.roleName;
   const roleLower = roleName.toLowerCase();
+  const roleHasStandaloneExample = ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE.includes(role);
   const roleContent = ROLE_CONTENT_MAP[role];
   const sampleConfig = resumePageConfigForRole(role);
   const canonicalBase = getSiteUrl();
@@ -63,7 +64,8 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
   const skillsPath = `${resumeGuidePath}#skills`;
   const summaryPath = `${resumeGuidePath}#summary`;
   const projectsPath = `${resumeGuidePath}#projects`;
-  const bulletsPath = `${resumeGuidePath}#bullet-points`;
+  const bulletsPath =
+    role === "data-scientist" ? "/data-scientist-resume-bullet-points" : `${resumeGuidePath}#bullet-points`;
 
   const faqItems = [
     {
@@ -242,10 +244,12 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
           <ul className="mt-4 space-y-2.5 text-sm font-medium text-slate-800 list-none p-0 m-0">
             <li>
               <Link
-                href={`${rolePath}${RESUME_SAMPLE_HASH}`}
+                href={roleHasStandaloneExample ? resumeGuidePath : `${rolePath}${RESUME_SAMPLE_HASH}`}
                 className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
-                {roleName} resume example (on this page)
+                {roleHasStandaloneExample
+                  ? `${roleName} resume example (full page)`
+                  : `${roleName} resume example (on this page)`}
               </Link>
             </li>
             <li>

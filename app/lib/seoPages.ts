@@ -201,6 +201,7 @@ export type RoleSlug =
  */
 export const ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE: readonly RoleSlug[] = [
   "data-analyst",
+  "data-scientist",
   "frontend-developer",
   "product-manager",
 ];

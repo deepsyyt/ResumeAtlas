@@ -186,6 +186,26 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
           </ul>
 
           <div className="mt-10 space-y-4 text-sm leading-relaxed text-slate-700 sm:text-base">
+            {role === "data-scientist" ? (
+              <div className="rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-700">
+                This page is a bullet bank (not a full resume template). For full resume example/sample intent,
+                use{" "}
+                <Link
+                  href="/data-scientist-resume-example"
+                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  data scientist resume example
+                </Link>
+                . For ATS terms, use{" "}
+                <Link
+                  href="/data-scientist-resume-keywords"
+                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  data scientist resume keywords
+                </Link>
+                .
+              </div>
+            ) : null}
             <p className="font-medium text-slate-800">{hub.introIntentStack}</p>
             <section
               id="what-are-good"

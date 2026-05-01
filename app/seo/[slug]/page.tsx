@@ -878,10 +878,12 @@ export function ResumeTopicSectionForGuide({
   role,
   topic,
   anchorId,
+  showRoleSpecificContext = true,
 }: {
   role: RoleSlug;
   topic: Topic;
   anchorId: string;
+  showRoleSpecificContext?: boolean;
 }) {
   const roleName = ROLE_NAMES[role];
   const roleContent = ROLE_CONTENT_MAP[role];
@@ -919,21 +921,23 @@ export function ResumeTopicSectionForGuide({
         ))}
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
-        <h3 className="text-base font-semibold tracking-tight text-slate-900">
-          {roleName}-specific context
-        </h3>
-        <p className="mt-2 text-sm text-slate-700 leading-relaxed">
-          For this role, ATS relevance improves when you show concrete use of tools like{" "}
-          {roleContent.tools.slice(0, 4).join(", ")} and action verbs such as{" "}
-          {roleContent.domainVerbs.slice(0, 4).join(", ")}.
-        </p>
-        <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-slate-700">
-          {roleContent.examplePhrases.slice(0, 2).map((phrase) => (
-            <li key={phrase}>{phrase}</li>
-          ))}
-        </ul>
-      </section>
+      {showRoleSpecificContext ? (
+        <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
+          <h3 className="text-base font-semibold tracking-tight text-slate-900">
+            {roleName}-specific context
+          </h3>
+          <p className="mt-2 text-sm text-slate-700 leading-relaxed">
+            For this role, ATS relevance improves when you show concrete use of tools like{" "}
+            {roleContent.tools.slice(0, 4).join(", ")} and action verbs such as{" "}
+            {roleContent.domainVerbs.slice(0, 4).join(", ")}.
+          </p>
+          <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-slate-700">
+            {roleContent.examplePhrases.slice(0, 2).map((phrase) => (
+              <li key={phrase}>{phrase}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section>
         <h3 className="text-lg font-semibold tracking-tight text-slate-900">

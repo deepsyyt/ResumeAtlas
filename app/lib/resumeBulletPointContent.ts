@@ -440,9 +440,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
   "data-scientist": {
     roleName: "Data Scientist",
     metaTitle:
-      "75 Data Scientist Resume Bullet Points (2026) | ResumeAtlas",
+      "Data Scientist Resume Bullet Points (2026, by Experience Level) | ResumeAtlas",
     metaDescription:
-      "Copy strong data scientist bullet points with metrics for ML, analytics, experimentation, and business impact.",
+      "Bullet-point bank for data scientist resumes: entry, junior, and senior examples with metrics for ML, analytics, and experimentation.",
     keywords: [
       "data scientist resume bullet points",
       "data scientist resume bullets",
@@ -547,10 +547,10 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       },
     ],
     relatedSearches: [
-      { label: "data scientist resume summary examples", href: "/data-scientist-resume-example" },
-      { label: "data scientist resume projects", href: "/data-scientist-resume-bullet-points-entry-level" },
-      { label: "machine learning resume bullet points", href: "/data-scientist-resume-bullet-points" },
-      { label: "resume bullet points for freshers", href: "/data-scientist-resume-bullet-points-entry-level" },
+      { label: "data scientist resume summary", href: "/data-scientist-resume-example#summary" },
+      { label: "data scientist resume objective", href: "/data-scientist-resume-example#summary" },
+      { label: "data scientist resume template", href: "/data-scientist-resume-example" },
+      { label: "data scientist resume keywords", href: "/data-scientist-resume-keywords" },
     ],
     levelCards: {
       "entry-level": {
