@@ -620,6 +620,26 @@ export default function OptimizePage() {
                   };
                 })
               }
+              onUpdateProjectTitle={(expIndex, projectIndex, value) =>
+                setEditableResume((prev) => {
+                  if (!prev) return prev;
+                  return {
+                    ...prev,
+                    experience: prev.experience.map((exp, i) => {
+                      if (i !== expIndex) return exp;
+                      const projects = exp.projects ?? [];
+                      return {
+                        ...exp,
+                        projects: projects.map((project, pIdx) =>
+                          pIdx === projectIndex
+                            ? { ...project, title: value }
+                            : project
+                        ),
+                      };
+                    }),
+                  };
+                })
+              }
               onUpdateEducationLine={(eduIndex, line) =>
                 setEditableResume((prev) => {
                   if (!prev) return prev;

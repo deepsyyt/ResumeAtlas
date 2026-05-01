@@ -151,11 +151,11 @@ const FALLBACK_ANON_USAGE: Usage = {
 };
 
 async function fetchUsage(accessToken: string | null): Promise<Usage> {
-  const headers: HeadersInit = {};
-  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
-  const res = await fetch("/api/usage", { credentials: "include", headers });
-  if (!res.ok) return FALLBACK_ANON_USAGE;
   try {
+    const headers: HeadersInit = {};
+    if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+    const res = await fetch("/api/usage", { credentials: "include", headers });
+    if (!res.ok) return FALLBACK_ANON_USAGE;
     const u = await res.json();
     return u && typeof u.type === "string" ? u : FALLBACK_ANON_USAGE;
   } catch {
@@ -166,11 +166,11 @@ async function fetchUsage(accessToken: string | null): Promise<Usage> {
 async function fetchAnalysisQuota(
   accessToken: string | null
 ): Promise<AnalysisQuotaStatus | null> {
-  const headers: HeadersInit = {};
-  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
-  const res = await fetch("/api/analysis-quota", { credentials: "include", headers });
-  if (!res.ok) return null;
   try {
+    const headers: HeadersInit = {};
+    if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+    const res = await fetch("/api/analysis-quota", { credentials: "include", headers });
+    if (!res.ok) return null;
     const q = await res.json();
     return q && typeof q.remaining === "number" ? q : null;
   } catch {
@@ -520,8 +520,8 @@ export default function HomeClient({
       }
       setSessionId(sid);
 
-      const openOptimizerReturn =
-        new URLSearchParams(window.location.search).get("openOptimizer") === "1";
+      const currentSearchParams = new URLSearchParams(window.location.search);
+      const openOptimizerReturn = currentSearchParams.get("openOptimizer") === "1";
       if (openOptimizerReturn) {
         try {
           const raw = window.sessionStorage.getItem(POST_OAUTH_ANALYZER_KEY);
@@ -598,11 +598,22 @@ export default function HomeClient({
   useEffect(() => {
     if (openedOptimizerFromQueryRef.current) return;
     if (typeof window === "undefined") return;
-    const open = new URLSearchParams(window.location.search).get("openOptimizer");
+    const params = new URLSearchParams(window.location.search);
+    const open = params.get("openOptimizer");
+    const optimizerFlow = params.get("optimizerFlow");
     if (open !== "1") return;
     if (!analyzeResult || !lastInputs) return;
     openedOptimizerFromQueryRef.current = true;
-    setCreditModalOpen(true);
+    if (optimizerFlow === "conversion") {
+      setOptimizeConversionPaymentSuccess(false);
+      setOptimizeConversionPaymentReceipt(null);
+      setConversionModalError(null);
+      setCreditModalOpen(false);
+      setOptimizeConversionModalOpen(true);
+    } else {
+      setOptimizeConversionModalOpen(false);
+      setCreditModalOpen(true);
+    }
     // Clean the URL so refresh doesn't re-open the modal.
     router.replace("/");
   }, [analyzeResult, lastInputs, router]);
@@ -789,7 +800,25 @@ export default function HomeClient({
           const {
             data: { session },
           } = await supabase.auth.getSession();
-          if (session?.access_token && jdTrimmed && typeof window !== "undefined") {
+          if (!session?.access_token) {
+            void logAnalysisEvent("optimize_conversion_modal_shown");
+            void logAnalysisEvent("optimize_conversion_modal_shown_logged_out");
+            if ((window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
+              (window as unknown as { gtag: (...a: unknown[]) => void }).gtag(
+                "event",
+                ANALYTICS_EVENTS.kpiOptimizeModalShown,
+                {
+                  event_category: "engagement",
+                  audience: "logged_out",
+                  funnel_id: funnelId,
+                }
+              );
+            }
+            trackFunnelStep("optimize_modal_shown", { audience: "logged_out" }, funnelId);
+            setOptimizeConversionPaymentSuccess(false);
+            setOptimizeConversionPaymentReceipt(null);
+            setOptimizeConversionModalOpen(true);
+          } else if (session?.access_token && typeof window !== "undefined") {
             const raw = window.sessionStorage.getItem(LOGGED_IN_ANALYSIS_SUCCESS_COUNT_KEY);
             const prev = raw ? Math.max(0, parseInt(raw, 10) || 0) : 0;
             const next = prev + 1;
@@ -966,7 +995,11 @@ export default function HomeClient({
             funnelId: activeFunnelId ?? undefined,
           });
         }
-        const redirectTo = buildAuthCallbackRedirectTo("/?openOptimizer=1");
+        const nextPath =
+          source === "conversion_modal"
+            ? "/?openOptimizer=1&optimizerFlow=conversion"
+            : "/?openOptimizer=1";
+        const redirectTo = buildAuthCallbackRedirectTo(nextPath);
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: { redirectTo },

@@ -32,6 +32,11 @@ type StructuredResumeProps = {
     field: "role" | "company" | "dates",
     value: string
   ) => void;
+  onUpdateProjectTitle?: (
+    expIndex: number,
+    projectIndex: number,
+    value: string
+  ) => void;
   onUpdateEducationLine?: (eduIndex: number, line: string) => void;
   onUpdateResumeMeta?: (
     patch: Partial<Pick<ResumeDocument, "name" | "title" | "contact">>
@@ -234,6 +239,7 @@ export function StructuredResume({
   onUpdateSkills,
   onUpdateExperienceBullet,
   onUpdateExperienceField,
+  onUpdateProjectTitle,
   onUpdateEducationLine,
   onUpdateResumeMeta,
 }: StructuredResumeProps) {
@@ -263,7 +269,7 @@ export function StructuredResume({
   const [editing, setEditing] = React.useState({
     header: false,
     summary: false,
-    experience: false,
+    experienceIndex: null as number | null,
     education: false,
     skills: false,
   });
@@ -457,27 +463,28 @@ export function StructuredResume({
           <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">
             Experience
           </h2>
-          {editable && (
-            <div className="mb-2 flex justify-end">
-              <button
-                type="button"
-                onClick={() =>
-                  setEditing((prev) => ({
-                    ...prev,
-                    experience: !prev.experience,
-                  }))
-                }
-                className="rounded border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700 hover:bg-slate-50 print:hidden"
-              >
-                {editing.experience ? "Done" : "Edit"}
-              </button>
-            </div>
-          )}
           <div className="space-y-4">
             {experience.map((exp, idx) => (
               <div key={idx}>
+                {editable && (
+                  <div className="mb-2 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setEditing((prev) => ({
+                          ...prev,
+                          experienceIndex:
+                            prev.experienceIndex === idx ? null : idx,
+                        }))
+                      }
+                      className="rounded border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700 hover:bg-slate-50 print:hidden"
+                    >
+                      {editing.experienceIndex === idx ? "Done" : "Edit"}
+                    </button>
+                  </div>
+                )}
                 <div className="flex justify-between items-baseline gap-2 flex-wrap">
-                  {editable && editing.experience ? (
+                  {editable && editing.experienceIndex === idx ? (
                     <div className="grid w-full grid-cols-1 gap-1.5 sm:grid-cols-3">
                       <input
                         value={exp.role ?? ""}
@@ -515,7 +522,7 @@ export function StructuredResume({
                     </>
                   )}
                 </div>
-                {exp.company && !(editable && editing.experience) && (
+                {exp.company && !(editable && editing.experienceIndex === idx) && (
                   <p className="text-xs text-slate-600 mt-0.5">{exp.company}</p>
                 )}
                 {exp.bullets.filter((b) => sanitizeBulletText(String(b ?? "")).length > 0).length >
@@ -534,7 +541,7 @@ export function StructuredResume({
                           bulletIndex={j}
                           expIndex={idx}
                           editable={editable}
-                          editingExperience={editing.experience}
+                          editingExperience={editing.experienceIndex === idx}
                           onUpdateExperienceBullet={onUpdateExperienceBullet}
                           highlightedSet={highlightedSet}
                           keywordSet={keywordSet}
@@ -547,9 +554,20 @@ export function StructuredResume({
                 )}
                 {(exp.projects ?? []).map((proj, pIdx) => (
                   <div key={`proj-${idx}-${pIdx}`} className="mt-3">
-                    <p className="text-xs font-semibold text-slate-800 leading-snug">
-                      {proj.title}
-                    </p>
+                    {editable && editing.experienceIndex === idx ? (
+                      <input
+                        value={proj.title ?? ""}
+                        onChange={(e) =>
+                          onUpdateProjectTitle?.(idx, pIdx, e.target.value)
+                        }
+                        placeholder="Project title"
+                        className="w-full rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-800 leading-snug focus:outline-none focus:ring-1 focus:ring-slate-400"
+                      />
+                    ) : (
+                      <p className="text-xs font-semibold text-slate-800 leading-snug">
+                        {proj.title}
+                      </p>
+                    )}
                     <ul className="mt-2 flex list-none flex-col gap-2 pl-0 text-sm text-slate-700 leading-relaxed">
                       {(proj.bullets ?? [])
                         .map((b, j) => ({
@@ -565,7 +583,7 @@ export function StructuredResume({
                             expIndex={idx}
                             projectIndex={pIdx}
                             editable={editable}
-                            editingExperience={editing.experience}
+                            editingExperience={editing.experienceIndex === idx}
                             onUpdateExperienceBullet={onUpdateExperienceBullet}
                             highlightedSet={highlightedSet}
                             keywordSet={keywordSet}
