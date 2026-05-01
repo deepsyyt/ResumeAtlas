@@ -203,8 +203,13 @@ export const ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE: readonly RoleSlug[] = [
   "data-analyst",
   "data-scientist",
   "software-engineer",
-  "frontend-developer",
   "product-manager",
+  "business-analyst",
+  "frontend-developer",
+  "backend-developer",
+  "machine-learning-engineer",
+  "devops-engineer",
+  "full-stack-developer",
 ];
 
 export type KeywordsConfig = {

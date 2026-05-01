@@ -86,6 +86,7 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
   const isDataAnalyst = role === "data-analyst";
   const isDataScientist = role === "data-scientist";
   const isSoftwareEngineer = role === "software-engineer";
+  const isBackendDeveloper = role === "backend-developer";
   const heroHeading = isDataAnalyst
     ? "Data Analyst Resume Example That Gets Interviews (2026)"
     : `${config.roleName} resume example, sample & template`;
@@ -95,6 +96,8 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
     ? "Use this page for full data scientist resume examples and template structure. For keyword lists or bullet-only banks, use the dedicated pages so your edits stay intent-specific."
     : isSoftwareEngineer
     ? "Use this page for full software engineer resume example/sample/template intent. For ATS keyword checklists or bullet-only banks, use the dedicated software engineer pages."
+    : isBackendDeveloper
+    ? "Use this page for full backend developer resume example/sample/template intent. For ATS keyword checklists, use the dedicated backend keyword page."
     : `These section-by-section patterns reflect how hiring teams and ATS tools read ${config.roleName.toLowerCase()} resumes in ${CONTENT_FRESHNESS_YEAR} - plain-text structure, proof in bullets, and honest posting-aligned keywords. Use it as a sample outline, then compare your resume to a job description to close gaps before you apply.`;
 
   return (
@@ -124,6 +127,32 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
                 data scientist resume bullet points
               </Link>
               .
+            </p>
+          ) : null}
+          {isBackendDeveloper ? (
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700">
+              For ATS terms, use{" "}
+              <Link
+                href="/backend-developer-resume-keywords"
+                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                backend developer resume keywords
+              </Link>
+              . For project and bullet patterns, use this page&apos;s{" "}
+              <Link
+                href="#projects"
+                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                projects
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="#bullet-points"
+                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                bullet points
+              </Link>{" "}
+              sections.
             </p>
           ) : null}
           {isSoftwareEngineer ? (

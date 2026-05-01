@@ -37,6 +37,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
   const keywordHubTitle = stripResumeAtlasTitleSuffix(roleResumeKeywordsHubMeta(roleSlug).title);
   const isDevOpsKeywordsPage = roleSlug === "devops-engineer";
   const isSoftwareKeywordsPage = roleSlug === "software-engineer";
+  const isBackendKeywordsPage = roleSlug === "backend-developer";
   const isDataAnalystKeywordsPage = roleSlug === "data-analyst";
   const topKeywords = (roleContent.topKeywords ?? roleContent.tools).slice(0, 20);
   const exampleBullets = roleContent.exampleBullets ?? roleContent.examplePhrases;
@@ -53,7 +54,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
       ? "These DevOps resume keywords reflect what hiring teams and ATS systems prioritize in 2026, including tools, cloud platforms, and measurable impact language. "
       : "";
   const exactQueryMatchLine =
-    isSoftwareKeywordsPage
+    isSoftwareKeywordsPage || isBackendKeywordsPage
       ? `${config.roleName} resume keywords and technical skills include tools like ${roleContent.tools
           .slice(0, 3)
           .join(", ")}, plus delivery terms ATS and recruiters prioritize for this role.`
@@ -177,6 +178,19 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                   className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   software engineer resume bullet points
+                </Link>
+                .
+              </p>
+            ) : null}
+            {isBackendKeywordsPage ? (
+              <p className="mt-3 text-sm text-slate-700 max-w-2xl mx-auto">
+                This page is the ATS keyword/technical-skills owner for backend developer queries. For
+                full resume example, sample, and template intent, use{" "}
+                <Link
+                  href="/backend-developer-resume-example"
+                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  backend developer resume example
                 </Link>
                 .
               </p>

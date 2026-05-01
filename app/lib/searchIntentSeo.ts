@@ -102,6 +102,8 @@ export function roleResumeKeywordsHubMeta(role: RoleSlug): { title: string; desc
         ? `Data Analyst Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR} Checklist + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
       : role === "product-manager"
         ? `Product Manager Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
+      : role === "backend-developer"
+        ? `Backend Developer Resume Keywords (ATS Technical Skills Checklist ${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
       : `${roleName} Resume Keywords (${CONTENT_FRESHNESS_YEAR}) - ATS Skills & Keywords${RESUME_ATLAS_TITLE_SUFFIX}`;
   const description =
     role === "devops-engineer"
@@ -114,6 +116,8 @@ export function roleResumeKeywordsHubMeta(role: RoleSlug): { title: string; desc
         ? "Data analyst resume keywords with ATS checklist, SQL/Excel/dashboard terms, and high-impact bullet examples to close keyword gaps fast."
       : role === "product-manager"
         ? "Best product manager resume keywords for roadmap, discovery, metrics, launches, and ATS screening with examples."
+      : role === "backend-developer"
+        ? "Backend developer ATS keywords and technical skills checklist for APIs, microservices, databases, caching, cloud, and reliability terms."
       : `${metaDescription} Includes ATS-friendly skills, role terms, and action language used in ${CONTENT_FRESHNESS_YEAR} hiring. Browse by category, then validate against a real posting with ResumeAtlas keyword scan and JD match tools.`;
   return { title, description };
 }
