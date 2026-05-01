@@ -89,12 +89,22 @@ export function CreditPackModal({
 
   useEffect(() => {
     if (!open) return;
+    const availablePackages = listCreditPackages();
+    const starter = availablePackages.find((p) => p.id === "starter");
+    const jobseeker = availablePackages.find((p) => p.id === "jobseeker");
+    const power = availablePackages.find((p) => p.id === "power");
     void logBillingEvent("billing_payment_modal_open");
     gtagEvent(ANALYTICS_EVENTS.kpiPaymentModalOpened, {
       event_category: "conversion",
       funnel_id: funnelId,
+      has_credits: creditsRemaining > 0 ? "yes" : "no",
+      selected_package_id: starter?.id ?? "starter",
+      selected_optimization_count: starter?.credits ?? 1,
+      selected_package_label: "1_optimization",
+      bundle_5_available: jobseeker ? "yes" : "no",
+      bundle_15_available: power ? "yes" : "no",
     });
-  }, [open, funnelId]);
+  }, [open, funnelId, creditsRemaining]);
 
   useEffect(() => {
     if (!open || checkoutSuccess || (isLoggedIn && creditsRemaining > 0)) return;
@@ -201,8 +211,13 @@ export function CreditPackModal({
       });
       gtagEvent(ANALYTICS_EVENTS.kpiPricingCardClick, {
         event_category: "conversion",
+        selected_package_id: pid,
+        selected_optimization_count: selectedPack?.credits ?? 0,
+        selected_package_label:
+          pid === "starter" ? "1_optimization" : pid === "jobseeker" ? "5_optimizations" : "15_optimizations",
         package_id: pid,
         pack_name: selectedPack?.name ?? pid,
+        pack_credits: selectedPack?.credits ?? 0,
         next_step: isLoggedIn ? "razorpay" : "google_auth",
         funnel_id: funnelId,
       });

@@ -25,7 +25,11 @@ export default function DataAnalystInterviewQuestionsPage() {
           <Link href="/data-analyst-resume-example" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
             data analyst ATS resume and example templates
           </Link>{" "}
-          to align your interview narrative with resume claims.
+          to align your interview narrative with resume claims. For posting-specific terms, use the{" "}
+          <Link href="/data-analyst-resume-keywords" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
+            data analyst resume keywords hub
+          </Link>
+          .
         </p>
       </div>
     </main>

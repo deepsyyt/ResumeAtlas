@@ -2,6 +2,8 @@ import { createClient } from "@/app/lib/supabase/client";
 import { getCreditPackage, type CreditPackageId } from "@/app/lib/billing/packages";
 import { logBillingEvent } from "@/app/lib/billing/billingEventsClient";
 import { trackFunnelStep } from "@/app/lib/funnelTracking";
+import { gtagEvent } from "@/app/lib/gtagClient";
+import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
 
 declare global {
   interface Window {
@@ -200,6 +202,15 @@ export async function openRazorpayPackCheckout({
               currency,
               value_minor: amountMinor,
               credits_remaining: balance,
+            });
+            gtagEvent(ANALYTICS_EVENTS.kpiPaymentSuccess, {
+              event_category: "conversion",
+              selected_package_id: packageId,
+              selected_optimization_count: creditsAdded,
+              value_minor: amountMinor,
+              currency,
+              checkout_trigger: checkoutTrigger,
+              funnel_id: funnelId,
             });
             finish({
               status: "paid",

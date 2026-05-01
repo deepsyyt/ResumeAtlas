@@ -265,8 +265,8 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     relatedSearches: [
       { label: "data analyst resume summary examples", href: "/data-analyst-resume-example" },
       { label: "entry-level data analyst resume bullet points", href: "/data-analyst-resume-bullet-points-entry-level" },
-      { label: "SQL resume bullet points", href: "/data-analyst-sql-resume-keywords" },
-      { label: "data analyst resume keywords", href: "/data-analyst-resume-keywords" },
+      { label: "data analyst SQL keywords checklist", href: "/data-analyst-resume-keywords" },
+      { label: "data analyst ATS keyword list", href: "/data-analyst-resume-keywords" },
     ],
     levelCards: {
       "entry-level": {

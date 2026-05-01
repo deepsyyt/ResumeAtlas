@@ -99,7 +99,7 @@ export function roleResumeKeywordsHubMeta(role: RoleSlug): { title: string; desc
       : role === "software-engineer"
         ? `Software Engineer Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
       : role === "data-analyst"
-        ? `Data Analyst Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
+        ? `Data Analyst Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR} Checklist + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
       : role === "product-manager"
         ? `Product Manager Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
       : `${roleName} Resume Keywords (${CONTENT_FRESHNESS_YEAR}) - ATS Skills & Keywords${RESUME_ATLAS_TITLE_SUFFIX}`;
@@ -111,7 +111,7 @@ export function roleResumeKeywordsHubMeta(role: RoleSlug): { title: string; desc
       : role === "software-engineer"
         ? "Best software engineer resume keywords for backend, frontend, APIs, cloud, testing, and ATS screening with examples."
       : role === "data-analyst"
-        ? "Best data analyst resume keywords for SQL, Excel, dashboards, experimentation, and ATS screening with examples."
+        ? "Data analyst resume keywords with ATS checklist, SQL/Excel/dashboard terms, and high-impact bullet examples to close keyword gaps fast."
       : role === "product-manager"
         ? "Best product manager resume keywords for roadmap, discovery, metrics, launches, and ATS screening with examples."
       : `${metaDescription} Includes ATS-friendly skills, role terms, and action language used in ${CONTENT_FRESHNESS_YEAR} hiring. Browse by category, then validate against a real posting with ResumeAtlas keyword scan and JD match tools.`;

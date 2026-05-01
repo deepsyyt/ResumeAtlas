@@ -37,6 +37,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
   const keywordHubTitle = stripResumeAtlasTitleSuffix(roleResumeKeywordsHubMeta(roleSlug).title);
   const isDevOpsKeywordsPage = roleSlug === "devops-engineer";
   const isSoftwareKeywordsPage = roleSlug === "software-engineer";
+  const isDataAnalystKeywordsPage = roleSlug === "data-analyst";
   const topKeywords = (roleContent.topKeywords ?? roleContent.tools).slice(0, 20);
   const exampleBullets = roleContent.exampleBullets ?? roleContent.examplePhrases;
   const toolSet = new Set(roleContent.tools.map((t) => t.toLowerCase()));
@@ -45,6 +46,8 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
     .filter((k) => !toolSet.has(k.toLowerCase()) && !verbSet.has(k.toLowerCase()))
     .slice(0, 8);
   const topKeywordCopyBlock = topKeywords.slice(0, 10).join(", ");
+  const topMissingKeywordList = roleContent.tools.slice(0, 4);
+  const checklistKeywords = topKeywords.slice(0, 12);
   const introFreshnessEcho =
     roleSlug === "devops-engineer"
       ? "These DevOps resume keywords reflect what hiring teams and ATS systems prioritize in 2026, including tools, cloud platforms, and measurable impact language. "
@@ -116,6 +119,17 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
     ],
   } as const;
 
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${config.roleName} top resume keywords`,
+    itemListElement: topKeywords.slice(0, 10).map((keyword, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: keyword,
+    })),
+  };
+
   return (
     <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/50">
@@ -142,7 +156,21 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               you run a resume keyword scan or compare your resume to that posting.
             </p>
             <p className="mt-3 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto">{exactQueryMatchLine}</p>
-            <p className="mt-3 text-sm font-medium text-slate-800 max-w-2xl mx-auto">
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm">
+              <a href="#top-keywords" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
+                Top keywords
+              </a>
+              <a href="#example-bullets" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
+                Bullet examples
+              </a>
+              <a href="#keyword-gaps" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
+                JD vs Resume gaps
+              </a>
+              <a href="#checklist" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
+                Checklist
+              </a>
+            </div>
+            <p className="mt-4 text-sm font-medium text-slate-800 max-w-2xl mx-auto">
               Check if your resume includes these keywords →{" "}
               <Link
                 href="/resume-keyword-scanner#ats-checker-form"
@@ -173,14 +201,14 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
             >
-              Scan my resume for missing keywords
+              Scan my resume for keyword gaps
             </Link>
           </div>
         </div>
       </section>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
-        <section className="rounded-2xl border border-sky-200 bg-sky-50/50 p-6 sm:p-8">
+        <section id="top-keywords" className="rounded-2xl border border-sky-200 bg-sky-50/50 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Top {config.roleName} Resume Keywords (2026)
           </h2>
@@ -218,7 +246,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           </div>
         </section>
 
-        <section className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-6 sm:p-8">
+        <section id="example-bullets" className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Example Resume Bullets Using These Keywords
           </h2>
@@ -228,6 +256,43 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             ))}
           </ul>
         </section>
+
+        {isDataAnalystKeywordsPage ? (
+          <section className="rounded-2xl border border-violet-200 bg-violet-50/40 p-6 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+              Data Analyst keywords by seniority
+            </h2>
+            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="rounded-xl border border-slate-200 bg-white p-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">Entry-level</h3>
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+                  <li>SQL fundamentals</li>
+                  <li>Excel reporting</li>
+                  <li>Dashboard maintenance</li>
+                  <li>Data cleaning</li>
+                </ul>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-white p-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">Mid-level</h3>
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+                  <li>Cohort analysis</li>
+                  <li>Experiment readouts</li>
+                  <li>dbt modeling</li>
+                  <li>Stakeholder alignment</li>
+                </ul>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-white p-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">Senior-level</h3>
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+                  <li>Metric definitions governance</li>
+                  <li>Decision impact storytelling</li>
+                  <li>Cross-functional KPI strategy</li>
+                  <li>Analytics roadmap ownership</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {isSoftwareKeywordsPage && roleContent.keywordClusters ? (
           <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
@@ -324,7 +389,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
 
         <KeywordApplicationModule keywordMistakes={roleContent.keywordMistakes} />
 
-        <section className="rounded-2xl border border-amber-200 bg-amber-50/40 p-6 sm:p-8">
+        <section id="keyword-gaps" className="rounded-2xl border border-amber-200 bg-amber-50/40 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Top missing keywords we repeatedly see in {config.roleName} resumes
           </h2>
@@ -332,7 +397,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             These are high-frequency gaps when resumes underperform against real job descriptions:
           </p>
           <ul className="mt-4 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            {roleContent.tools.slice(0, 4).map((tool) => (
+            {topMissingKeywordList.map((tool) => (
               <li key={tool}>{tool} (missing or weakly supported in experience bullets)</li>
             ))}
           </ul>
@@ -346,13 +411,37 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               Estimated keyword coverage: <strong className="text-slate-900">61%</strong>.
             </p>
           </div>
-          <Link
-            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-            className="mt-5 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
-          >
-            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
-          </Link>
+          <p className="mt-4 text-sm text-slate-700">
+            Pro tip: prioritize missing terms that appear in the first half of the JD and tie each to a
+            measurable bullet.
+          </p>
         </section>
+
+        {isDataAnalystKeywordsPage ? (
+          <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-6 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+              Keywords that look good but often fail in screening
+            </h2>
+            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm sm:text-base text-slate-700">
+              <li>
+                <strong className="text-slate-900">"data-driven"</strong> without a metric or business decision
+                outcome.
+              </li>
+              <li>
+                <strong className="text-slate-900">"created dashboards"</strong> without audience, cadence, or
+                changed behavior.
+              </li>
+              <li>
+                <strong className="text-slate-900">"expert SQL"</strong> without concrete query work (funnel,
+                retention, attribution, or experimentation).
+              </li>
+              <li>
+                <strong className="text-slate-900">"worked cross-functionally"</strong> without evidence of impact
+                on revenue, conversion, or efficiency.
+              </li>
+            </ul>
+          </section>
+        ) : null}
 
         <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900">
@@ -387,6 +476,57 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               </Link>
             </li>
           </ul>
+        </section>
+
+        <section id="checklist" className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+            {config.roleName} ATS keyword checklist
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700">
+            Use this quick checklist before every application. Aim to cover each keyword in context at least once
+            across summary, skills, and impact bullets.
+          </p>
+          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Copy checklist</p>
+            <p className="mt-2 text-sm text-slate-700">{checklistKeywords.join(" | ")}</p>
+          </div>
+          {isDataAnalystKeywordsPage ? (
+            <div className="mt-5 text-sm text-slate-700">
+              <p className="font-medium text-slate-900">Reference frameworks recruiters recognize:</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5">
+                <li>
+                  <a
+                    href="https://www.o*netonline.org/link/summary/15-2051.00"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                  >
+                    O*NET data analyst skills profile
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://powerbi.microsoft.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                  >
+                    BI dashboard platform ecosystem overview
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.getdbt.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                  >
+                    dbt analytics engineering workflow
+                  </a>
+                </li>
+              </ul>
+            </div>
+          ) : null}
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 sm:p-8">
@@ -484,6 +624,11 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
     </main>
   );

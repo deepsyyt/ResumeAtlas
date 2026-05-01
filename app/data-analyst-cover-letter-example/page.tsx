@@ -27,7 +27,11 @@ export default function DataAnalystCoverLetterExamplePage() {
           <Link href="/data-analyst-resume-example" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
             data analyst resume template and examples
           </Link>{" "}
-          for stronger interview conversion.
+          for stronger interview conversion. For keyword targeting, use the{" "}
+          <Link href="/data-analyst-resume-keywords" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
+            data analyst resume keywords hub
+          </Link>
+          .
         </p>
       </div>
     </main>

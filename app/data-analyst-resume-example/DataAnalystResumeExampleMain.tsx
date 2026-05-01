@@ -127,6 +127,16 @@ export function DataAnalystResumeExampleMain({ omitHero = false }: { omitHero?: 
               ATS-friendly resume example with SQL/Python skills, bullet points, and copy-paste template.
             </p>
             <p className="mt-3 text-sm font-medium text-slate-500">Updated 2026 • ATS-Friendly • Real Metrics Examples</p>
+            <p className="mt-3 max-w-2xl text-sm text-slate-600">
+              Need keyword targeting before editing bullets? Use the{" "}
+              <Link
+                href="/data-analyst-resume-keywords"
+                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                Data Analyst resume keywords hub
+              </Link>{" "}
+              for the canonical checklist.
+            </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href="#resume-example"
@@ -213,7 +223,16 @@ export function DataAnalystResumeExampleMain({ omitHero = false }: { omitHero?: 
           <ul className="mt-4 list-disc space-y-1.5 pl-5 text-sm text-slate-700">
             <li>Keep this to one page for most roles.</li>
             <li>Use numbers in at least 2 bullets per role.</li>
-            <li>Mirror keywords from the target job description.</li>
+            <li>
+              Mirror keywords from the target job description (use this{" "}
+              <Link
+                href="/data-analyst-resume-keywords"
+                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                data analyst keyword list
+              </Link>
+              ).
+            </li>
           </ul>
         </section>
 

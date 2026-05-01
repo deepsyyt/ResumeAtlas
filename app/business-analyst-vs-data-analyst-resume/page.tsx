@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Business Analyst vs Data Analyst Resume: Key Differences | ResumeAtlas",
   description:
-    "Compare business analyst vs data analyst resume positioning, keyword choices, and bullet patterns for ATS and recruiter fit.",
+    "Compare business analyst vs data analyst resume positioning, focus areas, and bullet patterns for ATS and recruiter fit.",
   alternates: { canonical: "/business-analyst-vs-data-analyst-resume" },
 };
 
@@ -32,6 +32,10 @@ export default function BusinessAnalystVsDataAnalystResumePage() {
           and compare against{" "}
           <Link href="/business-analyst-resume-example" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
             business analyst resume examples
+          </Link>
+          . For the full keyword checklist, use the{" "}
+          <Link href="/data-analyst-resume-keywords" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
+            data analyst resume keywords hub
           </Link>
           .
         </p>

@@ -405,7 +405,7 @@ export default function HomeClient({
       setIsStartingGoogleAuth((prev) => {
         if (prev) {
           const effectiveFunnelId = pending?.funnelId ?? activeFunnelIdRef.current;
-          gtagEvent(ANALYTICS_EVENTS.authGoogleCancelOrReturn, {
+          gtagEvent(ANALYTICS_EVENTS.kpiAuthGoogleCancelOrReturn, {
             event_category: "auth",
             source: pending?.source ?? authStartSourceRef.current ?? "unknown",
             auth_flow_id: pending?.flowId,
@@ -799,7 +799,7 @@ export default function HomeClient({
               if ((window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
                 (window as unknown as { gtag: (...a: unknown[]) => void }).gtag(
                   "event",
-                  ANALYTICS_EVENTS.optimizeConversionModalShown,
+                  ANALYTICS_EVENTS.kpiOptimizeModalShown,
                   {
                     event_category: "engagement",
                     analysis_count: next,
@@ -831,7 +831,7 @@ export default function HomeClient({
     setIsStartingGoogleAuth(true);
     setError(null);
     const flowId = beginPendingAuthFlow("quota_modal", activeFunnelId);
-    gtagEvent(ANALYTICS_EVENTS.authGoogleStart, {
+    gtagEvent(ANALYTICS_EVENTS.kpiAuthGoogleStart, {
       event_category: "auth",
       source: "quota_modal",
       auth_flow_id: flowId ?? undefined,
@@ -856,7 +856,7 @@ export default function HomeClient({
         );
       }
     } catch (e) {
-      gtagEvent(ANALYTICS_EVENTS.authGoogleFailed, {
+      gtagEvent(ANALYTICS_EVENTS.kpiAuthGoogleFailed, {
         event_category: "auth",
         source: "quota_modal",
         auth_flow_id: flowId ?? undefined,
@@ -944,7 +944,7 @@ export default function HomeClient({
       setIsStartingGoogleAuth(true);
       setError(null);
       const flowId = beginPendingAuthFlow(source, activeFunnelId);
-      gtagEvent(ANALYTICS_EVENTS.authGoogleStart, {
+      gtagEvent(ANALYTICS_EVENTS.kpiAuthGoogleStart, {
         event_category: "auth",
         source,
         auth_flow_id: flowId ?? undefined,
@@ -978,7 +978,7 @@ export default function HomeClient({
           );
         }
       } catch (e) {
-        gtagEvent(ANALYTICS_EVENTS.authGoogleFailed, {
+        gtagEvent(ANALYTICS_EVENTS.kpiAuthGoogleFailed, {
           event_category: "auth",
           source,
           auth_flow_id: flowId ?? undefined,
@@ -1000,13 +1000,6 @@ export default function HomeClient({
 
   const handleConversionPrimaryAction = useCallback(async () => {
     setConversionModalError(null);
-    void logAnalysisEvent("optimize_conversion_modal_fix_clicked");
-    if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.optimizeConversionModalFixClick, {
-        event_category: "engagement",
-        funnel_id: activeFunnelId ?? undefined,
-      });
-    }
     if (!lastInputs || !analyzeResult) return;
     if (!isLoggedIn) {
       closeOptimizeConversionModal();
@@ -1021,7 +1014,7 @@ export default function HomeClient({
     }
     void logAnalysisEvent("upgrade_modal_pay");
     if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.upgradeModalPayClick, {
+      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.kpiUpgradeModalPayClick, {
         event_category: "conversion",
         funnel_id: activeFunnelId ?? undefined,
       });
@@ -1070,7 +1063,7 @@ export default function HomeClient({
   const handleConversionFixResumeNow = useCallback(async () => {
     void logAnalysisEvent("optimize_conversion_modal_fix_resume_now_clicked");
     if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.optimizeConversionModalFixResumeNow, {
+      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.kpiOptimizeModalFixResumeNow, {
         event_category: "engagement",
         funnel_id: activeFunnelId ?? undefined,
       });
@@ -1363,7 +1356,7 @@ export default function HomeClient({
               onContinueManual={() => {
                 void logAnalysisEvent("optimize_conversion_modal_continue_manual");
                 if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-                  (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.optimizeConversionModalContinueManual, {
+                  (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.kpiOptimizeModalContinueManual, {
                     event_category: "engagement",
                     funnel_id: activeFunnelId ?? undefined,
                   });
