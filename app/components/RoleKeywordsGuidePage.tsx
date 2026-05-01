@@ -52,9 +52,14 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
     roleSlug === "devops-engineer"
       ? "These DevOps resume keywords reflect what hiring teams and ATS systems prioritize in 2026, including tools, cloud platforms, and measurable impact language. "
       : "";
-  const exactQueryMatchLine = `${config.roleName} resume keywords include tools like ${roleContent.tools
-    .slice(0, 3)
-    .join(", ")}, along with concepts recruiters and ATS systems prioritize for this role.`;
+  const exactQueryMatchLine =
+    isSoftwareKeywordsPage
+      ? `${config.roleName} resume keywords and technical skills include tools like ${roleContent.tools
+          .slice(0, 3)
+          .join(", ")}, plus delivery terms ATS and recruiters prioritize for this role.`
+      : `${config.roleName} resume keywords include tools like ${roleContent.tools
+          .slice(0, 3)
+          .join(", ")}, along with concepts recruiters and ATS systems prioritize for this role.`;
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -156,6 +161,26 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               you run a resume keyword scan or compare your resume to that posting.
             </p>
             <p className="mt-3 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto">{exactQueryMatchLine}</p>
+            {isSoftwareKeywordsPage ? (
+              <p className="mt-3 text-sm text-slate-700 max-w-2xl mx-auto">
+                This page is the ATS keyword/technical-skills owner for software engineer queries. For full
+                resume example, sample, and template intent, use{" "}
+                <Link
+                  href="/software-engineer-resume-example"
+                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  software engineer resume example
+                </Link>
+                . For copy-ready line banks, use{" "}
+                <Link
+                  href="/software-engineer-resume-bullet-points"
+                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  software engineer resume bullet points
+                </Link>
+                .
+              </p>
+            ) : null}
             <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm">
               <a href="#top-keywords" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
                 Top keywords

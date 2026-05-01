@@ -206,6 +206,26 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
                 .
               </div>
             ) : null}
+            {role === "software-engineer" ? (
+              <div className="rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-700">
+                This page is a bullet bank (not a full resume template). For full resume example/sample intent,
+                use{" "}
+                <Link
+                  href="/software-engineer-resume-example"
+                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  software engineer resume example
+                </Link>
+                . For ATS terms and technical-skills keywords, use{" "}
+                <Link
+                  href="/software-engineer-resume-keywords"
+                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  software engineer resume keywords
+                </Link>
+                .
+              </div>
+            ) : null}
             <p className="font-medium text-slate-800">{hub.introIntentStack}</p>
             <section
               id="what-are-good"

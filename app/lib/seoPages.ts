@@ -202,6 +202,7 @@ export type RoleSlug =
 export const ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE: readonly RoleSlug[] = [
   "data-analyst",
   "data-scientist",
+  "software-engineer",
   "frontend-developer",
   "product-manager",
 ];
@@ -297,6 +298,9 @@ export const RESUME_SAMPLE_HASH = "#resume-sample" as const;
 
 /** Prefer the merged role resume example (indexed) over the broad `/{role}` hub (noindex). */
 export function roleResumeSamplePath(role: RoleSlug): string {
+  for (const r of ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE) {
+    if (r === role) return `/${role}-resume-example`;
+  }
   return `/${role}-resume-example#bullet-points`;
 }
 

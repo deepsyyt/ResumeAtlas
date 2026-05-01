@@ -59,7 +59,7 @@ export function roleResumeExampleListMeta(role: RoleSlug): { title: string; desc
   const rn = kw.roleName;
   const title =
     role === "software-engineer"
-      ? `Software Engineer Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR} ATS-Friendly Template)${RESUME_ATLAS_TITLE_SUFFIX}`
+      ? `Software Engineer Resume Example, Sample & Template (${RESUME_EXAMPLE_SERP_TITLE_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`
       : role === "data-scientist"
         ? `Data Scientist Resume Example, Sample & Template (${RESUME_EXAMPLE_SERP_TITLE_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`
       : role === "data-analyst"
@@ -71,7 +71,7 @@ export function roleResumeExampleListMeta(role: RoleSlug): { title: string; desc
       : `${rn} Resume Example, Sample & Template (${RESUME_EXAMPLE_SERP_TITLE_YEAR}) — ATS Sections${RESUME_ATLAS_TITLE_SUFFIX}`;
   const baseDesc =
     role === "software-engineer"
-      ? "Use a modern software engineer resume example with strong sections, metrics, keywords, and ATS-safe formatting."
+      ? "Use a software engineer resume example, sample, and ATS-friendly template with summary/objective patterns, project bullets, and stack-specific impact lines."
       : role === "data-scientist"
         ? "Use a data scientist resume example, sample, and ATS-friendly template with summary/objective patterns, skills, projects, and measurable bullet points."
       : role === "data-analyst"
@@ -97,7 +97,7 @@ export function roleResumeKeywordsHubMeta(role: RoleSlug): { title: string; desc
       : role === "data-scientist"
         ? `Data Scientist Resume Keywords (Data Science ATS Checklist ${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
       : role === "software-engineer"
-        ? `Software Engineer Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
+        ? `Software Engineer Resume Keywords (ATS Technical Skills Checklist ${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
       : role === "data-analyst"
         ? `Data Analyst Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR} Checklist + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
       : role === "product-manager"
@@ -109,7 +109,7 @@ export function roleResumeKeywordsHubMeta(role: RoleSlug): { title: string; desc
       : role === "data-scientist"
         ? "Data scientist and data science resume keywords checklist for ATS: Python, SQL, ML, experimentation, and copy-ready examples to close keyword gaps."
       : role === "software-engineer"
-        ? "Best software engineer resume keywords for backend, frontend, APIs, cloud, testing, and ATS screening with examples."
+        ? "Software engineer ATS keywords and technical skills checklist for backend, frontend, APIs, cloud, testing, and measurable delivery terms."
       : role === "data-analyst"
         ? "Data analyst resume keywords with ATS checklist, SQL/Excel/dashboard terms, and high-impact bullet examples to close keyword gaps fast."
       : role === "product-manager"

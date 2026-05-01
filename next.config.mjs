@@ -27,6 +27,8 @@ const RESUME_BULLET_ROLES = [
  */
 const RESUME_EXAMPLE_STANDALONE_ROLES = [
   "data-analyst",
+  "data-scientist",
+  "software-engineer",
   "frontend-developer",
   "product-manager",
 ];

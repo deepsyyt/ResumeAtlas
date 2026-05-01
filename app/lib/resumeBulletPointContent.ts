@@ -582,9 +582,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
   "software-engineer": {
     roleName: "Software Engineer",
     metaTitle:
-      "75 Software Engineer Resume Bullets + Metrics (2026) | ResumeAtlas",
+      "Software Engineer Resume Bullet Points (2026, by Experience Level) | ResumeAtlas",
     metaDescription:
-      "Copy ATS-friendly software engineer bullet points for backend, frontend, full stack, APIs, scale, and impact.",
+      "Bullet-point bank for software engineer resumes: entry, junior, and senior examples with metrics for backend, frontend, APIs, reliability, and impact.",
     keywords: [
       "software engineer resume bullet points",
       "software developer resume bullets",
@@ -689,10 +689,10 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       },
     ],
     relatedSearches: [
-      { label: "software engineer resume summary examples", href: "/software-engineer-resume-example" },
-      { label: "software engineer resume projects", href: "/software-engineer-resume-bullet-points-entry-level" },
-      { label: "backend engineer resume bullet points", href: "/software-engineer-resume-bullet-points" },
-      { label: "resume bullet points for freshers", href: "/software-engineer-resume-bullet-points-entry-level" },
+      { label: "software engineer resume summary", href: "/software-engineer-resume-example#summary" },
+      { label: "software engineer resume template", href: "/software-engineer-resume-example" },
+      { label: "software engineer resume sample", href: "/software-engineer-resume-example" },
+      { label: "software engineer resume keywords", href: "/software-engineer-resume-keywords" },
     ],
     levelCards: {
       "entry-level": {
@@ -1957,9 +1957,9 @@ function seEntry(): ResumeBulletDetailCopy {
 function seJunior(): ResumeBulletDetailCopy {
   return {
     metaTitle:
-      "Junior Software Engineer Resume Bullet Points (Mid-Level IC – Examples) | ResumeAtlas",
+      "Junior Software Engineer Resume Bullet Points (Mid-Level IC Examples + Projects) | ResumeAtlas",
     metaDescription:
-      "Junior / mid-level software engineer resume bullets: services, CI/CD, reliability, observability—plus free ATS keyword scan and job description match.",
+      "Junior / mid-level software engineer resume bullet points with project-based examples for services, CI/CD, reliability, and observability.",
     keywords: [
       "junior software engineer resume bullet points",
       "mid level software engineer resume examples",
@@ -1971,7 +1971,7 @@ function seJunior(): ResumeBulletDetailCopy {
     intentStack:
       "Mid-level software engineer roles reward shipping, reliability, and clear metrics. These resume bullet points match that bar—adapt stack and scale to each job description.",
     exactMatchQueryLine:
-      "If you are searching for junior software engineer resume bullet points, these examples include services, CI, features, and observability lines typical of a mid-level IC.",
+      "If you are searching for junior software engineer resume bullet points, these examples include services, CI, features, and observability lines typical of a mid-level IC (not a full resume template).",
     copyIntentLine:
       "Copy and adapt these lines (replace services, languages, and numbers with your own).",
     examplesAboveFoldH2: "Examples of Junior Software Engineer Resume Bullet Points",
@@ -2004,7 +2004,7 @@ function seJunior(): ResumeBulletDetailCopy {
       "Used by mid-level engineers applying across backend, full-stack, and product infrastructure teams.",
     projectsSectionTitle: "Junior Software Engineer Resume Bullet Points (Experience & Projects)",
     projectsSectionSubcopy:
-      "Four project blocks—services, CI, product delivery, and observability. Mid-level readers skim for ownership and numbers; align verbs to each posting.",
+      "Four junior-only project blocks—services, CI, product delivery, and observability. Mid-level readers skim for ownership and numbers; align verbs to each posting.",
     realismLine:
       "These examples map to common mid-level themes—swap in your repos, services, and on-call reality.",
     projectSemanticReinforcement:

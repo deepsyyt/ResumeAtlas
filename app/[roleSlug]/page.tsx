@@ -65,7 +65,11 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
   const summaryPath = `${resumeGuidePath}#summary`;
   const projectsPath = `${resumeGuidePath}#projects`;
   const bulletsPath =
-    role === "data-scientist" ? "/data-scientist-resume-bullet-points" : `${resumeGuidePath}#bullet-points`;
+    role === "data-scientist"
+      ? "/data-scientist-resume-bullet-points"
+      : role === "software-engineer"
+        ? "/software-engineer-resume-bullet-points"
+        : `${resumeGuidePath}#bullet-points`;
 
   const faqItems = [
     {
