@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { getBearerUser } from "@/app/lib/billing/requestUser";
 import {
-  finalizeOptimizationCredit,
-  reserveOptimizationCredit,
-} from "@/app/lib/billing/creditsServer";
-import {
   clipToWordLimit,
   JOB_DESCRIPTION_MAX_WORDS,
   RESUME_TEXT_MAX_WORDS,
@@ -1480,8 +1476,6 @@ OR
 }
 
 export async function POST(request: Request) {
-  let userId: string | undefined;
-  let optimizationId: string | undefined;
   try {
     const body = (await request.json()) as OptimizeRequestBody;
     let resumeText = body?.resumeText;
@@ -1506,7 +1500,6 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
-    userId = user.id;
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     const model = resolveAnthropicModelCandidates()[0] ?? "claude-haiku-4-5-20251001";
@@ -1527,21 +1520,6 @@ export async function POST(request: Request) {
       };
       return NextResponse.json(response);
     }
-
-    const reserved = await reserveOptimizationCredit(userId, resumeText, jobDescription);
-    if (!reserved.ok) {
-      return NextResponse.json(
-        {
-          error:
-            reserved.code === "NO_CREDITS"
-              ? "No optimizations remaining. Buy a pack to continue tailoring your resume."
-              : "Unable to reserve an optimization run. Try again.",
-          code: reserved.code,
-        },
-        { status: 403 }
-      );
-    }
-    optimizationId = reserved.optimizationId;
 
     const resumeSnapshotBeforeOptimization = JSON.parse(
       JSON.stringify(body.structuredResume)
@@ -2202,12 +2180,8 @@ export async function POST(request: Request) {
       ...(debugEnabled ? { debug: { coveragePlan: coveragePlanDebug } } : {}),
     };
 
-    await finalizeOptimizationCredit(optimizationId, userId, true);
     return NextResponse.json(response);
   } catch (err) {
-    if (optimizationId && userId) {
-      await finalizeOptimizationCredit(optimizationId, userId, false);
-    }
     console.error("[optimize]", err);
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Optimization failed" },

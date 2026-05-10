@@ -5,6 +5,7 @@ import {
   getCreditPackage,
   type CreditPackageId,
 } from "@/app/lib/billing/packages";
+import { SHOW_AUTOMATIC_OPTIMIZER_PAYWALL_MODALS } from "@/app/lib/optimizerPaywallFlags";
 
 export type OptimizeConversionPaymentReceipt = {
   packName: string;
@@ -54,7 +55,7 @@ export function OptimizeConversionModal({
   isStartingGoogleAuth = false,
   localError,
 }: OptimizeConversionModalProps) {
-  if (!open) return null;
+  if (!SHOW_AUTOMATIC_OPTIMIZER_PAYWALL_MODALS || !open) return null;
 
   const starter = getCreditPackage(STARTER_PACK_ID);
   const priceLabel = starter

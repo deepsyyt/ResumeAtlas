@@ -18,24 +18,9 @@ export function setActiveFunnelId(funnelId: string): void {
   }
 }
 
-export function startNewFunnel(source: string): string {
+/** Creates a funnel correlation id stored in session (for server logs / payloads only; not GA). */
+export function startNewFunnel(_source: string): string {
   const funnelId = crypto.randomUUID();
   setActiveFunnelId(funnelId);
-  trackFunnelStep("funnel_started", { source }, funnelId);
   return funnelId;
 }
-
-export function trackFunnelStep(
-  step: string,
-  params?: Record<string, string | number | undefined>,
-  explicitFunnelId?: string | null
-): void {
-  void step;
-  void params;
-  void explicitFunnelId;
-  // Disabled intentionally: `conv_funnel_step` created noisy GA4 event tables
-  // and diluted button-level conversion event reporting.
-  // Keep this helper as a no-op for backwards compatibility across callers.
-  return;
-}
-

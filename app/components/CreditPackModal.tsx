@@ -13,9 +13,7 @@ import {
 } from "@/app/lib/billing/packages";
 import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import { logBillingEvent } from "@/app/lib/billing/billingEventsClient";
-import { gtagEvent } from "@/app/lib/gtagClient";
-import { trackFunnelStep } from "@/app/lib/funnelTracking";
-import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
+import type { CreditModalOptimizationEntryPoint } from "@/app/lib/analyticsEvents";
 
 export type CreditPackModalProps = {
   open: boolean;
@@ -23,7 +21,7 @@ export type CreditPackModalProps = {
   isLoggedIn: boolean;
   creditsRemaining: number;
   /** Persist inputs + navigate to /optimize (after credits OK or purchase). */
-  onStartOptimization: () => void | Promise<void>;
+  onStartOptimization: (entryPoint: CreditModalOptimizationEntryPoint) => void | Promise<void>;
   onRefreshBalance?: () => void | Promise<void>;
   /** OAuth redirect must include billing checkout query + pending package in sessionStorage. */
   onStartGoogleAuthForPackage: (packageId: CreditPackageId) => void | Promise<void>;
@@ -68,7 +66,6 @@ export function CreditPackModal({
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
   const [showBundles, setShowBundles] = useState(false);
-  const trackedPrimaryViewRef = useRef(false);
   const lastPricingCardClickAtRef = useRef(0);
   const postPaymentStartLockedRef = useRef(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState<{
@@ -83,34 +80,13 @@ export function CreditPackModal({
       setCheckoutLoading(null);
       setCheckoutSuccess(null);
       setShowBundles(false);
-      trackedPrimaryViewRef.current = false;
     }
   }, [open, funnelId]);
 
   useEffect(() => {
     if (!open) return;
-    const availablePackages = listCreditPackages();
-    const starter = availablePackages.find((p) => p.id === "starter");
-    const jobseeker = availablePackages.find((p) => p.id === "jobseeker");
-    const power = availablePackages.find((p) => p.id === "power");
     void logBillingEvent("billing_payment_modal_open");
-    gtagEvent(ANALYTICS_EVENTS.kpiPaymentModalOpened, {
-      event_category: "conversion",
-      funnel_id: funnelId,
-      has_credits: creditsRemaining > 0 ? "yes" : "no",
-      selected_package_id: starter?.id ?? "starter",
-      selected_optimization_count: starter?.credits ?? 1,
-      selected_package_label: "1_optimization",
-      bundle_5_available: jobseeker ? "yes" : "no",
-      bundle_15_available: power ? "yes" : "no",
-    });
-  }, [open, funnelId, creditsRemaining]);
-
-  useEffect(() => {
-    if (!open || checkoutSuccess || (isLoggedIn && creditsRemaining > 0)) return;
-    if (trackedPrimaryViewRef.current) return;
-    trackedPrimaryViewRef.current = true;
-  }, [open, checkoutSuccess, isLoggedIn, creditsRemaining]);
+  }, [open]);
 
   const getAuthHeaders = useCallback(async () => {
     const supabase = createClient();
@@ -173,17 +149,7 @@ export function CreditPackModal({
     if (postPaymentStartLockedRef.current) return;
     postPaymentStartLockedRef.current = true;
     try {
-      gtagEvent(ANALYTICS_EVENTS.kpiPostPaymentStartOptimizationClick, {
-        event_category: "conversion",
-        source: "credit_pack_modal_payment_success",
-        funnel_id: funnelId,
-      });
-      trackFunnelStep(
-        "post_payment_start_optimization_click",
-        { source: "credit_pack_modal_payment_success" },
-        funnelId
-      );
-      await onStartOptimization();
+      await onStartOptimization("credit_modal_after_purchase");
     } catch {
       /* parent sets error / modal state */
     } finally {
@@ -191,7 +157,7 @@ export function CreditPackModal({
         postPaymentStartLockedRef.current = false;
       }, 1200);
     }
-  }, [onStartOptimization, funnelId]);
+  }, [onStartOptimization]);
 
   const handleDismissSuccessOnly = useCallback(() => {
     setCheckoutSuccess(null);
@@ -209,27 +175,13 @@ export function CreditPackModal({
         pack_name: selectedPack?.name ?? pid,
         next_step: isLoggedIn ? "razorpay" : "google_auth",
       });
-      gtagEvent(ANALYTICS_EVENTS.kpiPricingCardClick, {
-        event_category: "conversion",
-        selected_package_id: pid,
-        selected_optimization_count: selectedPack?.credits ?? 0,
-        selected_package_label:
-          pid === "starter" ? "1_optimization" : pid === "jobseeker" ? "5_optimizations" : "15_optimizations",
-        package_id: pid,
-        pack_name: selectedPack?.name ?? pid,
-        pack_credits: selectedPack?.credits ?? 0,
-        next_step: isLoggedIn ? "razorpay" : "google_auth",
-        funnel_id: funnelId,
-      });
       if (!isLoggedIn) {
-        trackFunnelStep("pricing_auth_redirect", { package_id: pid }, funnelId);
         void onStartGoogleAuthForPackage(pid);
         return;
       }
-      trackFunnelStep("checkout_initiated", { package_id: pid, checkout_trigger: "pack_button" }, funnelId);
       void runCheckout(pid, "pack_button");
     },
-    [isBusy, checkoutLoading, isStartingGoogleAuth, isLoggedIn, onStartGoogleAuthForPackage, runCheckout, funnelId]
+    [isBusy, checkoutLoading, isStartingGoogleAuth, isLoggedIn, onStartGoogleAuthForPackage, runCheckout]
   );
 
   if (!open) return null;
@@ -275,7 +227,7 @@ export function CreditPackModal({
             ? "Payment successful"
             : showStart
               ? "Start optimization"
-              : "Unlock resume optimization"}
+              : "Unlock resume downloads"}
         </h2>
         <div className="absolute right-6 top-6">
           <button
@@ -357,7 +309,7 @@ export function CreditPackModal({
             <button
               type="button"
               disabled={busy}
-              onClick={() => void onStartOptimization()}
+              onClick={() => void onStartOptimization("credit_modal_balance")}
               className="mt-3 w-full rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
             >
               {isBusy ? "Starting…" : "Start optimization"}
@@ -384,7 +336,7 @@ export function CreditPackModal({
                 {formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)}
               </div>
               <div className="text-gray-600 mb-4">
-                Optimize this resume (1 job description)
+                Unlock this resume download (PDF + editable)
               </div>
 
               <ul className="space-y-2 text-sm mb-6">
@@ -405,7 +357,7 @@ export function CreditPackModal({
                   ? "Opening checkout…"
                   : isStartingGoogleAuth
                     ? "Signing in…"
-                    : "Unlock optimization for this resume"}
+                    : "Unlock PDF + editable download"}
               </button>
 
               <p className="text-xs text-center text-gray-500 mt-3">
@@ -448,7 +400,7 @@ export function CreditPackModal({
                           ? "Opening checkout…"
                           : isStartingGoogleAuth
                             ? "Signing in…"
-                            : "Pay and get 5 optimizations"}
+                            : "Pay and unlock 5 downloads"}
                       </button>
                     </div>
                   ) : null}
@@ -472,7 +424,7 @@ export function CreditPackModal({
                           ? "Opening checkout…"
                           : isStartingGoogleAuth
                             ? "Signing in…"
-                            : "Pay and get 15 optimizations"}
+                            : "Pay and unlock 15 downloads"}
                       </button>
                     </div>
                   ) : null}

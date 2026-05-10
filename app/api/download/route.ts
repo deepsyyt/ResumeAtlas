@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server";
 import PDFDocument from "pdfkit/js/pdfkit.standalone";
 import { getSupabaseAdmin } from "@/app/lib/supabase/server";
+import {
+  finalizeOptimizationCredit,
+  reserveOptimizationCredit,
+} from "@/app/lib/billing/creditsServer";
+import {
+  buildResumeHash,
+  createDownloadPass,
+  verifyDownloadPass,
+} from "@/app/lib/billing/downloadPass";
 import type { Resume } from "@/app/types/resume";
 
 type DownloadRequestBody = {
@@ -228,6 +237,8 @@ function renderStructuredResumeLikeUi(doc: PdfDoc, resume: Resume): void {
 }
 
 export async function POST(request: Request) {
+  let userId: string | undefined;
+  let optimizationId: string | undefined;
   try {
     const authHeader = request.headers.get("authorization");
     const accessToken = authHeader?.replace(/Bearer\s+/i, "").trim() || null;
@@ -250,6 +261,7 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
+    userId = user.id;
 
     const body = (await request.json()) as DownloadRequestBody;
     const resume = body?.resume;
@@ -260,6 +272,35 @@ export async function POST(request: Request) {
         { error: "Missing resume payload." },
         { status: 400 }
       );
+    }
+
+    const reservationSeed = rawText || JSON.stringify(resume);
+    const resumeHash = buildResumeHash(reservationSeed);
+    const downloadPassToken = request.headers.get("x-resumeatlas-download-pass");
+    const hasValidPass = verifyDownloadPass(downloadPassToken, {
+      userId: user.id,
+      resumeHash,
+      format: "pdf",
+    });
+    if (!hasValidPass) {
+      const reserved = await reserveOptimizationCredit(
+        user.id,
+        reservationSeed,
+        "download"
+      );
+      if (!reserved.ok) {
+        return NextResponse.json(
+          {
+            error:
+              reserved.code === "NO_CREDITS"
+                ? "No downloads remaining. Buy a pack to continue."
+                : "Unable to reserve a download credit. Try again.",
+            code: reserved.code,
+          },
+          { status: 403 }
+        );
+      }
+      optimizationId = reserved.optimizationId;
     }
 
     const doc = new PDFDocument({ size: "A4", margin: 50 });
@@ -428,15 +469,29 @@ export async function POST(request: Request) {
     doc.end();
     const pdfBuffer = await pdfPromise;
 
+    if (optimizationId) {
+      await finalizeOptimizationCredit(optimizationId, user.id, true);
+    }
+    const nextPass = hasValidPass
+      ? null
+      : createDownloadPass({
+          userId: user.id,
+          resumeHash,
+          allowFormat: "editable",
+        });
     return new Response(pdfBuffer as unknown as BodyInit, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition":
           'attachment; filename="ResumeAtlas_Optimized_Resume.pdf"',
+        ...(nextPass ? { "x-resumeatlas-download-pass": nextPass } : {}),
       },
     });
   } catch (error) {
+    if (optimizationId && userId) {
+      await finalizeOptimizationCredit(optimizationId, userId, false);
+    }
     console.error("Download PDF error", error);
     return NextResponse.json(
       { error: "Failed to generate PDF." },

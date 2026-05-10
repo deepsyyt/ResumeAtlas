@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ResumeOptimizationPanel } from "@/app/components/ResumeOptimizationPanel";
 import { StructuredResume } from "@/app/components/StructuredResume";
 import { parseResumeToJSON } from "@/app/lib/resumeParser";
+import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import {
   resumeDocumentFromHeuristicParsed,
   resumeDocumentToPlainText,
@@ -14,9 +15,10 @@ import { createClient } from "@/app/lib/supabase/client";
 import type { Resume } from "@/app/types/resume";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import { sameResumeAndJob } from "@/app/lib/resumeJobFingerprint";
-import { setActiveFunnelId, trackFunnelStep } from "@/app/lib/funnelTracking";
+import { setActiveFunnelId } from "@/app/lib/funnelTracking";
 import { gtagEvent } from "@/app/lib/gtagClient";
 import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
+import { DownloadPaymentSuccessModal } from "@/app/components/DownloadPaymentSuccessModal";
 
 const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
 const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
@@ -68,6 +70,9 @@ export default function OptimizePage() {
   const [optimizeInFlight, setOptimizeInFlight] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editableResume, setEditableResume] = useState<ResumeDocument | null>(null);
+  const [isUnlockingDownload, setIsUnlockingDownload] = useState(false);
+  const [downloadPassToken, setDownloadPassToken] = useState<string | null>(null);
+  const [downloadPaidSuccessOpen, setDownloadPaidSuccessOpen] = useState(false);
   const lastPdfDownloadAtRef = useRef(0);
   const lastEditableDownloadAtRef = useRef(0);
 
@@ -83,7 +88,6 @@ export default function OptimizePage() {
     if (typeof window === "undefined") return;
     let cancelled = false;
     const abortController = new AbortController();
-    let funnelIdForRun: string | null = null;
 
     (async () => {
       try {
@@ -115,9 +119,7 @@ export default function OptimizePage() {
         }
 
         if (parsed.funnelId) {
-          funnelIdForRun = parsed.funnelId;
           setActiveFunnelId(parsed.funnelId);
-          trackFunnelStep("optimize_page_loaded", undefined, parsed.funnelId);
         }
 
         if (!cancelled) setInput(parsed);
@@ -136,6 +138,11 @@ export default function OptimizePage() {
           setEditableResume(cache.editableResume ?? resumeFromOptimizeResult(cache.result));
           window.sessionStorage.setItem("resumeatlas_optimize_done", "1");
           setHydrating(false);
+          gtagEvent(ANALYTICS_EVENTS.optimizationCompleted, {
+            score_before: parsed.analyzeResult.ats_score,
+            score_after: cache.result.scoreAfter,
+            restored_from_cache: "yes",
+          });
           return true;
         };
 
@@ -203,8 +210,6 @@ export default function OptimizePage() {
           headers["Authorization"] = `Bearer ${session.access_token}`;
         }
 
-        trackFunnelStep("optimize_started", undefined, parsed.funnelId ?? null);
-
         const res = await fetch("/api/optimize", {
           method: "POST",
           headers,
@@ -234,17 +239,11 @@ export default function OptimizePage() {
           const nextEditable = resumeFromOptimizeResult(data);
           setResult(data);
           setEditableResume(nextEditable);
-          gtagEvent(ANALYTICS_EVENTS.kpiOptimizationSuccess, {
-            event_category: "conversion",
+          gtagEvent(ANALYTICS_EVENTS.optimizationCompleted, {
             score_before: parsed.analyzeResult.ats_score,
             score_after: data.scoreAfter,
-            funnel_id: parsed.funnelId,
+            restored_from_cache: "no",
           });
-          trackFunnelStep(
-            "optimize_success",
-            { score_before: parsed.analyzeResult.ats_score, score_after: data.scoreAfter },
-            parsed.funnelId ?? null
-          );
           window.sessionStorage.setItem("resumeatlas_optimize_done", "1");
           const cachePayload: OptimizeCacheV1 = {
             result: data,
@@ -268,7 +267,6 @@ export default function OptimizePage() {
       } catch (e) {
         if (cancelled || (e instanceof Error && e.name === "AbortError")) return;
         if (!cancelled) {
-          trackFunnelStep("optimize_failed", undefined, funnelIdForRun);
           setError(e instanceof Error ? e.message : "Something went wrong");
         }
       } finally {
@@ -313,15 +311,99 @@ export default function OptimizePage() {
     })();
   }, [result, editableResume, input]);
 
-  const handleDownloadPdf = useCallback(async () => {
-    const now = Date.now();
-    if (now - lastPdfDownloadAtRef.current < 1200) return;
-    lastPdfDownloadAtRef.current = now;
+  const refreshDownloadWallet = useCallback(async () => {
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.access_token) return;
+    await fetch("/api/usage", {
+      credentials: "include",
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    });
+  }, []);
+
+  type DownloadGateResult =
+    | { ok: true; justPaidForDownload: false }
+    | { ok: true; justPaidForDownload: true }
+    | { ok: false };
+
+  const resolveDownloadGate = useCallback(async (): Promise<DownloadGateResult> => {
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      setError("Please sign in again to unlock downloads.");
+      return { ok: false };
+    }
+
+    const usageRes = await fetch("/api/usage", {
+      credentials: "include",
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    });
+    const usageJson = (await usageRes.json().catch(() => null)) as
+      | { creditsRemaining?: number }
+      | null;
+    const creditsRemaining =
+      typeof usageJson?.creditsRemaining === "number"
+        ? usageJson.creditsRemaining
+        : 0;
+    if (creditsRemaining > 0) {
+      return { ok: true, justPaidForDownload: false };
+    }
+
+    const checkout = await openRazorpayPackCheckout({
+      packageId: "starter",
+      creditsRemaining: 0,
+      isLoggedIn: true,
+      getAuthHeaders: async () => ({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      }),
+      checkoutTrigger: "download_gate",
+      onRefreshBalance: refreshDownloadWallet,
+    });
+    if (checkout.status === "error") {
+      setError(checkout.message);
+      return { ok: false };
+    }
+    if (checkout.status === "dismissed") {
+      return { ok: false };
+    }
+    if (checkout.status !== "paid") {
+      return { ok: false };
+    }
+    await refreshDownloadWallet();
+    return { ok: true, justPaidForDownload: true };
+  }, [refreshDownloadWallet]);
+
+  useEffect(() => {
+    if (!downloadPaidSuccessOpen) return;
+    gtagEvent(ANALYTICS_EVENTS.paymentSuccessDownloadModalViewed, {});
+  }, [downloadPaidSuccessOpen]);
+
+  type DownloadSurface = "optimize_panel" | "payment_success_modal";
+
+  const handleDownloadPdf = useCallback(
+    async (surface: DownloadSurface = "optimize_panel") => {
     try {
       if (!editableResume) {
         setError("No optimized resume available to download.");
         return;
       }
+      setIsUnlockingDownload(true);
+      const gate: DownloadGateResult = downloadPassToken
+        ? { ok: true, justPaidForDownload: false }
+        : await resolveDownloadGate();
+      if (!gate.ok) return;
+      if (gate.justPaidForDownload) {
+        setDownloadPaidSuccessOpen(true);
+        return;
+      }
+      const now = Date.now();
+      if (now - lastPdfDownloadAtRef.current < 1200) return;
+      lastPdfDownloadAtRef.current = now;
 
       const resumePayload: Resume = {
         basics: {
@@ -360,6 +442,9 @@ export default function OptimizePage() {
       if (session?.access_token) {
         headers["Authorization"] = `Bearer ${session.access_token}`;
       }
+      if (downloadPassToken) {
+        headers["x-resumeatlas-download-pass"] = downloadPassToken;
+      }
 
       const res = await fetch("/api/download", {
         method: "POST",
@@ -374,6 +459,13 @@ export default function OptimizePage() {
       }
 
       const blob = await res.blob();
+      const nextPassToken = res.headers.get("x-resumeatlas-download-pass");
+      if (nextPassToken) {
+        setDownloadPassToken(nextPassToken);
+      } else if (downloadPassToken) {
+        // One-time paired pass consumed.
+        setDownloadPassToken(null);
+      }
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -382,34 +474,91 @@ export default function OptimizePage() {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      gtagEvent(ANALYTICS_EVENTS.kpiDownloadPdf, {
-        event_category: "conversion",
-      });
+      gtagEvent(
+        surface === "payment_success_modal"
+          ? ANALYTICS_EVENTS.optimizationPdfDownloadedPaymentSuccessModal
+          : ANALYTICS_EVENTS.optimizationPdfDownloadedOptimizePanel,
+        {}
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to download resume PDF.");
+    } finally {
+      setIsUnlockingDownload(false);
     }
-  }, [editableResume, toPlainText]);
+  },
+  [editableResume, toPlainText, resolveDownloadGate, downloadPassToken]
+  );
 
-  const handleDownloadDocx = useCallback(() => {
-    const now = Date.now();
-    if (now - lastEditableDownloadAtRef.current < 1200) return;
-    lastEditableDownloadAtRef.current = now;
+  const handleDownloadDocx = useCallback(
+    async (surface: DownloadSurface = "optimize_panel") => {
     try {
+      setIsUnlockingDownload(true);
+      const gate: DownloadGateResult = downloadPassToken
+        ? { ok: true, justPaidForDownload: false }
+        : await resolveDownloadGate();
+      if (!gate.ok) return;
+      if (gate.justPaidForDownload) {
+        setDownloadPaidSuccessOpen(true);
+        return;
+      }
+      const now = Date.now();
+      if (now - lastEditableDownloadAtRef.current < 1200) return;
+      lastEditableDownloadAtRef.current = now;
       const text = editableResume ? toPlainText(editableResume) : result?.optimizedResume ?? "";
-      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const headers: HeadersInit = { "Content-Type": "application/json" };
+      if (session?.access_token) {
+        headers["Authorization"] = `Bearer ${session.access_token}`;
+      }
+      if (downloadPassToken) {
+        headers["x-resumeatlas-download-pass"] = downloadPassToken;
+      }
+      const res = await fetch("/api/download-editable", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ rawText: text }),
+      });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as { error?: string } | null;
+        setError(data?.error || `Download failed (${res.status.toString()})`);
+        return;
+      }
+      const blob = await res.blob();
+      const nextPassToken = res.headers.get("x-resumeatlas-download-pass");
+      if (nextPassToken) {
+        setDownloadPassToken(nextPassToken);
+      } else if (downloadPassToken) {
+        setDownloadPassToken(null);
+      }
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = "resume-optimized.txt";
       a.click();
       URL.revokeObjectURL(url);
-      gtagEvent(ANALYTICS_EVENTS.kpiDownloadEditableFile, {
-        event_category: "conversion",
-      });
+      gtagEvent(
+        surface === "payment_success_modal"
+          ? ANALYTICS_EVENTS.optimizationEditableDownloadedPaymentSuccessModal
+          : ANALYTICS_EVENTS.optimizationEditableDownloadedOptimizePanel,
+        {}
+      );
     } catch {
       // no-op
+    } finally {
+      setIsUnlockingDownload(false);
     }
-  }, [editableResume, result?.optimizedResume, toPlainText]);
+  },
+  [
+    editableResume,
+    result?.optimizedResume,
+    toPlainText,
+    resolveDownloadGate,
+    downloadPassToken,
+  ]
+  );
 
   if (!result && !error && (hydrating || optimizeInFlight)) {
     return (
@@ -663,12 +812,40 @@ export default function OptimizePage() {
               scoreAfter={result.scoreAfter}
               roleAlignmentScore={result.roleAlignmentScore}
               matchedStrengthScore={result.matchedStrengthScore}
-              onDownloadPdf={handleDownloadPdf}
-              onDownloadDocx={handleDownloadDocx}
+              onDownloadPdf={() => {
+                void handleDownloadPdf("optimize_panel");
+              }}
+              onDownloadDocx={() => {
+                void handleDownloadDocx("optimize_panel");
+              }}
             />
+            {isUnlockingDownload ? (
+              <p className="text-xs text-slate-600">
+                Unlocking download and opening secure checkout...
+              </p>
+            ) : null}
           </div>
         </div>
 
+        <DownloadPaymentSuccessModal
+          open={downloadPaidSuccessOpen}
+          onClose={() => setDownloadPaidSuccessOpen(false)}
+          isBusy={isUnlockingDownload}
+          onDownloadPdf={async () => {
+            try {
+              await handleDownloadPdf("payment_success_modal");
+            } finally {
+              setDownloadPaidSuccessOpen(false);
+            }
+          }}
+          onDownloadEditable={async () => {
+            try {
+              await handleDownloadDocx("payment_success_modal");
+            } finally {
+              setDownloadPaidSuccessOpen(false);
+            }
+          }}
+        />
       </div>
     </div>
   );

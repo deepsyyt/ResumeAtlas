@@ -10,6 +10,8 @@ import { IntelligencePanel } from "@/app/components/IntelligencePanel";
 import { LimitModal } from "@/app/components/LimitModal";
 import { CreditPackModal } from "@/app/components/CreditPackModal";
 import { OptimizeConversionModal } from "@/app/components/OptimizeConversionModal";
+import { OptimizeOAuthResumeModal } from "@/app/components/OptimizeOAuthResumeModal";
+import { OptimizeDashboardNudgeModal } from "@/app/components/OptimizeDashboardNudgeModal";
 import { getCreditPackage, type CreditPackageId } from "@/app/lib/billing/packages";
 import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import {
@@ -30,8 +32,9 @@ import { resolveProblemInterviewCallout } from "@/app/lib/problemInterviewCallou
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
 import { gtagEvent, gtagSetUserId } from "@/app/lib/gtagClient";
-import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
-import { getActiveFunnelId, setActiveFunnelId, startNewFunnel, trackFunnelStep } from "@/app/lib/funnelTracking";
+import { ANALYTICS_EVENTS, type CreditModalOptimizationEntryPoint } from "@/app/lib/analyticsEvents";
+import { getActiveFunnelId, setActiveFunnelId, startNewFunnel } from "@/app/lib/funnelTracking";
+import { SHOW_AUTOMATIC_OPTIMIZER_PAYWALL_MODALS } from "@/app/lib/optimizerPaywallFlags";
 import { useRef } from "react";
 
 const homeFaqSchema = {
@@ -193,6 +196,8 @@ const AUTH_FLOW_FUNNEL_ID_KEY = "resumeatlas_auth_flow_funnel_id_v1";
 const AUTH_FLOW_STARTED_AT_KEY = "resumeatlas_auth_flow_started_at_v1";
 const AUTH_FLOW_SUCCESS_TRACKED_PREFIX = "resumeatlas_auth_flow_success_tracked_v1_";
 const AUTH_FLOW_MAX_AGE_MS = 15 * 60 * 1000;
+/** After JD-backed dashboard renders, pause before showing optimize nudge (lets users scan scores first). */
+const OPTIMIZE_NUDGE_DELAY_MS = 10_000;
 
 function countMissingKeywordsForConversion(r: ATSAnalyzeResult): number {
   const req = r.missing_skills_required?.length ?? 0;
@@ -360,7 +365,22 @@ export default function HomeClient({
   const [lastAnalysisUsedJd, setLastAnalysisUsedJd] = useState(true);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [activeFunnelId, setActiveFunnelIdState] = useState<string | null>(null);
+  const [optimizeOauthResumeModalOpen, setOptimizeOauthResumeModalOpen] = useState(false);
+  const [optimizeDashboardNudgeOpen, setOptimizeDashboardNudgeOpen] = useState(false);
+  const [optimizeNudgeTrigger, setOptimizeNudgeTrigger] = useState(0);
+  const optimizeNudgeTriggerRef = useRef(0);
+  /** Triggers (`optimizeNudgeTrigger` at fire time) the user dismissed or acted on — allows nudge again on a new analysis. */
+  const dismissedOptimizeNudgeTriggersRef = useRef<Set<number>>(new Set());
+  /** Which analysis generation the open nudge belongs to (for per-run dismiss tracking). */
+  const optimizeNudgeModalForTriggerRef = useRef<number | null>(null);
+  const modalStackRef = useRef({
+    credit: false,
+    conversion: false,
+    oauthResume: false,
+    limit: false,
+  });
   const openedOptimizerFromQueryRef = useRef(false);
+  const oauthResumeLaunchGuardRef = useRef(false);
   const optimizeClickLockedRef = useRef(false);
   const activeFunnelIdRef = useRef<string | null>(null);
   const authStartSourceRef = useRef<
@@ -374,6 +394,41 @@ export default function HomeClient({
   useEffect(() => {
     authStartSourceRef.current = authStartSource;
   }, [authStartSource]);
+
+  useEffect(() => {
+    modalStackRef.current = {
+      credit: creditModalOpen,
+      conversion: SHOW_AUTOMATIC_OPTIMIZER_PAYWALL_MODALS && optimizeConversionModalOpen,
+      oauthResume: optimizeOauthResumeModalOpen,
+      limit: limitModalOpen,
+    };
+  }, [creditModalOpen, optimizeConversionModalOpen, optimizeOauthResumeModalOpen, limitModalOpen]);
+
+  useEffect(() => {
+    if (optimizeNudgeTrigger === 0) return;
+    if (!analyzeResult || !lastInputs || !lastAnalysisUsedJd || isGenerating) return;
+
+    const scheduledFor = optimizeNudgeTrigger;
+    let cancelled = false;
+
+    const t =
+      typeof window !== "undefined"
+        ? window.setTimeout(() => {
+            if (cancelled) return;
+            if (scheduledFor !== optimizeNudgeTriggerRef.current) return;
+            if (dismissedOptimizeNudgeTriggersRef.current.has(scheduledFor)) return;
+            const m = modalStackRef.current;
+            if (m.credit || m.conversion || m.oauthResume || m.limit) return;
+            optimizeNudgeModalForTriggerRef.current = scheduledFor;
+            setOptimizeDashboardNudgeOpen(true);
+          }, OPTIMIZE_NUDGE_DELAY_MS)
+        : 0;
+
+    return () => {
+      cancelled = true;
+      if (t) window.clearTimeout(t);
+    };
+  }, [optimizeNudgeTrigger, analyzeResult, lastInputs, lastAnalysisUsedJd, isGenerating]);
 
   /** Supabase can send PKCE `code` to Site URL root (`/?code=`) instead of `/auth/callback`. */
   useEffect(() => {
@@ -401,27 +456,7 @@ export default function HomeClient({
     let cancelled = false;
     const clearIfActive = () => {
       if (cancelled) return;
-      const pending = readPendingAuthFlow();
-      setIsStartingGoogleAuth((prev) => {
-        if (prev) {
-          const effectiveFunnelId = pending?.funnelId ?? activeFunnelIdRef.current;
-          gtagEvent(ANALYTICS_EVENTS.kpiAuthGoogleCancelOrReturn, {
-            event_category: "auth",
-            source: pending?.source ?? authStartSourceRef.current ?? "unknown",
-            auth_flow_id: pending?.flowId,
-            funnel_id: effectiveFunnelId ?? undefined,
-          });
-          trackFunnelStep(
-            "auth_cancel_or_return",
-            {
-              source: pending?.source ?? authStartSourceRef.current ?? "unknown",
-              auth_flow_id: pending?.flowId,
-            },
-            effectiveFunnelId
-          );
-        }
-        return false;
-      });
+      setIsStartingGoogleAuth(false);
       setAuthStartSource(null);
       clearPendingAuthFlow();
     };
@@ -483,17 +518,10 @@ export default function HomeClient({
         if (pending) {
           const effectiveFunnelId = pending.funnelId ?? activeFunnelIdRef.current;
           if (!hasTrackedAuthFlowSuccess(pending.flowId)) {
-            gtagEvent(ANALYTICS_EVENTS.kpiLoginSuccess, {
-              event_category: "auth",
-              source: pending.source,
-              auth_flow_id: pending.flowId,
-              funnel_id: effectiveFunnelId ?? undefined,
+            gtagEvent(ANALYTICS_EVENTS.userLogin, {
+              method: "google",
+              auth_source: pending.source,
             });
-            trackFunnelStep(
-              "auth_success",
-              { source: pending.source, auth_flow_id: pending.flowId },
-              effectiveFunnelId
-            );
             markAuthFlowSuccessTracked(pending.flowId);
           }
           if (effectiveFunnelId) setActiveFunnelIdState(effectiveFunnelId);
@@ -604,7 +632,19 @@ export default function HomeClient({
     if (open !== "1") return;
     if (!analyzeResult || !lastInputs) return;
     openedOptimizerFromQueryRef.current = true;
-    if (optimizerFlow === "conversion") {
+
+    if (optimizerFlow === "optimize") {
+      setOptimizeConversionModalOpen(false);
+      setCreditModalOpen(false);
+      oauthResumeLaunchGuardRef.current = false;
+      setOptimizeOauthResumeModalOpen(true);
+    } else if (!SHOW_AUTOMATIC_OPTIMIZER_PAYWALL_MODALS) {
+      setOptimizeConversionPaymentSuccess(false);
+      setOptimizeConversionPaymentReceipt(null);
+      setConversionModalError(null);
+      setOptimizeConversionModalOpen(false);
+      setCreditModalOpen(false);
+    } else if (optimizerFlow === "conversion") {
       setOptimizeConversionPaymentSuccess(false);
       setOptimizeConversionPaymentReceipt(null);
       setConversionModalError(null);
@@ -657,15 +697,29 @@ export default function HomeClient({
       optimizeClickLockedRef.current = false;
     }, 1200);
     void logAnalysisEvent("optimize_after_analysis_clicked");
-    trackFunnelStep("optimize_after_analysis_click", undefined, activeFunnelId);
-    if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("event", ANALYTICS_EVENTS.kpiOptimizeClicked, {
-        event_category: "engagement",
-        event_label: "Optimize resume clicked after analysis",
-        funnel_id: activeFunnelId ?? undefined,
-      });
-    }
-  }, [logAnalysisEvent, activeFunnelId]);
+    gtagEvent(ANALYTICS_EVENTS.optimizationClickedIntelligencePanel, {});
+  }, [logAnalysisEvent]);
+
+  const trackOptimizeDashboardNudgeClick = useCallback(() => {
+    if (optimizeClickLockedRef.current) return;
+    optimizeClickLockedRef.current = true;
+    window.setTimeout(() => {
+      optimizeClickLockedRef.current = false;
+    }, 1200);
+    void logAnalysisEvent("optimize_dashboard_nudge_clicked");
+    gtagEvent(ANALYTICS_EVENTS.optimizationClickedPostDashboardNudge, {});
+  }, [logAnalysisEvent]);
+
+  useEffect(() => {
+    if (!optimizeDashboardNudgeOpen) return;
+    void logAnalysisEvent("optimize_dashboard_nudge_shown");
+    gtagEvent(ANALYTICS_EVENTS.postDashboardOptimizeModalViewed, {});
+  }, [optimizeDashboardNudgeOpen, logAnalysisEvent]);
+
+  useEffect(() => {
+    if (!optimizeOauthResumeModalOpen) return;
+    gtagEvent(ANALYTICS_EVENTS.oauthReturnOptimizeModalViewed, {});
+  }, [optimizeOauthResumeModalOpen]);
 
   const getAuthHeaders = useCallback(async () => {
     const supabase = createClient();
@@ -682,6 +736,11 @@ export default function HomeClient({
       setOptimizeConversionPaymentSuccess(false);
       setOptimizeConversionPaymentReceipt(null);
       setConversionModalError(null);
+      setOptimizeDashboardNudgeOpen(false);
+      if (optimizeNudgeModalForTriggerRef.current != null) {
+        dismissedOptimizeNudgeTriggersRef.current.add(optimizeNudgeModalForTriggerRef.current);
+      }
+      optimizeNudgeModalForTriggerRef.current = null;
       setIsGenerating(true);
       setJdMatchResult(null);
       setJdAnalysis(null);
@@ -704,11 +763,7 @@ export default function HomeClient({
       const funnelId = startNewFunnel("analyze_submit");
       setActiveFunnelIdState(funnelId);
       void logAnalysisEvent("analyze_clicked");
-      trackFunnelStep(
-        "analyze_started",
-        { has_job_description: jdTrimmed ? "yes" : "no" },
-        funnelId
-      );
+      gtagEvent(ANALYTICS_EVENTS.analysisClicked, {});
       try {
         const headers = await getAuthHeaders();
         const res = await fetch("/api/analyze", {
@@ -786,65 +841,19 @@ export default function HomeClient({
           }
         }
         void logAnalysisEvent("dashboard_generated");
-        trackFunnelStep("dashboard_generated", { ats_score: result.ats_score }, funnelId);
-        if (typeof window !== "undefined" && (window as any).gtag) {
-          (window as any).gtag("event", ANALYTICS_EVENTS.kpiDashboardGenerated, {
-            event_category: "engagement",
-            event_label: "ATS dashboard result generated",
-            funnel_id: funnelId,
+        gtagEvent(ANALYTICS_EVENTS.dashboardGenerated, {
+          ats_score: result.ats_score,
+        });
+
+        if (jdTrimmed) {
+          setOptimizeNudgeTrigger((n) => {
+            const next = n + 1;
+            optimizeNudgeTriggerRef.current = next;
+            return next;
           });
         }
 
-        try {
-          const supabase = createClient();
-          const {
-            data: { session },
-          } = await supabase.auth.getSession();
-          if (!session?.access_token) {
-            void logAnalysisEvent("optimize_conversion_modal_shown");
-            void logAnalysisEvent("optimize_conversion_modal_shown_logged_out");
-            if ((window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-              (window as unknown as { gtag: (...a: unknown[]) => void }).gtag(
-                "event",
-                ANALYTICS_EVENTS.kpiOptimizeModalShown,
-                {
-                  event_category: "engagement",
-                  audience: "logged_out",
-                  funnel_id: funnelId,
-                }
-              );
-            }
-            trackFunnelStep("optimize_modal_shown", { audience: "logged_out" }, funnelId);
-            setOptimizeConversionPaymentSuccess(false);
-            setOptimizeConversionPaymentReceipt(null);
-            setOptimizeConversionModalOpen(true);
-          } else if (session?.access_token && typeof window !== "undefined") {
-            const raw = window.sessionStorage.getItem(LOGGED_IN_ANALYSIS_SUCCESS_COUNT_KEY);
-            const prev = raw ? Math.max(0, parseInt(raw, 10) || 0) : 0;
-            const next = prev + 1;
-            window.sessionStorage.setItem(LOGGED_IN_ANALYSIS_SUCCESS_COUNT_KEY, String(next));
-            if (next === 2 || next === 4) {
-              void logAnalysisEvent("optimize_conversion_modal_shown");
-              if ((window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-                (window as unknown as { gtag: (...a: unknown[]) => void }).gtag(
-                  "event",
-                  ANALYTICS_EVENTS.kpiOptimizeModalShown,
-                  {
-                    event_category: "engagement",
-                    analysis_count: next,
-                    funnel_id: funnelId,
-                  }
-                );
-              }
-              trackFunnelStep("optimize_modal_shown", { analysis_count: next }, funnelId);
-              setOptimizeConversionPaymentSuccess(false);
-              setOptimizeConversionPaymentReceipt(null);
-              setOptimizeConversionModalOpen(true);
-            }
-          }
-        } catch {
-          /* ignore */
-        }
+        // Pricing is shown at download time on /optimize (not after analysis).
       } catch (e) {
         setError(e instanceof Error ? e.message : "Something went wrong");
       } finally {
@@ -860,17 +869,7 @@ export default function HomeClient({
     setIsStartingGoogleAuth(true);
     setError(null);
     const flowId = beginPendingAuthFlow("quota_modal", activeFunnelId);
-    gtagEvent(ANALYTICS_EVENTS.kpiAuthGoogleStart, {
-      event_category: "auth",
-      source: "quota_modal",
-      auth_flow_id: flowId ?? undefined,
-      funnel_id: activeFunnelId ?? undefined,
-    });
-    trackFunnelStep(
-      "auth_start",
-      { source: "quota_modal", auth_flow_id: flowId ?? undefined },
-      activeFunnelId
-    );
+    void flowId;
     try {
       const redirectTo = buildAuthCallbackRedirectTo("/");
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -885,23 +884,53 @@ export default function HomeClient({
         );
       }
     } catch (e) {
-      gtagEvent(ANALYTICS_EVENTS.kpiAuthGoogleFailed, {
-        event_category: "auth",
-        source: "quota_modal",
-        auth_flow_id: flowId ?? undefined,
-        funnel_id: activeFunnelId ?? undefined,
-      });
-      trackFunnelStep(
-        "auth_failed",
-        { source: "quota_modal", auth_flow_id: flowId ?? undefined },
-        activeFunnelId
-      );
       clearPendingAuthFlow();
       setError(e instanceof Error ? e.message : "Sign-in failed");
       setIsStartingGoogleAuth(false);
       setAuthStartSource(null);
     }
   }, [activeFunnelId]);
+
+  const handleStartGoogleAuthForOptimize = useCallback(async () => {
+    if (!lastInputs || !analyzeResult) return;
+    const supabase = createClient();
+    const source: "pricing_modal" = "pricing_modal";
+    setAuthStartSource(source);
+    setIsStartingGoogleAuth(true);
+    setError(null);
+    const flowId = beginPendingAuthFlow(source, activeFunnelId);
+    void flowId;
+    try {
+      if (typeof window !== "undefined") {
+        writePostOauthAnalyzerSnapshot({
+          lastInputs,
+          lastJD: lastJD ?? lastInputs.jobDescription,
+          lastRoleLevel,
+          analyzeResult,
+          savedAt: Date.now(),
+          funnelId: activeFunnelId ?? undefined,
+        });
+      }
+      const redirectTo = buildAuthCallbackRedirectTo(
+        "/?openOptimizer=1&optimizerFlow=optimize"
+      );
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.assign(
+          alignSupabaseOAuthAuthorizeUrl(data.url, redirectTo)
+        );
+      }
+    } catch (e) {
+      clearPendingAuthFlow();
+      setError(e instanceof Error ? e.message : "Sign-in failed");
+      setIsStartingGoogleAuth(false);
+      setAuthStartSource(null);
+    }
+  }, [lastInputs, analyzeResult, activeFunnelId, lastJD, lastRoleLevel]);
 
   const launchOptimizerFlow = useCallback(async () => {
     if (!lastInputs || !analyzeResult) return;
@@ -910,7 +939,7 @@ export default function HomeClient({
       data: { session },
     } = await supabase.auth.getSession();
     if (!session?.access_token) {
-      setCreditModalOpen(true);
+      await handleStartGoogleAuthForOptimize();
       return;
     }
     setError(null);
@@ -946,7 +975,6 @@ export default function HomeClient({
       }).catch(() => {
         /* analytics only */
       });
-      trackFunnelStep("optimize_page_navigation", undefined, activeFunnelId);
       setCreditModalOpen(false);
       void refreshUsage();
       router.push("/optimize");
@@ -955,16 +983,65 @@ export default function HomeClient({
     } finally {
       setIsLaunchingOptimize(false);
     }
-  }, [lastInputs, analyzeResult, lastJD, router, refreshUsage, activeFunnelId]);
+  }, [
+    lastInputs,
+    analyzeResult,
+    lastJD,
+    router,
+    refreshUsage,
+    activeFunnelId,
+    handleStartGoogleAuthForOptimize,
+  ]);
 
-  const onCreditModalStartOptimize = useCallback(() => {
-    return launchOptimizerFlow();
+  const dismissOptimizeDashboardNudge = useCallback(() => {
+    const t = optimizeNudgeModalForTriggerRef.current;
+    if (t != null) dismissedOptimizeNudgeTriggersRef.current.add(t);
+    optimizeNudgeModalForTriggerRef.current = null;
+    setOptimizeDashboardNudgeOpen(false);
+  }, []);
+
+  const onOptimizeFromDashboardNudge = useCallback(() => {
+    const t = optimizeNudgeModalForTriggerRef.current;
+    if (t != null) dismissedOptimizeNudgeTriggersRef.current.add(t);
+    optimizeNudgeModalForTriggerRef.current = null;
+    setOptimizeDashboardNudgeOpen(false);
+    trackOptimizeDashboardNudgeClick();
+    void launchOptimizerFlow();
+  }, [launchOptimizerFlow, trackOptimizeDashboardNudgeClick]);
+
+  const onCreditModalStartOptimize = useCallback(
+    (entryPoint: CreditModalOptimizationEntryPoint) => {
+      gtagEvent(
+        entryPoint === "credit_modal_balance"
+          ? ANALYTICS_EVENTS.optimizationClickedCreditModalBalance
+          : ANALYTICS_EVENTS.optimizationClickedCreditModalAfterPurchase,
+        {}
+      );
+      return launchOptimizerFlow();
+    },
+    [launchOptimizerFlow]
+  );
+
+  const dismissOptimizeOAuthResumeModal = useCallback(() => {
+    oauthResumeLaunchGuardRef.current = false;
+    setOptimizeOauthResumeModalOpen(false);
+  }, []);
+
+  const startOptimizationAfterOAuthReturn = useCallback(() => {
+    if (oauthResumeLaunchGuardRef.current) return;
+    oauthResumeLaunchGuardRef.current = true;
+    gtagEvent(ANALYTICS_EVENTS.optimizationClickedOauthReturnOptimize, {});
+    void launchOptimizerFlow().finally(() => {
+      oauthResumeLaunchGuardRef.current = false;
+      setOptimizeOauthResumeModalOpen(false);
+    });
   }, [launchOptimizerFlow]);
 
   const handleStartGoogleAuthForPackage = useCallback(
     async (
       packageId: CreditPackageId,
-      source: "pricing_modal" | "conversion_modal" = "pricing_modal"
+      source: "pricing_modal" | "conversion_modal" = "pricing_modal",
+      targetFlow: "pricing" | "conversion" | "optimize" = "pricing"
     ) => {
       void packageId;
       if (!lastInputs || !analyzeResult) return;
@@ -973,17 +1050,7 @@ export default function HomeClient({
       setIsStartingGoogleAuth(true);
       setError(null);
       const flowId = beginPendingAuthFlow(source, activeFunnelId);
-      gtagEvent(ANALYTICS_EVENTS.kpiAuthGoogleStart, {
-        event_category: "auth",
-        source,
-        auth_flow_id: flowId ?? undefined,
-        funnel_id: activeFunnelId ?? undefined,
-      });
-      trackFunnelStep(
-        "auth_start",
-        { source, auth_flow_id: flowId ?? undefined },
-        activeFunnelId
-      );
+      void flowId;
       try {
         if (typeof window !== "undefined") {
           writePostOauthAnalyzerSnapshot({
@@ -996,9 +1063,11 @@ export default function HomeClient({
           });
         }
         const nextPath =
-          source === "conversion_modal"
+          targetFlow === "conversion"
             ? "/?openOptimizer=1&optimizerFlow=conversion"
-            : "/?openOptimizer=1";
+            : targetFlow === "optimize"
+              ? "/?openOptimizer=1&optimizerFlow=optimize"
+              : "/?openOptimizer=1";
         const redirectTo = buildAuthCallbackRedirectTo(nextPath);
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
@@ -1011,17 +1080,6 @@ export default function HomeClient({
           );
         }
       } catch (e) {
-        gtagEvent(ANALYTICS_EVENTS.kpiAuthGoogleFailed, {
-          event_category: "auth",
-          source,
-          auth_flow_id: flowId ?? undefined,
-          funnel_id: activeFunnelId ?? undefined,
-        });
-        trackFunnelStep(
-          "auth_failed",
-          { source, auth_flow_id: flowId ?? undefined },
-          activeFunnelId
-        );
         clearPendingAuthFlow();
         setError(e instanceof Error ? e.message : "Sign-in failed");
         setIsStartingGoogleAuth(false);
@@ -1042,17 +1100,11 @@ export default function HomeClient({
     const credits = usage?.creditsRemaining ?? 0;
     if (credits > 0) {
       closeOptimizeConversionModal();
+      gtagEvent(ANALYTICS_EVENTS.optimizationClickedConversionModal, {});
       await launchOptimizerFlow();
       return;
     }
     void logAnalysisEvent("upgrade_modal_pay");
-    if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.kpiUpgradeModalPayClick, {
-        event_category: "conversion",
-        funnel_id: activeFunnelId ?? undefined,
-      });
-    }
-    trackFunnelStep("checkout_initiated", { checkout_trigger: "conversion_modal" }, activeFunnelId);
     setConversionModalBusy(true);
     try {
       const result = await openRazorpayPackCheckout({
@@ -1095,26 +1147,10 @@ export default function HomeClient({
 
   const handleConversionFixResumeNow = useCallback(async () => {
     void logAnalysisEvent("optimize_conversion_modal_fix_resume_now_clicked");
-    if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.kpiOptimizeModalFixResumeNow, {
-        event_category: "engagement",
-        funnel_id: activeFunnelId ?? undefined,
-      });
-      (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.kpiPostPaymentStartOptimizationClick, {
-        event_category: "conversion",
-        source: "optimize_conversion_modal_payment_success",
-        funnel_id: activeFunnelId ?? undefined,
-      });
-    }
-    trackFunnelStep("optimize_fix_resume_now_click", undefined, activeFunnelId);
-    trackFunnelStep(
-      "post_payment_start_optimization_click",
-      { source: "optimize_conversion_modal_payment_success" },
-      activeFunnelId
-    );
+    gtagEvent(ANALYTICS_EVENTS.optimizationClickedConversionModalAfterPayment, {});
     closeOptimizeConversionModal();
     await launchOptimizerFlow();
-  }, [closeOptimizeConversionModal, launchOptimizerFlow, logAnalysisEvent, activeFunnelId]);
+  }, [closeOptimizeConversionModal, launchOptimizerFlow, logAnalysisEvent]);
 
   const handleResumeChange = useCallback((next: Resume) => {
     setResume(next);
@@ -1223,12 +1259,18 @@ export default function HomeClient({
 
           <div className="mt-4 sm:mt-5 mb-4 sm:mb-5 mx-auto w-full max-w-lg px-0 sm:px-0">
             <div className="rounded-xl bg-slate-50 px-4 py-4 sm:p-5 text-center">
-              <a
-                href="#ats-checker-form"
+              <button
+                type="button"
+                data-analytics="hero_scroll_to_checker"
                 className="inline-flex w-full sm:w-auto min-w-[min(100%,16rem)] items-center justify-center rounded-xl bg-slate-900 px-4 py-3 text-[13px] font-semibold text-white shadow-md transition hover:bg-slate-800 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:px-8 sm:py-3 sm:text-base"
+                onClick={() => {
+                  document
+                    .getElementById("ats-checker-form")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
               >
                 Check My Resume for This Job (Free)
-              </a>
+              </button>
               <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm leading-snug text-slate-600">
                 <span className="mr-1.5 inline-block" aria-hidden="true">
                   👉
@@ -1356,10 +1398,12 @@ export default function HomeClient({
               onOpenOptimizer={
                 analyzeResult && lastInputs && lastAnalysisUsedJd
                   ? () => {
+                      dismissedOptimizeNudgeTriggersRef.current.add(optimizeNudgeTriggerRef.current);
+                      optimizeNudgeModalForTriggerRef.current = null;
+                      setOptimizeDashboardNudgeOpen(false);
                       void trackOptimizeAfterAnalysisClick();
-                      trackFunnelStep("credit_modal_opened", undefined, activeFunnelId);
                       closeOptimizeConversionModal();
-                      setCreditModalOpen(true);
+                      void launchOptimizerFlow();
                     }
                   : undefined
               }
@@ -1384,17 +1428,10 @@ export default function HomeClient({
               funnelId={activeFunnelId ?? undefined}
             />
             <OptimizeConversionModal
-              open={optimizeConversionModalOpen}
+              open={SHOW_AUTOMATIC_OPTIMIZER_PAYWALL_MODALS && optimizeConversionModalOpen}
               onClose={closeOptimizeConversionModal}
               onContinueManual={() => {
                 void logAnalysisEvent("optimize_conversion_modal_continue_manual");
-                if (typeof window !== "undefined" && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag) {
-                  (window as unknown as { gtag: (...a: unknown[]) => void }).gtag("event", ANALYTICS_EVENTS.kpiOptimizeModalContinueManual, {
-                    event_category: "engagement",
-                    funnel_id: activeFunnelId ?? undefined,
-                  });
-                }
-                trackFunnelStep("optimize_continue_manual", undefined, activeFunnelId);
                 closeOptimizeConversionModal();
               }}
               onPrimaryAction={() => void handleConversionPrimaryAction()}
@@ -1409,6 +1446,20 @@ export default function HomeClient({
               isBusy={conversionModalBusy || isLaunchingOptimize}
               isStartingGoogleAuth={isStartingGoogleAuth}
               localError={conversionModalError}
+            />
+            <OptimizeOAuthResumeModal
+              open={optimizeOauthResumeModalOpen}
+              onDismiss={dismissOptimizeOAuthResumeModal}
+              onStartOptimization={startOptimizationAfterOAuthReturn}
+              isBusy={isLaunchingOptimize}
+            />
+            <OptimizeDashboardNudgeModal
+              open={optimizeDashboardNudgeOpen}
+              onDismiss={dismissOptimizeDashboardNudge}
+              onOptimize={onOptimizeFromDashboardNudge}
+              isLoggedIn={isLoggedIn}
+              isBusy={isLaunchingOptimize}
+              isStartingGoogleAuth={isStartingGoogleAuth}
             />
             {resume && (
               <div className="flex-1 min-h-0 flex flex-col">

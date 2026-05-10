@@ -9,8 +9,6 @@ import {
   JOB_DESCRIPTION_MAX_WORDS,
   RESUME_TEXT_MAX_WORDS,
 } from "@/app/lib/inputWordLimits";
-import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
-
 export const ROLE_LEVELS = ["Entry", "Mid", "Senior", "Leadership"] as const;
 
 export type GenerateInputs = {
@@ -86,12 +84,6 @@ export function ResumeForm({
     const now = Date.now();
     if (now - lastAnalyzeClickAtRef.current < 1200) return;
     lastAnalyzeClickAtRef.current = now;
-    if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("event", ANALYTICS_EVENTS.kpiAnalyzeButtonClick, {
-        event_category: "engagement",
-        event_label: "Check resume against job free",
-      });
-    }
     onGenerate({
       resumeText: data.resumeText,
       jobDescription: data.jobDescription,
@@ -340,6 +332,7 @@ export function ResumeForm({
           <div className="pt-3">
             <button
               type="submit"
+              data-analytics="analyzer_form_analyze_submit"
               disabled={isGenerating}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-3 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-slate-900/10 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-65"
             >
@@ -351,7 +344,7 @@ export function ResumeForm({
                 ? "Get my ATS score (free)"
                 : isKeywordScanner
                   ? "Scan for missing keywords (free)"
-                  : "Check my resume against this job (Free)"}
+                  : "Check my resume for this job (Free)"}
             </button>
             <p className="mt-1.5 text-center text-[11px] text-slate-500 sm:text-xs">
               Paste-only (no file upload). Free analysis. No signup required.

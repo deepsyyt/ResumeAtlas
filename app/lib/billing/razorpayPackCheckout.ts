@@ -1,9 +1,8 @@
 import { createClient } from "@/app/lib/supabase/client";
 import { getCreditPackage, type CreditPackageId } from "@/app/lib/billing/packages";
 import { logBillingEvent } from "@/app/lib/billing/billingEventsClient";
-import { trackFunnelStep } from "@/app/lib/funnelTracking";
-import { gtagEvent } from "@/app/lib/gtagClient";
 import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
+import { gtagEvent } from "@/app/lib/gtagClient";
 
 declare global {
   interface Window {
@@ -33,7 +32,29 @@ export type PackCheckoutResult =
   | { status: "dismissed" }
   | { status: "error"; message: string };
 
-type CheckoutTrigger = "pack_button" | "oauth_resume" | "conversion_modal";
+export type CheckoutTrigger =
+  | "pack_button"
+  | "oauth_resume"
+  | "conversion_modal"
+  | "download_gate";
+
+function gaPaymentFailed(reason: string): void {
+  gtagEvent(ANALYTICS_EVENTS.paymentFailed, { reason });
+}
+
+function paymentClickedAnalyticsName(checkoutTrigger: CheckoutTrigger): string {
+  if (checkoutTrigger === "conversion_modal") return ANALYTICS_EVENTS.paymentClickedConversionModal;
+  if (checkoutTrigger === "download_gate") return ANALYTICS_EVENTS.paymentClickedOptimizeDownload;
+  if (checkoutTrigger === "oauth_resume") return ANALYTICS_EVENTS.paymentClickedOauthResume;
+  return ANALYTICS_EVENTS.paymentClickedCreditPackModal;
+}
+
+function paymentSuccessAnalyticsName(checkoutTrigger: CheckoutTrigger): string {
+  if (checkoutTrigger === "conversion_modal") return ANALYTICS_EVENTS.paymentSuccessConversionModal;
+  if (checkoutTrigger === "download_gate") return ANALYTICS_EVENTS.paymentSuccessOptimizeDownload;
+  if (checkoutTrigger === "oauth_resume") return ANALYTICS_EVENTS.paymentSuccessOauthResume;
+  return ANALYTICS_EVENTS.paymentSuccessCreditPackModal;
+}
 
 export type OpenRazorpayPackCheckoutParams = {
   packageId: CreditPackageId;
@@ -57,7 +78,7 @@ export async function openRazorpayPackCheckout({
   getAuthHeaders,
   onRefreshBalance,
   checkoutTrigger = "pack_button",
-  funnelId,
+  funnelId: _funnelId,
 }: OpenRazorpayPackCheckoutParams): Promise<PackCheckoutResult> {
   if (isLoggedIn && creditsRemaining > 0) {
     return {
@@ -68,7 +89,10 @@ export async function openRazorpayPackCheckout({
   try {
     await loadRazorpayScript();
     const Razorpay = window.Razorpay;
-    if (!Razorpay) return { status: "error", message: "Razorpay unavailable" };
+    if (!Razorpay) {
+      gaPaymentFailed("razorpay_unavailable");
+      return { status: "error", message: "Razorpay unavailable" };
+    }
 
     const headers = await getAuthHeaders();
     const supabase = createClient();
@@ -92,7 +116,7 @@ export async function openRazorpayPackCheckout({
     };
     if (!res.ok) {
       if (res.status === 409 && data.code === "CREDITS_REMAINING") {
-        trackFunnelStep("checkout_error", { package_id: packageId, reason: "credits_remaining" }, funnelId);
+        gaPaymentFailed("order_create_credits_remaining");
         return {
           status: "error",
           message:
@@ -101,30 +125,29 @@ export async function openRazorpayPackCheckout({
               : "Use your available optimizations before buying another pack.",
         };
       }
-      trackFunnelStep("checkout_error", { package_id: packageId, reason: "create_order_failed" }, funnelId);
+      gaPaymentFailed("order_create_failed");
       return {
         status: "error",
         message: typeof data.error === "string" ? data.error : "Could not start checkout",
       };
     }
     if (!data.orderId || !data.keyId) {
-      trackFunnelStep("checkout_error", { package_id: packageId, reason: "invalid_checkout_response" }, funnelId);
+      gaPaymentFailed("invalid_checkout_response");
       return { status: "error", message: "Invalid checkout response" };
     }
 
     const amountMinor = Math.round(Number(data.amount));
     const currency = String(data.currency ?? "USD").toUpperCase();
     if (!Number.isFinite(amountMinor) || amountMinor <= 0) {
-      trackFunnelStep("checkout_error", { package_id: packageId, reason: "invalid_amount" }, funnelId);
+      gaPaymentFailed("invalid_amount");
       return { status: "error", message: "Invalid payment amount from server" };
     }
 
     const pkgMeta = getCreditPackage(packageId);
-    trackFunnelStep(
-      "checkout_opened",
-      { package_id: packageId, checkout_trigger: checkoutTrigger },
-      funnelId
-    );
+    const checkoutDescription =
+      checkoutTrigger === "download_gate"
+        ? "Unlock resume downloads (PDF + editable)"
+        : `${data.credits ?? ""} resume optimization${data.credits === 1 ? "" : "s"}`;
     void logBillingEvent("billing_razorpay_checkout_opened", {
       package_id: packageId,
       credits: pkgMeta?.credits ?? 0,
@@ -154,7 +177,7 @@ export async function openRazorpayPackCheckout({
         currency,
         order_id: data.orderId,
         name: "ResumeAtlas",
-        description: `${data.credits ?? ""} resume optimization${data.credits === 1 ? "" : "s"}`,
+        description: checkoutDescription,
         ...(Object.keys(prefill).length > 0 ? { prefill } : {}),
         theme: { color: "#0f172a" },
         handler: async (response: {
@@ -179,7 +202,7 @@ export async function openRazorpayPackCheckout({
               creditsRemaining?: number;
             };
             if (!v.ok) {
-              trackFunnelStep("checkout_error", { package_id: packageId, reason: "verify_failed" }, funnelId);
+              gaPaymentFailed("verify_failed");
               finish({
                 status: "error",
                 message: typeof vr.error === "string" ? vr.error : "Payment verification failed",
@@ -195,7 +218,6 @@ export async function openRazorpayPackCheckout({
               typeof vr.creditsRemaining === "number"
                 ? vr.creditsRemaining
                 : creditsRemaining + creditsAdded;
-            trackFunnelStep("checkout_paid", { package_id: packageId }, funnelId);
             void logBillingEvent("billing_payment_success", {
               package_id: packageId,
               credits: creditsAdded,
@@ -203,14 +225,11 @@ export async function openRazorpayPackCheckout({
               value_minor: amountMinor,
               credits_remaining: balance,
             });
-            gtagEvent(ANALYTICS_EVENTS.kpiPaymentSuccess, {
-              event_category: "conversion",
-              selected_package_id: packageId,
-              selected_optimization_count: creditsAdded,
+            gtagEvent(paymentSuccessAnalyticsName(checkoutTrigger), {
+              package_id: packageId,
               value_minor: amountMinor,
               currency,
-              checkout_trigger: checkoutTrigger,
-              funnel_id: funnelId,
+              credits_granted: creditsAdded,
             });
             finish({
               status: "paid",
@@ -218,28 +237,33 @@ export async function openRazorpayPackCheckout({
               creditsRemaining: balance,
             });
           } catch {
-            trackFunnelStep("checkout_error", { package_id: packageId, reason: "verify_exception" }, funnelId);
+            gaPaymentFailed("verify_exception");
             finish({ status: "error", message: "Verification failed" });
           }
         },
         modal: {
           ondismiss: () => {
             if (!razorpayReportedPaymentSuccess) {
-              trackFunnelStep("checkout_dismissed", { package_id: packageId }, funnelId);
               void logBillingEvent("billing_razorpay_checkout_dismissed", {
                 package_id: packageId,
               });
+              gaPaymentFailed("dismissed");
             }
             finish({ status: "dismissed" });
           },
         },
+      });
+      gtagEvent(paymentClickedAnalyticsName(checkoutTrigger), {
+        package_id: packageId,
+        value_minor: amountMinor,
+        currency,
       });
       rzp.open();
     });
 
     return result;
   } catch (e) {
-    trackFunnelStep("checkout_error", { package_id: packageId, reason: "checkout_exception" }, funnelId);
+    gaPaymentFailed("checkout_exception");
     return {
       status: "error",
       message: e instanceof Error ? e.message : "Checkout failed",
