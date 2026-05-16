@@ -154,13 +154,13 @@ export function toolClusterBreadcrumbSchema(config: ToolClusterPageConfig) {
 
 export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   path: CHECK_RESUME_AGAINST_JD_PATH,
-  breadcrumbName: "Match resume to job description",
+  breadcrumbName: "Posting fit diagnosis",
   clusterLinkAnchor: RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
   ...CLUSTER_JD_MATCH_TOOL_COPY,
   titleAbsolute:
-    "Check Resume Against Job Description (Free ATS Match Tool) | ResumeAtlas",
-  ogTitle: "Check Resume Against Job Description (Free ATS Match Tool)",
-  twitterTitle: "Check Resume Against Job Description (Free Tool)",
+    "Posting Fit Diagnosis — Match Resume to Job Description (Free) | ResumeAtlas",
+  ogTitle: "Posting fit diagnosis — resume vs job description (free)",
+  twitterTitle: "Posting fit diagnosis — resume vs job description",
   ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   exampleJobRequires: "Python, SQL, stakeholder communication, and experimentation.",
   exampleResumeContains: "Python, dashboards, and ad-hoc analysis.",
@@ -182,7 +182,7 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
     {
       question: "What does it mean to match a resume to a job description?",
       answer:
-        "It means comparing your resume to one specific posting so you can tailor: add evidence where keywords are missing, rewrite bullets for fit, and show outcomes the JD cares about—honestly. For a missing-keyword list only, use the resume keyword scanner; for layout and parsing risk without a JD, use the ATS checker.",
+        "It means comparing your resume to one specific posting so you can tailor: add evidence where keywords are missing, rewrite bullets for fit, and show outcomes the JD cares about—honestly. For layout and parsing risk without a JD, use the ATS checker.",
     },
     {
       question: "Why is ATS matching important?",
@@ -327,7 +327,7 @@ export const TOOL_CLUSTER_SCORE: ToolClusterPageConfig = {
 };
 
 export const TOOL_CLUSTER_KEYWORD_SCANNER: ToolClusterPageConfig = {
-  path: "/resume-keyword-scanner",
+  path: "/check-resume-against-job-description",
   breadcrumbName: "Resume Keyword Scanner",
   clusterLinkAnchor: "resume keyword scanner",
   ...CLUSTER_KEYWORD_SCANNER_TOOL_COPY,
@@ -444,7 +444,6 @@ export const TOOL_CLUSTER_COMPAT: ToolClusterPageConfig = {
 export const ALL_TOOL_CLUSTER_CONFIGS: ToolClusterPageConfig[] = [
   TOOL_CLUSTER_PRIMARY,
   TOOL_CLUSTER_ATS_FREE,
-  TOOL_CLUSTER_KEYWORD_SCANNER,
 ];
 
 export const TOOL_CLUSTER_PATHS_FOR_OAUTH: readonly string[] = ALL_TOOL_CLUSTER_CONFIGS.map(

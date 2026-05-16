@@ -1,6 +1,7 @@
 import type { RoleSlug } from "@/app/lib/seoPages";
+import { roleResumePillarPath } from "@/app/lib/searchIntentSeo";
 
-/** Public URLs use `/{role}-resume-bullet-points*`; internal routes use `/resume-bullet-points/{role}/...`. */
+/** Public links point at the role pillar (`/{role}-resume-guide#bullet-points`); legacy `/resume-bullet-points/...` URLs 301 there. */
 export const RESUME_BULLET_ROLES = [
   "data-analyst",
   "business-analyst",
@@ -263,10 +264,10 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       },
     ],
     relatedSearches: [
-      { label: "data analyst resume summary examples", href: "/data-analyst-resume-example" },
-      { label: "entry-level data analyst resume bullet points", href: "/data-analyst-resume-bullet-points-entry-level" },
-      { label: "data analyst SQL keywords checklist", href: "/data-analyst-resume-keywords" },
-      { label: "data analyst ATS keyword list", href: "/data-analyst-resume-keywords" },
+      { label: "data analyst resume summary examples", href: "/data-analyst-resume-guide#summary" },
+      { label: "entry-level data analyst resume bullet points", href: "/data-analyst-resume-guide#bullet-points" },
+      { label: "data analyst SQL keywords checklist", href: "/data-analyst-resume-guide#skills" },
+      { label: "data analyst ATS keyword list", href: "/data-analyst-resume-guide#skills" },
     ],
     levelCards: {
       "entry-level": {
@@ -405,9 +406,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       },
     ],
     relatedSearches: [
-      { label: "business analyst resume summary examples", href: "/business-analyst-resume-example" },
-      { label: "entry-level business analyst resume bullet points", href: "/business-analyst-resume-bullet-points-entry-level" },
-      { label: "business analyst resume keywords", href: "/business-analyst-resume-keywords" },
+      { label: "business analyst resume summary examples", href: "/business-analyst-resume-guide#summary" },
+      { label: "entry-level business analyst resume bullet points", href: "/business-analyst-resume-guide#bullet-points" },
+      { label: "business analyst resume keywords", href: "/business-analyst-resume-guide#skills" },
       { label: "business analyst interview questions", href: "/data-analyst-interview-questions" },
     ],
     levelCards: {
@@ -547,10 +548,10 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       },
     ],
     relatedSearches: [
-      { label: "data scientist resume summary", href: "/data-scientist-resume-example#summary" },
-      { label: "data scientist resume objective", href: "/data-scientist-resume-example#summary" },
-      { label: "data scientist resume template", href: "/data-scientist-resume-example" },
-      { label: "data scientist resume keywords", href: "/data-scientist-resume-keywords" },
+      { label: "data scientist resume summary", href: "/data-scientist-resume-guide#summary" },
+      { label: "data scientist resume objective", href: "/data-scientist-resume-guide#summary" },
+      { label: "data scientist resume template", href: "/data-scientist-resume-guide" },
+      { label: "data scientist resume keywords", href: "/data-scientist-resume-guide#skills" },
     ],
     levelCards: {
       "entry-level": {
@@ -689,10 +690,10 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       },
     ],
     relatedSearches: [
-      { label: "software engineer resume summary", href: "/software-engineer-resume-example#summary" },
-      { label: "software engineer resume template", href: "/software-engineer-resume-example" },
-      { label: "software engineer resume sample", href: "/software-engineer-resume-example" },
-      { label: "software engineer resume keywords", href: "/software-engineer-resume-keywords" },
+      { label: "software engineer resume summary", href: "/software-engineer-resume-guide#summary" },
+      { label: "software engineer resume template", href: "/software-engineer-resume-guide" },
+      { label: "software engineer resume sample", href: "/software-engineer-resume-guide" },
+      { label: "software engineer resume keywords", href: "/software-engineer-resume-guide#skills" },
     ],
     levelCards: {
       "entry-level": {
@@ -831,10 +832,10 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       },
     ],
     relatedSearches: [
-      { label: "product manager resume summary examples", href: "/product-manager-resume-example" },
-      { label: "product manager resume projects", href: "/product-manager-resume-bullet-points-entry-level" },
-      { label: "APM resume bullet points", href: "/product-manager-resume-bullet-points-entry-level" },
-      { label: "resume bullet points for freshers", href: "/product-manager-resume-bullet-points-entry-level" },
+      { label: "product manager resume summary examples", href: "/product-manager-resume-guide#summary" },
+      { label: "product manager resume projects", href: "/product-manager-resume-guide#projects" },
+      { label: "APM resume bullet points", href: "/product-manager-resume-guide#bullet-points" },
+      { label: "resume bullet points for freshers", href: "/product-manager-resume-guide#bullet-points" },
     ],
     levelCards: {
       "entry-level": {
@@ -1446,7 +1447,7 @@ function dsEntry(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These examples are generic patterns. Your resume may still miss keywords required by ATS for a specific posting.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/resume-keyword-scanner#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Entry-Level Data Scientist Resume Bullet Points?",
@@ -1581,7 +1582,7 @@ function dsJunior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These lines are patterns. Your resume still needs the exact tools and domains each employer lists in the job description.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/resume-keyword-scanner#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Junior Data Scientist Resume Bullet Points?",
@@ -1690,7 +1691,7 @@ function dsSenior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These patterns are illustrative. Your resume must still match the exact tools, domains, and leadership verbs from each job description.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/resume-keyword-scanner#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Senior Data Scientist Resume Bullet Points?",
@@ -1843,7 +1844,7 @@ function seEntry(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These examples are generic patterns. Your resume may still miss keywords required by ATS for a specific posting.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/resume-keyword-scanner#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Entry-Level Software Engineer Resume Bullet Points?",
@@ -1978,7 +1979,7 @@ function seJunior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These are illustrative patterns. Your resume must still reflect the frameworks, cloud, and domains each posting requires.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/resume-keyword-scanner#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Junior Software Engineer Resume Bullet Points?",
@@ -2085,7 +2086,7 @@ function seSenior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These examples are patterns. Your resume still needs the frameworks, cloud, and reliability terms each employer lists.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/resume-keyword-scanner#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Senior Software Engineer Resume Bullet Points?",
@@ -2238,7 +2239,7 @@ function pmEntry(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These examples are generic patterns. Your resume may still miss keywords required by ATS for a specific posting.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/resume-keyword-scanner#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Entry-Level Product Manager Resume Bullet Points?",
@@ -2374,7 +2375,7 @@ function pmJunior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These are templates. Your resume still needs the domain, metrics, and keywords from each specific job description.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/resume-keyword-scanner#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Junior Product Manager Resume Bullet Points?",
@@ -2481,7 +2482,7 @@ function pmSenior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These examples are templates. Your resume still needs the domain, metrics, and leadership verbs from each job description.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/resume-keyword-scanner#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Senior Product Manager Resume Bullet Points?",
@@ -2694,20 +2695,14 @@ export function splitProjectsAtBulletCount(
 }
 
 export function publicPathForBulletHub(role: ResumeBulletRole): string {
-  return `/${role}-resume-bullet-points`;
+  return `${roleResumePillarPath(role)}#bullet-points`;
 }
 
 export function publicPathForBulletDetail(
   role: ResumeBulletRole,
-  level: ResumeBulletLevel
+  _level: ResumeBulletLevel
 ): string {
-  const suffix =
-    level === "entry-level"
-      ? "-entry-level"
-      : level === "junior"
-        ? "-junior"
-        : "-senior";
-  return `/${role}-resume-bullet-points${suffix}`;
+  return `${roleResumePillarPath(role)}#bullet-points`;
 }
 
 export const RESUME_BULLET_LEVELS: ResumeBulletLevel[] = [

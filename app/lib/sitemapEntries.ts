@@ -6,12 +6,6 @@ import {
   type RoleSlug,
 } from "@/app/lib/seoPages";
 import { INDEXED_PROBLEM_SLUGS } from "@/app/lib/problemPages";
-import {
-  RESUME_BULLET_ROLES,
-  publicPathForBulletHub,
-  publicPathForBulletDetail,
-  RESUME_BULLET_LEVELS,
-} from "@/app/lib/resumeBulletPointContent";
 import { ROLE_ATS_PATH } from "@/app/lib/roleAtsTemplateConfig";
 
 const LEGAL_PATHS = [
@@ -25,10 +19,8 @@ const LEGAL_PATHS = [
 function priorityForPath(pathname: string): number {
   if (pathname === "/") return 1.0;
   if (pathname === "/check-resume-against-job-description") return 0.94;
-  if (
-    pathname === "/ats-resume-checker" ||
-    pathname === "/resume-keyword-scanner"
-  ) {
+  if (pathname === "/methodology") return 0.93;
+  if (pathname === "/ats-resume-checker") {
     return 0.91;
   }
   if (pathname === "/resume-examples") return 0.86;
@@ -45,13 +37,7 @@ function priorityForPath(pathname: string): number {
     return 0.85;
   }
   if (pathname.startsWith("/ats-resume-template-")) return 0.84;
-  if (pathname.endsWith("-resume-example")) return 0.84;
-  if (
-    /^\/[^/]+-resume-bullet-points(-entry-level|-junior|-senior)?$/.test(pathname)
-  ) {
-    return 0.82;
-  }
-  if (/^\/[^/]+-resume-keywords$/.test(pathname)) return 0.55;
+  if (pathname.endsWith("-resume-guide")) return 0.84;
   if (
     /^\/[a-z0-9-]+$/.test(pathname) &&
     Object.prototype.hasOwnProperty.call(KEYWORD_PAGES, pathname.slice(1))
@@ -85,11 +71,14 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     changeFrequency: "weekly" as const,
     priority: priorityForPath("/check-resume-against-job-description"),
   });
+  entries.push({
+    url: `${base}/methodology`,
+    lastModified: new Date("2026-05-13"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/methodology"),
+  });
   const toolClusterLastMod = new Date("2026-03-29");
-  const toolClusterPaths = [
-    "/ats-resume-checker",
-    "/resume-keyword-scanner",
-  ] as const;
+  const toolClusterPaths = ["/ats-resume-checker"] as const;
   for (const p of toolClusterPaths) {
     entries.push({
       url: `${base}${p}`,
@@ -133,42 +122,12 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/customize-resume-without-lying"),
   });
-  const resumeBulletLastMod = new Date("2026-04-05");
-  for (const role of RESUME_BULLET_ROLES) {
-    const hubPath = publicPathForBulletHub(role);
-    entries.push({
-      url: `${base}${hubPath}`,
-      lastModified: resumeBulletLastMod,
-      changeFrequency: "monthly" as const,
-      priority: priorityForPath(hubPath),
-    });
-    for (const level of RESUME_BULLET_LEVELS) {
-      const p = publicPathForBulletDetail(role, level);
-      entries.push({
-        url: `${base}${p}`,
-        lastModified: resumeBulletLastMod,
-        changeFrequency: "monthly" as const,
-        priority: priorityForPath(p),
-      });
-    }
-  }
   const legalLastMod = new Date("2026-03-23");
   for (const path of LEGAL_PATHS) {
     entries.push({
       url: `${base}${path}`,
       lastModified: legalLastMod,
       changeFrequency: "yearly" as const,
-      priority: priorityForPath(path),
-    });
-  }
-
-  const roleResumeKeywordLastMod = new Date("2026-04-17");
-  for (const { slug } of Object.values(KEYWORD_PAGES)) {
-    const path = `/${slug}-resume-keywords`;
-    entries.push({
-      url: `${base}${path}`,
-      lastModified: roleResumeKeywordLastMod,
-      changeFrequency: "monthly" as const,
       priority: priorityForPath(path),
     });
   }
@@ -185,7 +144,7 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
         priority: priorityForPath(roleHubPath),
       });
     }
-    const resumeGuidePath = `/${slug}-resume-example`;
+    const resumeGuidePath = `/${slug}-resume-guide`;
     entries.push({
       url: `${base}${resumeGuidePath}`,
       lastModified: resumeGuideLastMod,
@@ -217,40 +176,54 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
   return entries;
 }
 
-function pathnameFromEntryUrl(url: string, base: string): string {
-  const baseNorm = base.replace(/\/$/, "");
-  if (url.startsWith(baseNorm)) {
-    const p = url.slice(baseNorm.length) || "/";
-    return p.startsWith("/") ? p : `/${p}`;
-  }
+/** Normalize `<loc>` for dedupe (strip hash, trailing slash except origin-only). */
+function sitemapDedupeKey(url: string): string {
   try {
     const u = new URL(url);
-    return u.pathname || "/";
-  } catch {
-    return "/";
-  }
-}
-
-/** Keyword cluster URLs: /{role}-resume-keywords */
-export function isKeywordsClusterPath(pathname: string): boolean {
-  return /^\/[^/]+-resume-keywords$/.test(pathname);
-}
-
-export function splitSitemapEntries(
-  entries: MetadataRoute.Sitemap,
-  baseUrl: string
-): { keywords: MetadataRoute.Sitemap; resume: MetadataRoute.Sitemap } {
-  const keywords: MetadataRoute.Sitemap = [];
-  const resume: MetadataRoute.Sitemap = [];
-  const base = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
-
-  for (const entry of entries) {
-    const path = pathnameFromEntryUrl(entry.url, base);
-    if (isKeywordsClusterPath(path)) {
-      keywords.push(entry);
-    } else {
-      resume.push(entry);
+    u.hash = "";
+    let path = u.pathname;
+    if (path.length > 1 && path.endsWith("/")) {
+      path = path.slice(0, -1);
     }
+    u.pathname = path;
+    return u.href;
+  } catch {
+    return url.trim();
   }
-  return { keywords, resume };
+}
+
+function newerLastModified(
+  a?: string | Date,
+  b?: string | Date
+): string | Date | undefined {
+  if (!a) return b;
+  if (!b) return a;
+  const ta = typeof a === "string" ? new Date(a).getTime() : a.getTime();
+  const tb = typeof b === "string" ? new Date(b).getTime() : b.getTime();
+  if (Number.isNaN(ta)) return b;
+  if (Number.isNaN(tb)) return a;
+  return ta >= tb ? a : b;
+}
+
+/** One row per canonical URL — duplicate `<loc>`s merge to the freshest `lastModified`. */
+export function dedupeSitemapEntries(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
+  const byKey = new Map<string, MetadataRoute.Sitemap[number]>();
+  for (const entry of entries) {
+    const key = sitemapDedupeKey(entry.url);
+    const prev = byKey.get(key);
+    if (!prev) {
+      byKey.set(key, { ...entry, url: key });
+      continue;
+    }
+    byKey.set(key, {
+      ...prev,
+      url: key,
+      lastModified: newerLastModified(prev.lastModified, entry.lastModified),
+    });
+  }
+  return Array.from(byKey.values()).sort((x, y) => x.url.localeCompare(y.url));
+}
+
+export function getDedupedSitemapEntries(): MetadataRoute.Sitemap {
+  return dedupeSitemapEntries(getAllSitemapEntries());
 }

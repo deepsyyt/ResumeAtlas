@@ -24,7 +24,7 @@ import { goodResumeSnippet } from "@/app/lib/roleHubSeo";
 const ROLE = "Product Manager";
 
 const JD_CHECK_HREF = CHECK_RESUME_AGAINST_JD_FORM_HREF;
-const KEYWORD_SCANNER_HREF = "/resume-keyword-scanner";
+const KEYWORD_SCANNER_HREF = CHECK_RESUME_AGAINST_JD_FORM_HREF;
 const ATS_CHECKER_HREF = "/ats-resume-checker";
 
 const COPY_PASTE_TEMPLATE = `ALEX RIVERA
@@ -358,7 +358,7 @@ export function ProductManagerResumeExampleMain({ omitHero = false }: { omitHero
           </ul>
           <p className="mt-5 text-sm text-slate-600">
             <Link
-              href="/product-manager-resume-bullet-points"
+              href="/product-manager-resume-guide#bullet-points"
               className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
             >
               See more product manager resume bullet points

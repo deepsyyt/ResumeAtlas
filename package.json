@@ -12,7 +12,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "assets:ats-template": "node scripts/generate-ats-resume-assets.mjs"
+    "assets:ats-template": "node scripts/generate-ats-resume-assets.mjs",
+    "urls:inventory": "npx --yes tsx scripts/count-site-urls.ts",
+    "validate:diagnostics": "npx --yes tsx scripts/validate-diagnostics-registry.ts",
+    "validate:seo-phase1": "npx --yes tsx scripts/seo-phase1-qa.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

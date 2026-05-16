@@ -26,15 +26,15 @@ export default function BusinessAnalystVsDataAnalystResumePage() {
         </ul>
         <p className="mt-6 text-sm text-slate-700 sm:text-base">
           For direct examples, use{" "}
-          <Link href="/data-analyst-resume-example" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
+          <Link href="/data-analyst-resume-guide" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
             data analyst resume examples
           </Link>{" "}
           and compare against{" "}
-          <Link href="/business-analyst-resume-example" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
+          <Link href="/business-analyst-resume-guide" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
             business analyst resume examples
           </Link>
           . For the full keyword checklist, use the{" "}
-          <Link href="/data-analyst-resume-keywords" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
+          <Link href="/data-analyst-resume-guide#skills" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
             data analyst resume keywords hub
           </Link>
           .

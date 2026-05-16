@@ -196,7 +196,7 @@ export type RoleSlug =
   | "full-stack-developer";
 
 /**
- * Roles with a consolidated `/{role}-resume-example` page (patterns + full sample appendix). The
+ * Roles with a consolidated `/{role}-resume-guide` pillar (patterns + full sample appendix). The
  * `/{role}` hub should canonical to that URL so one page owns “example + walkthrough” intent.
  */
 export const ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE: readonly RoleSlug[] = [
@@ -304,18 +304,18 @@ export const RESUME_SAMPLE_HASH = "#resume-sample" as const;
 /** Prefer the merged role resume example (indexed) over the broad `/{role}` hub (noindex). */
 export function roleResumeSamplePath(role: RoleSlug): string {
   for (const r of ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE) {
-    if (r === role) return `/${role}-resume-example`;
+    if (r === role) return `/${role}-resume-guide`;
   }
-  return `/${role}-resume-example#bullet-points`;
+  return `/${role}-resume-guide#bullet-points`;
 }
 
 /**
- * Public URL for “resume example” intent: consolidated `/{role}-resume-example` for standalone roles;
+ * Public URL for “resume example” intent: consolidated `/{role}-resume-guide` for standalone roles;
  * otherwise the merged page sample anchor (same as {@link roleResumeSamplePath}).
  */
 export function resumeExamplePublicPath(role: RoleSlug): string {
   for (const r of ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE) {
-    if (r === role) return `/${role}-resume-example`;
+    if (r === role) return `/${role}-resume-guide`;
   }
   return roleResumeSamplePath(role);
 }

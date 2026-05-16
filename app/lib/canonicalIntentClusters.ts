@@ -4,9 +4,10 @@
  *
  * | Cluster        | Canonical path |
  * |----------------|----------------|
+ * | Homepage discovery | `/` exposes **role-only** link clusters (`#browse-by-role`); product/tools stay in-page and nav—not separate “topics” columns. |
  * | Brand + tools hub | / |
  * | Resume ↔ JD   | /check-resume-against-job-description |
- * | Keyword gaps  | /resume-keyword-scanner |
+ * | Keyword gaps  | (consolidated into posting fit workbench `/check-resume-against-job-description`) |
  * | ATS read/score | /ats-resume-checker |
  * | ATS layout guide | /ats-resume-template |
  * | Work history section | /resume-guides/resume-work-experience-examples |
@@ -49,26 +50,26 @@ export const CLUSTER_HOME_METADATA = {
 /** Resume ↔ this job description (tailor / compare / match). */
 export const CLUSTER_JD_MATCH_TOOL_COPY = {
   titleAbsolute:
-    "Match Resume to Job Description (Free) - Compare, Score & Fix Gaps (2026) | ResumeAtlas",
+    "Posting Fit Diagnosis — Match Resume to Job Description (Free, 2026) | ResumeAtlas",
   description:
-    "Match your resume to a specific job description and get an estimated match score, missing keywords, and section-level fixes in minutes. Free, instant, no signup. Built for long, modern postings and real ATS screening in 2026 hiring workflows.",
-  ogTitle: "Match Resume to Job Description (Free, 2026) | ResumeAtlas",
+    "Posting fit diagnosis: compare your resume to a specific job description for required skill debt, posting vocabulary coverage, semantic fit, evidence density, parse hygiene, skim friction, and truth-envelope alignment. Free, instant, no signup.",
+  ogTitle: "Posting fit diagnosis — resume vs job description (free, 2026) | ResumeAtlas",
   ogDescription:
-    "Resume vs job description: match-style feedback for the posting you paste—built for long, modern JDs—free, no signup.",
-  twitterTitle: "Match resume to job description (free)",
+    "Structured resume vs posting diagnostics—gates A–D—built for long, modern job descriptions.",
+  twitterTitle: "Posting fit diagnosis — resume vs job description (free)",
   twitterDescription:
-    "Compare resume to the posting—instant gaps; tuned for how employers write job descriptions today.",
-  h1: "Match your resume to this job description",
+    "Compare resume to the posting: vocabulary, hard gaps, fit, and proof—in one flow.",
+  h1: "Posting fit diagnosis: match your resume to this job description",
   intro:
-    "Paste your resume and the exact job posting. You get feedback focused on that pairing: how well your bullets and skills reflect the posting’s language, which keywords are missing or weak, and what to change first—so you are tailoring to this job description, not polishing a generic file.",
+    "Paste your resume and the exact job posting. ResumeAtlas frames the readout as posting fit diagnosis: vocabulary against the posting, required skill debt, semantic fit, evidence density, parse hygiene, skim friction, and truth-envelope alignment—so you tailor to this job description with defensible edits, not generic polish.",
   topStripStrong:
     "Resume-to-job-description matching: use the same posting text you will apply with.",
-  webAppName: "Resume vs job description checker",
+  webAppName: "ResumeAtlas posting fit diagnosis",
   webAppDescription:
-    "Compare resume text with a job description for keyword overlap, skill gaps, and match-style signals before you apply.",
+    "Posting fit diagnosis: compare resume text to a job posting for vocabulary coverage, required skill debt, semantic fit, evidence density, parse hygiene, skim friction, and truth-envelope alignment before you apply.",
   differentiatorHeading: "Different from keyword-only scans and ATS-only checks",
   differentiatorBody: [
-    "A keyword scanner highlights missing terms. This flow keeps the full job description in view—requirements, responsibilities, and repeated phrases—so edits read as evidence for this role, not a disconnected keyword list.",
+    "Posting vocabulary coverage and required skill debt are surfaced as Gate B signals on this workbench—without splitting into a separate vanity “keyword tool” URL.",
     "An ATS checker emphasizes whether machines can read your layout and sections. That matters, but it does not replace proving fit to this posting. Use the ATS checker when structure and parsing are the question; use this page when you have a real JD and need alignment and tailoring priorities.",
   ],
   serpVariantsParagraph:

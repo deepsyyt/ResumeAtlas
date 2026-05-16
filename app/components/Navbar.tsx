@@ -253,7 +253,7 @@ export function Navbar() {
               ATS resume checker
             </Link>
             <Link
-              href="/resume-keyword-scanner"
+              href="/check-resume-against-job-description"
               className={desktopNavLinkClass}
               title="Resume keyword scanner"
             >
@@ -314,7 +314,7 @@ export function Navbar() {
             <Link href="/ats-resume-checker" className={mobileNavLinkClass} onClick={closeMobileNav}>
               ATS resume checker
             </Link>
-            <Link href="/resume-keyword-scanner" className={mobileNavLinkClass} onClick={closeMobileNav}>
+            <Link href="/check-resume-against-job-description" className={mobileNavLinkClass} onClick={closeMobileNav}>
               Keyword scanner
             </Link>
             <a href="/#how-ats-works" className={mobileNavLinkClass} onClick={closeMobileNav}>

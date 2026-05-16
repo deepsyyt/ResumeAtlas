@@ -245,7 +245,7 @@ export default function ResumeSkillsExamplesPage() {
             </li>
             <li>
               <Link
-                href="/resume-keyword-scanner"
+                href="/check-resume-against-job-description"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Resume keyword scanner
@@ -261,7 +261,7 @@ export default function ResumeSkillsExamplesPage() {
             </li>
             <li>
               <Link
-                href="/data-scientist-resume-keywords"
+                href="/data-scientist-resume-guide#skills"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Data scientist resume keywords
@@ -269,7 +269,7 @@ export default function ResumeSkillsExamplesPage() {
             </li>
             <li>
               <Link
-                href="/devops-engineer-resume-keywords"
+                href="/devops-engineer-resume-guide#skills"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 DevOps engineer resume keywords

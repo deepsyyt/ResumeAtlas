@@ -16,7 +16,9 @@ import {
   roleResumeExamplePath,
 } from "@/app/lib/searchIntentSeo";
 import type { ResumeSeoTopic } from "@/app/lib/resumeTopicTypes";
-import { ResumeTopicSectionForGuide } from "@/app/seo/[slug]/page";
+import { ResumeTopicSectionForGuide } from "@/app/components/resumeTopicGuide";
+import { PostingFitAnalyticsRoot } from "@/app/components/postingFit/PostingFitAnalyticsRoot";
+import { RolePostingFitMoat } from "@/app/components/postingFit/RolePostingFitMoat";
 
 type PageParams = { roleSlug: RoleSlug };
 
@@ -93,15 +95,19 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
   const heroIntro = isDataAnalyst
     ? "Use recruiter-ready examples, ATS-friendly templates, and proven bullet points for SQL, Excel, Python, Tableau, Power BI, and analytics roles."
     : isDataScientist
-    ? "Use this page for full data scientist resume examples and template structure. For keyword lists or bullet-only banks, use the dedicated pages so your edits stay intent-specific."
+    ? "Use this page for full data scientist resume examples and template structure—the keyword list and bullet patterns are linked below as on-page sections."
     : isSoftwareEngineer
-    ? "Use this page for full software engineer resume example/sample/template intent. For ATS keyword checklists or bullet-only banks, use the dedicated software engineer pages."
+    ? "Use this page for full software engineer resume example/sample/template intent—keywords and bullet sections are linked below on the same URL."
     : isBackendDeveloper
-    ? "Use this page for full backend developer resume example/sample/template intent. For ATS keyword checklists, use the dedicated backend keyword page."
+    ? "Use this page for full backend developer resume example/sample/template intent—for ATS keyword checklists, jump to the keywords section below."
     : `These section-by-section patterns reflect how hiring teams and ATS tools read ${config.roleName.toLowerCase()} resumes in ${CONTENT_FRESHNESS_YEAR} - plain-text structure, proof in bullets, and honest posting-aligned keywords. Use it as a sample outline, then compare your resume to a job description to close gaps before you apply.`;
 
   return (
-    <main className="min-h-screen bg-white text-slate-900">
+    <>
+      {role === "software-engineer" || role === "data-analyst" || role === "product-manager" ? (
+        <PostingFitAnalyticsRoot surface="role_hub" />
+      ) : null}
+      <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/60">
         <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-16 lg:px-8">
           <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
@@ -114,14 +120,14 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
             <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700">
               For ATS terms, use{" "}
               <Link
-                href="/data-scientist-resume-keywords"
+                href="#skills"
                 className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 data scientist resume keywords
               </Link>
               . For copy-ready line banks, use{" "}
               <Link
-                href="/data-scientist-resume-bullet-points"
+                href="#bullet-points"
                 className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 data scientist resume bullet points
@@ -133,7 +139,7 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
             <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700">
               For ATS terms, use{" "}
               <Link
-                href="/backend-developer-resume-keywords"
+                href="#skills"
                 className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 backend developer resume keywords
@@ -159,14 +165,14 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
             <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700">
               For ATS terms, use{" "}
               <Link
-                href="/software-engineer-resume-keywords"
+                href="#skills"
                 className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 software engineer resume keywords
               </Link>
               . For line banks by level, use{" "}
               <Link
-                href="/software-engineer-resume-bullet-points"
+                href="#bullet-points"
                 className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 software engineer resume bullet points
@@ -249,6 +255,11 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
               </Link>
             ) : null}
           </div>
+          {role === "software-engineer" || role === "data-analyst" || role === "product-manager" ? (
+            <div className="mx-auto mt-8 max-w-3xl">
+              <RolePostingFitMoat role={role} />
+            </div>
+          ) : null}
         </div>
       </section>
 
@@ -301,5 +312,6 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
         </section>
       ) : null}
     </main>
+    </>
   );
 }

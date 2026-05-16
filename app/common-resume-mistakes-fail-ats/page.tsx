@@ -211,22 +211,22 @@ export default function CommonResumeMistakesFailATSPage() {
                 </Link>
               </li>
               <li>
-                <Link href="/software-engineer-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/software-engineer-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Software Engineer ATS keywords
                 </Link>
               </li>
               <li>
-                <Link href="/data-scientist-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/data-scientist-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Data Scientist ATS keywords
                 </Link>
               </li>
               <li>
-                <Link href="/product-manager-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/product-manager-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Product Manager ATS keywords
                 </Link>
               </li>
               <li>
-                <Link href="/resume-keyword-scanner#ats-checker-form" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/check-resume-against-job-description#ats-checker-form" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Resume keyword scanner
                 </Link>
               </li>

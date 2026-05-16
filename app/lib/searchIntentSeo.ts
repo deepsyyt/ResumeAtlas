@@ -20,22 +20,15 @@ export function stripResumeAtlasTitleSuffix(title: string): string {
 /**
  * Canonical URL owners (indexed) vs. query intent — use when writing titles, descriptions, and internal links.
  *
- * **`/{role}-resume-example`** — Example / sample / template intent: queries like
- * "{role} resume example", "{role} resume sample", "ATS {role} resume", "{role} resume template".
+ * **`/{role}-resume-guide`** — Single pillar per role: examples, keywords, bullets, summaries, skills, and
+ * projects on one authoritative URL (anchors for deep jumps). Consolidates legacy
+ * `-resume-example`, `-resume-keywords`, and bullet-hub URLs via 301s.
  *
- * **`/{role}-resume-keywords`** — Keyword list / ATS coverage intent: queries like
- * "{role} resume keywords", "ATS keywords for {role}", "{role} skills to put on resume".
+ * **`/{role}`** — Career / interview-framed hub (indexed only when there is no standalone pillar takeover in
+ * `seoPages.ts`; otherwise noindex with canonical to `/{role}-resume-guide`).
  *
- * **`/{role}-resume-bullet-points`** (subset of roles) — Bullet-only intent: queries like
- * "{role} resume bullet points", "{role} resume achievements examples".
- *
- * **`/{role}`** — Career / interview-framed hub (indexed only when there is no standalone example takeover;
- * otherwise noindex with canonical to `/{role}-resume-example`).
- *
- * **Thin-content avoidance:** `/{role}/keywords/{intent}` pages are **noindex** (see
- * `NOINDEX_ROLE_KEYWORD_INTENT_PAGES` in `roleClusterIndexPolicy.ts`); they support depth internally while the
- * keyword **hub** stays the indexed owner for keyword intent. Legacy `/{role}/resume/{topic}` routes
- * are noindex with canonical to the matching fragment on `/{role}-resume-example` where mapped.
+ * **Thin-content avoidance:** `/{role}/keywords/{intent}` and legacy hyphen keyword URLs **301** to the pillar.
+ * Thin `/{role}/resume/{topic}` routes remain noindex with canonical to fragment on the pillar where mapped.
  */
 
 export function absoluteCanonicalUrl(path: string): string {
@@ -44,12 +37,19 @@ export function absoluteCanonicalUrl(path: string): string {
   return `${base}${normalized}`;
 }
 
-export function roleResumeExamplePath(role: RoleSlug): string {
-  return `/${role}-resume-example`;
+/** Canonical indexed URL for merged role pillar (SEO Phase 1). */
+export function roleResumePillarPath(role: RoleSlug): string {
+  return `/${role}-resume-guide`;
 }
 
+/** Alias: legacy name; resolves to pillar. */
+export function roleResumeExamplePath(role: RoleSlug): string {
+  return roleResumePillarPath(role);
+}
+
+/** Keyword hub merges into pillar; canonical is the pillar URL (no duplicate owners). */
 export function roleResumeKeywordsPath(role: RoleSlug): string {
-  return `/${role}-resume-keywords`;
+  return roleResumePillarPath(role);
 }
 
 export function roleResumeExampleListMeta(role: RoleSlug): { title: string; description: string } {

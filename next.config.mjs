@@ -21,8 +21,18 @@ const RESUME_BULLET_ROLES = [
   "product-manager",
 ];
 
+/** Align with `ROLE_KEYWORD_INTENTS` in `app/lib/roleSeo.ts` (next.config is plain JS). */
+const ROLE_KEYWORD_INTENTS = [
+  "core-keywords",
+  "technical-skills",
+  "tools-platforms",
+  "action-verbs",
+  "projects",
+  "summary",
+];
+
 /**
- * Roles with consolidated `/{role}-resume-example` (patterns + sample appendix).
+ * Roles with consolidated `/{role}-resume-guide` pillar (patterns + sample appendix).
  * Their `/{role}` hub is noindex and redirects here so one URL owns the cluster.
  */
 const RESUME_EXAMPLE_STANDALONE_ROLES = [
@@ -51,49 +61,148 @@ const nextConfig = {
         source: "/_next/static/chunks/app/LayoutGroupContext.mjs.map",
         destination: "/api/empty-source-map",
       },
-      // Canonical keyword hub moved to `/{role}-resume-keywords` (served by existing `/{role}/keywords` page).
+      // Canonical role pillar (`/{role}-resume-guide`) internally serves `/{role}/resume-example`.
       {
-        source: "/:roleSlug-resume-keywords",
-        destination: "/:roleSlug/keywords",
-      },
-      {
-        source: "/:roleSlug-resume-keywords/",
-        destination: "/:roleSlug/keywords",
-      },
-      // Canonical merged role page: `/{role}-resume-example` → `/{role}/resume-example`
-      {
-        source: "/:roleSlug-resume-example",
+        source: "/:roleSlug-resume-guide",
         destination: "/:roleSlug/resume-example",
       },
       {
-        source: "/:roleSlug-resume-example/",
+        source: "/:roleSlug-resume-guide/",
         destination: "/:roleSlug/resume-example",
       },
-      ...RESUME_BULLET_ROLES.flatMap((role) => [
-        {
-          source: `/${role}-resume-bullet-points`,
-          destination: `/resume-bullet-points/${role}`,
-        },
-        {
-          source: `/${role}-resume-bullet-points/`,
-          destination: `/resume-bullet-points/${role}`,
-        },
-        {
-          source: `/${role}-resume-bullet-points-entry-level`,
-          destination: `/resume-bullet-points/${role}/entry-level`,
-        },
-        {
-          source: `/${role}-resume-bullet-points-junior`,
-          destination: `/resume-bullet-points/${role}/junior`,
-        },
-        {
-          source: `/${role}-resume-bullet-points-senior`,
-          destination: `/resume-bullet-points/${role}/senior`,
-        },
-      ]),
     ];
   },
   async redirects() {
+    const pillar = (role) => `/${role}-resume-guide`;
+
+    const pathnameBulletRedirects = RESUME_BULLET_ROLES.flatMap((role) => {
+      const dest = pillar(role);
+      return [
+        {
+          source: `/resume-bullet-points/${role}`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/resume-bullet-points/${role}/`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/resume-bullet-points/${role}/entry-level`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/resume-bullet-points/${role}/junior`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/resume-bullet-points/${role}/senior`,
+          destination: dest,
+          permanent: true,
+        },
+      ];
+    });
+
+    const hyphenBulletRedirects = RESUME_BULLET_ROLES.flatMap((role) => {
+      const dest = pillar(role);
+      return [
+        {
+          source: `/${role}-resume-bullet-points`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}-resume-bullet-points/`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}-resume-bullet-points-entry-level`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}-resume-bullet-points-entry-level/`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}-resume-bullet-points-junior`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}-resume-bullet-points-junior/`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}-resume-bullet-points-senior`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}-resume-bullet-points-senior/`,
+          destination: dest,
+          permanent: true,
+        },
+      ];
+    });
+
+    const resumeBulletLegacyTopicRedirects = RESUME_BULLET_ROLES.flatMap((role) => {
+      const dest = pillar(role);
+      return [
+        {
+          source: `/${role}/resume/bullet-points`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}/resume/bullet-points/`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}/resume/bullet-points-entry-level`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}/resume/bullet-points-entry-level/`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}/resume/bullet-points-senior`,
+          destination: dest,
+          permanent: true,
+        },
+        {
+          source: `/${role}/resume/bullet-points-senior/`,
+          destination: dest,
+          permanent: true,
+        },
+      ];
+    });
+
+    const roleKeywordIntentRedirects = ROLE_SLUGS.flatMap((role) =>
+      ROLE_KEYWORD_INTENTS.flatMap((intent) => [
+        {
+          source: `/${role}/keywords/${intent}`,
+          destination: pillar(role),
+          permanent: true,
+        },
+        {
+          source: `/${role}/keywords/${intent}/`,
+          destination: pillar(role),
+          permanent: true,
+        },
+      ]),
+    );
+
     const roleHubRedirects = ROLE_SLUGS.flatMap((role) => {
       return [
         {
@@ -103,165 +212,121 @@ const nextConfig = {
         },
         {
           source: `/${role}/resume-example`,
-          destination: `/${role}-resume-example`,
+          destination: pillar(role),
           permanent: true,
         },
         {
           source: `/${role}/resume-example/`,
-          destination: `/${role}-resume-example`,
+          destination: pillar(role),
           permanent: true,
         },
-      {
-        source: `/${role}/resume/`,
-        destination: `/${role}`,
-        permanent: true,
-      },
-      {
-        source: `/${role}/keywords`,
-        destination: `/${role}-resume-keywords`,
-        permanent: true,
-      },
-      {
-        source: `/${role}/keywords/`,
-        destination: `/${role}-resume-keywords`,
-        permanent: true,
-      },
-    ];
+        {
+          source: `/${role}/resume/`,
+          destination: `/${role}`,
+          permanent: true,
+        },
+        {
+          source: `/${role}/keywords`,
+          destination: pillar(role),
+          permanent: true,
+        },
+        {
+          source: `/${role}/keywords/`,
+          destination: pillar(role),
+          permanent: true,
+        },
+      ];
     });
 
-    const resumeBulletCanonicalRedirects = RESUME_BULLET_ROLES.flatMap((role) => [
-      {
-        source: `/resume-bullet-points/${role}`,
-        destination: `/${role}-resume-bullet-points`,
-        permanent: true,
-      },
-      {
-        source: `/resume-bullet-points/${role}/`,
-        destination: `/${role}-resume-bullet-points`,
-        permanent: true,
-      },
-      {
-        source: `/resume-bullet-points/${role}/entry-level`,
-        destination: `/${role}-resume-bullet-points-entry-level`,
-        permanent: true,
-      },
-      {
-        source: `/resume-bullet-points/${role}/junior`,
-        destination: `/${role}-resume-bullet-points-junior`,
-        permanent: true,
-      },
-      {
-        source: `/resume-bullet-points/${role}/senior`,
-        destination: `/${role}-resume-bullet-points-senior`,
-        permanent: true,
-      },
-    ]);
-
-    // Keep bullet-point intent on the dedicated bullet hubs for supported roles.
-    const resumeBulletLegacyTopicRedirects = RESUME_BULLET_ROLES.flatMap((role) => [
-      {
-        source: `/${role}/resume/bullet-points`,
-        destination: `/${role}-resume-bullet-points`,
-        permanent: true,
-      },
-      {
-        source: `/${role}/resume/bullet-points/`,
-        destination: `/${role}-resume-bullet-points`,
-        permanent: true,
-      },
-      {
-        source: `/${role}/resume/bullet-points-entry-level`,
-        destination: `/${role}-resume-bullet-points-entry-level`,
-        permanent: true,
-      },
-      {
-        source: `/${role}/resume/bullet-points-entry-level/`,
-        destination: `/${role}-resume-bullet-points-entry-level`,
-        permanent: true,
-      },
-      {
-        source: `/${role}/resume/bullet-points-senior`,
-        destination: `/${role}-resume-bullet-points-senior`,
-        permanent: true,
-      },
-      {
-        source: `/${role}/resume/bullet-points-senior/`,
-        destination: `/${role}-resume-bullet-points-senior`,
-        permanent: true,
-      },
-    ]);
-
     const resumeGuideTopicRedirects = ROLE_SLUGS.flatMap((role) => {
-      const topics = [
-        "bullet-points",
-        "skills",
-        "summary",
-        "projects",
-      ];
+      const topics = ["bullet-points", "skills", "summary", "projects"];
       return topics.flatMap((topic) => [
         {
           source: `/${role}/resume/${topic}`,
-          destination: `/${role}-resume-example#${topic}`,
+          destination: `${pillar(role)}#${topic}`,
           permanent: true,
         },
         {
           source: `/${role}/resume/${topic}/`,
-          destination: `/${role}-resume-example#${topic}`,
+          destination: `${pillar(role)}#${topic}`,
           permanent: true,
         },
       ]);
     });
 
-    /**
-     * Roles with a consolidated example page: `/{role}` hub → `/{role}-resume-example` (canonical owner).
-     */
-    const standaloneRoleHubToResumeExampleRedirects =
+    const standaloneRoleHubToPillarRedirects =
       RESUME_EXAMPLE_STANDALONE_ROLES.flatMap((role) => [
         {
           source: `/${role}`,
-          destination: `/${role}-resume-example`,
+          destination: pillar(role),
           permanent: true,
         },
         {
           source: `/${role}/`,
-          destination: `/${role}-resume-example`,
+          destination: pillar(role),
           permanent: true,
         },
       ]);
 
-    const resumeGuideToExampleRedirects = ROLE_SLUGS.flatMap((role) => [
-      {
-        source: `/${role}-resume-guide`,
-        destination: `/${role}-resume-example`,
-        permanent: true,
-      },
-      {
-        source: `/${role}-resume-guide/`,
-        destination: `/${role}-resume-example`,
-        permanent: true,
-      },
-    ]);
-
-    const resumeTemplateToExampleRedirects = ROLE_SLUGS.flatMap((role) => [
+    const resumeTemplateToPillarRedirects = ROLE_SLUGS.flatMap((role) => [
       {
         source: `/${role}-resume-template`,
-        destination: `/${role}-resume-example`,
+        destination: pillar(role),
         permanent: true,
       },
       {
         source: `/${role}-resume-template/`,
-        destination: `/${role}-resume-example`,
+        destination: pillar(role),
+        permanent: true,
+      },
+    ]);
+
+    const legacyHyphenExampleAndKeywordRedirects = ROLE_SLUGS.flatMap((role) => [
+      {
+        source: `/${role}-resume-example`,
+        destination: pillar(role),
+        permanent: true,
+      },
+      {
+        source: `/${role}-resume-example/`,
+        destination: pillar(role),
+        permanent: true,
+      },
+      {
+        source: `/${role}-resume-keywords`,
+        destination: pillar(role),
+        permanent: true,
+      },
+      {
+        source: `/${role}-resume-keywords/`,
+        destination: pillar(role),
+        permanent: true,
+      },
+    ]);
+
+    const seoBulletRedirects = RESUME_BULLET_ROLES.flatMap((role) => [
+      {
+        source: `/seo/bullet-points-${role}-resume`,
+        destination: pillar(role),
+        permanent: true,
+      },
+      {
+        source: `/seo/bullet-points-${role}-resume/`,
+        destination: pillar(role),
         permanent: true,
       },
     ]);
 
     return [
-      ...resumeBulletCanonicalRedirects,
+      ...pathnameBulletRedirects,
+      ...hyphenBulletRedirects,
       ...resumeBulletLegacyTopicRedirects,
-      ...resumeTemplateToExampleRedirects,
+      ...resumeTemplateToPillarRedirects,
+      ...roleKeywordIntentRedirects,
       ...roleHubRedirects,
-      ...standaloneRoleHubToResumeExampleRedirects,
-      ...resumeGuideToExampleRedirects,
+      ...standaloneRoleHubToPillarRedirects,
+      ...legacyHyphenExampleAndKeywordRedirects,
+      ...seoBulletRedirects,
       ...resumeGuideTopicRedirects,
       {
         source: "/resume-vs-job-description-checker",
@@ -280,6 +345,16 @@ const nextConfig = {
       },
       {
         source: "/match-resume-to-job-description/",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/resume-keyword-scanner",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/resume-keyword-scanner/",
         destination: "/check-resume-against-job-description",
         permanent: true,
       },
@@ -315,17 +390,17 @@ const nextConfig = {
       },
       {
         source: "/ats-keywords-data-scientist-resumes",
-        destination: "/data-scientist-resume-keywords",
+        destination: "/data-scientist-resume-guide",
         permanent: true,
       },
       {
         source: "/ats-keywords-data-scientist-resumes/",
-        destination: "/data-scientist-resume-keywords",
+        destination: "/data-scientist-resume-guide",
         permanent: true,
       },
       {
         source: "/ats-keywords/:role",
-        destination: "/:role-resume-keywords",
+        destination: "/:role-resume-guide",
         permanent: true,
       },
       {
@@ -381,35 +456,25 @@ const nextConfig = {
       },
       {
         source: "/ats-resume-template-data-analyst",
-        destination: "/data-analyst-resume-example",
+        destination: "/data-analyst-resume-guide",
         permanent: true,
       },
       {
         source: "/ats-resume-template-data-analyst/",
-        destination: "/data-analyst-resume-example",
+        destination: "/data-analyst-resume-guide",
         permanent: true,
       },
       {
         source: "/ats-resume-template-product-manager",
-        destination: "/product-manager-resume-example",
+        destination: "/product-manager-resume-guide",
         permanent: true,
       },
       {
         source: "/ats-resume-template-product-manager/",
-        destination: "/product-manager-resume-example",
+        destination: "/product-manager-resume-guide",
         permanent: true,
       },
-      {
-        source: "/seo/bullet-points-:role-resume",
-        destination: "/:role/resume/bullet-points",
-        permanent: true,
-      },
-      {
-        source:
-          "/seo/:role-resume-:topic(skills|summary|responsibilities|projects|experience-examples)",
-        destination: "/:role-resume-example#:topic",
-        permanent: true,
-      },
+      // Legacy /seo/* URLs handled by middleware.ts → /{role}-resume-guide#{topic}
       // Problems intent deduplication (keep only one pillar page per intent)
       {
         source: "/problems/why-am-i-not-getting-interviews",
@@ -459,6 +524,16 @@ const nextConfig = {
       {
         source: "/problems/why-recruiters-ignore-resume/",
         destination: "/problems/resume-not-getting-interviews",
+        permanent: true,
+      },
+      {
+        source: "/sitemap-resume.xml",
+        destination: "/sitemap.xml",
+        permanent: true,
+      },
+      {
+        source: "/sitemap-keywords.xml",
+        destination: "/sitemap.xml",
         permanent: true,
       },
     ];

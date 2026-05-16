@@ -1,4 +1,4 @@
-/** Shared with `app/seo/[slug]/page.tsx` and role resume topic routes */
+/** Shared with `app/components/resumeTopicGuide.tsx` and role resume topic routes */
 export type ResumeSeoTopic =
   | "bullet-points"
   | "skills"

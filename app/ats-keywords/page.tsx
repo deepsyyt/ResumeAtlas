@@ -42,7 +42,7 @@ export default function ATSKeywordsIndexPage() {
           {items.map((p) => (
             <li key={p.slug} className="rounded-xl border border-slate-200 bg-white p-4">
               <Link
-                href={`/${p.slug}-resume-keywords`}
+                href={`/${p.slug}-resume-guide#skills`}
                 className="font-semibold text-slate-900 hover:underline"
               >
                 {p.h1}
@@ -60,7 +60,7 @@ export default function ATSKeywordsIndexPage() {
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link
-                href="/data-scientist-resume-example#summary"
+                href="/data-scientist-resume-guide#summary"
                 className="text-sky-700 hover:underline"
               >
                 Data Scientist resume summary examples
@@ -68,7 +68,7 @@ export default function ATSKeywordsIndexPage() {
             </li>
             <li>
               <Link
-                href="/product-manager-resume-example#bullet-points"
+                href="/product-manager-resume-guide#bullet-points"
                 className="text-sky-700 hover:underline"
               >
                 Product Manager resume responsibilities

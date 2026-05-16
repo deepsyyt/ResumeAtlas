@@ -14,7 +14,7 @@ import {
 import { roleToProblemLinkLabel, roleToProblemPath } from "@/app/lib/roleSeo";
 import { goodResumeSnippet } from "@/app/lib/roleHubSeo";
 import { getSiteUrl } from "@/app/lib/siteUrl";
-import { absoluteCanonicalUrl, roleResumeExamplePath } from "@/app/lib/searchIntentSeo";
+import { absoluteCanonicalUrl, roleResumeExamplePath, roleResumePillarPath } from "@/app/lib/searchIntentSeo";
 import { CONTENT_FRESHNESS_YEAR } from "@/app/lib/contentFreshness";
 
 type PageParams = {
@@ -35,7 +35,7 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
     title: `${rn} Resume Guide (${CONTENT_FRESHNESS_YEAR}): Examples, Keywords & ATS Fixes | ResumeAtlas`,
     description:
       `${rn} resume guide for ${CONTENT_FRESHNESS_YEAR}: section-by-section examples, ATS keywords, bullet patterns, and posting-specific resume-vs-job-description fixes. Use ResumeAtlas free tools to improve match quality before you apply.`,
-    // Standalone `/{role}-resume-example` is the indexed URL; hub duplicates canonical to avoid competing URLs.
+    // Standalone `/{role}-resume-guide` is the indexed URL; hub duplicates canonical to avoid competing URLs.
     robots: standaloneExample
       ? { index: false, follow: true }
       : { index: true, follow: true },
@@ -59,17 +59,12 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
   const sampleConfig = resumePageConfigForRole(role);
   const canonicalBase = getSiteUrl();
   const rolePath = `/${role}`;
-  const atsKeywordsPath = `/${role}-resume-keywords`;
-  const resumeGuidePath = `/${role}-resume-example`;
+  const resumeGuidePath = roleResumePillarPath(role);
+  const atsKeywordsPath = `${resumeGuidePath}#skills`;
   const skillsPath = `${resumeGuidePath}#skills`;
   const summaryPath = `${resumeGuidePath}#summary`;
   const projectsPath = `${resumeGuidePath}#projects`;
-  const bulletsPath =
-    role === "data-scientist"
-      ? "/data-scientist-resume-bullet-points"
-      : role === "software-engineer"
-        ? "/software-engineer-resume-bullet-points"
-        : `${resumeGuidePath}#bullet-points`;
+  const bulletsPath = `${resumeGuidePath}#bullet-points`;
 
   const faqItems = [
     {
@@ -178,7 +173,7 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
               Check resume against job description
             </Link>
             <Link
-              href="/resume-keyword-scanner"
+              href="/check-resume-against-job-description"
               className="inline-flex rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
             >
               Find missing keywords in your resume
@@ -225,7 +220,7 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
               </Link>
             </li>
             <li>
-              <Link href="/resume-keyword-scanner" className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
+              <Link href="/check-resume-against-job-description" className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
                 Find missing keywords in your resume
               </Link>
             </li>

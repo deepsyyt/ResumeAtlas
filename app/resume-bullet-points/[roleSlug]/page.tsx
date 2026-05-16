@@ -14,6 +14,10 @@ import {
 } from "@/app/lib/resumeBulletPointContent";
 import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
 import { getSiteUrl } from "@/app/lib/siteUrl";
+import {
+  absoluteCanonicalUrl,
+  roleResumePillarPath,
+} from "@/app/lib/searchIntentSeo";
 import { ResumeBulletPreviewCopyButton } from "@/app/components/ResumeBulletPreviewCopyButton";
 import { ResumeExampleSeoFunnel } from "@/app/components/ResumeExampleSeoFunnel";
 
@@ -36,18 +40,19 @@ export function generateStaticParams(): { roleSlug: ResumeBulletRole }[] {
 export function generateMetadata({ params }: { params: PageParams }): Metadata {
   if (!isResumeBulletRole(params.roleSlug)) return {};
   const hub = getResumeBulletHub(params.roleSlug);
-  const canonicalPath = `/${params.roleSlug}-resume-bullet-points`;
-  const canonical = `${getSiteUrl().replace(/\/$/, "")}${canonicalPath}`;
+  const canonicalAbs = absoluteCanonicalUrl(
+    roleResumePillarPath(params.roleSlug)
+  );
   return {
     title: hub.metaTitle,
     description: hub.metaDescription,
     keywords: hub.keywords,
-    robots: { index: true, follow: true },
-    alternates: { canonical },
+    robots: { index: false, follow: true },
+    alternates: { canonical: canonicalAbs },
     openGraph: {
       title: hub.metaTitle,
       description: hub.metaDescription,
-      url: canonical,
+      url: canonicalAbs,
       type: "website",
     },
     twitter: {
@@ -166,7 +171,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
               Generate bullets for my resume
             </Link>
             <Link
-              href="/resume-keyword-scanner#ats-checker-form"
+              href="/check-resume-against-job-description#ats-checker-form"
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50"
             >
               Find missing keywords in your resume
@@ -191,17 +196,17 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
                 This page is a bullet bank (not a full resume template). For full resume example/sample intent,
                 use{" "}
                 <Link
-                  href="/data-scientist-resume-example"
+                  href="/data-scientist-resume-guide"
                   className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  data scientist resume example
+                  data scientist resume guide
                 </Link>
                 . For ATS terms, use{" "}
                 <Link
-                  href="/data-scientist-resume-keywords"
+                  href="/data-scientist-resume-guide#skills"
                   className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  data scientist resume keywords
+                  the keywords section
                 </Link>
                 .
               </div>
@@ -211,17 +216,17 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
                 This page is a bullet bank (not a full resume template). For full resume example/sample intent,
                 use{" "}
                 <Link
-                  href="/software-engineer-resume-example"
+                  href="/software-engineer-resume-guide"
                   className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  software engineer resume example
+                  software engineer resume guide
                 </Link>
                 . For ATS terms and technical-skills keywords, use{" "}
                 <Link
-                  href="/software-engineer-resume-keywords"
+                  href="/software-engineer-resume-guide#skills"
                   className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  software engineer resume keywords
+                  the keywords section
                 </Link>
                 .
               </div>
@@ -256,7 +261,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
           <p className="mt-6 text-sm leading-relaxed text-slate-700">
             Compared to the posting, many resumes lose keyword overlap first - so run a scan to{" "}
             <Link
-              href="/resume-keyword-scanner#ats-checker-form"
+              href="/check-resume-against-job-description#ats-checker-form"
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
               find missing keywords in your {hub.roleName.toLowerCase()} resume
@@ -443,7 +448,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
               Compare your resume with this job description
             </Link>
             <Link
-              href="/resume-keyword-scanner#ats-checker-form"
+              href="/check-resume-against-job-description#ats-checker-form"
               className="inline-flex items-center justify-center rounded-xl border border-amber-300/80 bg-white px-4 py-2.5 text-sm font-semibold text-amber-950 transition hover:bg-amber-50"
             >
               Find missing keywords in your {hub.roleName.toLowerCase()} resume
@@ -473,7 +478,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
             <li>
               <Link
-                href={`/${role}-resume-keywords`}
+                href={`/${role}-resume-guide#skills`}
                 className="block rounded-xl border border-white bg-white p-4 text-sm font-medium text-sky-800 shadow-sm transition hover:border-sky-200"
               >
                 ATS keywords for {hub.roleName.toLowerCase()} resumes →
@@ -481,7 +486,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
             </li>
             <li>
               <Link
-                href={`/${role}-resume-example`}
+                href={`/${role}-resume-guide`}
                 className="block rounded-xl border border-white bg-white p-4 text-sm font-medium text-sky-800 shadow-sm transition hover:border-sky-200"
               >
                 Full {hub.roleName} resume guide (summary, skills, projects) →

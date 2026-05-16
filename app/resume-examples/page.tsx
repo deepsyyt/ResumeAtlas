@@ -123,7 +123,7 @@ export default function ResumeExamplesIndexPage() {
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link
-                href="/data-scientist-resume-example#bullet-points"
+                href="/data-scientist-resume-guide#bullet-points"
                 className="text-sky-700 hover:underline"
               >
                 Data Scientist resume bullet points
@@ -131,7 +131,7 @@ export default function ResumeExamplesIndexPage() {
             </li>
             <li>
               <Link
-                href="/software-engineer-resume-example#skills"
+                href="/software-engineer-resume-guide#skills"
                 className="text-sky-700 hover:underline"
               >
                 Software Engineer resume skills

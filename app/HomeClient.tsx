@@ -28,7 +28,9 @@ import type { JDAnalysisResult } from "@/app/lib/jdAnalysis";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import type { AnalysisQuotaStatus } from "@/app/lib/quota";
 import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
-import { resolveProblemInterviewCallout } from "@/app/lib/problemInterviewCallout";
+import { KEYWORD_PAGES, type RoleSlug } from "@/app/lib/seoPages";
+import { roleResumePillarPath } from "@/app/lib/searchIntentSeo";
+import { isResumeBulletRole } from "@/app/lib/resumeBulletPointContent";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
 import { gtagEvent, gtagSetUserId } from "@/app/lib/gtagClient";
@@ -1163,6 +1165,7 @@ export default function HomeClient({
 
   const handleDownload = useCallback(async () => {
     if (!resume) return;
+    gtagEvent(ANALYTICS_EVENTS.postingFitExportIntentClicked, { format: "pdf", surface: "landing" });
     setError(null);
     setIsDownloading(true);
     try {
@@ -1228,7 +1231,9 @@ export default function HomeClient({
     },
   };
 
-  const homeProblemCallout = resolveProblemInterviewCallout("/");
+  const roleClustersSorted = Object.values(KEYWORD_PAGES).slice().sort((a, b) =>
+    a.roleName.localeCompare(b.roleName)
+  );
 
   const Root = isHome ? "main" : "div";
   const rootClassName = isHome ? "min-h-screen flex flex-col bg-white" : "flex flex-col bg-white";
@@ -1540,38 +1545,16 @@ export default function HomeClient({
           </div>
 
           <div className="mt-5 border-t border-slate-200 pt-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-              Learn more
+            <p className="text-sm text-slate-700 leading-snug">
+              Next: pick your role in{" "}
+              <Link
+                href="/#browse-by-role"
+                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Browse by role
+              </Link>{" "}
+              for examples, keywords, and bullet patterns for that title.
             </p>
-            <ul className="mt-2 space-y-0.5 text-sm text-slate-700 list-disc pl-5">
-              <li>
-                <Link
-                  href="/ats-resume-template#how-ats-scans"
-                  className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  <span>↗</span>
-                  How ATS Systems Scan Resumes
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/ats-resume-template#common-mistakes"
-                  className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  <span>↗</span>
-                  Common Resume Mistakes That Fail ATS
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/data-scientist-resume-keywords"
-                  className="inline-flex items-center gap-1 text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  <span>↗</span>
-                  ATS Keywords for Data Scientist Resumes
-                </Link>
-              </li>
-            </ul>
           </div>
         </div>
       </section>
@@ -1639,83 +1622,65 @@ export default function HomeClient({
       </section>
 
       <section
+        id="browse-by-role"
         className="border-t border-slate-200 bg-slate-50/60"
-        aria-labelledby="home-resource-links"
+        aria-labelledby="home-browse-by-role-heading"
       >
-        <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <h2 id="home-resource-links" className="sr-only">
-            Resources and guides
-          </h2>
-          {homeProblemCallout ? (
-            <p className="mb-6 max-w-3xl text-center text-sm text-slate-700 sm:text-left leading-snug">
-              {homeProblemCallout.prefix}
-              <Link
-                href={homeProblemCallout.href}
-                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-              >
-                {homeProblemCallout.linkText}
-              </Link>
+        <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+          <div className="max-w-2xl">
+            <h2
+              id="home-browse-by-role-heading"
+              className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900"
+            >
+              Browse by role
+            </h2>
+            <p className="mt-2 text-sm text-slate-600 leading-snug">
+              One authoritative page per role: examples, ATS keywords, section patterns, and (where available)
+              bullet examples—jump links anchor to the section you need.
             </p>
-          ) : null}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-start">
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">Browse by role</h3>
-              <p className="text-sm text-slate-500 mt-1 leading-snug">
-                Sample resumes, keyword ideas, and writing help for the role you&apos;re targeting.
-              </p>
-              <ul className="mt-3 space-y-2 text-sm">
-                <li>
-                  <Link href="/resume-examples" className="text-sky-700 font-medium hover:underline">
-                    Resume examples
-                  </Link>
-                  <span className="text-slate-600"> — browse by role</span>
-                </li>
-                <li>
-                  <Link href="/ats-keywords" className="text-sky-700 font-medium hover:underline">
-                    ATS keyword guides
-                  </Link>
-                  <span className="text-slate-600"> — skills and terms by role</span>
-                </li>
-                <li>
-                  <Link
-                    href="/customize-resume-without-lying"
-                    className="text-sky-700 font-medium hover:underline"
-                  >
-                    Customize resume without lying
-                  </Link>
-                  <span className="text-slate-600"> — align to the job, honestly</span>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">ATS help &amp; common issues</h3>
-              <p className="text-sm text-slate-500 mt-1 leading-snug">
-                How screening works and what to fix when applications stall.
-              </p>
-              <ul className="mt-3 space-y-2 text-sm">
-                <li>
-                  <Link href="/ats-resume-template" className="text-sky-700 hover:underline">
-                    How to pass ATS screening
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/ats-resume-template#how-ats-scans" className="text-sky-700 hover:underline">
-                    How ATS scans resumes
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/problems/ats-rejecting-my-resume" className="text-sky-700 hover:underline">
-                    Why ATS may reject your resume
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/problems/resume-not-getting-interviews" className="text-sky-700 hover:underline">
-                    Resume not getting interviews
-                  </Link>
-                </li>
-              </ul>
-            </div>
           </div>
+          <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 list-none m-0 p-0">
+            {roleClustersSorted.map((cfg) => {
+              const slug = cfg.slug as RoleSlug;
+              const pillarPath = roleResumePillarPath(slug);
+              return (
+                <li
+                  key={slug}
+                  className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm ring-1 ring-slate-900/[0.04]"
+                >
+                  <h3 className="text-sm font-semibold text-slate-900">{cfg.roleName}</h3>
+                  <ul className="mt-3 space-y-2 text-sm list-none m-0 p-0">
+                    <li>
+                      <Link
+                        href={pillarPath}
+                        className="text-sky-800 font-medium underline underline-offset-2 hover:text-sky-950"
+                      >
+                        Resume guide (examples + outline)
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href={`${pillarPath}#skills`}
+                        className="text-sky-700 underline underline-offset-2 hover:text-sky-950"
+                      >
+                        ATS keywords
+                      </Link>
+                    </li>
+                    {isResumeBulletRole(slug) ? (
+                      <li>
+                        <Link
+                          href={`${pillarPath}#bullet-points`}
+                          className="text-sky-700 underline underline-offset-2 hover:text-sky-950"
+                        >
+                          Resume bullet examples
+                        </Link>
+                      </li>
+                    ) : null}
+                  </ul>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </section>
       </>

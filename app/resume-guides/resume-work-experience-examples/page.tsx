@@ -275,7 +275,7 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
           <ul className="list-disc space-y-2 pl-5 text-sm sm:text-base">
             <li>
               <Link
-                href="/data-analyst-resume-example"
+                href="/data-analyst-resume-guide"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Data analyst resume example
@@ -283,7 +283,7 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
             </li>
             <li>
               <Link
-                href="/product-manager-resume-example"
+                href="/product-manager-resume-guide"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Product manager resume example
@@ -307,7 +307,7 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
             </li>
             <li>
               <Link
-                href="/software-engineer-resume-bullet-points"
+                href="/software-engineer-resume-guide#bullet-points"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Software engineer resume bullet points
@@ -315,7 +315,7 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
             </li>
             <li>
               <Link
-                href="/data-scientist-resume-keywords"
+                href="/data-scientist-resume-guide#skills"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Data scientist resume keywords
@@ -323,7 +323,7 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
             </li>
             <li>
               <Link
-                href="/devops-engineer-resume-keywords"
+                href="/devops-engineer-resume-guide#skills"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 DevOps engineer resume keywords
@@ -331,7 +331,7 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
             </li>
             <li>
               <Link
-                href="/product-manager-resume-bullet-points"
+                href="/product-manager-resume-guide#bullet-points"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Product manager resume bullet points
@@ -339,7 +339,7 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
             </li>
             <li>
               <Link
-                href="/data-scientist-resume-bullet-points"
+                href="/data-scientist-resume-guide#bullet-points"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Data scientist resume bullet points

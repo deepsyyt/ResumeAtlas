@@ -64,9 +64,9 @@ EDUCATION
 BS Computer Science · State University · 2021`,
     exampleHref: "/resume-bullet-points/software-engineer",
     exampleLabel: "Software engineer resume bullet hub (levels)",
-    keywordGuideHref: "/software-engineer-resume-keywords",
+    keywordGuideHref: "/software-engineer-resume-guide#skills",
     keywordGuideLabel: "Software engineer ATS keywords",
-    resumeGuideHref: "/software-engineer-resume-example",
+    resumeGuideHref: "/software-engineer-resume-guide",
     resumeGuideLabel: "Software engineer resume example",
   },
 };

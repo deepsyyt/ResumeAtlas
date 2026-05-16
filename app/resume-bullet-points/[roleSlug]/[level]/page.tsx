@@ -17,7 +17,10 @@ import {
 import { ResumeBulletConversionBlocks } from "@/app/components/ResumeBulletConversionBlocks";
 import { ResumeExampleSeoFunnel } from "@/app/components/ResumeExampleSeoFunnel";
 import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
-import { getSiteUrl } from "@/app/lib/siteUrl";
+import {
+  absoluteCanonicalUrl,
+  roleResumePillarPath,
+} from "@/app/lib/searchIntentSeo";
 
 type PageParams = { roleSlug: string; level: string };
 
@@ -42,14 +45,13 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
   const level = parseLevel(params.level);
   if (!level) return {};
   const d = getResumeBulletDetail(params.roleSlug, level);
-  const path = publicPathForBulletDetail(params.roleSlug, level);
-  const siteUrl = getSiteUrl().replace(/\/$/, "");
+  const canonicalAbs = absoluteCanonicalUrl(roleResumePillarPath(params.roleSlug));
   return {
     title: d.metaTitle,
     description: d.metaDescription,
     ...(d.keywords?.length ? { keywords: d.keywords } : {}),
-    robots: { index: true, follow: true },
-    alternates: { canonical: `${siteUrl}${path}` },
+    robots: { index: false, follow: true },
+    alternates: { canonical: canonicalAbs },
   };
 }
 
@@ -166,7 +168,7 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
               </Link>
               . For full resume example/sample/template intent, use{" "}
               <Link
-                href={`/${role}-resume-example`}
+                href={`/${role}-resume-guide`}
                 className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 {hub.roleName.toLowerCase()} resume example
@@ -214,7 +216,7 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
               Generate bullets for my resume
             </Link>
             <Link
-              href="/resume-keyword-scanner#ats-checker-form"
+              href="/check-resume-against-job-description#ats-checker-form"
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
             >
               Find missing keywords in your resume
@@ -560,7 +562,7 @@ export default function ResumeBulletDetailPage({ params }: { params: PageParams 
           <ul className="mt-3 space-y-2 text-sm">
             <li>
               <Link
-                href="/resume-keyword-scanner#ats-checker-form"
+                href="/check-resume-against-job-description#ats-checker-form"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 Find missing keywords in your {hub.roleName.toLowerCase()} resume

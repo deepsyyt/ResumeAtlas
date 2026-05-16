@@ -47,12 +47,14 @@ export function resolveProblemInterviewCallout(
 
   const isRoleResumeTopicPath = /^\/[^/]+\/resume\/[^/]+$/.test(p);
   const isRoleKeywordsPath =
-    /^\/[^/]+\/keywords(\/[^/]+)?$/.test(p) || /^\/[^/]+-resume-keywords$/.test(p);
+    /^\/[^/]+\/keywords(\/[^/]+)?$/.test(p) ||
+    /^\/[^/]+-resume-keywords$/.test(p) ||
+    /^\/[^/]+-resume-guide$/.test(p);
   if (p === "/ats-keywords" || p.startsWith("/ats-keywords/") || isRoleResumeTopicPath || isRoleKeywordsPath) {
     return {
       prefix: "Worried about keyword gaps on your resume? ",
       linkText: "Scan your resume against a job posting",
-      href: "/resume-keyword-scanner#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     };
   }
 

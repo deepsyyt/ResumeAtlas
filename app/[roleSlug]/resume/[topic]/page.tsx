@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import { generateMetadata as generateSeoMetadata } from "@/app/seo/[slug]/page";
+import { generateRoleResumeTopicLegacyMetadata } from "@/app/components/resumeTopicGuide";
 import type { RoleSlug } from "@/app/lib/seoPages";
 import type { ResumeSeoTopic as Topic } from "@/app/lib/resumeTopicTypes";
 import { isRoleResumeTopicIndexed } from "@/app/lib/roleClusterIndexPolicy";
@@ -20,13 +20,6 @@ const TOPICS = new Set<Topic>([
   "experience-examples",
 ]);
 
-function buildLegacySeoSlug(roleSlug: RoleSlug, topic: Topic): string {
-  if (topic === "bullet-points") {
-    return `bullet-points-${roleSlug}-resume`;
-  }
-  return `${roleSlug}-resume-${topic}`;
-}
-
 function canonicalTargetForTopic(roleSlug: RoleSlug, topic: Topic): string {
   const examplePath = roleResumeExamplePath(roleSlug);
   switch (topic) {
@@ -45,32 +38,19 @@ function canonicalTargetForTopic(roleSlug: RoleSlug, topic: Topic): string {
   }
 }
 
-export async function generateMetadata({
+export function generateMetadata({
   params,
 }: {
   params: PageParams;
-}): Promise<Metadata> {
+}): Metadata {
   if (!TOPICS.has(params.topic)) return {};
-  const slug = buildLegacySeoSlug(params.roleSlug, params.topic);
-  const existing = await generateSeoMetadata({ params: { slug } });
+  const existing = generateRoleResumeTopicLegacyMetadata(params.roleSlug, params.topic);
   const indexed = isRoleResumeTopicIndexed(params.topic);
-  const mergedAnchor =
-    params.topic === "bullet-points"
-      ? "bullet-points"
-      : params.topic === "skills"
-        ? "skills"
-        : params.topic === "summary"
-          ? "summary"
-          : params.topic === "projects"
-            ? "projects"
-            : null;
-  const exampleBase = absoluteCanonicalUrl(roleResumeExamplePath(params.roleSlug));
+  const pillarBase = absoluteCanonicalUrl(roleResumeExamplePath(params.roleSlug));
   return {
     ...existing,
     alternates: {
-      canonical: mergedAnchor
-        ? `${exampleBase}#${mergedAnchor}`
-        : absoluteCanonicalUrl(`/${params.roleSlug}/resume/${params.topic}`),
+      canonical: pillarBase,
     },
     ...(indexed
       ? {}

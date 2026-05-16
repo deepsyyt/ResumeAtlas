@@ -21,6 +21,8 @@ import {
 } from "@/app/lib/internalLinks";
 import {
   roleResumeKeywordsHubMeta,
+  roleResumePillarPath,
+  roleResumeKeywordsPath,
   stripResumeAtlasTitleSuffix,
 } from "@/app/lib/searchIntentSeo";
 
@@ -32,7 +34,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
   const roleSlug = params.role;
   const roleContent = ROLE_CONTENT_MAP[roleSlug];
   const resumeSamplePath = roleResumeSamplePath(roleSlug);
-  const mergedGuidePath = `/${roleSlug}-resume-example`;
+  const mergedGuidePath = roleResumePillarPath(roleSlug);
   const canonicalBase = getSiteUrl().replace(/\/$/, "");
   const keywordHubTitle = stripResumeAtlasTitleSuffix(roleResumeKeywordsHubMeta(roleSlug).title);
   const isDevOpsKeywordsPage = roleSlug === "devops-engineer";
@@ -113,14 +115,14 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
       {
         "@type": "ListItem",
         position: 1,
-        name: `${config.roleName} resume example (full page)`,
-        item: `${canonicalBase}${mergedGuidePath}`,
+        name: "Home",
+        item: `${canonicalBase}/`,
       },
       {
         "@type": "ListItem",
         position: 2,
-        name: `${config.roleName} resume keywords (complete guide)`,
-        item: `${canonicalBase}/${roleSlug}-resume-keywords`,
+        name: `${config.roleName} resume guide & keywords`,
+        item: `${canonicalBase}${roleResumeKeywordsPath(roleSlug)}`,
       },
     ],
   } as const;
@@ -167,17 +169,17 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                 This page is the ATS keyword/technical-skills owner for software engineer queries. For full
                 resume example, sample, and template intent, use{" "}
                 <Link
-                  href="/software-engineer-resume-example"
+                  href="/software-engineer-resume-guide"
                   className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  software engineer resume example
+                  software engineer resume guide
                 </Link>
                 . For copy-ready line banks, use{" "}
                 <Link
-                  href="/software-engineer-resume-bullet-points"
+                  href="/software-engineer-resume-guide#bullet-points"
                   className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  software engineer resume bullet points
+                  the bullet section
                 </Link>
                 .
               </p>
@@ -187,10 +189,10 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                 This page is the ATS keyword/technical-skills owner for backend developer queries. For
                 full resume example, sample, and template intent, use{" "}
                 <Link
-                  href="/backend-developer-resume-example"
+                  href="/backend-developer-resume-guide"
                   className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  backend developer resume example
+                  backend developer resume guide
                 </Link>
                 .
               </p>
@@ -212,7 +214,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             <p className="mt-4 text-sm font-medium text-slate-800 max-w-2xl mx-auto">
               Check if your resume includes these keywords →{" "}
               <Link
-                href="/resume-keyword-scanner#ats-checker-form"
+                href="/check-resume-against-job-description#ats-checker-form"
                 className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 scan your resume for missing keywords
@@ -492,7 +494,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           <ul className="mt-4 space-y-2 text-sm">
             <li>
               <Link
-                href={`/${roleSlug}-resume-example#projects`}
+                href={`${mergedGuidePath}#projects`}
                 className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
               >
                 {config.roleName} resume projects →
@@ -508,7 +510,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             </li>
             <li>
               <Link
-                href={`/${roleSlug}-resume-example#skills`}
+                href={`${mergedGuidePath}#skills`}
                 className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
               >
                 {config.roleName} resume skills examples →
@@ -626,7 +628,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
         </section>
 
         <RelatedResumeGuidesSection
-          currentPath={`/${roleSlug}-resume-keywords`}
+          currentPath={roleResumeKeywordsPath(roleSlug)}
           className="border-t border-slate-200 pt-6"
         />
 

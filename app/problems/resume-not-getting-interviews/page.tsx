@@ -126,7 +126,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
               Upload resume and get instant fix suggestions
             </Link>
             <Link
-              href="/resume-keyword-scanner"
+              href="/check-resume-against-job-description"
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
             >
               Find missing keywords in your resume
@@ -178,7 +178,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             <li>
               <strong>Software Engineer:</strong> weak delivery proof (latency, uptime, CI/CD) often
               blocks interviews.{" "}
-              <Link href="/software-engineer-resume-example#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/software-engineer-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 See role fix
               </Link>
               {" · "}
@@ -188,7 +188,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             </li>
             <li>
               <strong>Data Scientist:</strong> missing SQL and experiment-impact terms can hide fit.{" "}
-              <Link href="/data-scientist-resume-example#projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/data-scientist-resume-guide#projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 See role fix
               </Link>
               {" · "}
@@ -199,7 +199,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             <li>
               <strong>Product Manager:</strong> no quantified outcomes (activation, retention, ARR)
               makes bullets look generic.{" "}
-              <Link href="/product-manager-resume-example#summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/product-manager-resume-guide#summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 See role fix
               </Link>
               {" · "}

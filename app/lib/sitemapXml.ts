@@ -25,10 +25,3 @@ export function buildUrlsetXml(entries: MetadataRoute.Sitemap): string {
     .join("");
   return `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${inner}</urlset>`;
 }
-
-export function buildSitemapIndexXml(absoluteLocs: string[]): string {
-  const inner = absoluteLocs
-    .map((loc) => `<sitemap><loc>${escapeXml(loc)}</loc></sitemap>`)
-    .join("");
-  return `<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${inner}</sitemapindex>`;
-}

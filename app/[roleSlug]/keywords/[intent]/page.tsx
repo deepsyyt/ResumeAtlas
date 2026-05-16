@@ -19,6 +19,8 @@ import { NOINDEX_ROLE_KEYWORD_INTENT_PAGES } from "@/app/lib/roleClusterIndexPol
 import {
   absoluteCanonicalUrl,
   roleResumeKeywordIntentMeta,
+  roleResumePillarPath,
+  roleResumeKeywordsPath,
 } from "@/app/lib/searchIntentSeo";
 
 type PageParams = {
@@ -30,7 +32,7 @@ function intentToResumeTopicPath(
   role: RoleSlug,
   intent: RoleKeywordIntent
 ): string {
-  const guidePath = `/${role}-resume-example`;
+  const guidePath = roleResumePillarPath(role);
   if (intent === "core-keywords") return `${guidePath}#skills`;
   if (intent === "action-verbs") return `${guidePath}#bullet-points`;
   if (intent === "summary") return `${guidePath}#summary`;
@@ -51,12 +53,11 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
     intentLabel,
     content.metaDescription
   );
-  const path = `/${params.roleSlug}/keywords/${intent}`;
   return {
     title,
     description,
     alternates: {
-      canonical: absoluteCanonicalUrl(path),
+      canonical: absoluteCanonicalUrl(roleResumePillarPath(params.roleSlug)),
     },
     ...(NOINDEX_ROLE_KEYWORD_INTENT_PAGES
       ? { robots: { index: false, follow: true } as const }
@@ -83,14 +84,14 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <nav className="text-xs text-slate-500">
             <Link
-              href={`/${role}-resume-keywords`}
+              href={roleResumeKeywordsPath(role)}
               className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
             >
               {roleConfig.roleName}
             </Link>
             <span className="mx-1.5">/</span>
             <Link
-              href={`/${role}-resume-keywords`}
+              href={`${roleResumePillarPath(role)}#skills`}
               className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
             >
               Keywords
@@ -195,10 +196,10 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
           <ul className="mt-3 list-disc pl-5 space-y-1 text-sm text-slate-700">
             <li>
               <Link
-                href={`/${role}-resume-example`}
+                href={roleResumePillarPath(role)}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
-                {roleConfig.roleName} resume example (all sections)
+                {roleConfig.roleName} resume guide (all sections)
               </Link>
             </li>
             <li>
@@ -211,7 +212,7 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
             </li>
             <li>
               <Link
-                href={`/${role}/keywords/core-keywords`}
+                href={`${roleResumePillarPath(role)}#skills`}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 Core ATS keyword clusters
@@ -234,7 +235,7 @@ export default function RoleKeywordIntentPage({ params }: { params: PageParams }
             {relatedIntents.map((sibling) => (
               <li key={sibling}>
                 <Link
-                  href={`/${role}/keywords/${sibling}`}
+                  href={intentToResumeTopicPath(role, sibling)}
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
                   {keywordIntentLabel(sibling)} →

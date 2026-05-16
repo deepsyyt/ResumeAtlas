@@ -252,7 +252,7 @@ export function AtsResumeTemplateGuide() {
           <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-700 text-sm sm:text-base">
             <li>
               <Link
-                href="/data-analyst-resume-example"
+                href="/data-analyst-resume-guide"
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 ATS resume example for data analyst
@@ -261,7 +261,7 @@ export function AtsResumeTemplateGuide() {
             </li>
             <li>
               <Link
-                href="/product-manager-resume-example"
+                href="/product-manager-resume-guide"
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 ATS resume example for product manager
@@ -536,15 +536,15 @@ export function AtsResumeTemplateGuide() {
           </p>
           <p className="mt-4 text-sm text-slate-600 sm:text-base">
             Go deeper by role:{" "}
-            <Link href="/data-analyst-resume-keywords" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
+            <Link href="/data-analyst-resume-guide#skills" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
               data analyst keywords
             </Link>
             ,{" "}
-            <Link href="/product-manager-resume-keywords" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
+            <Link href="/product-manager-resume-guide#skills" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
               product manager keywords
             </Link>
             ,{" "}
-            <Link href="/software-engineer-resume-keywords" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
+            <Link href="/software-engineer-resume-guide#skills" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
               software engineer keywords
             </Link>
             .
@@ -567,7 +567,7 @@ export function AtsResumeTemplateGuide() {
               {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
             <Link
-              href="/resume-keyword-scanner"
+              href="/check-resume-against-job-description"
               className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
             >
               Resume keyword scanner

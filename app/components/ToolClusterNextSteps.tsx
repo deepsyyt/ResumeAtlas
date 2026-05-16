@@ -1,20 +1,14 @@
 import Link from "next/link";
 
-const ROLE_GUIDES: { href: string; label: string }[] = [
-  { href: "/data-scientist-resume-example", label: "Data Scientist resume example" },
-  { href: "/software-engineer-resume-example", label: "Software Engineer resume example" },
-  { href: "/product-manager-resume-example", label: "Product Manager resume example" },
-  { href: "/data-analyst-resume-example", label: "Data Analyst resume example" },
-];
-
-const KEYWORD_GUIDES: { href: string; label: string }[] = [
-  { href: "/data-scientist-resume-keywords", label: "Data Scientist keywords" },
-  { href: "/software-engineer-resume-keywords", label: "Software Engineer keywords" },
-  { href: "/product-manager-resume-keywords", label: "Product Manager keywords" },
+const ROLE_PILLARS: { pillar: string; label: string }[] = [
+  { pillar: "/data-scientist-resume-guide", label: "Data Scientist" },
+  { pillar: "/software-engineer-resume-guide", label: "Software Engineer" },
+  { pillar: "/product-manager-resume-guide", label: "Product Manager" },
+  { pillar: "/data-analyst-resume-guide", label: "Data Analyst" },
 ];
 
 /**
- * Post-check “next steps” links to merged role guides and keyword clusters (session depth + internal authority).
+ * Post-check “next steps” links into consolidated role pillar pages + skills anchors (session depth).
  */
 export function ToolClusterNextSteps() {
   return (
@@ -29,52 +23,40 @@ export function ToolClusterNextSteps() {
         After you see your results
       </h2>
       <p className="mt-2 text-sm text-emerald-900/90 leading-relaxed">
-        Improve your score with role-specific examples and keyword lists—then come back and run the
-        check again on your updated resume.
+        Improve your score with one authoritative page per role (examples + structure), jump to the skills
+        section for ATS keyword coverage—then rerun the check on your updated resume.
       </p>
-      <div className="mt-4 grid gap-4 sm:grid-cols-2 text-sm">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800/80">
-            Role resume guides
-          </p>
-          <ul className="mt-2 space-y-1.5">
-            {ROLE_GUIDES.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="text-emerald-900 font-medium underline underline-offset-2 hover:text-emerald-950"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800/80">
-            ATS keyword guides
-          </p>
-          <ul className="mt-2 space-y-1.5">
-            {KEYWORD_GUIDES.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="text-emerald-900 font-medium underline underline-offset-2 hover:text-emerald-950"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3">
-            <Link
-              href="/ats-keywords"
-              className="text-sm font-medium text-emerald-900 underline underline-offset-2 hover:text-emerald-950"
-            >
-              Browse all ATS keyword guides →
-            </Link>
-          </p>
-        </div>
+      <div className="mt-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800/80">
+          Role guides
+        </p>
+        <ul className="mt-2 space-y-2 text-sm">
+          {ROLE_PILLARS.map((item) => (
+            <li key={item.pillar} className="text-emerald-900">
+              <Link
+                href={item.pillar}
+                className="font-medium underline underline-offset-2 hover:text-emerald-950"
+              >
+                {item.label} resume guide
+              </Link>
+              <span className="text-emerald-800/70"> · </span>
+              <Link
+                href={`${item.pillar}#skills`}
+                className="underline underline-offset-2 hover:text-emerald-950"
+              >
+                ATS keywords section
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4">
+          <Link
+            href="/ats-keywords"
+            className="text-sm font-medium text-emerald-900 underline underline-offset-2 hover:text-emerald-950"
+          >
+            Browse all ATS keyword hubs →
+          </Link>
+        </p>
       </div>
     </section>
   );

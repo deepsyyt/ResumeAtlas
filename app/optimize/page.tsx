@@ -393,6 +393,10 @@ export default function OptimizePage() {
         return;
       }
       setIsUnlockingDownload(true);
+      gtagEvent(ANALYTICS_EVENTS.postingFitExportIntentClicked, {
+        format: "pdf",
+        surface,
+      });
       const gate: DownloadGateResult = downloadPassToken
         ? { ok: true, justPaidForDownload: false }
         : await resolveDownloadGate();
@@ -493,6 +497,10 @@ export default function OptimizePage() {
     async (surface: DownloadSurface = "optimize_panel") => {
     try {
       setIsUnlockingDownload(true);
+      gtagEvent(ANALYTICS_EVENTS.postingFitExportIntentClicked, {
+        format: "editable",
+        surface,
+      });
       const gate: DownloadGateResult = downloadPassToken
         ? { ok: true, justPaidForDownload: false }
         : await resolveDownloadGate();

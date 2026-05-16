@@ -40,6 +40,12 @@ export const ANALYTICS_EVENTS = {
   paymentSuccessConversionModal: "payment_success_conversion_modal",
 
   paymentFailed: "payment_failed",
+
+  /** Posting-fit diagnosis engine (minimal funnel instrumentation) */
+  postingFitWorkbenchSurfaceViewed: "posting_fit_workbench_surface_viewed",
+  postingFitMethodologySurfaceViewed: "posting_fit_methodology_surface_viewed",
+  postingFitTierSCtaClicked: "posting_fit_tier_s_cta_clicked",
+  postingFitExportIntentClicked: "posting_fit_export_intent_clicked",
 } as const;
 
 /** Passed from CreditPackModal when starting optimize from the pricing UI. */

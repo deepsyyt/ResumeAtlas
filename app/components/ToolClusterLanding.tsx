@@ -18,14 +18,19 @@ import {
 
 type Props = {
   config: ToolClusterPageConfig;
+  /** When true, skip hero H1/intro/strip (SSR shell owns them). Posting-fit workbench only. */
+  hidePrimaryHero?: boolean;
+  /** When true, skip footer JSON-LD scripts (SSR shell provides schema). */
+  omitStructuredData?: boolean;
 };
 
-export function ToolClusterLanding({ config }: Props) {
+export function ToolClusterLanding({ config, hidePrimaryHero, omitStructuredData }: Props) {
   const path = config.path;
-  const isKeywordScanner = path === "/resume-keyword-scanner";
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
+      {!hidePrimaryHero ? (
+        <>
       <section className="border-b border-slate-200 bg-slate-50/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 text-center">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
@@ -69,18 +74,7 @@ export function ToolClusterLanding({ config }: Props) {
           </div>
         </div>
       </section>
-
-      {isKeywordScanner ? (
-        <section className="border-b border-slate-200 bg-emerald-50/50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 text-center">
-            <p className="text-sm sm:text-base font-semibold text-slate-900">
-              Scan resume keywords against job description in seconds.
-            </p>
-            <p className="mt-1 text-xs sm:text-sm text-slate-700">
-              See missing terms first, then decide what to rewrite before you apply.
-            </p>
-          </div>
-        </section>
+        </>
       ) : null}
 
       <section className="border-b border-slate-200 bg-sky-50/40">
@@ -105,38 +99,6 @@ export function ToolClusterLanding({ config }: Props) {
           </p>
         </section>
 
-        {isKeywordScanner ? (
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-              Sample keyword gap report
-            </h2>
-            <p className="mt-2 text-sm sm:text-base text-slate-700">
-              Typical output from one real posting comparison:
-            </p>
-            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Missing keywords example
-              </p>
-              <ul className="mt-2 list-disc pl-5 space-y-1.5 text-sm text-slate-700">
-                <li>SQL window functions</li>
-                <li>A/B testing</li>
-                <li>Stakeholder communication</li>
-                <li>Experiment design</li>
-              </ul>
-              <p className="mt-3 text-sm text-slate-700">
-                Coverage estimate: <strong className="text-slate-900">61%</strong> before edits.
-              </p>
-              <p className="mt-1 text-sm text-slate-700">
-                First fix: add one SQL-impact bullet and one experiment result line where truthful.
-              </p>
-            </div>
-            <p className="mt-4 text-sm text-slate-700">
-              Trust proof: this scanner uses the exact posting text you paste, not a generic keyword
-              list.
-            </p>
-          </section>
-        ) : null}
-
         <section className="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-5 sm:p-6">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Choose the right page for your intent
@@ -150,7 +112,8 @@ export function ToolClusterLanding({ config }: Props) {
               <strong>Resume vs JD matcher:</strong> compare fit to one posting and prioritize edits.
             </li>
             <li>
-              <strong>Keyword scanner:</strong> isolate missing terms and weak keyword coverage.
+              <strong>Posting vocabulary &amp; required skill debt:</strong> surfaced inside this
+              workbench (Gate B)—not a separate keyword vanity URL.
             </li>
             <li>
               <strong>ATS checker:</strong> diagnose parsing, structure, and formatting risk.
@@ -302,7 +265,7 @@ export function ToolClusterLanding({ config }: Props) {
             <li>
               Need only missing terms list? Use{" "}
               <Link
-                href="/resume-keyword-scanner"
+                href="/check-resume-against-job-description"
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 resume keyword scanner
@@ -502,24 +465,6 @@ export function ToolClusterLanding({ config }: Props) {
           </a>
         </section>
 
-        {isKeywordScanner ? (
-          <section className="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-5 sm:p-6 text-center">
-            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-              Ready to optimize after keyword scan?
-            </h2>
-            <p className="mt-2 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto">
-              Run the scanner above, close high-signal gaps, then unlock optimization for JD-aligned
-              rewrite suggestions and downloadable output.
-            </p>
-            <a
-              href="#ats-checker-form"
-              className="mt-5 inline-flex rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition"
-            >
-              Scan keywords and continue to optimization
-            </a>
-          </section>
-        ) : null}
-
         <RelatedResumeGuidesSection
           currentPath={path}
           className="border-t border-slate-200 pt-8"
@@ -528,6 +473,8 @@ export function ToolClusterLanding({ config }: Props) {
         <LastUpdated className="text-xs text-slate-500" />
       </div>
 
+      {!omitStructuredData ? (
+        <>
       <script
         type="application/ld+json"
         suppressHydrationWarning
@@ -547,6 +494,8 @@ export function ToolClusterLanding({ config }: Props) {
           __html: JSON.stringify(toolClusterBreadcrumbSchema(config)),
         }}
       />
+        </>
+      ) : null}
     </div>
   );
 }

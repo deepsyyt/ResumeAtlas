@@ -181,7 +181,7 @@ export default function CustomizeResumeWithoutLyingPage() {
             </Link>{" "}
             for parsing and layout. When you need to{" "}
             <Link
-              href="/resume-keyword-scanner#ats-checker-form"
+              href="/check-resume-against-job-description#ats-checker-form"
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
               find missing keywords in resume
