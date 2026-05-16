@@ -8,7 +8,7 @@ const faqSchema = {
       acceptedAnswer: {
         "@type": "Answer",
         text:
-          "ATS Pass Probability is an estimated score from 0–100 that summarizes how likely your resume is to pass an automated applicant tracking system screen for the specific job description you pasted. It combines keyword coverage, semantic similarity, experience alignment, impact score, and overall resume quality into one transparent metric.",
+          "ATS Pass Probability is an estimated score from 0-100 that summarizes how likely your resume is to pass an automated applicant tracking system screen for the specific job description you pasted. It combines keyword coverage, semantic similarity, experience alignment, impact score, and overall resume quality into one transparent metric.",
       },
     },
     {
@@ -84,13 +84,13 @@ export default function FAQPage() {
             </summary>
             <div className="mt-2 space-y-2">
               <p>
-                <strong>ATS Pass Probability</strong> is an estimated score from 0–100 that
+                <strong>ATS Pass Probability</strong> is an estimated score from 0-100 that
                 summarizes how likely your resume is to pass an automated applicant tracking system
                 screen for the specific job description you pasted.
               </p>
               <p>
-                It combines several signals from the dashboard – keyword coverage, semantic
-                similarity, experience alignment, impact score, and resume quality – into
+                It combines several signals from the dashboard - keyword coverage, semantic
+                similarity, experience alignment, impact score, and resume quality - into
                 a single number, so you can quickly see whether you are in low, moderate, strong, or
                 very strong match territory.
               </p>

@@ -19,7 +19,7 @@ export default function HowItWorksPage() {
             </h2>
             <p>
               Start by pasting your current resume on the left and the exact job description you’re
-              targeting on the right. You don’t need to log in or upload a file – everything runs
+              targeting on the right. You don’t need to log in or upload a file - everything runs
               directly in the browser.
             </p>
             <p>
@@ -93,7 +93,7 @@ export default function HowItWorksPage() {
               quickly see whether your changes are helping.
             </p>
             <p>
-              Most users iterate 2–3 times per role until keyword coverage, semantic similarity, and
+              Most users iterate 2-3 times per role until keyword coverage, semantic similarity, and
               impact score all move into the “strong match” range.
             </p>
           </div>

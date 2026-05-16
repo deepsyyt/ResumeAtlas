@@ -32,7 +32,7 @@ Return ONLY valid JSON. Do not include explanations, markdown, or any text outsi
 
 Skill extraction rules:
 - Only extract skills that explicitly appear in the job description text.
-- Extract concise, meaningful skill phrases (typically 1–3 words) that represent concrete capabilities, technologies, methods, or product domains (e.g. "recommendation systems", "search relevance", "A/B testing", "causal inference").
+- Extract concise, meaningful skill phrases (typically 1-3 words) that represent concrete capabilities, technologies, methods, or product domains (e.g. "recommendation systems", "search relevance", "A/B testing", "causal inference").
 - Do NOT treat extremely generic standalone words as separate skills (e.g. "search", "ranking", "relevance", "performance", "quality") unless the job description clearly labels them as named skills or disciplines (for example in a "Skills" or "Requirements" list).
 - When a generic word appears as part of a more specific phrase, you MUST extract only the specific phrase, not the generic word by itself (e.g. "search relevance" or "search ranking models", not separate "search" and "relevance").
 - Do NOT infer tools, frameworks, or platforms that are not written in the JD.
@@ -78,12 +78,12 @@ Section classification rules:
 - If the section is unclear, mixed, or not explicitly labeled, you MUST default to treating the skill as REQUIRED.
 
 Evaluate the following metrics (each 0-100):
-1. ats_score – overall probability the resume passes ATS
-2. keyword_coverage – must be calculated as: round((number of matched_skills ÷ total JD skills) × 100). Total JD skills = count of distinct skill phrases you extracted from the JD. If there are zero JD skills, set keyword_coverage to 100.
-3. semantic_similarity – how closely the experience matches the role context
-4. experience_alignment – compare required years vs resume years (0-100). If the JD does not specify years of experience, set experience_alignment to 80 (neutral) and set required_years_experience and required_years_experience_max to null.
-5. impact_score – based on quantified achievements (%, $, growth, etc.)
-6. resume_quality – structure, bullet points, clarity
+1. ats_score - overall probability the resume passes ATS
+2. keyword_coverage - must be calculated as: round((number of matched_skills ÷ total JD skills) × 100). Total JD skills = count of distinct skill phrases you extracted from the JD. If there are zero JD skills, set keyword_coverage to 100.
+3. semantic_similarity - how closely the experience matches the role context
+4. experience_alignment - compare required years vs resume years (0-100). If the JD does not specify years of experience, set experience_alignment to 80 (neutral) and set required_years_experience and required_years_experience_max to null.
+5. impact_score - based on quantified achievements (%, $, growth, etc.)
+6. resume_quality - structure, bullet points, clarity
 
 For experience alignment you MUST also output:
 - required_years_experience: number or null. Lower bound from the JD. Examples: "5+ years" or "at least 5 years" -> 5. For an explicit range "10-15 years" or "10 to 15 years of experience" -> 10. If the JD does not mention years of experience at all, use null.
@@ -130,7 +130,7 @@ Output format (no other keys):
   "summary": "string"
 }`;
 
-/** When no job description is provided: ATS readability, structure, parsing — not JD keyword match. */
+/** When no job description is provided: ATS readability, structure, parsing - not JD keyword match. */
 const SYSTEM_PROMPT_RESUME_ONLY = `You are an ATS compatibility analyst. There is NO job description. Evaluate ONLY the resume for how likely it is to be parsed and processed correctly by typical Applicant Tracking Systems, and how strong the document is on structure and clarity.
 
 Return ONLY valid JSON. Do not include explanations, markdown, or any text outside the JSON object.
@@ -140,12 +140,12 @@ Focus on:
 - Section coverage: contact signals, experience with dates, education, skills or technical terms somewhere readable.
 - Formatting red flags implied by text: unusual characters-only blocks, heavy unicode decoration, role-play formatting that might break parsers.
 - Bullet quality: action-led bullets, measurable outcomes where present.
-- Keyword coverage: there is NO job description — you MUST set keyword_coverage to null (JSON null) and MUST set matched_skills, missing_skills, missing_skills_required, and missing_skills_preferred to empty arrays [].
-- semantic_similarity: set to 70 (neutral — no role context).
-- experience_alignment: 0–100 based on coherent work history and dates; use 80 if dates are unclear.
+- Keyword coverage: there is NO job description - you MUST set keyword_coverage to null (JSON null) and MUST set matched_skills, missing_skills, missing_skills_required, and missing_skills_preferred to empty arrays [].
+- semantic_similarity: set to 70 (neutral - no role context).
+- experience_alignment: 0-100 based on coherent work history and dates; use 80 if dates are unclear.
 - required_years_experience and required_years_experience_max: MUST be null (no JD).
 - resume_years_experience: estimate total relevant years from employment dates in the resume (number ≥ 0).
-- ats_score: 0–100 overall likelihood the resume parses cleanly and presents experience in an ATS-friendly way (not match to a specific job).
+- ats_score: 0-100 overall likelihood the resume parses cleanly and presents experience in an ATS-friendly way (not match to a specific job).
 - impact_score: from quantified achievements in bullets.
 - resume_quality: structure, bullets, clarity.
 - summary: one short sentence emphasizing structure, formatting, and ATS readability; explicitly state that no job description was used so keyword match to a specific posting was not evaluated.
@@ -326,7 +326,7 @@ export async function POST(request: Request) {
     }
 
     const userContent = jdEmpty
-      ? `RESUME ONLY — no job description was provided. Evaluate ATS parsing compatibility, section structure, and formatting signals only:\n${resumeText}`
+      ? `RESUME ONLY - no job description was provided. Evaluate ATS parsing compatibility, section structure, and formatting signals only:\n${resumeText}`
       : `RESUME:
 ${resumeText}
 

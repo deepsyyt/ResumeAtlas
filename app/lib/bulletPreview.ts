@@ -96,7 +96,7 @@ export function getWeakestBullet(bullets: string[]): string | null {
 }
 
 /**
- * Bullet is "strong" if it has numbers and impact phrasing — don't rewrite, show trust message.
+ * Bullet is "strong" if it has numbers and impact phrasing - don't rewrite, show trust message.
  */
 export function isStrongBullet(bullet: string): boolean {
   if (!bullet?.trim()) return false;

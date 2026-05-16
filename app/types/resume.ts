@@ -3,7 +3,7 @@ export type Resume = {
     name: string;
     title: string;
     summary: string;
-    /** Multiline contact block (phone, email, links) — matches optimize preview header. */
+    /** Multiline contact block (phone, email, links) - matches optimize preview header. */
     contact?: string;
   };
   experience: {

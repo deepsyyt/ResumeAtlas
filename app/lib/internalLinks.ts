@@ -3,7 +3,7 @@ import { roleResumePillarPath } from "@/app/lib/searchIntentSeo";
 
 export type InternalLink = { path: string; label: string };
 
-/** Primary free tool landing: JD comparison (single canonical URL for all resume–JD intents). */
+/** Primary free tool landing: JD comparison (single canonical URL for all resume-JD intents). */
 export const CHECK_RESUME_AGAINST_JD_PATH =
   "/check-resume-against-job-description" as const;
 
@@ -113,7 +113,7 @@ const FEATURED_PATHS = new Set<string>([
   ...Array.from(POPULAR_PILLAR_PATHS),
 ]);
 
-/** Dense semantic internal links: 6–8 topically related paths per page for topical authority. */
+/** Dense semantic internal links: 6-8 topically related paths per page for topical authority. */
 const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   [CHECK_RESUME_AGAINST_JD_PATH]: [
     "/ats-resume-checker",
@@ -216,7 +216,7 @@ const PATH_BY_PATH = (() => {
   return m;
 })();
 
-/** Build 6–8 semantic path recommendations for a given page (topic cluster). */
+/** Build 6-8 semantic path recommendations for a given page (topic cluster). */
 function getSemanticPathsFor(currentPath: string): string[] {
   const normalized = currentPath.replace(/\/$/, "") || "/";
   const explicit = SEMANTIC_RECOMMENDATIONS[normalized];
@@ -264,7 +264,7 @@ function hashString(s: string): number {
 const DEFAULT_RELATED_COUNT = 8;
 
 /**
- * Returns 5–8 related internal links for the given page path (dense semantic linking for topical authority).
+ * Returns 5-8 related internal links for the given page path (dense semantic linking for topical authority).
  * Uses topic-based recommendations when available, then fills with rotated links. Excludes current page.
  */
 export function getRelatedResumeGuides(

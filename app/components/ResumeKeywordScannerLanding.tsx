@@ -20,7 +20,7 @@ import {
 const path = TOOL_CLUSTER_KEYWORD_SCANNER.path;
 
 /**
- * Keyword gaps + missing skills vs a job description — distinct from ATS parsing, overall score, and full JD matcher narrative.
+ * Keyword gaps + missing skills vs a job description - distinct from ATS parsing, overall score, and full JD matcher narrative.
  */
 export function ResumeKeywordScannerLanding() {
   return (
@@ -278,7 +278,7 @@ export function ResumeKeywordScannerLanding() {
           </h2>
           <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
             This page is built for <strong className="text-slate-900">keyword and skill gaps</strong>{" "}
-            versus a pasted job description—not a full formatting audit or a deep narrative match
+            versus a pasted job description, not a full formatting audit or a deep narrative match
             report.
           </p>
           <p className="mt-3 text-sm sm:text-base text-slate-700">

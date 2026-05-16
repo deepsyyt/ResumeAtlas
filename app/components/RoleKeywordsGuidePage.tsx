@@ -160,7 +160,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               {introFreshnessEcho}
               This hub maps high-intent {config.roleName.toLowerCase()} resume keywords for ATS and recruiters:
               core terms, technical skills, tools, action verbs, projects, and summary patterns. Pick a
-              category below, then mirror the job description where it matches your real experience—before
+              category below, then mirror the job description where it matches your real experience, before
               you run a resume keyword scan or compare your resume to that posting.
             </p>
             <p className="mt-3 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto">{exactQueryMatchLine}</p>

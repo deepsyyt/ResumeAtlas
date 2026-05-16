@@ -109,11 +109,11 @@ export const SUMMARY_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       ),
     ],
     [
-      { section: "summary", advice: "3–4 sentences: who you are, what domains, what outcomes, what you want next." },
+      { section: "summary", advice: "3-4 sentences: who you are, what domains, what outcomes, what you want next." },
       { section: "summary", advice: "Repeat 3 must-have nouns from the target JD naturally." },
-      { section: "skills", advice: "Don’t duplicate entire skills list in summary—tease themes only." },
+      { section: "skills", advice: "Don’t duplicate entire skills list in summary, tease themes only." },
       { section: "experience", advice: "Summary claims must appear in bullets with evidence." },
-      { section: "summary", advice: "Avoid first-person if the rest of resume is neutral—keep consistent voice." },
+      { section: "summary", advice: "Avoid first-person if the rest of resume is neutral, keep consistent voice." },
     ],
     [
       "Summary that could apply to any DS candidate.",
@@ -226,8 +226,8 @@ export const SUMMARY_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       ),
     ],
     [
-      { section: "summary", advice: "If T-shaped, say backend-heavy full-stack or frontend-heavy—clarity helps matching." },
-      { section: "summary", advice: "One line on scale: users, RPS, data volume—pick what’s strongest." },
+      { section: "summary", advice: "If T-shaped, say backend-heavy full-stack or frontend-heavy, clarity helps matching." },
+      { section: "summary", advice: "One line on scale: users, RPS, data volume, pick what’s strongest." },
       { section: "skills", advice: "Summary teases stack; skills section lists comprehensively." },
       { section: "experience", advice: "Don’t claim staff scope in summary without staff outcomes in bullets." },
       { section: "summary", advice: "Match job title wording: Software Engineer vs Member of Technical Staff if appropriate." },
@@ -456,7 +456,7 @@ export const SUMMARY_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       ),
     ],
     [
-      { section: "summary", advice: "Avoid internal titles only recruiters understand—use standard PM title." },
+      { section: "summary", advice: "Avoid internal titles only recruiters understand, use standard PM title." },
       { section: "summary", advice: "One strong metric line if you have a flagship outcome." },
       { section: "skills", advice: "Tools (Jira/Figma) can appear once if JD-heavy." },
       { section: "experience", advice: "Summary claims must match bullets." },
@@ -570,7 +570,7 @@ export const SUMMARY_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       ),
     ],
     [
-      { section: "summary", advice: "Name industry domain early—finance, healthcare, logistics." },
+      { section: "summary", advice: "Name industry domain early, finance, healthcare, logistics." },
       { section: "summary", advice: "If agile, say ‘agile BA’ once if JD uses it." },
       { section: "experience", advice: "Summary savings claims need supporting bullet metrics." },
       { section: "skills", advice: "Keep tools minimal in summary." },
@@ -797,7 +797,7 @@ export const SUMMARY_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       ),
     ],
     [
-      { section: "summary", advice: "Mention domain: payments, ads, logistics—helps relevance." },
+      { section: "summary", advice: "Mention domain: payments, ads, logistics, helps relevance." },
       { section: "summary", advice: "One scale hint: RPS, records, $ volume band." },
       { section: "skills", advice: "Stack list belongs in skills; summary uses 1 line max." },
       { section: "experience", advice: "Don’t claim ‘architect’ in summary without architecture bullets." },
@@ -813,7 +813,7 @@ export const SUMMARY_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
 
   "machine-learning-engineer": page(
     "Summary keywords for ML engineer resumes: production ML, systems, and domains.",
-    "MLE summaries should emphasize production: training, serving, monitoring—not only modeling.",
+    "MLE summaries should emphasize production: training, serving, monitoring, not only modeling.",
     [
       cluster(
         "Positioning",
@@ -911,7 +911,7 @@ export const SUMMARY_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       ),
     ],
     [
-      { section: "summary", advice: "Say ‘production ML’ if that’s true—differentiates from pure DS." },
+      { section: "summary", advice: "Say ‘production ML’ if that’s true, differentiates from pure DS." },
       { section: "summary", advice: "Domain line: ads, recommendations, risk, etc." },
       { section: "skills", advice: "Frameworks in skills; summary stays outcome-oriented." },
       { section: "experience", advice: "Online metrics in summary need backup in bullets." },
@@ -1038,7 +1038,7 @@ export const SUMMARY_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
 
   "full-stack-developer": page(
     "Summary keywords for full-stack developer resumes: product breadth with honest depth.",
-    "Full-stack summaries should state end-to-end ownership and primary stack—avoid ‘everything’ claims.",
+    "Full-stack summaries should state end-to-end ownership and primary stack, avoid ‘everything’ claims.",
     [
       cluster(
         "Positioning",
@@ -1136,7 +1136,7 @@ export const SUMMARY_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       { section: "summary", advice: "Product type matters: B2B SaaS vs consumer." },
       { section: "skills", advice: "Split skills by layer; summary doesn’t duplicate." },
       { section: "experience", advice: "Full-stack claims need cross-layer bullets." },
-      { section: "summary", advice: "Indie/SaaS: mention if you own production solo—signals maturity." },
+      { section: "summary", advice: "Indie/SaaS: mention if you own production solo, signals maturity." },
     ],
     [
       "Claims full stack with single-layer evidence.",

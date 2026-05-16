@@ -16,7 +16,7 @@ export type ATSAnalyzeResult = {
   /** Years of experience required by the job description; null if not specified in the JD. */
   required_years_experience: number | null;
   /**
-   * When the JD states a range (e.g. 10–15 years), upper bound; null for a minimum only ("5+ years") or unspecified.
+   * When the JD states a range (e.g. 10-15 years), upper bound; null for a minimum only ("5+ years") or unspecified.
    */
   required_years_experience_max?: number | null;
   /** Years of experience reflected in the resume (inferred from roles and dates). */

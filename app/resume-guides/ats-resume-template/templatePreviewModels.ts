@@ -6,7 +6,7 @@ export type TemplatePreviewModel = {
   name: string;
   roleLine: string;
   contactLine: string;
-  /** Optional second line (phone, LinkedIn) — reads like a real resume header. */
+  /** Optional second line (phone, LinkedIn) - reads like a real resume header. */
   contactLine2?: string;
   summary: string;
   skills: string;
@@ -34,12 +34,12 @@ export const PREVIEW_GENERAL: TemplatePreviewModel = {
   contactLine: "Boston, MA · jordan.lee@email.com · (555) 010-0199",
   contactLine2: "linkedin.com/in/jordanlee",
   summary:
-    "Economics graduate targeting operations analytics roles. Internship-proven at turning messy operational data into weekly KPI packs, exec-ready Excel readouts, and SQL-backed answers for account managers—comfortable owning the loop from raw tables to clear stakeholder updates under tight deadlines.",
+    "Economics graduate targeting operations analytics roles. Internship-proven at turning messy operational data into weekly KPI packs, exec-ready Excel readouts, and SQL-backed answers for account managers, comfortable owning the loop from raw tables to clear stakeholder updates under tight deadlines.",
   skills: "SQL · Microsoft Excel · Google Sheets · Tableau (basics) · Python (pandas, introductory)",
   experienceJob: {
     title: "Operations Analytics Intern",
     company: "Acme Logistics",
-    dates: "Jun 2023 – Aug 2024",
+    dates: "Jun 2023 - Aug 2024",
   },
   bullets: [
     "Built weekly KPI pack in Excel; reduced prep time from roughly 4 hours to under 90 minutes.",
@@ -75,7 +75,7 @@ export const PREVIEW_DATA_ANALYST: TemplatePreviewModel = {
   experienceJob: {
     title: "Data Analyst",
     company: "BrightCo",
-    dates: "Mar 2022 – Present",
+    dates: "Mar 2022 - Present",
   },
   bullets: [
     "Owned funnel dashboards for growth; supported tests that improved trial-to-paid.",
@@ -123,7 +123,7 @@ export const PREVIEW_PRODUCT_MANAGER: TemplatePreviewModel = {
   experienceJob: {
     title: "Associate Product Manager",
     company: "CloudApp Inc",
-    dates: "Jan 2021 – Present",
+    dates: "Jan 2021 - Present",
   },
   bullets: [
     "Prioritized onboarding backlog with design and engineering; improved day-7 activation by 9% after two release cycles.",
@@ -134,7 +134,7 @@ export const PREVIEW_PRODUCT_MANAGER: TemplatePreviewModel = {
       title: "API usage-based pricing exploration",
       context: "0→1 discovery · cross-functional working group",
       outcome:
-        "Interviewed 14 customers, mapped jobs-to-be-done, and shipped a one-pager with success metrics and risk flags—used by leadership to greenlight a scoped MVP track.",
+        "Interviewed 14 customers, mapped jobs-to-be-done, and shipped a one-pager with success metrics and risk flags, used by leadership to greenlight a scoped MVP track.",
     },
     {
       title: "Self-serve onboarding teardown",
@@ -146,7 +146,7 @@ export const PREVIEW_PRODUCT_MANAGER: TemplatePreviewModel = {
       title: "Enterprise SSO readiness competitive matrix",
       context: "PM interview prep · three public vendors",
       outcome:
-        "Compared SCIM/SAML depth, audit logs, and SLA posture in a shareable sheet plus narrative on GTM risk—used as a live walkthrough artifact.",
+        "Compared SCIM/SAML depth, audit logs, and SLA posture in a shareable sheet plus narrative on GTM risk, used as a live walkthrough artifact.",
     },
     {
       title: "“Power user” workflow research sprint",

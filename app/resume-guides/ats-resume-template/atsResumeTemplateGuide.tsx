@@ -334,7 +334,7 @@ export function AtsResumeTemplateGuide() {
           <p className="mt-2 text-slate-700 text-sm sm:text-base">
             <strong className="text-slate-900">Format checklist:</strong> single column, standard section
             titles (Summary, Experience, Skills, Education), no tables or skill icons in images, simple fonts
-            (Arial, Calibri, Inter) at 10.5–12pt.
+            (Arial, Calibri, Inter) at 10.5-12pt.
           </p>
           <h3 className="mt-6 text-lg font-semibold text-slate-900">Layout rules (scannable, not pretty)</h3>
           <ul className="mt-2 list-disc space-y-1.5 pl-5 text-slate-700 text-sm sm:text-base">
@@ -353,7 +353,7 @@ export function AtsResumeTemplateGuide() {
           </ul>
           <h3 className="mt-5 text-base font-semibold text-slate-900 sm:text-lg">Scannable body copy</h3>
           <p className="mt-2 text-slate-700 text-sm sm:text-base">
-            Short summary, tight skills line, reverse-chronological roles with 3–6 bullets (tool + impact).
+            Short summary, tight skills line, reverse-chronological roles with 3-6 bullets (tool + impact).
             When in doubt, pick clarity over design for the file you submit online.
           </p>
         </section>
@@ -373,7 +373,7 @@ export function AtsResumeTemplateGuide() {
               “Remote”, LinkedIn or portfolio (plain text links).
             </li>
             <li>
-              <strong className="text-slate-900">Professional summary</strong>  -  2–3 lines: role,
+              <strong className="text-slate-900">Professional summary</strong>  -  2-3 lines: role,
               years of experience, top skills that match the posting, one proof point.
             </li>
             <li>
@@ -382,7 +382,7 @@ export function AtsResumeTemplateGuide() {
             </li>
             <li>
               <strong className="text-slate-900">Work experience</strong>  -  reverse chronological;
-              each role: title, company, dates, then 3–6 bullets (action + scope + metric).
+              each role: title, company, dates, then 3-6 bullets (action + scope + metric).
             </li>
             <li>
               <strong className="text-slate-900">Education &amp; certifications</strong>  -  degree,

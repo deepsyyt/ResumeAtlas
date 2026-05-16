@@ -126,7 +126,7 @@ function topicExplanationBody(topic: Topic, roleName: string, role: RoleSlug): s
     case "responsibilities":
       core = [
         "Responsibility lines should describe what you consistently owned: systems, stakeholders, metrics, and decision areas. Strong responsibilities read like a clear snapshot of your scope, rather than a copied job posting.",
-        "Use wording that reflects how you operated day to day – who you partnered with, the scale of systems or teams, and how your responsibilities evolved over time as you earned more trust.",
+        "Use wording that reflects how you operated day to day - who you partnered with, the scale of systems or teams, and how your responsibilities evolved over time as you earned more trust.",
       ];
       break;
     case "projects":
@@ -629,7 +629,7 @@ function buildBulletExamples(role: RoleSlug, topic: Topic): BulletExample[] {
           categoryId: "analytics",
           text:
             "Owned weekly business performance reviews, " +
-            "analyzing pipeline, bookings, and churn trends and surfacing 3–5 high-impact actions for leadership.",
+            "analyzing pipeline, bookings, and churn trends and surfacing 3-5 high-impact actions for leadership.",
         },
         {
           categoryId: "analytics",

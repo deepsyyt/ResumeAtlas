@@ -128,7 +128,7 @@ export function IntelligencePanel({
     );
   }
 
-  // Empty state – static demo using same color codes and layout as live dashboard
+  // Empty state - static demo using same color codes and layout as live dashboard
   if (!hasAny) {
     const demoAts = 78;
     const demoKeyword = 82;
@@ -178,7 +178,7 @@ export function IntelligencePanel({
             </h2>
             <p className="text-[11px] text-slate-600 truncate sm:truncate-none sm:text-xs">
               {emptyAts
-                ? "ATS parsing, structure, and readability — not job posting keyword match."
+                ? "ATS parsing, structure, and readability - not job posting keyword match."
                 : "ATS-style signals for your resume vs job description."}
             </p>
           </div>
@@ -187,7 +187,7 @@ export function IntelligencePanel({
           </span>
         </div>
 
-        {/* ATS Pass Likelihood – dominant hero block */}
+        {/* ATS Pass Likelihood - dominant hero block */}
         <div className="mt-3 flex items-center gap-3 sm:gap-4 py-1">
           <div
             className="relative flex items-center justify-center h-20 w-20 sm:h-24 sm:w-24 rounded-full flex-shrink-0"
@@ -240,7 +240,7 @@ export function IntelligencePanel({
             : "Paste your resume and job description, then see your score and fix your resume."}
         </p>
 
-        {/* Supporting metrics – compact cards */}
+        {/* Supporting metrics - compact cards */}
         <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-1.5">
           <div
             className="rounded-xl px-2.5 py-2"
@@ -356,7 +356,7 @@ export function IntelligencePanel({
           </div>
         </div>
 
-        {/* Matched skills – green chips */}
+        {/* Matched skills - green chips */}
         <div className="mt-3 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
             Matched skills
@@ -374,7 +374,7 @@ export function IntelligencePanel({
           </div>
         </div>
 
-        {/* Missing skills – red chips */}
+        {/* Missing skills - red chips */}
         <div className="mt-2.5 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
             {emptyAts
@@ -404,7 +404,7 @@ export function IntelligencePanel({
     );
   }
 
-  // Live analysis – ATS dashboard (flat JSON from /api/analyze)
+  // Live analysis - ATS dashboard (flat JSON from /api/analyze)
   const atsScore = analyzeResult?.ats_score ?? 0;
   const keywordCoverageRaw = analyzeResult?.keyword_coverage;
   const keywordNotApplicable = keywordCoverageRaw === null;
@@ -488,7 +488,7 @@ export function IntelligencePanel({
     improvementTips.length = 0;
     if (missingSkills.length > 0) {
       improvementTips.push(
-        `Address ${missingSkills.length} missing keyword${missingSkills.length === 1 ? "" : "s"} from the posting in your bullets or skills—only where truthful.`
+        `Address ${missingSkills.length} missing keyword${missingSkills.length === 1 ? "" : "s"} from the posting in your bullets or skills, only where truthful.`
       );
     }
     if (typeof keywordCoverageRaw === "number" && keywordScore < 75) {
@@ -579,7 +579,7 @@ export function IntelligencePanel({
           </p>
           <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4">
             <span className="text-2xl sm:text-3xl font-bold text-slate-900 tabular-nums">
-              {keywordNotApplicable ? "—" : `${keywordScore}%`}
+              {keywordNotApplicable ? ", " : `${keywordScore}%`}
             </span>
             <p className="text-xs text-slate-700 leading-snug min-w-0 flex-1">
               {analyzeResult.summary}
@@ -592,7 +592,7 @@ export function IntelligencePanel({
         </div>
       ) : null}
 
-      {/* ATS Pass Likelihood – dominant hero block */}
+      {/* ATS Pass Likelihood - dominant hero block */}
       {!isKeywordScanner ? (
         <>
       <div className="mt-3 flex items-center gap-3 sm:gap-4 py-1">
@@ -623,7 +623,7 @@ export function IntelligencePanel({
           <p className="mt-0.5 text-xs text-slate-500">
             {analysisUsedJobDescription
               ? "Resume vs this job description"
-              : "Resume scan only — no job description"}
+              : "Resume scan only - no job description"}
           </p>
         </div>
       </div>
@@ -663,7 +663,7 @@ export function IntelligencePanel({
         </>
       ) : null}
 
-      {/* Single optimization card – header (problem + opportunity), two-column preview, centered CTA */}
+      {/* Single optimization card - header (problem + opportunity), two-column preview, centered CTA */}
       {onOpenOptimizer && (() => {
         const potentialNum = atsScore < 90 ? 90 : 95;
         const potentialLabel = atsScore < 90 ? "90+" : "95+";
@@ -708,7 +708,7 @@ export function IntelligencePanel({
               </div>
             </div>
 
-            {/* Before | After – static example (same for all users; not from their resume) */}
+            {/* Before | After - static example (same for all users; not from their resume) */}
             <div className="mt-2.5 space-y-1.5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div className="rounded-lg bg-slate-100 px-2.5 py-2">
@@ -739,7 +739,7 @@ export function IntelligencePanel({
         );
       })()}
 
-      {/* Supporting metrics – compact cards (hidden on keyword scanner — hero above) */}
+      {/* Supporting metrics - compact cards (hidden on keyword scanner - hero above) */}
       {!isKeywordScanner ? (
         <>
       <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-1.5">
@@ -832,7 +832,7 @@ export function IntelligencePanel({
 
       {analysisUsedJobDescription || matchedSkills.length > 0 || missingSkills.length > 0 ? (
         <>
-          {/* Matched skills – green chips */}
+          {/* Matched skills - green chips */}
           <div className="mt-3 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
               Matched skills
@@ -854,7 +854,7 @@ export function IntelligencePanel({
             )}
           </div>
 
-          {/* Missing skills – Required vs Preferred when classified, else single list */}
+          {/* Missing skills - Required vs Preferred when classified, else single list */}
           <div className="mt-2.5 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
               Missing skills (from JD)

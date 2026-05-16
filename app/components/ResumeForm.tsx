@@ -301,9 +301,9 @@ export function ResumeForm({
                       className={textareaClass}
                       placeholder={
                         isAtsCompliance
-                          ? "Optional — paste a job description for keyword alignment"
+                          ? "Optional - paste a job description for keyword alignment"
                           : isKeywordScanner
-                            ? "Paste the full job description — gaps are detected against this text"
+                            ? "Paste the full job description - gaps are detected against this text"
                             : "Paste the job description you're applying for"
                       }
                       disabled={isGenerating}

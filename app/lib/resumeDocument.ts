@@ -37,7 +37,7 @@ export function resumeDocumentToPlainText(doc: ResumeDocument): string {
   const headerParts: string[] = [];
   if (doc.name?.trim()) headerParts.push(doc.name.trim());
   if (doc.title?.trim()) headerParts.push(doc.title.trim());
-  const headerLine = headerParts.join(" — ");
+  const headerLine = headerParts.join(" - ");
   if (headerLine) lines.push(headerLine);
   if (doc.contact?.trim()) lines.push(doc.contact.trim());
   if (lines.length > 0) lines.push("");
@@ -60,7 +60,7 @@ export function resumeDocumentToPlainText(doc: ResumeDocument): string {
       const role = exp.role?.trim();
       const company = exp.company?.trim();
       const dates = exp.dates?.trim();
-      const header = [role, company, dates].filter(Boolean).join(" — ");
+      const header = [role, company, dates].filter(Boolean).join(" - ");
       if (header) lines.push(header);
       for (const b of exp.bullets ?? []) {
         if (b && b.trim()) lines.push(`• ${b.trim()}`);

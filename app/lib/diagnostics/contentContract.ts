@@ -1,6 +1,6 @@
 /**
  * Content contracts for posting-fit diagnosis engine pages.
- * Validates MDX/build-time bundles — extend with CI script that reads frontmatter.
+ * Validates MDX/build-time bundles - extend with CI script that reads frontmatter.
  */
 
 import type { DiagnosticPrimitiveId } from "./primitiveRegistry";
@@ -19,7 +19,7 @@ export interface MdxFrontmatterBase {
   description: string;
   /** Single H1 source for MDX pages that use it; utility shells may override in layout. */
   h1?: string;
-  /** Owning diagnostic narrative — must align with posting-fit engine. */
+  /** Owning diagnostic narrative - must align with posting-fit engine. */
   engine: "posting_fit_diagnosis";
   /** Registry version this content was authored against. */
   diagnostic_registry_version: string;
@@ -122,7 +122,7 @@ export function validateUtilityContract(input: Partial<UtilityPageContract>): Co
   for (const p of input.primitives ?? []) {
     if (!isPrimitiveId(p)) errors.push(`invalid primitive id: ${String(p)}`);
   }
-  if (!input.primitives?.length) warnings.push("primitives empty — intentional?");
+  if (!input.primitives?.length) warnings.push("primitives empty - intentional?");
   return { ok: errors.length === 0, errors, warnings };
 }
 

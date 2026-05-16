@@ -1,5 +1,5 @@
 /**
- * GA4 event names — one event name per distinct funnel step (no custom dimensions
+ * GA4 event names - one event name per distinct funnel step (no custom dimensions
  * required to compare sources in standard Events reports).
  */
 export const ANALYTICS_EVENTS = {
@@ -8,7 +8,7 @@ export const ANALYTICS_EVENTS = {
   userLogin: "user_login",
   optimizationCompleted: "optimization_completed",
 
-  /** Start optimization — separate events per surface */
+  /** Start optimization - separate events per surface */
   optimizationClickedIntelligencePanel: "optimization_clicked_intelligence_panel",
   optimizationClickedPostDashboardNudge: "optimization_clicked_post_dashboard_nudge",
   optimizationClickedOauthReturnOptimize: "optimization_clicked_oauth_return_optimize",
@@ -28,7 +28,7 @@ export const ANALYTICS_EVENTS = {
   optimizationEditableDownloadedPaymentSuccessModal:
     "optimization_editable_downloaded_payment_success_modal",
 
-  /** Razorpay opens — one event per checkout source */
+  /** Razorpay opens - one event per checkout source */
   paymentClickedCreditPackModal: "payment_clicked_credit_pack_modal",
   paymentClickedOptimizeDownload: "payment_clicked_optimize_download",
   paymentClickedOauthResume: "payment_clicked_oauth_resume",

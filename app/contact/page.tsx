@@ -74,7 +74,7 @@ export default function ContactPage() {
               </a>
             </p>
             <p className="mt-2 text-sm text-slate-400">
-              We typically respond within 24–48 hours.
+              We typically respond within 24-48 hours.
             </p>
           </InfoCard>
         </div>

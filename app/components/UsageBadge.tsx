@@ -25,7 +25,7 @@ export function UsageBadge({ usage }: UsageBadgeProps) {
 
   return (
     <span className="inline-flex items-center rounded-lg bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800">
-      No optimizations left — buy a pack to tailor your resume
+      No optimizations left - buy a pack to tailor your resume
     </span>
   );
 }

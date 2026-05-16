@@ -371,7 +371,7 @@ export default function HomeClient({
   const [optimizeDashboardNudgeOpen, setOptimizeDashboardNudgeOpen] = useState(false);
   const [optimizeNudgeTrigger, setOptimizeNudgeTrigger] = useState(0);
   const optimizeNudgeTriggerRef = useRef(0);
-  /** Triggers (`optimizeNudgeTrigger` at fire time) the user dismissed or acted on — allows nudge again on a new analysis. */
+  /** Triggers (`optimizeNudgeTrigger` at fire time) the user dismissed or acted on - allows nudge again on a new analysis. */
   const dismissedOptimizeNudgeTriggersRef = useRef<Set<number>>(new Set());
   /** Which analysis generation the open nudge belongs to (for per-run dismiss tracking). */
   const optimizeNudgeModalForTriggerRef = useRef<number | null>(null);
@@ -1636,7 +1636,7 @@ export default function HomeClient({
             </h2>
             <p className="mt-2 text-sm text-slate-600 leading-snug">
               One authoritative page per role: examples, ATS keywords, section patterns, and (where available)
-              bullet examples—jump links anchor to the section you need.
+              bullet examples, jump links anchor to the section you need.
             </p>
           </div>
           <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 list-none m-0 p-0">

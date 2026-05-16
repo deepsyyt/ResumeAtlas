@@ -18,13 +18,13 @@ export function stripResumeAtlasTitleSuffix(title: string): string {
 }
 
 /**
- * Canonical URL owners (indexed) vs. query intent — use when writing titles, descriptions, and internal links.
+ * Canonical URL owners (indexed) vs. query intent - use when writing titles, descriptions, and internal links.
  *
- * **`/{role}-resume-guide`** — Single pillar per role: examples, keywords, bullets, summaries, skills, and
+ * **`/{role}-resume-guide`** - Single pillar per role: examples, keywords, bullets, summaries, skills, and
  * projects on one authoritative URL (anchors for deep jumps). Consolidates legacy
  * `-resume-example`, `-resume-keywords`, and bullet-hub URLs via 301s.
  *
- * **`/{role}`** — Career / interview-framed hub (indexed only when there is no standalone pillar takeover in
+ * **`/{role}`** - Career / interview-framed hub (indexed only when there is no standalone pillar takeover in
  * `seoPages.ts`; otherwise noindex with canonical to `/{role}-resume-guide`).
  *
  * **Thin-content avoidance:** `/{role}/keywords/{intent}` and legacy hyphen keyword URLs **301** to the pillar.
@@ -68,7 +68,7 @@ export function roleResumeExampleListMeta(role: RoleSlug): { title: string; desc
         ? `Product Manager Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR} ATS-Friendly Template)${RESUME_ATLAS_TITLE_SUFFIX}`
       : role === "devops-engineer"
         ? `DevOps Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR} ATS-Friendly Template)${RESUME_ATLAS_TITLE_SUFFIX}`
-      : `${rn} Resume Example, Sample & Template (${RESUME_EXAMPLE_SERP_TITLE_YEAR}) — ATS Sections${RESUME_ATLAS_TITLE_SUFFIX}`;
+      : `${rn} Resume Example, Sample & Template (${RESUME_EXAMPLE_SERP_TITLE_YEAR}) - ATS Sections${RESUME_ATLAS_TITLE_SUFFIX}`;
   const baseDesc =
     role === "software-engineer"
       ? "Use a software engineer resume example, sample, and ATS-friendly template with summary/objective patterns, project bullets, and stack-specific impact lines."

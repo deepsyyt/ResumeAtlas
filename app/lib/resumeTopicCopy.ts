@@ -17,12 +17,12 @@ export function getRoleTopicExtraParagraphs(
     case "bullet-points":
       return [
         `For ${roleName} roles, strong bullets weave tools such as ${tools} with verbs like ${verbs} so ATS and humans see both keyword coverage and ownership.`,
-        `Mirror patterns like: ${phrase}—then swap in your own metrics, constraints, and stakeholders.`,
+        `Mirror patterns like: ${phrase}, then swap in your own metrics, constraints, and stakeholders.`,
       ];
     case "skills":
       return [
         `Prioritize skills recruiters expect for ${roleName} work: anchor on ${tools}, then reinforce the same terms inside your experience section.`,
-        `Your skills block should read like a map of how you deliver work—tied to verbs such as ${verbs}—not a disconnected keyword dump.`,
+        `Your skills block should read like a map of how you deliver work, tied to verbs such as ${verbs}, not a disconnected keyword dump.`,
       ];
     case "summary":
       return [
@@ -31,13 +31,13 @@ export function getRoleTopicExtraParagraphs(
       ];
     case "responsibilities":
       return [
-        `For ${roleName} candidates, responsibility lines should show steady ownership of systems and partners—using language around ${verbs} and tools like ${tools}.`,
+        `For ${roleName} candidates, responsibility lines should show steady ownership of systems and partners, using language around ${verbs} and tools like ${tools}.`,
         `Tie responsibilities to scale and constraints (teams, data volume, SLAs) so they don’t read like pasted job descriptions.`,
       ];
     case "projects":
       return [
         `Project write-ups for ${roleName} resumes should read like mini case studies: problem → approach (${tools}) → measurable outcome, echoing patterns such as ${phrase}`,
-        `Highlight cross-functional work explicitly—who you partnered with and what decision changed because of the project.`,
+        `Highlight cross-functional work explicitly, who you partnered with and what decision changed because of the project.`,
       ];
     case "experience-examples":
       return [
@@ -49,14 +49,14 @@ export function getRoleTopicExtraParagraphs(
   }
 }
 
-/** Three ATS tips that vary by role—replaces identical six-bullet block sitewide */
+/** Three ATS tips that vary by role, replaces identical six-bullet block sitewide */
 export function getRoleSpecificAtsTips(role: RoleSlug, roleName: string): string[] {
   switch (role) {
     case "data-scientist":
       return [
         "Spell out experimentation language (A/B tests, guardrails, incrementality) next to modeling terms so ATS sees both stats and product impact.",
-        "Pair model keywords with data/pipeline terms where true—freshness, monitoring, drift—to signal production maturity.",
-        "Quantify research decisions: baseline, uplift, error rates, or latency budgets—not only offline AUC.",
+        "Pair model keywords with data/pipeline terms where true, freshness, monitoring, drift, to signal production maturity.",
+        "Quantify research decisions: baseline, uplift, error rates, or latency budgets, not only offline AUC.",
       ];
     case "software-engineer":
       return [
@@ -72,13 +72,13 @@ export function getRoleSpecificAtsTips(role: RoleSlug, roleName: string): string
       ];
     case "product-manager":
       return [
-        "Echo discovery and shipping vocabulary: PRDs, rollouts, guardrail metrics—paired with business numbers you moved.",
+        "Echo discovery and shipping vocabulary: PRDs, rollouts, guardrail metrics, paired with business numbers you moved.",
         "Connect roadmap keywords to evidence: what shipped, in what timeframe, with what adoption or revenue impact.",
-        "Keep tools (Jira, Figma, Amplitude) aligned with the posting—ATS often literal-matches product stack.",
+        "Keep tools (Jira, Figma, Amplitude) aligned with the posting, ATS often literal-matches product stack.",
       ];
     case "business-analyst":
       return [
-        "Use artifact language: BRD, UAT, BPMN, RACI—only where you truly delivered or signed off.",
+        "Use artifact language: BRD, UAT, BPMN, RACI, only where you truly delivered or signed off.",
         "Tie requirements work to measurable change: cycle time, savings, defects, audit findings.",
         "Pair ERP/CRM/system names with integration or process outcomes, not just exposure.",
       ];
@@ -90,7 +90,7 @@ export function getRoleSpecificAtsTips(role: RoleSlug, roleName: string): string
       ];
     case "backend-developer":
       return [
-        "Anchor bullets in APIs, datastores, and messaging with throughput/latency/incident metrics—not only technology names.",
+        "Anchor bullets in APIs, datastores, and messaging with throughput/latency/incident metrics, not only technology names.",
         "For regulated domains, include correctness/security terms (idempotency, encryption, audit) with scope you owned.",
         "Show on-call or reliability work with MTTR/SLO language when it reflects your experience.",
       ];
@@ -98,12 +98,12 @@ export function getRoleSpecificAtsTips(role: RoleSlug, roleName: string): string
       return [
         "Balance modeling terms with serving/monitoring terms: latency SLO, drift, batch vs online inference.",
         "Feature pipelines and data quality keywords differentiate MLE from notebook-only profiles.",
-        "Connect deployments to cost and reliability tradeoffs—GPU usage, autoscaling, rollback stories.",
+        "Connect deployments to cost and reliability tradeoffs, GPU usage, autoscaling, rollback stories.",
       ];
     case "devops-engineer":
       return [
         "Pair CI/CD and IaC keywords with DORA-style outcomes: lead time, deploy frequency, change failure rate, MTTR.",
-        "Tie Kubernetes/GitOps terms to cluster patterns you operated—not just buzzwords.",
+        "Tie Kubernetes/GitOps terms to cluster patterns you operated, not just buzzwords.",
         "Include security/supply-chain automation (OIDC, image signing) when you enforced policies, not only installed tools.",
       ];
     case "full-stack-developer":

@@ -17,7 +17,7 @@ export type ResumeBulletLevel = "entry-level" | "junior" | "senior";
 export type ProjectBlock = {
   /** Entry-level: section label before this block (e.g. “Academic Projects”). */
   groupHeading?: string;
-  /** One line under groupHeading — tool / intent reinforcement for SEO. */
+  /** One line under groupHeading - tool / intent reinforcement for SEO. */
   groupIntro?: string;
   /** Short label shown as H3 (e.g. “Pricing experiment”, “ML platform”). */
   name: string;
@@ -27,11 +27,11 @@ export type ProjectBlock = {
 export type HubLevelCard = {
   /** One-line promise (CTR on the card). */
   hook: string;
-  /** What that level page contains—teasers only, not duplicate bullet banks. */
+  /** What that level page contains, teasers only, not duplicate bullet banks. */
   whatsInside: string[];
 };
 
-/** Grouped preview lines for hub SERP-weight block (12–16 bullets; distinct from full level pages). */
+/** Grouped preview lines for hub SERP-weight block (12-16 bullets; distinct from full level pages). */
 export type HubPreviewGroup = { label: string; bullets: string[] };
 
 /** Long-tail query + internal URL (“People also search for”). */
@@ -44,7 +44,7 @@ export type ResumeBulletHubCopy = {
   metaDescription: string;
   /** Optional extra keywords for metadata. */
   keywords: string[];
-  /** Primary visible headline—query-aligned + benefit. */
+  /** Primary visible headline, query-aligned + benefit. */
   h1: string;
   /** One line under H1 for SERP snippet alignment & CTR. */
   heroSubheadline: string;
@@ -52,9 +52,9 @@ export type ResumeBulletHubCopy = {
   aboveFoldBullets: [string, string, string];
   /** Short trust line after intro block (no fabricated stats). */
   authorityLine: string;
-  /** 1–2 sentences with role-specific tools/terms for keyword density. */
+  /** 1-2 sentences with role-specific tools/terms for keyword density. */
   roleKeywordDensity: string;
-  /** First 2–3 sentences: must cover “resume bullet points”, role, entry/junior/senior, ATS + keywords. */
+  /** First 2-3 sentences: must cover “resume bullet points”, role, entry/junior/senior, ATS + keywords. */
   introIntentStack: string;
   /** Featured-snippet style: question H2 + two-line direct answer. */
   snippetDefinition: {
@@ -62,7 +62,7 @@ export type ResumeBulletHubCopy = {
     line1: string;
     line2: string;
   };
-  /** Paragraphs 2–3: supporting depth. */
+  /** Paragraphs 2-3: supporting depth. */
   paragraphs: [string, string];
   /** Natural use of “resume lines / statements / achievements” for query coverage. */
   semanticVariation: string;
@@ -91,11 +91,11 @@ export type ResumeBulletDetailCopy = {
   /** Optional metadata keywords (entry-level / long-tail). */
   keywords?: string[];
   h1: string;
-  /** Intent stacking: fresher / entry-level, resume bullet points, ATS + keywords (2–3 sentences). */
+  /** Intent stacking: fresher / entry-level, resume bullet points, ATS + keywords (2-3 sentences). */
   intentStack?: string;
   /** Featured-snippet style definition for entry-level pages. */
   snippetDefinition?: { h2: string; line1: string; line2: string };
-  /** Visible hero bullets (3–4 lines); entry-level often uses four for CTR. */
+  /** Visible hero bullets (3-4 lines); entry-level often uses four for CTR. */
   aboveFoldBullets?: [string, string, string] | [string, string, string, string];
   /** Exact-match phrasing for primary queries (after intent / reassurance). */
   exactMatchQueryLine?: string;
@@ -117,17 +117,17 @@ export type ResumeBulletDetailCopy = {
   projectsSectionTitle?: string;
   /** Override gray intro under project section H2. */
   projectsSectionSubcopy?: string;
-  /** Right after H1 — reassures candidates with little or no paid experience. */
+  /** Right after H1 - reassures candidates with little or no paid experience. */
   noExperienceReassurance?: string;
   /** Long-tail query breadth: students, internship, no experience, etc. */
   queryBreadthLine?: string;
-  /** Student / no-experience micro-section (2–3 bullets). */
+  /** Student / no-experience micro-section (2-3 bullets). */
   studentIntentBlock?: { h2: string; bullets: string[] };
   /** Second featured-snippet style block (“How to write…”). */
   howToWriteSnippet?: { h2: string; line1: string; line2: string };
   /** Trust line near example bullets. */
   realismLine?: string;
-  /** Line above hero bullets — copy/paste intent. */
+  /** Line above hero bullets - copy/paste intent. */
   copyIntentLine?: string;
   /** Early ATS warning + CTA after the three hero bullets. */
   earlyAtsWarning?: { body: string; ctaLabel: string; href: string };
@@ -453,7 +453,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     ],
     h1: "40+ Data Scientist Resume Bullet Points You Can Adapt Fast",
     heroSubheadline:
-      "Project-wise examples by career stage—entry, junior, and senior. No fluff: metrics, tools, and scope you can defend in an interview.",
+      "Project-wise examples by career stage, entry, junior, and senior. No fluff: metrics, tools, and scope you can defend in an interview.",
     aboveFoldBullets: [
       "Shipped a Python + SQL scoring pipeline on 2M+ rows nightly; cut forecast error (MAPE) by 18% vs prior quarter.",
       "Trained ML models (Python, XGBoost) with calibrated metrics; reduced false positives 18% at the chosen operating point.",
@@ -462,24 +462,24 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     authorityLine:
       "Used by job seekers applying to competitive roles at well-known technology and data-driven companies.",
     roleKeywordDensity:
-      "Strong data scientist resume bullet points should include tools like Python, SQL, machine learning, and A/B testing—plus metrics that prove business impact, not just model accuracy.",
+      "Strong data scientist resume bullet points should include tools like Python, SQL, machine learning, and A/B testing, plus metrics that prove business impact, not just model accuracy.",
     introIntentStack:
-      "These data scientist resume bullet points reflect what hiring teams expect in 2026, including measurable impact, clear ownership, and ATS-friendly phrasing. Data scientist resume bullet points should match how you actually work: entry-level, junior, or senior—and the ATS keywords in each job posting. This hub gives copy-ready resume bullet points for every level, plus free tools to scan for missing keywords and compare your resume to the job description before you apply.",
+      "These data scientist resume bullet points reflect what hiring teams expect in 2026, including measurable impact, clear ownership, and ATS-friendly phrasing. Data scientist resume bullet points should match how you actually work: entry-level, junior, or senior, and the ATS keywords in each job posting. This hub gives copy-ready resume bullet points for every level, plus free tools to scan for missing keywords and compare your resume to the job description before you apply.",
     snippetDefinition: {
       h2: "What Are Good Data Scientist Resume Bullet Points?",
       line1:
         "Good data scientist resume bullet points pair concrete tools (Python, SQL, machine learning, experimentation) with measurable outcomes and the scope you truly owned.",
       line2:
-        "They should also align with ATS screening: include keywords from the job description naturally—without stuffing metrics you cannot defend in an interview.",
+        "They should also align with ATS screening: include keywords from the job description naturally, without stuffing metrics you cannot defend in an interview.",
     },
     paragraphs: [
-      "Recruiters and ATS skim for tools (Python, SQL, Spark), outcomes (lift, precision, dollars), and how you influenced decisions. This hub routes you to one of three pages—each built around realistic project blocks—so the language matches how you actually worked.",
+      "Recruiters and ATS skim for tools (Python, SQL, Spark), outcomes (lift, precision, dollars), and how you influenced decisions. This hub routes you to one of three pages, each built around realistic project blocks, so the language matches how you actually worked.",
       "Treat every line as a template: swap our X% and N rows for numbers from your work. If a bullet oversells your role, tighten it; credibility beats buzzwords when someone asks follow-ups in screening.",
     ],
     semanticVariation:
-      "These resume bullet points (also called resume lines or statements) should highlight measurable achievements—not adjectives. If you describe achievements honestly, you stay interview-safe while still improving ATS match.",
+      "These resume bullet points (also called resume lines or statements) should highlight measurable achievements, not adjectives. If you describe achievements honestly, you stay interview-safe while still improving ATS match.",
     previewSectionIntro:
-      "These grouped examples add SERP depth: 16 data scientist resume bullet points across machine learning, data analysis, projects, and business impact—then open entry-level, junior, or senior pages for full project-wise banks.",
+      "These grouped examples add SERP depth: 16 data scientist resume bullet points across machine learning, data analysis, projects, and business impact, then open entry-level, junior, or senior pages for full project-wise banks.",
     previewSection: {
       h2: "Data Scientist Resume Bullet Point Examples (Preview)",
       groups: [
@@ -526,7 +526,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       points: [
         "Too generic: could apply to any company, so ATS and recruiters see no signal.",
         "No metrics: “improved model” without lift, latency, or cost is unverifiable.",
-        "Missing keywords: the posting asks for SQL, experimentation, and causal thinking—but your resume never says them.",
+        "Missing keywords: the posting asks for SQL, experimentation, and causal thinking, but your resume never says them.",
         "Not aligned to the job description: strong bullets for the wrong role still lose.",
       ],
     },
@@ -539,12 +539,12 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       {
         question: "Can I copy these bullets directly?",
         answer:
-          "Use them as patterns and swap in your real metrics, tools, and outcomes. Copying verbatim without alignment to your experience can hurt you in interviews—and ATS still needs keywords from each specific job description.",
+          "Use them as patterns and swap in your real metrics, tools, and outcomes. Copying verbatim without alignment to your experience can hurt you in interviews, and ATS still needs keywords from each specific job description.",
       },
       {
         question: "How do I know if my resume matches a job posting?",
         answer:
-          "Paste your resume and the job description into ResumeAtlas. You get a practical view of keyword overlap and gaps compared to that posting—not a generic score—so you know what to fix before you apply.",
+          "Paste your resume and the job description into ResumeAtlas. You get a practical view of keyword overlap and gaps compared to that posting, not a generic score, so you know what to fix before you apply.",
       },
     ],
     relatedSearches: [
@@ -555,9 +555,9 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     ],
     levelCards: {
       "entry-level": {
-        hook: "Internships, capstone, and portfolio projects—SQL, Python, and first ML wins.",
+        hook: "Internships, capstone, and portfolio projects, SQL, Python, and first ML wins.",
         whatsInside: [
-          "2–3 project blocks (academic + internship-style)",
+          "2-3 project blocks (academic + internship-style)",
           "Metric-friendly phrasing you can localize to your work",
           "CTA to scan for missing keywords vs the posting",
         ],
@@ -595,7 +595,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     ],
     h1: "40+ Software Engineer Resume Bullet Points Hiring Teams Read",
     heroSubheadline:
-      "Shipped features, reliability work, and scale—broken out by level so your bullets match the job you want, not a generic template.",
+      "Shipped features, reliability work, and scale, broken out by level so your bullets match the job you want, not a generic template.",
     aboveFoldBullets: [
       "Shipped TypeScript/React features behind REST APIs; cut p95 latency 22% on a core checkout path.",
       "Hardened CI with Playwright + unit tests; dropped flaky integration failure rate from 11% to under 2%.",
@@ -606,22 +606,22 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     roleKeywordDensity:
       "Strong software engineer resume bullet points should name your stack (TypeScript, React, Node, cloud), reliability signals (tests, SLOs, latency), and measurable outcomes hiring managers can verify.",
     introIntentStack:
-      "These software engineer resume bullet points reflect what hiring teams expect in 2026, including measurable impact, clear ownership, and ATS-friendly phrasing. Software engineer resume bullet points need to match your level—entry-level, junior, or senior—and the ATS keywords in each posting. This hub links full example pages for every stage, plus free tools to find missing keywords and compare your resume to the job description.",
+      "These software engineer resume bullet points reflect what hiring teams expect in 2026, including measurable impact, clear ownership, and ATS-friendly phrasing. Software engineer resume bullet points need to match your level, entry-level, junior, or senior, and the ATS keywords in each posting. This hub links full example pages for every stage, plus free tools to find missing keywords and compare your resume to the job description.",
     snippetDefinition: {
       h2: "What Are Good Software Engineer Resume Bullet Points?",
       line1:
         "Good software engineer resume bullet points name your stack (languages, frameworks, cloud), constraints (scale, latency, reliability), and a measurable result you can explain.",
       line2:
-        "They should also pass ATS screening for that employer: mirror important keywords from the job description honestly—especially tools and domains the role emphasizes.",
+        "They should also pass ATS screening for that employer: mirror important keywords from the job description honestly, especially tools and domains the role emphasizes.",
     },
     paragraphs: [
-      "Strong engineering resumes prove ownership: what you built, under what constraints, with what measurable result (latency, incidents, adoption). The three pages below mirror how IC scope grows—from bootcamp and internship projects to services, CI, and cross-team architecture.",
+      "Strong engineering resumes prove ownership: what you built, under what constraints, with what measurable result (latency, incidents, adoption). The three pages below mirror how IC scope grows, from bootcamp and internship projects to services, CI, and cross-team architecture.",
       "Use stacks and numbers you can defend. If you did not own the rollout, say how you contributed; if you measured p95 or error budgets, say so. Vague “improved performance” lines get skipped.",
     ],
     semanticVariation:
       "Think of these as resume lines and achievement bullets: short resume statements that prove impact. Hiring managers skim for proof, not buzzwords.",
     previewSectionIntro:
-      "Below are 16 software engineer resume bullet points across ML-related work, data-heavy debugging, project delivery, and business impact—use them as patterns, then open entry-level, junior, or senior pages for deeper banks.",
+      "Below are 16 software engineer resume bullet points across ML-related work, data-heavy debugging, project delivery, and business impact, use them as patterns, then open entry-level, junior, or senior pages for deeper banks.",
     previewSection: {
       h2: "Software Engineer Resume Bullet Point Examples (Preview)",
       groups: [
@@ -669,7 +669,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
         "Buzzwords without proof: “strong collaborator” does not replace shipped outcomes.",
         "Missing metrics: latency, uptime, adoption, or error rate beats “improved performance.”",
         "Wrong keywords for the role: backend-heavy posting with only frontend bullets loses ATS match.",
-        "Same resume for every job: stacks and domains differ—tailor honestly.",
+        "Same resume for every job: stacks and domains differ, tailor honestly.",
       ],
     },
     faq: [
@@ -681,7 +681,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       {
         question: "What makes a software engineer bullet “senior”?",
         answer:
-          "Senior bullets usually show trade-offs, scale, reliability, mentorship, and cross-team impact—not just tasks. If you are applying to senior roles, your bullets should reflect that scope honestly.",
+          "Senior bullets usually show trade-offs, scale, reliability, mentorship, and cross-team impact, not just tasks. If you are applying to senior roles, your bullets should reflect that scope honestly.",
       },
       {
         question: "How can I check ATS keyword fit?",
@@ -697,7 +697,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     ],
     levelCards: {
       "entry-level": {
-        hook: "Coursework, internships, and first production commits—tests and stack details matter.",
+        hook: "Coursework, internships, and first production commits, tests and stack details matter.",
         whatsInside: [
           "3 project blocks (API, React perf, systems coursework)",
           "Concrete stacks: TypeScript, Node, Playwright, etc.",
@@ -705,7 +705,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
         ],
       },
       junior: {
-        hook: "Services, CI, observability—mid-level ownership on real systems.",
+        hook: "Services, CI, observability, mid-level ownership on real systems.",
         whatsInside: [
           "4 project blocks (microservices, flaky tests, payments, metrics)",
           "Bullets that show delivery + reliability, not only tasks",
@@ -713,7 +713,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
         ],
       },
       senior: {
-        hook: "Architecture, SLOs, cost, security—and org-wide leadership.",
+        hook: "Architecture, SLOs, cost, security, and org-wide leadership.",
         whatsInside: [
           "5 project blocks + 10 leadership bullets",
           "RFCs, incident culture, hiring, exec visibility",
@@ -746,24 +746,24 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     authorityLine:
       "Used by job seekers targeting product roles at growth-stage and established technology companies.",
     roleKeywordDensity:
-      "Strong product manager resume bullet points should weave in discovery, metrics, roadmaps, and stakeholder outcomes—using terms that match each job description’s domain (B2B SaaS, marketplace, platform, etc.).",
+      "Strong product manager resume bullet points should weave in discovery, metrics, roadmaps, and stakeholder outcomes, using terms that match each job description’s domain (B2B SaaS, marketplace, platform, etc.).",
     introIntentStack:
-      "These product manager resume bullet points reflect what hiring teams expect in 2026, including measurable impact, clear ownership, and ATS-friendly phrasing. Product manager resume bullet points should match your stage: entry-level, junior, or senior PM—and the ATS keywords in each job posting. This hub routes you to full example pages for every level, with tools to scan for missing keywords and compare your resume to the job description.",
+      "These product manager resume bullet points reflect what hiring teams expect in 2026, including measurable impact, clear ownership, and ATS-friendly phrasing. Product manager resume bullet points should match your stage: entry-level, junior, or senior PM, and the ATS keywords in each job posting. This hub routes you to full example pages for every level, with tools to scan for missing keywords and compare your resume to the job description.",
     snippetDefinition: {
       h2: "What Are Good Product Manager Resume Bullet Points?",
       line1:
-        "Good product manager resume bullet points connect customer evidence, business metrics (conversion, retention, revenue), and the decisions you influenced—not a feature laundry list.",
+        "Good product manager resume bullet points connect customer evidence, business metrics (conversion, retention, revenue), and the decisions you influenced, not a feature laundry list.",
       line2:
         "They should also align with ATS screening: reuse keywords from the job description (discovery, roadmap, stakeholders, metrics) where they match your true experience.",
     },
     paragraphs: [
-      "PM resumes get shortlisted when they show problems you framed, decisions you influenced, and metrics that moved (conversion, retention, revenue, NPS). The three pages map language to associate, mid-level, and senior scope—without mixing “owned roadmap” with work you only supported.",
-      "Credibility beats title inflation. If you facilitated discovery but did not set strategy, the bullet should say that clearly—then show the impact you did drive.",
+      "PM resumes get shortlisted when they show problems you framed, decisions you influenced, and metrics that moved (conversion, retention, revenue, NPS). The three pages map language to associate, mid-level, and senior scope, without mixing “owned roadmap” with work you only supported.",
+      "Credibility beats title inflation. If you facilitated discovery but did not set strategy, the bullet should say that clearly, then show the impact you did drive.",
     ],
     semanticVariation:
-      "These resume bullet points work as resume lines or short statements—what matters is measurable product outcomes, not a list of tools unless the posting demands them.",
+      "These resume bullet points work as resume lines or short statements, what matters is measurable product outcomes, not a list of tools unless the posting demands them.",
     previewSectionIntro:
-      "Below are 16 product manager resume bullet points grouped by ML collaboration, data analysis, shipped projects, and business impact—then use the entry-level, junior, or senior pages for complete project blocks.",
+      "Below are 16 product manager resume bullet points grouped by ML collaboration, data analysis, shipped projects, and business impact, then use the entry-level, junior, or senior pages for complete project blocks.",
     previewSection: {
       h2: "Product Manager Resume Bullet Point Examples (Preview)",
       groups: [
@@ -808,7 +808,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     comparisonSection: {
       title: "Why Most Resume Bullet Points Don't Work",
       points: [
-        "Feature lists without outcomes: shipping is not the win—impact is.",
+        "Feature lists without outcomes: shipping is not the win, impact is.",
         "No metrics: conversion, retention, revenue, or time-to-value beats vague “improved product.”",
         "Missing domain keywords: B2B SaaS vs marketplace vs platform roles read differently to ATS.",
         "Same bullets for every employer: tailor to each job description.",
@@ -839,7 +839,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     ],
     levelCards: {
       "entry-level": {
-        hook: "APM / associate PM—discovery, shipping support, and measurable slices.",
+        hook: "APM / associate PM, discovery, shipping support, and measurable slices.",
         whatsInside: [
           "3 project blocks (discovery sprint, launch support, stakeholders)",
           "Honest scope: what you owned vs supported",
@@ -847,7 +847,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
         ],
       },
       junior: {
-        hook: "Mid PM—roadmap slices, pricing, and cross-functional delivery.",
+        hook: "Mid PM, roadmap slices, pricing, and cross-functional delivery.",
         whatsInside: [
           "4 project blocks (OKRs, pricing, platform, experiments)",
           "Outcome-first language hiring managers scan for",
@@ -855,7 +855,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
         ],
       },
       senior: {
-        hook: "Senior / Group PM—portfolio, exec narrative, and org-wide bets.",
+        hook: "Senior / Group PM, portfolio, exec narrative, and org-wide bets.",
         whatsInside: [
           "5 project blocks + 10 leadership bullets",
           "P&L, compliance, enterprise, and hiring themes",
@@ -1409,9 +1409,9 @@ function baSenior(): ResumeBulletDetailCopy {
 function dsEntry(): ResumeBulletDetailCopy {
   return {
     metaTitle:
-      "20+ Entry-Level Data Scientist Resume Bullet Points (Freshers – Copy & Paste) | ResumeAtlas",
+      "20+ Entry-Level Data Scientist Resume Bullet Points (Freshers - Copy & Paste) | ResumeAtlas",
     metaDescription:
-      "20+ entry-level data scientist resume bullet points for freshers, recent graduates, and internships: Python, SQL, ML projects—plus ATS keyword scan and job description match, free.",
+      "20+ entry-level data scientist resume bullet points for freshers, recent graduates, and internships: Python, SQL, ML projects, plus ATS keyword scan and job description match, free.",
     keywords: [
       "data scientist resume bullet points entry level",
       "resume bullet points for freshers",
@@ -1424,7 +1424,7 @@ function dsEntry(): ResumeBulletDetailCopy {
       "Python SQL resume bullets",
       "ATS data science keywords",
     ],
-    h1: "20+ Entry-Level Data Scientist Resume Bullet Points (Freshers – Copy & Paste)",
+    h1: "20+ Entry-Level Data Scientist Resume Bullet Points (Freshers - Copy & Paste)",
     noExperienceReassurance:
       "No experience? These bullet points are designed for projects, internships, and coursework.",
     queryBreadthLine:
@@ -1452,9 +1452,9 @@ function dsEntry(): ResumeBulletDetailCopy {
     snippetDefinition: {
       h2: "What Are Good Entry-Level Data Scientist Resume Bullet Points?",
       line1:
-        "Good entry-level data scientist resume bullet points name tools you actually used (Python, pandas, SQL, scikit-learn) and a measurable outcome or learning—even from class, internships, or Kaggle-style projects.",
+        "Good entry-level data scientist resume bullet points name tools you actually used (Python, pandas, SQL, scikit-learn) and a measurable outcome or learning, even from class, internships, or Kaggle-style projects.",
       line2:
-        "They should also echo ATS-friendly keywords from the job description: statistics, experimentation, dashboards—without inventing production scope you did not have.",
+        "They should also echo ATS-friendly keywords from the job description: statistics, experimentation, dashboards, without inventing production scope you did not have.",
     },
     howToWriteSnippet: {
       h2: "How to Write Entry-Level Data Scientist Resume Bullet Points",
@@ -1466,13 +1466,13 @@ function dsEntry(): ResumeBulletDetailCopy {
     aboveFoldBullets: [
       "Built a machine learning classifier as part of an academic capstone project, improving macro-F1 by 5 pts using Python and scikit-learn (stratified k-fold validation).",
       "Wrote SQL with joins and window functions during a summer internship to reconcile funnel vs revenue data; surfaced a 6% attribution gap for the ops lead.",
-      "Trained an NLP text classifier as a personal portfolio project (TF–IDF + logistic regression vs a small transformer baseline) and documented error analysis in a public GitHub README.",
+      "Trained an NLP text classifier as a personal portfolio project (TF-IDF + logistic regression vs a small transformer baseline) and documented error analysis in a public GitHub README.",
       "Documented EDA and modeling steps in Jupyter for a statistics course; earned full credit for reproducibility and clear visualizations.",
     ],
     detailsIntroLine:
       "Here are more entry-level resume bullet point examples you can use:",
     projectSemanticReinforcement:
-      "These entry-level data scientist resume bullet points include skills like Python, SQL, machine learning, and data analysis—mirror the terms your target job description uses.",
+      "These entry-level data scientist resume bullet points include skills like Python, SQL, machine learning, and data analysis, mirror the terms your target job description uses.",
     endOfPageRecap:
       "Whether you are a fresher, student, or internship applicant, these entry-level data scientist resume bullet points can help you improve your resume and pass ATS screening.",
     entryFaqExtra: {
@@ -1481,13 +1481,13 @@ function dsEntry(): ResumeBulletDetailCopy {
         "Yes. These examples are designed for students, freshers, and candidates with no work experience, using projects, internships, and coursework you can defend in interviews.",
     },
     realismLine:
-      "These examples are based on real projects, internships, and coursework—replace every metric and tool with your own truth.",
+      "These examples are based on real projects, internships, and coursework, replace every metric and tool with your own truth.",
     authorityLine:
       "Used by students and career switchers building a first data science resume that still reads credible to recruiters.",
     intro:
-      "Use the project blocks below as patterns: swap in your datasets, course names, and honest metrics. Entry-level screening still rewards specificity—tools, methods, and outcomes—over buzzwords.",
+      "Use the project blocks below as patterns: swap in your datasets, course names, and honest metrics. Entry-level screening still rewards specificity, tools, methods, and outcomes, over buzzwords.",
     doubtLine:
-      "Examples are starting points. Your resume still needs the exact skills and tools each employer lists—otherwise ATS and recruiters may never see the fit.",
+      "Examples are starting points. Your resume still needs the exact skills and tools each employer lists, otherwise ATS and recruiters may never see the fit.",
     entryProjectsSectionTitle:
       "Entry-Level Data Scientist Resume Bullet Points (Projects & Internships)",
     commonMistakes: {
@@ -1495,7 +1495,7 @@ function dsEntry(): ResumeBulletDetailCopy {
       points: [
         "No metrics: “worked on ML” without Python/SQL detail or any measurable outcome.",
         "Too generic: bullets that could describe any student without tools or methods.",
-        "Missing keywords: the posting asks for experimentation, statistics, or dashboards—but your resume never says them.",
+        "Missing keywords: the posting asks for experimentation, statistics, or dashboards, but your resume never says them.",
         "Not aligned to the job description: strong class projects for the wrong role or stack still lose.",
       ],
     },
@@ -1503,7 +1503,7 @@ function dsEntry(): ResumeBulletDetailCopy {
       {
         groupHeading: "Academic Projects",
         groupIntro:
-          "These academic project bullet points highlight data science skills like Python, SQL, statistics, and machine learning—common phrases ATS parsers look for.",
+          "These academic project bullet points highlight data science skills like Python, SQL, statistics, and machine learning, common phrases ATS parsers look for.",
         name: "Capstone: churn prediction (course)",
         bullets: [
           "Built a binary classification model in Python (pandas, scikit-learn) on ~50k rows as part of a degree capstone; validated with stratified k-fold and reported precision/recall trade-offs to a non-technical audience.",
@@ -1524,7 +1524,7 @@ function dsEntry(): ResumeBulletDetailCopy {
       {
         groupHeading: "Internship Projects",
         groupIntro:
-          "These internship bullet points emphasize SQL, analytics, dashboards, and stakeholder communication—keywords many data job descriptions repeat.",
+          "These internship bullet points emphasize SQL, analytics, dashboards, and stakeholder communication, keywords many data job descriptions repeat.",
         name: "SQL + dashboard internship",
         bullets: [
           "Wrote SQL (joins, window functions) to reconcile daily revenue vs funnel events; surfaced a 6% discrepancy between marketing attribution and finance totals for the ops lead.",
@@ -1536,10 +1536,10 @@ function dsEntry(): ResumeBulletDetailCopy {
       {
         groupHeading: "Personal Projects",
         groupIntro:
-          "These personal portfolio bullet points show end-to-end practice with Python, NLP, and reproducible workflows—useful when you have no traditional job title yet.",
+          "These personal portfolio bullet points show end-to-end practice with Python, NLP, and reproducible workflows, useful when you have no traditional job title yet.",
         name: "Kaggle-style NLP (portfolio)",
         bullets: [
-          "Trained a text classifier on ~20k labeled reviews; compared TF–IDF + logistic regression vs a small fine-tuned transformer baseline and reported error analysis by class.",
+          "Trained a text classifier on ~20k labeled reviews; compared TF-IDF + logistic regression vs a small fine-tuned transformer baseline and reported error analysis by class.",
           "Packaged preprocessing and evaluation in a public repo with a one-page README so a reviewer could rerun training in under 30 minutes on CPU.",
           "Submitted to a class leaderboard competition; ranked top 15% by macro-F1 while keeping inference time under the stated CPU budget.",
           "Added a short ethics note on label noise and class imbalance; proposed next steps if the model were used beyond the coursework scope.",
@@ -1573,7 +1573,7 @@ function dsJunior(): ResumeBulletDetailCopy {
     ],
     h1: "Data Scientist Resume Bullet Points (Junior)",
     intentStack:
-      "Mid-level data scientist roles expect owned analyses, trustworthy experiments, and stakeholder-ready metrics. These resume bullet points are built for that scope—edit every line to match your posting.",
+      "Mid-level data scientist roles expect owned analyses, trustworthy experiments, and stakeholder-ready metrics. These resume bullet points are built for that scope, edit every line to match your posting.",
     exactMatchQueryLine:
       "If you are searching for junior data scientist resume bullet points, these examples cover experiments, modeling, analytics hygiene, and cross-functional work typical of a mid-level IC (not a full resume template).",
     copyIntentLine:
@@ -1587,7 +1587,7 @@ function dsJunior(): ResumeBulletDetailCopy {
     snippetDefinition: {
       h2: "What Are Good Junior Data Scientist Resume Bullet Points?",
       line1:
-        "Good junior (mid-level) data scientist resume bullet points show end-to-end ownership: experiment design, modeling or analysis, and a measurable product or ops outcome—not notebook tasks alone.",
+        "Good junior (mid-level) data scientist resume bullet points show end-to-end ownership: experiment design, modeling or analysis, and a measurable product or ops outcome, not notebook tasks alone.",
       line2:
         "They should also align with ATS screening: Python, SQL, statistics or ML, and experimentation language pulled honestly from each job description.",
     },
@@ -1599,7 +1599,7 @@ function dsJunior(): ResumeBulletDetailCopy {
         "Avoid junior-in-title inflation: if you supported an analysis, say how; if you owned the metric story, say that clearly.",
     },
     aboveFoldBullets: [
-      "Designed and analyzed sequential A/B tests on onboarding; recommended a flow change that lifted 7-day activation by 4.1% (95% CI 1.2–6.9%) without harming support volume.",
+      "Designed and analyzed sequential A/B tests on onboarding; recommended a flow change that lifted 7-day activation by 4.1% (95% CI 1.2-6.9%) without harming support volume.",
       "Built gradient-boosted LTV estimates in Python; calibrated bins vs realized revenue over 6 months and shared uncertainty ranges with marketing for budget allocation.",
       "Fine-tuned a compact transformer for multi-label intent on ~40k tickets; achieved macro-F1 0.81 vs 0.68 for the legacy rules baseline in offline eval.",
       "Owned metric definitions for “active user” across mobile and web; resolved three conflicting dashboards by publishing a single source of truth doc and dbt tests.",
@@ -1608,36 +1608,36 @@ function dsJunior(): ResumeBulletDetailCopy {
       "Used by mid-level data scientists targeting product analytics, applied ML, and growth roles.",
     projectsSectionTitle: "Junior Data Scientist Resume Bullet Points (Experience & Projects)",
     projectsSectionSubcopy:
-      "Four junior-only project blocks—experiments, modeling, NLP assist, and metrics hygiene. Replace numbers with yours; mid-level screens reward clarity and defensible scope.",
+      "Four junior-only project blocks, experiments, modeling, NLP assist, and metrics hygiene. Replace numbers with yours; mid-level screens reward clarity and defensible scope.",
     realismLine:
-      "These examples reflect common junior DS themes—swap in your real experiments, stacks, and business context.",
+      "These examples reflect common junior DS themes, swap in your real experiments, stacks, and business context.",
     projectSemanticReinforcement:
-      "These junior data scientist resume bullet points reinforce Python, SQL, machine learning, and experimentation—mirror the exact phrases and tools in each job description.",
+      "These junior data scientist resume bullet points reinforce Python, SQL, machine learning, and experimentation, mirror the exact phrases and tools in each job description.",
     endOfPageRecap:
-      "Whether you are a mid-level IC or moving from entry-level to more ownership, junior data scientist resume bullet points should prove impact—then compare your resume to the posting for gaps before you apply.",
+      "Whether you are a mid-level IC or moving from entry-level to more ownership, junior data scientist resume bullet points should prove impact, then compare your resume to the posting for gaps before you apply.",
     juniorFaqExtra: {
       question: "Are “junior” and “mid-level” data scientist resume bullets the same?",
       answer:
-        "Often yes on a resume: both usually mean you own analyses and models without org-wide platform leadership. Use the language your target job uses (IC2, mid-level, experienced)—and align bullets to that scope honestly.",
+        "Often yes on a resume: both usually mean you own analyses and models without org-wide platform leadership. Use the language your target job uses (IC2, mid-level, experienced), and align bullets to that scope honestly.",
     },
     commonMistakes: {
       title: "Common Mistakes in Junior Data Scientist Resume Bullet Points",
       points: [
         "Notebook tasks with no product metric: “built a model” without lift, calibration, or stakeholder use.",
         "Generic ML stack dumps: algorithms listed without problem, data, or outcome.",
-        "Missing posting fit: the JD emphasizes causal inference or forecasting—your bullets stay only on dashboards.",
-        "Scope blur: “led” when you only supported data pulls—recruiters probe this in screens.",
+        "Missing posting fit: the JD emphasizes causal inference or forecasting, your bullets stay only on dashboards.",
+        "Scope blur: “led” when you only supported data pulls, recruiters probe this in screens.",
       ],
     },
     intro:
-      "Use these patterns when you own analyses end-to-end, partner with PMs or engineers, and ship work that affects product or operations—not only ad-hoc notebooks.",
+      "Use these patterns when you own analyses end-to-end, partner with PMs or engineers, and ship work that affects product or operations, not only ad-hoc notebooks.",
     doubtLine:
       "If your bullets could apply to any company, they will not match a specific posting. Compare your resume to the job description to see which terms and outcomes are missing.",
     projects: [
       {
         name: "Onboarding experiment roadmap",
         bullets: [
-          "Designed and analyzed sequential A/B tests on onboarding; recommended a flow change that lifted 7-day activation by 4.1% (95% CI 1.2–6.9%) without harming support volume.",
+          "Designed and analyzed sequential A/B tests on onboarding; recommended a flow change that lifted 7-day activation by 4.1% (95% CI 1.2-6.9%) without harming support volume.",
           "Partnered with engineering on event quality; improved coverage of key funnel events from 78% to 96% before scaling the experiment to 100% traffic.",
         ],
       },
@@ -1670,7 +1670,7 @@ function dsSenior(): ResumeBulletDetailCopy {
     metaTitle:
       "Senior Data Scientist Resume Bullet Points (Staff / Leadership Examples) | ResumeAtlas",
     metaDescription:
-      "Senior data scientist resume bullets: platform ML, experimentation systems, exec-level stakeholder leadership, and org-wide metrics—plus free ATS keyword scan and job description match.",
+      "Senior data scientist resume bullets: platform ML, experimentation systems, exec-level stakeholder leadership, and org-wide metrics, plus free ATS keyword scan and job description match.",
     keywords: [
       "senior data scientist resume bullet points",
       "staff data scientist resume examples",
@@ -1682,7 +1682,7 @@ function dsSenior(): ResumeBulletDetailCopy {
     ],
     h1: "Senior Data Scientist Resume Bullet Points",
     intentStack:
-      "Targeting senior or staff data scientist roles? These resume bullet points emphasize platform scale, experimentation systems, risk/governance context, and cross-functional leadership. This page is intentionally senior-level (strategy and ownership), not entry-level or junior execution copy. Use these as patterns—then align every line to the posting’s keywords and scope.",
+      "Targeting senior or staff data scientist roles? These resume bullet points emphasize platform scale, experimentation systems, risk/governance context, and cross-functional leadership. This page is intentionally senior-level (strategy and ownership), not entry-level or junior execution copy. Use these as patterns, then align every line to the posting’s keywords and scope.",
     exactMatchQueryLine:
       "If you are searching for senior data scientist resume bullet points, these examples cover platform ML, experiments at scale, and leadership-style lines you can split across summary and experience.",
     copyIntentLine:
@@ -1696,14 +1696,14 @@ function dsSenior(): ResumeBulletDetailCopy {
     snippetDefinition: {
       h2: "What Are Good Senior Data Scientist Resume Bullet Points?",
       line1:
-        "Good senior data scientist resume bullet points show platform or product-level impact: experimentation systems, ranking or forecasting at scale, and clear trade-offs—not just model names.",
+        "Good senior data scientist resume bullet points show platform or product-level impact: experimentation systems, ranking or forecasting at scale, and clear trade-offs, not just model names.",
       line2:
-        "They should also echo ATS-friendly leadership and stakeholder language from the posting: roadmaps, governance, exec reviews, and cross-functional alignment—where you truly owned that scope.",
+        "They should also echo ATS-friendly leadership and stakeholder language from the posting: roadmaps, governance, exec reviews, and cross-functional alignment, where you truly owned that scope.",
     },
     howToWriteSnippet: {
       h2: "How to Write Senior Data Scientist Resume Bullet Points",
       line1:
-        "Lead with the business or product outcome, then the method: owned the loop, shipped the guardrails, influenced the roadmap—paired with Python, SQL, ML, and experimentation where relevant.",
+        "Lead with the business or product outcome, then the method: owned the loop, shipped the guardrails, influenced the roadmap, paired with Python, SQL, ML, and experimentation where relevant.",
       line2:
         "Mirror senior-level keywords from each job description (staff, principal, platform, reliability, stakeholders) without inflating title or scope you did not have.",
     },
@@ -1717,29 +1717,29 @@ function dsSenior(): ResumeBulletDetailCopy {
       "Used by senior ICs and staff data scientists applying to high-bar product and platform teams.",
     projectsSectionTitle: "Senior Data Scientist Resume Bullet Points (Experience & Projects)",
     projectsSectionSubcopy:
-      "Five project blocks—experimentation, real-time ranking, forecasting, risk, and mentorship. Replace every metric with your own; senior screens reward specificity and defensible scope.",
+      "Five project blocks, experimentation, real-time ranking, forecasting, risk, and mentorship. Replace every metric with your own; senior screens reward specificity and defensible scope.",
     realismLine:
-      "These examples are based on common senior DS themes—swap in your real systems, teams, and numbers.",
+      "These examples are based on common senior DS themes, swap in your real systems, teams, and numbers.",
     projectSemanticReinforcement:
-      "These senior data scientist resume bullet points reinforce skills like Python, SQL, machine learning, and A/B testing—plus leadership and stakeholder language—so ATS and humans see the same story.",
+      "These senior data scientist resume bullet points reinforce skills like Python, SQL, machine learning, and A/B testing, plus leadership and stakeholder language, so ATS and humans see the same story.",
     endOfPageRecap:
-      "Whether you are a staff IC, senior lead, or principal-track candidate, senior data scientist resume bullet points should match how you actually influenced scope—then align your resume to each posting before you apply.",
+      "Whether you are a staff IC, senior lead, or principal-track candidate, senior data scientist resume bullet points should match how you actually influenced scope, then align your resume to each posting before you apply.",
     seniorFaqExtra: {
       question: "Should senior data scientist resume bullets include leadership if I am still an IC?",
       answer:
-        "Yes, when it is true: mentoring, hiring, roadmap influence, and cross-org alignment are all fair signals for senior IC roles. Keep them concrete and tied to outcomes—not vague “leadership” adjectives.",
+        "Yes, when it is true: mentoring, hiring, roadmap influence, and cross-org alignment are all fair signals for senior IC roles. Keep them concrete and tied to outcomes, not vague “leadership” adjectives.",
     },
     commonMistakes: {
       title: "Common Mistakes in Senior Data Scientist Resume Bullet Points",
       points: [
         "Model-only bullets: techniques without business impact, scale, or governance context.",
         "Inflated leadership: claiming org-wide scope you only supported in a meeting.",
-        "Missing posting keywords: the JD asks for experimentation, causal inference, or platform—your resume never says them.",
+        "Missing posting keywords: the JD asks for experimentation, causal inference, or platform, your resume never says them.",
         "Generic metrics: “improved model” without lift, latency, or risk trade-offs you can defend.",
       ],
     },
     intro:
-      "Senior ICs are hired for judgment under ambiguity, reliable delivery, and cross-functional leadership. These examples emphasize scope, trade-offs, and business outcomes—not model names alone.",
+      "Senior ICs are hired for judgment under ambiguity, reliable delivery, and cross-functional leadership. These examples emphasize scope, trade-offs, and business outcomes, not model names alone.",
     doubtLine:
       "Senior titles get screened hard for keyword fit. Generic wins will not beat a tailored resume for this job description.",
     leadershipQueryBridge:
@@ -1752,7 +1752,7 @@ function dsSenior(): ResumeBulletDetailCopy {
       line1:
         "Leadership resume bullet points highlight ownership, cross-team impact, hiring, and strategic decision-making across large systems or products.",
       line2:
-        "For data science, they often show up as roadmap influence with VPs, model ROI narratives for execs, vendor governance, or org-wide metrics—not one-off analyses.",
+        "For data science, they often show up as roadmap influence with VPs, model ROI narratives for execs, vendor governance, or org-wide metrics, not one-off analyses.",
     },
     projects: [
       {
@@ -1793,7 +1793,7 @@ function dsSenior(): ResumeBulletDetailCopy {
       "Set the annual DS roadmap with product and engineering VPs; rebalanced two initiatives toward platform reliability after a Q2 outage postmortem.",
       "Owned the executive narrative for model ROI: standardized a one-page template tying model releases to revenue, cost, and risk metrics used in board prep.",
       "Negotiated vendor spend on labeling and feature stores; consolidated two contracts to save ~$180k ARR without reducing label quality SLAs.",
-      "Stood up a science–engineering SLA for model handoffs (docs, tests, dashboards); cut production incidents tagged “unclear ownership” by 40% quarter over quarter.",
+      "Stood up a science-engineering SLA for model handoffs (docs, tests, dashboards); cut production incidents tagged “unclear ownership” by 40% quarter over quarter.",
       "Led hiring for three senior IC roles; introduced a live case focused on trade-off communication, improving onsite-to-offer calibration.",
       "Partnered with security on data access patterns for PII-heavy features; delivered a reviewed design that passed internal audit on first submission.",
       "Facilitated quarterly planning with GTM: translated model roadmap into customer-facing capability timelines without overpromising delivery dates.",
@@ -1807,9 +1807,9 @@ function dsSenior(): ResumeBulletDetailCopy {
 function seEntry(): ResumeBulletDetailCopy {
   return {
     metaTitle:
-      "20+ Entry-Level Software Engineer Resume Bullet Points (Freshers – Copy & Paste) | ResumeAtlas",
+      "20+ Entry-Level Software Engineer Resume Bullet Points (Freshers - Copy & Paste) | ResumeAtlas",
     metaDescription:
-      "20+ entry-level software engineer resume bullet points for freshers, recent graduates, and internships: TypeScript, React, APIs, tests—plus ATS scan and job description match, free.",
+      "20+ entry-level software engineer resume bullet points for freshers, recent graduates, and internships: TypeScript, React, APIs, tests, plus ATS scan and job description match, free.",
     keywords: [
       "software engineer resume bullet points entry level",
       "resume bullet points for freshers",
@@ -1821,7 +1821,7 @@ function seEntry(): ResumeBulletDetailCopy {
       "software engineering internship resume",
       "ATS software engineer keywords",
     ],
-    h1: "20+ Entry-Level Software Engineer Resume Bullet Points (Freshers – Copy & Paste)",
+    h1: "20+ Entry-Level Software Engineer Resume Bullet Points (Freshers - Copy & Paste)",
     noExperienceReassurance:
       "No experience? These bullet points are designed for projects, internships, and coursework.",
     queryBreadthLine:
@@ -1835,7 +1835,7 @@ function seEntry(): ResumeBulletDetailCopy {
       ],
     },
     intentStack:
-      "Looking for entry-level software engineer resume bullet points as a fresher, recent graduate, or internship applicant? These examples are designed to pass ATS screening and match job descriptions. Below are 20+ lines across academic, internship, and personal projects—edit with your real stack, commits, and metrics.",
+      "Looking for entry-level software engineer resume bullet points as a fresher, recent graduate, or internship applicant? These examples are designed to pass ATS screening and match job descriptions. Below are 20+ lines across academic, internship, and personal projects, edit with your real stack, commits, and metrics.",
     exactMatchQueryLine:
       "If you are searching for entry-level software engineer resume bullet points, these examples are designed for freshers and students with no experience.",
     copyIntentLine:
@@ -1851,7 +1851,7 @@ function seEntry(): ResumeBulletDetailCopy {
       line1:
         "Good entry-level software engineer resume bullet points cite real code: languages, frameworks, tests, and a metric (latency, crashes, coverage) or a concrete artifact (PRs merged, tickets closed).",
       line2:
-        "They should also mirror ATS keywords from the posting—REST, CI/CD, React, cloud—when those match experience you can explain in an interview.",
+        "They should also mirror ATS keywords from the posting, REST, CI/CD, React, cloud, when those match experience you can explain in an interview.",
     },
     howToWriteSnippet: {
       h2: "How to Write Entry-Level Software Engineer Resume Bullet Points",
@@ -1869,7 +1869,7 @@ function seEntry(): ResumeBulletDetailCopy {
     detailsIntroLine:
       "Here are more entry-level resume bullet point examples you can use:",
     projectSemanticReinforcement:
-      "These entry-level software engineer resume bullet points include skills like TypeScript, React, testing, and APIs—align the stack with each job description.",
+      "These entry-level software engineer resume bullet points include skills like TypeScript, React, testing, and APIs, align the stack with each job description.",
     endOfPageRecap:
       "Whether you are a fresher, student, or internship applicant, these entry-level software engineer resume bullet points can help you improve your resume and pass ATS screening.",
     entryFaqExtra: {
@@ -1878,11 +1878,11 @@ function seEntry(): ResumeBulletDetailCopy {
         "Yes. These examples are designed for students, freshers, and candidates with no work experience, using projects, internships, and coursework you can defend in interviews.",
     },
     realismLine:
-      "These examples are based on real projects, internships, and coursework—replace every metric and tool with your own truth.",
+      "These examples are based on real projects, internships, and coursework, replace every metric and tool with your own truth.",
     authorityLine:
       "Built for new grads, interns, and bootcamp students who need credible stack detail without overselling senior scope.",
     intro:
-      "Mix internships, class projects, and open-source—just keep each bullet tied to something you can walk through in a technical screen.",
+      "Mix internships, class projects, and open-source, just keep each bullet tied to something you can walk through in a technical screen.",
     doubtLine:
       "Bootcamp and class projects help, but job-specific keywords still matter. Scan your resume against each posting before you apply.",
     entryProjectsSectionTitle:
@@ -1892,7 +1892,7 @@ function seEntry(): ResumeBulletDetailCopy {
       points: [
         "No metrics: “built features” without stack, tests, or latency/crash/coverage detail.",
         "Too generic: bullets that could describe any CS student without languages or frameworks.",
-        "Missing keywords: the posting asks for React, Node, or CI—but your resume never says them.",
+        "Missing keywords: the posting asks for React, Node, or CI, but your resume never says them.",
         "Not aligned to the job description: strong coursework for the wrong stack (mobile vs backend) still loses ATS match.",
       ],
     },
@@ -1900,7 +1900,7 @@ function seEntry(): ResumeBulletDetailCopy {
       {
         groupHeading: "Academic Projects",
         groupIntro:
-          "These academic project bullet points stress languages, testing, and reproducible setup—signals hiring managers and ATS parsers associate with junior engineering roles.",
+          "These academic project bullet points stress languages, testing, and reproducible setup, signals hiring managers and ATS parsers associate with junior engineering roles.",
         name: "REST API group project (typed stack)",
         bullets: [
           "Implemented CRUD endpoints in Node.js + TypeScript with Zod validation; added Jest unit tests that brought line coverage on handlers from 0% to 78%.",
@@ -1921,7 +1921,7 @@ function seEntry(): ResumeBulletDetailCopy {
       {
         groupHeading: "Internship Projects",
         groupIntro:
-          "These internship bullet points highlight React, reliability, and quality practices—keywords common on junior web and full-stack postings.",
+          "These internship bullet points highlight React, reliability, and quality practices, keywords common on junior web and full-stack postings.",
         name: "Web app: bug fixes + performance",
         bullets: [
           "Fixed a memory leak in a React effect tied to unsubscribed listeners; reduced crash rate on a key page by ~35% over two releases (Sentry).",
@@ -1933,7 +1933,7 @@ function seEntry(): ResumeBulletDetailCopy {
       {
         groupHeading: "Personal Projects",
         groupIntro:
-          "These personal project bullet points show shipping, docs, and performance thinking—strong when you have no employer brand yet.",
+          "These personal project bullet points show shipping, docs, and performance thinking, strong when you have no employer brand yet.",
         name: "Portfolio site + CLI tool",
         bullets: [
           "Built a static portfolio with Next.js and deployed on Vercel; added Lighthouse-driven tweaks that improved LCP on mobile.",
@@ -1970,7 +1970,7 @@ function seJunior(): ResumeBulletDetailCopy {
     ],
     h1: "Software Engineer Resume Bullet Points (Junior)",
     intentStack:
-      "Mid-level software engineer roles reward shipping, reliability, and clear metrics. These resume bullet points match that bar—adapt stack and scale to each job description.",
+      "Mid-level software engineer roles reward shipping, reliability, and clear metrics. These resume bullet points match that bar, adapt stack and scale to each job description.",
     exactMatchQueryLine:
       "If you are searching for junior software engineer resume bullet points, these examples include services, CI, features, and observability lines typical of a mid-level IC (not a full resume template).",
     copyIntentLine:
@@ -1986,7 +1986,7 @@ function seJunior(): ResumeBulletDetailCopy {
       line1:
         "Good junior (mid-level) software engineer resume bullet points tie a concrete system change to a measurable outcome: latency, flakiness, incidents, cost, or delivery risk.",
       line2:
-        "They should also mirror ATS keywords from the posting—languages, infra, testing—without claiming architecture you did not own.",
+        "They should also mirror ATS keywords from the posting, languages, infra, testing, without claiming architecture you did not own.",
     },
     howToWriteSnippet: {
       h2: "How to Write Junior Software Engineer Resume Bullet Points",
@@ -2005,24 +2005,24 @@ function seJunior(): ResumeBulletDetailCopy {
       "Used by mid-level engineers applying across backend, full-stack, and product infrastructure teams.",
     projectsSectionTitle: "Junior Software Engineer Resume Bullet Points (Experience & Projects)",
     projectsSectionSubcopy:
-      "Four junior-only project blocks—services, CI, product delivery, and observability. Mid-level readers skim for ownership and numbers; align verbs to each posting.",
+      "Four junior-only project blocks, services, CI, product delivery, and observability. Mid-level readers skim for ownership and numbers; align verbs to each posting.",
     realismLine:
-      "These examples map to common mid-level themes—swap in your repos, services, and on-call reality.",
+      "These examples map to common mid-level themes, swap in your repos, services, and on-call reality.",
     projectSemanticReinforcement:
-      "These junior software engineer resume bullet points stress languages, reliability, and delivery—echo the stack and reliability terms from each job description.",
+      "These junior software engineer resume bullet points stress languages, reliability, and delivery, echo the stack and reliability terms from each job description.",
     endOfPageRecap:
-      "Whether you are a mid-level IC or stepping up from entry-level scope, junior software engineer resume bullet points should show measurable ownership—then run a keyword and JD compare before you submit.",
+      "Whether you are a mid-level IC or stepping up from entry-level scope, junior software engineer resume bullet points should show measurable ownership, then run a keyword and JD compare before you submit.",
     juniorFaqExtra: {
       question: "Should I say “junior” or “mid-level” on my software engineer resume?",
       answer:
-        "Use the title that matches your experience and the roles you want. Many employers say “Software Engineer II” or “mid-level” instead of “junior”—mirror the job listing’s language when it is truthful.",
+        "Use the title that matches your experience and the roles you want. Many employers say “Software Engineer II” or “mid-level” instead of “junior”, mirror the job listing’s language when it is truthful.",
     },
     commonMistakes: {
       title: "Common Mistakes in Junior Software Engineer Resume Bullet Points",
       points: [
         "Feature dumps: shipped X and Y with no latency, reliability, or user impact.",
         "Stack salad: technologies listed without a problem or outcome.",
-        "Missing domain fit: backend role but only frontend bullets—or vice versa.",
+        "Missing domain fit: backend role but only frontend bullets, or vice versa.",
         "Inflated ownership: “designed system” for a small module you implemented.",
       ],
     },
@@ -2065,7 +2065,7 @@ function seSenior(): ResumeBulletDetailCopy {
     metaTitle:
       "Senior Software Engineer Resume Bullet Points (Staff / Leadership Examples) | ResumeAtlas",
     metaDescription:
-      "Senior software engineer resume bullets: distributed systems, reliability, security, cost—and leadership lines for staff IC roles. Free ATS keyword scan and job description match.",
+      "Senior software engineer resume bullets: distributed systems, reliability, security, cost, and leadership lines for staff IC roles. Free ATS keyword scan and job description match.",
     keywords: [
       "senior software engineer resume bullet points",
       "staff software engineer resume examples",
@@ -2093,14 +2093,14 @@ function seSenior(): ResumeBulletDetailCopy {
       line1:
         "Good senior software engineer resume bullet points combine system design, operational rigor, and measurable outcomes: latency, incidents avoided, cost, security, and clear ownership.",
       line2:
-        "For ATS and recruiters, they should also mirror the posting’s stack and domains—Kubernetes, event-driven design, SLOs, migrations—without buzzwords you cannot back in a system-design interview.",
+        "For ATS and recruiters, they should also mirror the posting’s stack and domains, Kubernetes, event-driven design, SLOs, migrations, without buzzwords you cannot back in a system-design interview.",
     },
     howToWriteSnippet: {
       h2: "How to Write Senior Software Engineer Resume Bullet Points",
       line1:
         "Start with the constraint or risk (scale, outage, compliance), then what you changed (RFC, policy, rollout), then the measurable result.",
       line2:
-        "Add mentorship, hiring, or cross-team forums only when they produced a durable outcome—rubrics, incident trends, or delivery speed—not generic “mentored engineers.”",
+        "Add mentorship, hiring, or cross-team forums only when they produced a durable outcome, rubrics, incident trends, or delivery speed, not generic “mentored engineers.”",
     },
     aboveFoldBullets: [
       "Led design for an event-driven order pipeline (Kafka, idempotent consumers); sustained 2× holiday peak with <0.02% duplicate processing (audited via reconciliation job).",
@@ -2112,29 +2112,29 @@ function seSenior(): ResumeBulletDetailCopy {
       "Used by senior and staff engineers targeting high-scale product and infrastructure teams.",
     projectsSectionTitle: "Senior Software Engineer Resume Bullet Points (Experience & Projects)",
     projectsSectionSubcopy:
-      "Five project blocks—architecture, reliability, security, mentorship, and cost. Senior readers look for trade-offs, scale, and ownership; align verbs to each job description.",
+      "Five project blocks, architecture, reliability, security, mentorship, and cost. Senior readers look for trade-offs, scale, and ownership; align verbs to each job description.",
     realismLine:
-      "These examples reflect common senior IC themes—replace services, clouds, and numbers with your own production reality.",
+      "These examples reflect common senior IC themes, replace services, clouds, and numbers with your own production reality.",
     projectSemanticReinforcement:
-      "These senior software engineer resume bullet points surface skills like distributed systems, testing, observability, and cloud—mirror the exact stack and reliability language in each posting.",
+      "These senior software engineer resume bullet points surface skills like distributed systems, testing, observability, and cloud, mirror the exact stack and reliability language in each posting.",
     endOfPageRecap:
-      "Whether you are a senior IC, staff engineer, or tech-lead track candidate, senior software engineer resume bullet points should reflect real scope—then compare your resume to the job description for keyword gaps before you submit.",
+      "Whether you are a senior IC, staff engineer, or tech-lead track candidate, senior software engineer resume bullet points should reflect real scope, then compare your resume to the job description for keyword gaps before you submit.",
     seniorFaqExtra: {
       question: "How many leadership bullets should a senior software engineer resume include?",
       answer:
-        "There is no fixed count—include leadership only where it is true and specific: hiring loops, RFCs adopted org-wide, incident programs, or roadmap trade-offs. A few strong lines beat a wall of vague “led team.”",
+        "There is no fixed count, include leadership only where it is true and specific: hiring loops, RFCs adopted org-wide, incident programs, or roadmap trade-offs. A few strong lines beat a wall of vague “led team.”",
     },
     commonMistakes: {
       title: "Common Mistakes in Senior Software Engineer Resume Bullet Points",
       points: [
         "Task lists without scale: features shipped with no latency, traffic, or incident context.",
         "Buzzword stacks: technologies listed without a problem, design choice, or outcome.",
-        "Missing posting fit: the JD emphasizes reliability or security—your bullets stay feature-only.",
+        "Missing posting fit: the JD emphasizes reliability or security, your bullets stay feature-only.",
         "Inflated scope: “owned architecture” for a small slice you advised on once.",
       ],
     },
     intro:
-      "Senior IC and staff-style bullets emphasize trade-offs, scale, and enabling others—architecture reviews, incident culture, and long-term maintainability.",
+      "Senior IC and staff-style bullets emphasize trade-offs, scale, and enabling others, architecture reviews, incident culture, and long-term maintainability.",
     doubtLine:
       "Senior candidates get filtered on both leadership keywords and hard skills. Generic wins will not substitute for posting-specific language.",
     leadershipQueryBridge:
@@ -2201,9 +2201,9 @@ function seSenior(): ResumeBulletDetailCopy {
 function pmEntry(): ResumeBulletDetailCopy {
   return {
     metaTitle:
-      "20+ Entry-Level Product Manager Resume Bullet Points (APM / Freshers – Copy & Paste) | ResumeAtlas",
+      "20+ Entry-Level Product Manager Resume Bullet Points (APM / Freshers - Copy & Paste) | ResumeAtlas",
     metaDescription:
-      "20+ entry-level product manager resume bullet points for freshers, recent graduates, and internships: discovery, metrics, roadmaps—plus ATS keyword scan and job description match, free.",
+      "20+ entry-level product manager resume bullet points for freshers, recent graduates, and internships: discovery, metrics, roadmaps, plus ATS keyword scan and job description match, free.",
     keywords: [
       "APM resume bullet points",
       "entry level product manager resume",
@@ -2216,7 +2216,7 @@ function pmEntry(): ResumeBulletDetailCopy {
       "product management internship resume",
       "ATS product manager keywords",
     ],
-    h1: "20+ Entry-Level Product Manager Resume Bullet Points (APM / Freshers – Copy & Paste)",
+    h1: "20+ Entry-Level Product Manager Resume Bullet Points (APM / Freshers - Copy & Paste)",
     noExperienceReassurance:
       "No experience? These bullet points are designed for projects, internships, and coursework.",
     queryBreadthLine:
@@ -2230,7 +2230,7 @@ function pmEntry(): ResumeBulletDetailCopy {
       ],
     },
     intentStack:
-      "Looking for entry-level product manager resume bullet points as a fresher, recent graduate, or internship applicant? These examples are designed to pass ATS screening and match job descriptions. Below are 20+ lines across academic, internship, and campus-style projects—edit with your real scope, metrics, and tools.",
+      "Looking for entry-level product manager resume bullet points as a fresher, recent graduate, or internship applicant? These examples are designed to pass ATS screening and match job descriptions. Below are 20+ lines across academic, internship, and campus-style projects, edit with your real scope, metrics, and tools.",
     exactMatchQueryLine:
       "If you are searching for entry-level product manager resume bullet points, these examples are designed for freshers and students with no experience.",
     copyIntentLine:
@@ -2244,14 +2244,14 @@ function pmEntry(): ResumeBulletDetailCopy {
     snippetDefinition: {
       h2: "What Are Good Entry-Level Product Manager Resume Bullet Points?",
       line1:
-        "Good entry-level PM resume bullet points tie customer evidence to outcomes: interviews, funnel metrics, or launch support—with honest scope (what you owned vs facilitated).",
+        "Good entry-level PM resume bullet points tie customer evidence to outcomes: interviews, funnel metrics, or launch support, with honest scope (what you owned vs facilitated).",
       line2:
-        "They should also reflect ATS keywords from the posting: roadmap, stakeholders, experiments, SQL or analytics—only where you truly used them.",
+        "They should also reflect ATS keywords from the posting: roadmap, stakeholders, experiments, SQL or analytics, only where you truly used them.",
     },
     howToWriteSnippet: {
       h2: "How to Write Entry-Level Product Manager Resume Bullet Points",
       line1:
-        "Entry-level product manager resume bullet points should focus on projects, internships, coursework, and measurable outcomes—especially discovery, delivery support, and metrics.",
+        "Entry-level product manager resume bullet points should focus on projects, internships, coursework, and measurable outcomes, especially discovery, delivery support, and metrics.",
       line2:
         "Include tools like spreadsheets, BI dashboards, SQL, or roadmaps when you truly used them, and match phrasing to keywords from each job description.",
     },
@@ -2264,7 +2264,7 @@ function pmEntry(): ResumeBulletDetailCopy {
     detailsIntroLine:
       "Here are more entry-level resume bullet point examples you can use:",
     projectSemanticReinforcement:
-      "These entry-level product manager resume bullet points include themes like discovery, metrics, roadmaps, and stakeholder coordination—echo the vocabulary in each posting.",
+      "These entry-level product manager resume bullet points include themes like discovery, metrics, roadmaps, and stakeholder coordination, echo the vocabulary in each posting.",
     endOfPageRecap:
       "Whether you are a fresher, student, or internship applicant, these entry-level product manager resume bullet points can help you improve your resume and pass ATS screening.",
     entryFaqExtra: {
@@ -2273,11 +2273,11 @@ function pmEntry(): ResumeBulletDetailCopy {
         "Yes. These examples are designed for students, freshers, and candidates with no work experience, using projects, internships, and coursework you can defend in interviews.",
     },
     realismLine:
-      "These examples are based on real projects, internships, and coursework—replace every metric and tool with your own truth.",
+      "These examples are based on real projects, internships, and coursework, replace every metric and tool with your own truth.",
     authorityLine:
       "Written for APM programs, associate PMs, and internship candidates who need outcome-focused language without claiming full roadmap ownership.",
     intro:
-      "If you facilitated discovery but did not set strategy, say so clearly—then show impact you did drive. Credibility beats title inflation for early PM screens.",
+      "If you facilitated discovery but did not set strategy, say so clearly, then show impact you did drive. Credibility beats title inflation for early PM screens.",
     doubtLine:
       "PM job descriptions vary wildly (B2B vs consumer, platform vs growth). Generic bullets will not match the keywords each recruiter screens for.",
     entryProjectsSectionTitle:
@@ -2287,7 +2287,7 @@ function pmEntry(): ResumeBulletDetailCopy {
       points: [
         "No metrics: “helped ship features” without interviews, funnel impact, or defects reduced.",
         "Too generic: PM bullets that could apply to any club officer without product vocabulary.",
-        "Missing keywords: the posting asks for SQL, experiments, or roadmaps—but your resume never says them.",
+        "Missing keywords: the posting asks for SQL, experiments, or roadmaps, but your resume never says them.",
         "Not aligned to the job description: strong campus projects for the wrong domain (consumer vs B2B) still lose ATS match.",
       ],
     },
@@ -2295,7 +2295,7 @@ function pmEntry(): ResumeBulletDetailCopy {
       {
         groupHeading: "Academic Projects",
         groupIntro:
-          "These academic project bullet points highlight discovery, prioritization, and communication—core phrases recruiters and ATS tools associate with product roles.",
+          "These academic project bullet points highlight discovery, prioritization, and communication, core phrases recruiters and ATS tools associate with product roles.",
         name: "Case competition (product strategy)",
         bullets: [
           "Placed top 10% in a national product case competition; recommended pricing and packaging changes with a simple sensitivity model and cited customer research themes.",
@@ -2316,7 +2316,7 @@ function pmEntry(): ResumeBulletDetailCopy {
       {
         groupHeading: "Internship Projects",
         groupIntro:
-          "These internship bullet points emphasize interviews, metrics, roadmaps, and stakeholder coordination—keywords common on APM and associate PM postings.",
+          "These internship bullet points emphasize interviews, metrics, roadmaps, and stakeholder coordination, keywords common on APM and associate PM postings.",
         name: "Discovery sprint (APM / internship)",
         bullets: [
           "Ran 14 user interviews and synthesized themes into a prioritized backlog; two shipped tweaks lifted trial-to-paid conversion by 2.3% in 6 weeks.",
@@ -2337,7 +2337,7 @@ function pmEntry(): ResumeBulletDetailCopy {
       {
         groupHeading: "Personal & Campus Projects",
         groupIntro:
-          "These campus and side-project bullet points show ownership without a job title—useful for students and no-experience candidates building PM credibility.",
+          "These campus and side-project bullet points show ownership without a job title, useful for students and no-experience candidates building PM credibility.",
         name: "Campus club + metrics cadence",
         bullets: [
           "Facilitated weekly syncs between design and two engineering pods; cut scope churn mid-sprint by documenting decisions in a single decision log.",
@@ -2353,9 +2353,9 @@ function pmEntry(): ResumeBulletDetailCopy {
 function pmJunior(): ResumeBulletDetailCopy {
   return {
     metaTitle:
-      "Junior Product Manager Resume Bullet Points (Mid-Level PM – Examples) | ResumeAtlas",
+      "Junior Product Manager Resume Bullet Points (Mid-Level PM - Examples) | ResumeAtlas",
     metaDescription:
-      "Junior / mid-level PM resume bullets: roadmaps, OKRs, pricing, experiments, and cross-functional delivery—plus free ATS scan and job description match.",
+      "Junior / mid-level PM resume bullets: roadmaps, OKRs, pricing, experiments, and cross-functional delivery, plus free ATS scan and job description match.",
     keywords: [
       "junior product manager resume bullet points",
       "mid level product manager resume examples",
@@ -2366,7 +2366,7 @@ function pmJunior(): ResumeBulletDetailCopy {
     ],
     h1: "Product Manager Resume Bullet Points (Junior)",
     intentStack:
-      "Mid-level PM roles expect outcomes, trade-offs, and cross-functional delivery—not feature lists. These resume bullet points reflect that scope; tailor every line to your domain and the posting.",
+      "Mid-level PM roles expect outcomes, trade-offs, and cross-functional delivery, not feature lists. These resume bullet points reflect that scope; tailor every line to your domain and the posting.",
     exactMatchQueryLine:
       "If you are searching for junior product manager resume bullet points, these examples cover roadmaps, pricing, platform partnerships, and experiment cadence typical of a mid-level PM.",
     copyIntentLine:
@@ -2380,14 +2380,14 @@ function pmJunior(): ResumeBulletDetailCopy {
     snippetDefinition: {
       h2: "What Are Good Junior Product Manager Resume Bullet Points?",
       line1:
-        "Good junior (mid-level) PM resume bullet points connect decisions to metrics: retention, revenue, conversion, or operational risk—with clear cross-functional work.",
+        "Good junior (mid-level) PM resume bullet points connect decisions to metrics: retention, revenue, conversion, or operational risk, with clear cross-functional work.",
       line2:
         "They should also align with ATS language: roadmaps, OKRs, discovery, experiments, and stakeholder groups named in the posting.",
     },
     howToWriteSnippet: {
       h2: "How to Write Junior Product Manager Resume Bullet Points",
       line1:
-        "Start with the customer or business problem, the option you pushed, and the measurable result—or the learning if the bet failed.",
+        "Start with the customer or business problem, the option you pushed, and the measurable result, or the learning if the bet failed.",
       line2:
         "Avoid buzzword roadmaps: name the bet, the constraint, and who you aligned (eng, design, GTM, legal) when that is true.",
     },
@@ -2401,29 +2401,29 @@ function pmJunior(): ResumeBulletDetailCopy {
       "Used by associate and mid-level PMs across B2B SaaS, marketplaces, and growth teams.",
     projectsSectionTitle: "Junior Product Manager Resume Bullet Points (Experience & Projects)",
     projectsSectionSubcopy:
-      "Four project blocks—roadmap, pricing, platform, and growth systems. Replace metrics with yours; mid-level PM screens reward specificity.",
+      "Four project blocks, roadmap, pricing, platform, and growth systems. Replace metrics with yours; mid-level PM screens reward specificity.",
     realismLine:
-      "These examples reflect common mid-level PM themes—swap in your real products, users, and numbers.",
+      "These examples reflect common mid-level PM themes, swap in your real products, users, and numbers.",
     projectSemanticReinforcement:
-      "These junior product manager resume bullet points reinforce roadmaps, metrics, discovery, and cross-functional delivery—mirror the verbs and domains each employer uses.",
+      "These junior product manager resume bullet points reinforce roadmaps, metrics, discovery, and cross-functional delivery, mirror the verbs and domains each employer uses.",
     endOfPageRecap:
-      "Whether you are an associate PM moving up or a mid-level PM changing companies, junior product manager resume bullet points should prove outcomes—then align your resume to each posting before you apply.",
+      "Whether you are an associate PM moving up or a mid-level PM changing companies, junior product manager resume bullet points should prove outcomes, then align your resume to each posting before you apply.",
     juniorFaqExtra: {
       question: "Is “junior PM” the same as associate or mid-level PM on a resume?",
       answer:
-        "Often, yes—employers use different labels. Match the job title language in the postings you want (Associate PM, PM II, Growth PM) and keep bullets aligned to that level of ownership.",
+        "Often, yes, employers use different labels. Match the job title language in the postings you want (Associate PM, PM II, Growth PM) and keep bullets aligned to that level of ownership.",
     },
     commonMistakes: {
       title: "Common Mistakes in Junior Product Manager Resume Bullet Points",
       points: [
         "Feature shipping lists with no metric or business outcome.",
         "Vague prioritization: “managed backlog” without trade-offs or results.",
-        "Wrong domain signals: B2B role but only consumer examples—or the reverse.",
+        "Wrong domain signals: B2B role but only consumer examples, or the reverse.",
         "Inflated scope: “owned roadmap” for a narrow slice you supported.",
       ],
     },
     intro:
-      "Mid-level PM bullets emphasize ownership of outcomes, prioritization frameworks, and measurable launches—not just shipping features.",
+      "Mid-level PM bullets emphasize ownership of outcomes, prioritization frameworks, and measurable launches, not just shipping features.",
     doubtLine:
       "If your resume does not echo the posting’s domain (e.g. marketplace, SaaS metrics, compliance), you may look unqualified before a human reads deeply.",
     projects: [
@@ -2461,7 +2461,7 @@ function pmSenior(): ResumeBulletDetailCopy {
     metaTitle:
       "Senior Product Manager Resume Bullet Points (Staff / Leadership Examples) | ResumeAtlas",
     metaDescription:
-      "Senior PM resume bullets: portfolio strategy, enterprise GTM, compliance launches, and exec-ready metrics—plus free ATS keyword scan and job description match.",
+      "Senior PM resume bullets: portfolio strategy, enterprise GTM, compliance launches, and exec-ready metrics, plus free ATS keyword scan and job description match.",
     keywords: [
       "senior product manager resume bullet points",
       "group product manager resume examples",
@@ -2473,7 +2473,7 @@ function pmSenior(): ResumeBulletDetailCopy {
     ],
     h1: "Senior Product Manager Resume Bullet Points",
     intentStack:
-      "Hiring for senior, group, or principal PM roles? These resume bullet points highlight portfolio bets, cross-org alignment, enterprise/regulated trade-offs, and executive communication. This page is intentionally leadership-level PM content (strategy and org influence), not APM or mid-level delivery copy—edit to match your true scope.",
+      "Hiring for senior, group, or principal PM roles? These resume bullet points highlight portfolio bets, cross-org alignment, enterprise/regulated trade-offs, and executive communication. This page is intentionally leadership-level PM content (strategy and org influence), not APM or mid-level delivery copy, edit to match your true scope.",
     exactMatchQueryLine:
       "If you are searching for senior product manager resume bullet points, these examples cover strategy, multi-team roadmaps, regulated launches, and leadership lines for summary or experience.",
     copyIntentLine:
@@ -2487,14 +2487,14 @@ function pmSenior(): ResumeBulletDetailCopy {
     snippetDefinition: {
       h2: "What Are Good Senior Product Manager Resume Bullet Points?",
       line1:
-        "Good senior PM resume bullet points show portfolio decisions, measurable outcomes (revenue, retention, risk), and cross-functional leadership—not a list of features shipped.",
+        "Good senior PM resume bullet points show portfolio decisions, measurable outcomes (revenue, retention, risk), and cross-functional leadership, not a list of features shipped.",
       line2:
-        "They should also align with ATS and exec screens: roadmaps, OKRs, discovery, enterprise, compliance, and stakeholder management—where the posting actually uses those terms.",
+        "They should also align with ATS and exec screens: roadmaps, OKRs, discovery, enterprise, compliance, and stakeholder management, where the posting actually uses those terms.",
     },
     howToWriteSnippet: {
       h2: "How to Write Senior Product Manager Resume Bullet Points",
       line1:
-        "Frame the problem and decision first, then the outcome: what you stopped, prioritized, or negotiated—and what metrics moved.",
+        "Frame the problem and decision first, then the outcome: what you stopped, prioritized, or negotiated, and what metrics moved.",
       line2:
         "Mirror senior PM language from each posting (group, principal, platform, regulated markets) without claiming scope you did not own.",
     },
@@ -2508,29 +2508,29 @@ function pmSenior(): ResumeBulletDetailCopy {
       "Used by senior and group PMs targeting strategy-heavy roles and enterprise customers.",
     projectsSectionTitle: "Senior Product Manager Resume Bullet Points (Experience & Projects)",
     projectsSectionSubcopy:
-      "Five project blocks—portfolio, alignment, GTM, compliance, and org design. Leadership bullets below add exec- and board-level scope; keep every claim interview-safe.",
+      "Five project blocks, portfolio, alignment, GTM, compliance, and org design. Leadership bullets below add exec- and board-level scope; keep every claim interview-safe.",
     realismLine:
-      "These examples are based on common senior PM themes—swap in your real products, customers, and metrics.",
+      "These examples are based on common senior PM themes, swap in your real products, customers, and metrics.",
     projectSemanticReinforcement:
-      "These senior product manager resume bullet points reinforce skills like roadmaps, metrics, discovery, and stakeholder leadership—echo the exact phrases your target posting uses.",
+      "These senior product manager resume bullet points reinforce skills like roadmaps, metrics, discovery, and stakeholder leadership, echo the exact phrases your target posting uses.",
     endOfPageRecap:
-      "Whether you are a senior PM, group PM, or principal PM candidate, senior product manager resume bullet points should prove judgment and outcomes—then align your resume to each posting before you apply.",
+      "Whether you are a senior PM, group PM, or principal PM candidate, senior product manager resume bullet points should prove judgment and outcomes, then align your resume to each posting before you apply.",
     seniorFaqExtra: {
       question: "Should senior PM resume bullets mention revenue and P&L?",
       answer:
-        "When you can credibly tie your work to revenue, margin, cost, or risk—yes. Exec readers and many ATS filters look for business outcomes, not only feature delivery. Use numbers you can explain in a panel interview.",
+        "When you can credibly tie your work to revenue, margin, cost, or risk, yes. Exec readers and many ATS filters look for business outcomes, not only feature delivery. Use numbers you can explain in a panel interview.",
     },
     commonMistakes: {
       title: "Common Mistakes in Senior Product Manager Resume Bullet Points",
       points: [
         "Feature laundry lists: shipped X and Y with no outcome, trade-off, or metric.",
         "Vague leadership: “influenced stakeholders” without a decision or result.",
-        "Missing domain language: the posting says B2B SaaS, enterprise, or regulated—your resume stays generic.",
+        "Missing domain language: the posting says B2B SaaS, enterprise, or regulated, your resume stays generic.",
         "Scope inflation: “owned roadmap” for work you only supported.",
       ],
     },
     intro:
-      "Senior PM and Group PM resumes should show portfolio choices, multi-team alignment, and business outcomes across quarters—not only shipping velocity.",
+      "Senior PM and Group PM resumes should show portfolio choices, multi-team alignment, and business outcomes across quarters, not only shipping velocity.",
     doubtLine:
       "Executive readers and ATS both expect domain language from the job description. Tailor before you submit.",
     leadershipQueryBridge:
@@ -2543,7 +2543,7 @@ function pmSenior(): ResumeBulletDetailCopy {
       line1:
         "Leadership resume bullet points highlight ownership, cross-team impact, hiring, and strategic decision-making across large systems or products.",
       line2:
-        "For product management, they often mean portfolio trade-offs, revenue or risk outcomes, enterprise commitments, and exec-ready narratives—not a backlog of features.",
+        "For product management, they often mean portfolio trade-offs, revenue or risk outcomes, enterprise commitments, and exec-ready narratives, not a backlog of features.",
     },
     projects: [
       {

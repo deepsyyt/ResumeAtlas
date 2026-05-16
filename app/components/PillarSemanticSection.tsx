@@ -162,7 +162,7 @@ function renderSemanticChunk(
         <div key="negative_expertise" className="rounded-xl border border-rose-200/90 bg-rose-50/50 px-4 py-4">
           <h3 className="text-base font-semibold text-rose-950">{h}</h3>
           <p className="mt-1 text-xs text-rose-900/85">
-            What strong screeners discount or reinterpret—nuance beats generic “tips.”
+            What strong screeners discount or reinterpret, nuance beats generic “tips.”
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-rose-950/90">
             {items.map((line) => (
@@ -283,7 +283,7 @@ function renderSemanticChunk(
                 className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
               >
                 <span className="font-medium text-slate-900">{ap.pattern}</span>
-                <span className="text-slate-600"> — </span>
+                <span className="text-slate-600"> - </span>
                 <span className="text-slate-700">{ap.reviewerRead}</span>
               </li>
             ))}

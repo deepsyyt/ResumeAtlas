@@ -62,7 +62,7 @@ export function ResumeOptimizationPanel({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* 1 — CTA (above readiness for download intent) */}
+      {/* 1 - CTA (above readiness for download intent) */}
       <section className="rounded-xl border border-slate-900 bg-slate-900 p-3.5 text-white shadow-md">
         <h3 className="text-sm font-bold">Your resume is ready</h3>
         <p className="mt-1 text-xs text-slate-300 leading-snug">
@@ -91,7 +91,7 @@ export function ResumeOptimizationPanel({
         </p>
       </section>
 
-      {/* 2 — Optimization summary (legend, metrics + alignment rows, keywords, truth-first, what improved) */}
+      {/* 2 - Optimization summary (legend, metrics + alignment rows, keywords, truth-first, what improved) */}
       <section className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
         <h3 className="text-[11px] font-bold uppercase tracking-wide text-slate-800">
           Optimization summary

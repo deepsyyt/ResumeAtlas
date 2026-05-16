@@ -38,7 +38,7 @@ const METHODOLOGY_FAQ = [
 export const metadata: Metadata = {
   title: `Posting fit diagnosis methodology${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "How ResumeAtlas defines parse hygiene, posting vocabulary coverage, required skill debt, semantic fit, evidence density, skim friction, and truth envelope—what we measure and what we refuse to claim.",
+    "How ResumeAtlas defines parse hygiene, posting vocabulary coverage, required skill debt, semantic fit, evidence density, skim friction, and truth envelope, what we measure and what we refuse to claim.",
   alternates: { canonical },
   robots: { index: true, follow: true },
   openGraph: {
@@ -73,13 +73,13 @@ export default function MethodologyPage() {
           <p className="mt-4 text-base leading-relaxed text-slate-700">
             This page defines the vocabulary that appears in HTML across ResumeAtlas for resume-versus-job-description
             diagnostics. Product surfaces, API contracts, and SEO content are aligned to the same primitive names and
-            gate model—no paraphrase drift.
+            gate model, no paraphrase drift.
           </p>
 
           <section className="mt-10">
             <h2 className="text-xl font-semibold tracking-tight text-slate-900">Scoring philosophy</h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
-              Signals are grouped into Gates A–D so users know whether the bottleneck is machine ingestion (A),
+              Signals are grouped into Gates A-D so users know whether the bottleneck is machine ingestion (A),
               posting vocabulary and hard requirements (B), fit and proof in bullets (C), or recruiter skim and claim
               defensibility (D). A low score in one gate does not automatically mean failure in another.
             </p>
@@ -113,7 +113,7 @@ export default function MethodologyPage() {
             <h2 className="text-xl font-semibold tracking-tight text-slate-900">Truth-envelope doctrine</h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
               Tailoring stops where evidence stops. If a posting demands a skill you do not have, the correct output may
-              be a gap flag—not a suggested lie. Optimization and exports in the product follow the same constraint:
+              be a gap flag, not a suggested lie. Optimization and exports in the product follow the same constraint:
               edits are for defensible wording and structure, not credential invention.
             </p>
           </section>

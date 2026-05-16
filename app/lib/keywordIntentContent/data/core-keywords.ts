@@ -2,11 +2,11 @@ import type { RoleSlug } from "@/app/lib/seoPages";
 import type { KeywordIntentContent } from "../types";
 import { cluster, ex, page } from "../helpers";
 
-/** Core high-signal ATS terms per role — 5 clusters × ~10 keywords, 2 examples/cluster */
+/** Core high-signal ATS terms per role - 5 clusters × ~10 keywords, 2 examples/cluster */
 export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
   "data-scientist": page(
     "Core ATS keywords for data scientist resumes: ML, statistics, Python, experimentation, and stakeholder impact.",
-    "These clusters capture what hiring systems and recruiters scan for first on data scientist resumes: modeling depth, statistical rigor, tooling, experimentation, and how you translate analysis into decisions. Use them as a checklist against real job descriptions—mirror phrasing where it matches your experience, and avoid dumping terms you cannot defend in an interview.",
+    "These clusters capture what hiring systems and recruiters scan for first on data scientist resumes: modeling depth, statistical rigor, tooling, experimentation, and how you translate analysis into decisions. Use them as a checklist against real job descriptions, mirror phrasing where it matches your experience, and avoid dumping terms you cannot defend in an interview.",
     [
       cluster(
         "Machine learning & statistical modeling",
@@ -113,13 +113,13 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       {
         section: "summary",
         advice:
-          "Name 2–3 anchor domains (e.g., experimentation, personalization) plus scale signals (users, revenue, data volume).",
+          "Name 2-3 anchor domains (e.g., experimentation, personalization) plus scale signals (users, revenue, data volume).",
         example:
           "Data scientist with 5+ years driving retention and monetization via experimentation and production ML at B2C scale.",
       },
       {
         section: "skills",
-        advice: "Group by Modeling, Engineering, Experimentation, Tools—mirror the job’s section headers when possible.",
+        advice: "Group by Modeling, Engineering, Experimentation, Tools, mirror the job’s section headers when possible.",
         example: "Modeling: classification, uplift modeling, calibration · Experimentation: A/B testing, sequential testing",
       },
       {
@@ -139,7 +139,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       },
     ],
     [
-      "Keyword stuffing a skills line with every ML buzzword—recruiters will probe and ATS may still miss context.",
+      "Keyword stuffing a skills line with every ML buzzword, recruiters will probe and ATS may still miss context.",
       "Listing tools you only used once at hobby depth; keep keywords tied to recent, credible scope.",
       "Hiding impact behind tasks: ‘built models’ without metrics, constraints, or stakeholder outcome.",
       "Ignoring experimentation keywords when the job emphasizes A/B testing and causal thinking.",
@@ -148,7 +148,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
 
   "software-engineer": page(
     "Core ATS keywords for software engineer resumes: languages, systems design, testing, CI/CD, and measurable delivery.",
-    "These terms map to how engineering job descriptions are written: stack specifics, reliability, ownership, and collaboration. Your resume should echo the posting’s vocabulary while proving depth with scope, scale, and outcomes—not isolated buzzwords.",
+    "These terms map to how engineering job descriptions are written: stack specifics, reliability, ownership, and collaboration. Your resume should echo the posting’s vocabulary while proving depth with scope, scale, and outcomes, not isolated buzzwords.",
     [
       cluster(
         "Languages, frameworks & runtime",
@@ -254,7 +254,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
     [
       {
         section: "summary",
-        advice: "State your specialty (backend, full-stack, infra-adjacent) and 1–2 scale or domain anchors.",
+        advice: "State your specialty (backend, full-stack, infra-adjacent) and 1-2 scale or domain anchors.",
         example: "Backend engineer focused on high-throughput APIs and data-intensive services in fintech.",
       },
       {
@@ -263,7 +263,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       },
       {
         section: "skills",
-        advice: "Separate ‘strong’ vs ‘exposure’ only if you must—mislabeling depth backfires in interviews.",
+        advice: "Separate ‘strong’ vs ‘exposure’ only if you must, mislabeling depth backfires in interviews.",
       },
       {
         section: "experience",
@@ -272,7 +272,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       },
       {
         section: "experience",
-        advice: "Mention constraints: traffic, data size, SLAs, compliance—this differentiates seniority.",
+        advice: "Mention constraints: traffic, data size, SLAs, compliance, this differentiates seniority.",
       },
     ],
     [
@@ -285,7 +285,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
 
   "data-analyst": page(
     "Core ATS keywords for data analyst resumes: SQL, BI, metrics, experimentation, and stakeholder storytelling.",
-    "Hiring teams look for analysts who can own definitions, ship trustworthy reporting, and drive decisions—not only pull queries. These clusters align with how ATS maps analyst postings to resumes.",
+    "Hiring teams look for analysts who can own definitions, ship trustworthy reporting, and drive decisions, not only pull queries. These clusters align with how ATS maps analyst postings to resumes.",
     [
       cluster(
         "SQL, data modeling & BI",
@@ -405,7 +405,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       },
       {
         section: "experience",
-        advice: "Name the audience: leadership, PM, finance—matches stakeholder-heavy JD language.",
+        advice: "Name the audience: leadership, PM, finance, matches stakeholder-heavy JD language.",
       },
       {
         section: "skills",
@@ -416,7 +416,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       "Vague ‘data-driven’ claims without metrics, definitions, or decisions.",
       "Keyword dumping vendor names without how you used them in production reporting.",
       "Ignoring experimentation terms when the role owns test readouts.",
-      "Burying SQL depth—many ATS templates weight SQL strongly for analysts.",
+      "Burying SQL depth, many ATS templates weight SQL strongly for analysts.",
     ]
   ),
 
@@ -533,7 +533,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       },
       {
         section: "skills",
-        advice: "Include tools (Jira, Figma, Amplitude) when JD lists them—ATS often literal-matches.",
+        advice: "Include tools (Jira, Figma, Amplitude) when JD lists them, ATS often literal-matches.",
       },
       {
         section: "experience",
@@ -546,7 +546,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       },
       {
         section: "summary",
-        advice: "Avoid empty leadership adjectives—tie ‘cross-functional’ to artifacts you led (PRDs, reviews, launches).",
+        advice: "Avoid empty leadership adjectives, tie ‘cross-functional’ to artifacts you led (PRDs, reviews, launches).",
       },
     ],
     [
@@ -678,7 +678,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       },
       {
         section: "experience",
-        advice: "Reference facilitation: workshops, interviews, sign-offs—this differentiates senior BAs.",
+        advice: "Reference facilitation: workshops, interviews, sign-offs, this differentiates senior BAs.",
       },
       {
         section: "skills",
@@ -824,7 +824,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
     [
       "Listing frameworks without performance or quality outcomes.",
       "Treating accessibility as optional when many JDs require WCAG language.",
-      "Bullets that ignore business metrics—frontend wins should show user or revenue impact proxies.",
+      "Bullets that ignore business metrics, frontend wins should show user or revenue impact proxies.",
       "Omitting testing/tooling when posting emphasizes quality and design systems.",
     ]
   ),
@@ -1099,7 +1099,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       "Notebook metrics without online impact or serving constraints.",
       "Omitting feature-store/pipeline language for production ML roles.",
       "No monitoring/drift vocabulary when job stresses reliability.",
-      "Treating MLE as pure research—missing deployment and ops keywords.",
+      "Treating MLE as pure research, missing deployment and ops keywords.",
     ]
   ),
 
@@ -1370,7 +1370,7 @@ export const CORE_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
     [
       "‘Full stack’ with only frontend or only backend evidence.",
       "Long ungrouped skill lists that read as keyword stuffing.",
-      "No cross-layer outcomes—features need business or UX metrics.",
+      "No cross-layer outcomes, features need business or UX metrics.",
       "Omitting testing/CI when posting emphasizes quality.",
     ]
   ),

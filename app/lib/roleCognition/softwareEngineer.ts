@@ -1,6 +1,6 @@
 /**
  * Source-of-truth for SWE pillar semantics (author before expanding semantic plans).
- * Not rendered directly—feeds authoring discipline for pillarSemanticPlans + future lint tooling.
+ * Not rendered directly, feeds authoring discipline for pillarSemanticPlans + future lint tooling.
  */
 
 export const softwareEngineerCognition = {
@@ -25,7 +25,7 @@ export const softwareEngineerCognition = {
   seniorityHeuristics: {
     junior: "Projects and internships can justify breadth; proof is learning + shipped work in scope.",
     mid: "Production outcomes on real services; recurring themes in reliability and delivery.",
-    senior: "Sustained systems thinking—scale, operability, mentoring, multi-quarter technical bets.",
+    senior: "Sustained systems thinking, scale, operability, mentoring, multi-quarter technical bets.",
     staff: "Org-level leverage, ambiguous problem framing, durable platform or cost/risk reduction narratives.",
   },
   commonExaggerations: [

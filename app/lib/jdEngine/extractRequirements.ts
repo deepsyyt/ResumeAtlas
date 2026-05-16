@@ -108,8 +108,8 @@ export async function extractRequirementsFromJD(
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    // No key available in this environment – log once and fall back.
-    console.warn("[jdEngine] ANTHROPIC_API_KEY is not set – using fallback JD extractor.");
+    // No key available in this environment - log once and fall back.
+    console.warn("[jdEngine] ANTHROPIC_API_KEY is not set - using fallback JD extractor.");
     // Fallback to a simple deterministic extractor if no API key
     return buildFallbackCategories(jdText);
   }
@@ -222,13 +222,13 @@ JOB DESCRIPTION:
       normalized.explicit_soft_skills.length;
 
     if (!hasAny) {
-      console.warn("[jdEngine] Anthropic JD extraction returned empty categories – using fallback extractor.");
+      console.warn("[jdEngine] Anthropic JD extraction returned empty categories - using fallback extractor.");
       return buildFallbackCategories(jdText);
     }
 
     return normalized;
   } catch {
-    console.error("[jdEngine] Anthropic JD extraction threw – using fallback extractor.");
+    console.error("[jdEngine] Anthropic JD extraction threw - using fallback extractor.");
     return buildFallbackCategories(jdText);
   }
 }

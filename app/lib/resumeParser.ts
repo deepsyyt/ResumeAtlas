@@ -103,7 +103,7 @@ export function parseResumeToJSON(raw: string): ParsedResume {
     let company: string | undefined;
     let dates: string | undefined;
     const header = first ?? "";
-    const parts = header.split(/[–—-]/).map((p) => p.trim());
+    const parts = header.split(/[–, -]/).map((p) => p.trim());
     if (parts.length >= 2) {
       role = parts[0];
       company = parts[1];

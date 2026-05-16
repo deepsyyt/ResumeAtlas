@@ -205,7 +205,7 @@ function newerLastModified(
   return ta >= tb ? a : b;
 }
 
-/** One row per canonical URL — duplicate `<loc>`s merge to the freshest `lastModified`. */
+/** One row per canonical URL - duplicate `<loc>`s merge to the freshest `lastModified`. */
 export function dedupeSitemapEntries(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
   const byKey = new Map<string, MetadataRoute.Sitemap[number]>();
   for (const entry of entries) {

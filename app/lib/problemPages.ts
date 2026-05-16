@@ -40,7 +40,7 @@ export const INDEXED_PROBLEM_SLUGS = [
 
 /**
  * Old URLs that 301 to a canonical problem page (`next.config.mjs`).
- * Do not pre-render these paths — avoids duplicate HTML + clearer crawl signals.
+ * Do not pre-render these paths - avoids duplicate HTML + clearer crawl signals.
  */
 export const PROBLEM_REDIRECT_SOURCE_SLUGS = [
   "why-am-i-not-getting-interviews",
@@ -389,7 +389,7 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
     primaryKeyword: "why am I not getting interviews",
     metaTitle: "Why Am I Not Getting Interviews? (Resume, Fit & ATS) | ResumeAtlas",
     metaDescription:
-      "Ask why am I not getting interviews? Often it is resume–job mismatch, keywords, or volume without tailoring. Practical steps and how ResumeAtlas helps.",
+      "Ask why am I not getting interviews? Often it is resume-job mismatch, keywords, or volume without tailoring. Practical steps and how ResumeAtlas helps.",
     h1: "Why Am I Not Getting Interviews? Start With How You Look Next to the Job Description",
     hook: [
       "If you keep asking why am I not getting interviews, you are probably tired of generic advice. The honest answer blends market luck with things you control: clarity of fit, proof, and whether your resume survives the first automated pass.",
@@ -535,7 +535,7 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
     rootCauses: {
       heading: "Why no response after applying keeps happening",
       intro:
-        "Pipelines are noisy, but recurring silence often points to resume–JD distance.",
+        "Pipelines are noisy, but recurring silence often points to resume-JD distance.",
       bullets: [
         {
           title: "Resume not aligned to job description",

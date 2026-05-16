@@ -95,11 +95,11 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
   const heroIntro = isDataAnalyst
     ? "Use recruiter-ready examples, ATS-friendly templates, and proven bullet points for SQL, Excel, Python, Tableau, Power BI, and analytics roles."
     : isDataScientist
-    ? "Use this page for full data scientist resume examples and template structure—the keyword list and bullet patterns are linked below as on-page sections."
+    ? "Use this page for full data scientist resume examples and template structure, the keyword list and bullet patterns are linked below as on-page sections."
     : isSoftwareEngineer
-    ? "Use this page for full software engineer resume example/sample/template intent—keywords and bullet sections are linked below on the same URL."
+    ? "Use this page for full software engineer resume example/sample/template intent, keywords and bullet sections are linked below on the same URL."
     : isBackendDeveloper
-    ? "Use this page for full backend developer resume example/sample/template intent—for ATS keyword checklists, jump to the keywords section below."
+    ? "Use this page for full backend developer resume example/sample/template intent, for ATS keyword checklists, jump to the keywords section below."
     : `These section-by-section patterns reflect how hiring teams and ATS tools read ${config.roleName.toLowerCase()} resumes in ${CONTENT_FRESHNESS_YEAR} - plain-text structure, proof in bullets, and honest posting-aligned keywords. Use it as a sample outline, then compare your resume to a job description to close gaps before you apply.`;
 
   return (

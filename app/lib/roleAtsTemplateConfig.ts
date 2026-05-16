@@ -34,10 +34,10 @@ const BLOCKS: Record<RoleAtsTemplateKey, RoleBlock> = {
     path: ROLE_ATS_PATH["software-engineer"],
     title: "ATS Resume Template for Software Engineers (Format + Keywords) | ResumeAtlas",
     description:
-      "Software engineer ATS resume template: APIs, reliability, and delivery keywords in a scannable layout—starter text plus links to engineer keyword and bullet guides.",
+      "Software engineer ATS resume template: APIs, reliability, and delivery keywords in a scannable layout, starter text plus links to engineer keyword and bullet guides.",
     h1: "ATS resume template for software engineers",
     intro: [
-      "Engineering job postings are dense with stack-specific tokens—languages, frameworks, cloud primitives, and reliability work—that ATS and recruiters scan for in seconds. A software engineer ATS resume template keeps those tokens in plain text sections parsers expect: Summary, Skills, Experience, Education—without multi-column layouts that drop content.",
+      "Engineering job postings are dense with stack-specific tokens, languages, frameworks, cloud primitives, and reliability work, that ATS and recruiters scan for in seconds. A software engineer ATS resume template keeps those tokens in plain text sections parsers expect: Summary, Skills, Experience, Education, without multi-column layouts that drop content.",
       "Use the strips below as a sanity checklist against your target posting, then adapt the starter snippet with repos, systems, and scale you actually owned. For a structured match, paste your resume and the job description into ResumeAtlas to see missing skills and alignment issues before you apply.",
     ],
     keywordStrip: [
@@ -56,7 +56,7 @@ SKILLS
 TypeScript · Node.js · PostgreSQL · AWS (ECS, Lambda) · Docker · GitHub Actions · Jest · OpenAPI
 
 EXPERIENCE
-Software Engineer · RiverStack · 2021–Present
+Software Engineer · RiverStack · 2021-Present
 • Reduced p95 API latency by 28% via caching, query tuning, and connection pool limits.
 • Shipped GitHub Actions pipelines for blue/green deploys; cut failed releases by roughly 40% in six months.
 

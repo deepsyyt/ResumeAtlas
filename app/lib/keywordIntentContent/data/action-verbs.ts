@@ -6,7 +6,7 @@ import { cluster, ex, page } from "../helpers";
 export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
   "data-scientist": page(
     "Action verbs and phrasing for data scientist resumes: modeling, experimentation, and influence.",
-    "Strong DS bullets start with verbs that imply ownership and decision impact: designed, owned, led, improved, productionized—not just ‘used’ or ‘helped with’. Use these clusters to upgrade weak phrasing.",
+    "Strong DS bullets start with verbs that imply ownership and decision impact: designed, owned, led, improved, productionized, not just ‘used’ or ‘helped with’. Use these clusters to upgrade weak phrasing.",
     [
       cluster(
         "Modeling & evaluation verbs",
@@ -111,13 +111,13 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
     ],
     [
       { section: "experience", advice: "Start bullets with a strong verb + scope + tool + metric (in any readable order)." },
-      { section: "summary", advice: "Use 1–2 leadership verbs only if backed by bullets." },
-      { section: "experience", advice: "Replace ‘utilized’ with ‘used’ sparingly—prefer ‘built’, ‘shipped’, ‘cut’." },
+      { section: "summary", advice: "Use 1-2 leadership verbs only if backed by bullets." },
+      { section: "experience", advice: "Replace ‘utilized’ with ‘used’ sparingly, prefer ‘built’, ‘shipped’, ‘cut’." },
       { section: "skills", advice: "Skills lines are noun-heavy; verbs belong in experience." },
       { section: "experience", advice: "Pair experimentation verbs with guardrail metrics when relevant." },
     ],
     [
-      "Repeating the same verb ten times—vary with synonyms but keep accuracy.",
+      "Repeating the same verb ten times, vary with synonyms but keep accuracy.",
       "Inflating seniority with ‘led’ when you contributed as IC.",
       "Vague verbs with no numbers: ‘improved model’ without metric or baseline.",
       "Buzz verbs (‘synergized’) that read as filler.",
@@ -230,13 +230,13 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
     ],
     [
       { section: "experience", advice: "Lead with outcome when possible: ‘Cut costs 18% by…’ then how." },
-      { section: "experience", advice: "Use ‘owned’ when you had end-to-end accountability—not for small tasks." },
+      { section: "experience", advice: "Use ‘owned’ when you had end-to-end accountability, not for small tasks." },
       { section: "summary", advice: "Strong opener: years + domain + specialty (APIs, infra, product eng)." },
       { section: "skills", advice: "Keep verbs out of skills unless ‘public speaking’-style soft skills." },
       { section: "experience", advice: "Quantify: latency, uptime, cost, incidents, throughput." },
     ],
     [
-      "Same verb repeated every bullet—readability suffers.",
+      "Same verb repeated every bullet, readability suffers.",
       "Overclaiming ‘architected’ for small changes.",
       "Buzzwords without evidence: ‘innovated’, ‘synergized’.",
       "Passive voice hiding ownership: ‘was responsible for’.",
@@ -245,7 +245,7 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
 
   "data-analyst": page(
     "Action verbs for data analyst resumes: analysis, reporting, and enabling decisions.",
-    "Analyst bullets should sound like ownership of insights: diagnosed, quantified, recommended—not only ‘created reports’.",
+    "Analyst bullets should sound like ownership of insights: diagnosed, quantified, recommended, not only ‘created reports’.",
     [
       cluster(
         "Analysis & diagnostic verbs",
@@ -364,7 +364,7 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
 
   "product-manager": page(
     "Action verbs for product manager resumes: discovery, prioritization, and shipping.",
-    "PM resumes should emphasize decisions and outcomes: prioritized, shipped, launched, defined metrics—not ‘managed’ everything.",
+    "PM resumes should emphasize decisions and outcomes: prioritized, shipped, launched, defined metrics, not ‘managed’ everything.",
     [
       cluster(
         "Discovery & problem framing verbs",
@@ -460,15 +460,15 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
           "assisted sales",
         ],
         [
-          ex("Helped launch", "Owned GTM checklist: docs, training, support macros—launch hit adoption targets week one."),
+          ex("Helped launch", "Owned GTM checklist: docs, training, support macros, launch hit adoption targets week one."),
           ex("Worked on roadmap", "Prioritized three initiatives based on opportunity sizing and strategic fit."),
         ]
       ),
     ],
     [
       { section: "experience", advice: "Every bullet: decision or shipped outcome + metric + timeframe when possible." },
-      { section: "summary", advice: "Strong verbs: shipped, launched, grew, reduced, defined—paired with domain." },
-      { section: "experience", advice: "Avoid ‘responsible for’—use owned/led/drove where appropriate." },
+      { section: "summary", advice: "Strong verbs: shipped, launched, grew, reduced, defined, paired with domain." },
+      { section: "experience", advice: "Avoid ‘responsible for’, use owned/led/drove where appropriate." },
       { section: "skills", advice: "PM skills are tools; verbs belong in experience." },
       { section: "experience", advice: "Show trade-offs: cut, deprioritized, sequenced." },
     ],
@@ -482,7 +482,7 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
 
   "business-analyst": page(
     "Action verbs for business analyst resumes: elicitation, documentation, and change.",
-    "BA bullets should emphasize facilitation: elicited, documented, validated, facilitated—paired with artifacts and savings.",
+    "BA bullets should emphasize facilitation: elicited, documented, validated, facilitated, paired with artifacts and savings.",
     [
       cluster(
         "Elicitation & facilitation verbs",
@@ -600,7 +600,7 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
 
   "frontend-developer": page(
     "Action verbs for frontend developer resumes: shipping UI, performance, and accessibility.",
-    "Frontend bullets should show craft: implemented, improved, optimized, instrumented—with measurable UX impact.",
+    "Frontend bullets should show craft: implemented, improved, optimized, instrumented, with measurable UX impact.",
     [
       cluster(
         "UI implementation verbs",
@@ -819,8 +819,8 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
     ],
     [
       { section: "experience", advice: "Verbs + scale: RPS, QPS, records, dollars, latency." },
-      { section: "experience", advice: "Use ‘designed’ when you owned architecture—not for small tweaks." },
-      { section: "summary", advice: "Domain: fintech, ads, platform—helps keyword relevance." },
+      { section: "experience", advice: "Use ‘designed’ when you owned architecture, not for small tweaks." },
+      { section: "summary", advice: "Domain: fintech, ads, platform, helps keyword relevance." },
       { section: "skills", advice: "Keep verbs out of skills section." },
       { section: "experience", advice: "Reliability verbs need metrics: MTTR, incident rate, SLO." },
     ],
@@ -834,7 +834,7 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
 
   "machine-learning-engineer": page(
     "Action verbs for ML engineer resumes: training, deploying, monitoring, and improving models.",
-    "MLE bullets should emphasize production: trained, deployed, monitored, reduced latency—not only research.",
+    "MLE bullets should emphasize production: trained, deployed, monitored, reduced latency, not only research.",
     [
       cluster(
         "Training & evaluation verbs",
@@ -950,7 +950,7 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
 
   "devops-engineer": page(
     "Action verbs for DevOps/SRE resumes: automation, reliability, and security.",
-    "Platform roles reward verbs like automated, reduced MTTR, enforced policy, migrated—not ‘maintained servers’.",
+    "Platform roles reward verbs like automated, reduced MTTR, enforced policy, migrated, not ‘maintained servers’.",
     [
       cluster(
         "Automation & delivery verbs",
@@ -1051,7 +1051,7 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
     [
       { section: "experience", advice: "Reliability verbs need numbers: MTTR, frequency, error budget." },
       { section: "experience", advice: "Automation verbs need before/after time or effort." },
-      { section: "summary", advice: "Clarify: platform, SRE, CI—pick what matches job." },
+      { section: "summary", advice: "Clarify: platform, SRE, CI, pick what matches job." },
       { section: "skills", advice: "Tools in skills; outcomes in bullets." },
       { section: "experience", advice: "Security verbs need policy/enforcement outcomes." },
     ],
@@ -1065,7 +1065,7 @@ export const ACTION_VERBS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
 
   "full-stack-developer": page(
     "Action verbs for full-stack developer resumes: end-to-end delivery across UI, API, and data.",
-    "Full-stack bullets should connect layers: shipped feature across React, API, DB—with one outcome metric.",
+    "Full-stack bullets should connect layers: shipped feature across React, API, DB, with one outcome metric.",
     [
       cluster(
         "End-to-end delivery verbs",

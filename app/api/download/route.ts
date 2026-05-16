@@ -66,7 +66,7 @@ const PDF_META_PT = 9;
 /** Project titles: regular weight only (not bold). */
 const PDF_PROJECT_TITLE_PT = 9;
 
-/** Role left, dates right — mirrors StructuredResume experience header row. */
+/** Role left, dates right - mirrors StructuredResume experience header row. */
 function drawExperienceRoleRow(doc: PdfDoc, role: string, dates: string): void {
   const left = doc.page.margins.left;
   const w = contentWidth(doc);
@@ -319,7 +319,7 @@ export async function POST(request: Request) {
     if (resume) {
       renderStructuredResumeLikeUi(doc, resume);
     } else if (rawText) {
-      // Fallback: plain text only (no structured resume) — ATS-style typography.
+      // Fallback: plain text only (no structured resume) - ATS-style typography.
       const lines = rawText.replace(/\r\n?/g, "\n").split("\n");
       const sectionHeaderRe = /^(professional summary|experience|skills|education)$/i;
       let i = 0;
@@ -336,7 +336,7 @@ export async function POST(request: Request) {
       while (i < lines.length && !lines[i]!.trim()) i++;
 
       if (name) {
-        const titleSplit = name.split(/\s+—\s+/).map((s) => s.trim()).filter(Boolean);
+        const titleSplit = name.split(/\s+, \s+/).map((s) => s.trim()).filter(Boolean);
         if (titleSplit.length >= 2) {
           doc
             .font("Helvetica-Bold")
@@ -348,7 +348,7 @@ export async function POST(request: Request) {
             .font("Helvetica-Bold")
             .fontSize(14)
             .fillColor("#1e293b")
-            .text(titleSplit.slice(1).join(" — "), { align: "left" });
+            .text(titleSplit.slice(1).join(" - "), { align: "left" });
         } else {
           doc
             .font("Helvetica-Bold")
@@ -394,7 +394,7 @@ export async function POST(request: Request) {
           continue;
         }
 
-        // Project label (tab from resumeDocumentToPlainText) — subtle, not a section heading.
+        // Project label (tab from resumeDocumentToPlainText) - subtle, not a section heading.
         if (/^\t/.test(rawLine)) {
           ensureSpace(doc, 22);
           doc
@@ -429,13 +429,13 @@ export async function POST(request: Request) {
           continue;
         }
 
-        // Experience block: role — company — dates (matches resumeDocumentToPlainText)
-        if (/—/.test(t)) {
-          const parts = t.split("—").map((p) => p.trim()).filter(Boolean);
+        // Experience block: role - company - dates (matches resumeDocumentToPlainText)
+        if (/, /.test(t)) {
+          const parts = t.split(", ").map((p) => p.trim()).filter(Boolean);
           if (parts.length >= 2) {
             const role = parts[0] ?? "";
             const company = parts[1] ?? "";
-            const dates = parts.slice(2).join(" — ");
+            const dates = parts.slice(2).join(" - ");
             drawExperienceRoleRow(doc, role, dates);
             if (company) {
               doc.moveDown(0.08);

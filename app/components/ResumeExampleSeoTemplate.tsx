@@ -18,7 +18,7 @@ export function ResumeExampleSeoIntro({ role }: { role: string }) {
   return (
     <p className="mt-3 max-w-2xl text-base text-slate-600 sm:text-lg">
       These patterns reflect how recruiters and ATS screens weight {role.toLowerCase()} resumes in{" "}
-      {CONTENT_FRESHNESS_YEAR} hiring—plain-text structure, proof in bullets, and honest keyword use. Use this
+      {CONTENT_FRESHNESS_YEAR} hiring, plain-text structure, proof in bullets, and honest keyword use. Use this
       example to tighten your draft, then run our free ATS checker or compare your resume to a job description.
     </p>
   );

@@ -26,7 +26,7 @@ export function ToolClusterRelatedLinks({ currentPath }: Props) {
         Related free resume tools
       </h2>
       <p className="mt-2 text-sm text-slate-600">
-        Same engine—pick the entry that matches what you searched for. Interlinking helps you
+        Same engine, pick the entry that matches what you searched for. Interlinking helps you
         compare resume vs job description from different angles (score, keywords, ATS fit).
       </p>
       <ul className="mt-4 space-y-2 text-sm text-slate-800 list-disc pl-5">

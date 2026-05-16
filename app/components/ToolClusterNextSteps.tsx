@@ -24,7 +24,7 @@ export function ToolClusterNextSteps() {
       </h2>
       <p className="mt-2 text-sm text-emerald-900/90 leading-relaxed">
         Improve your score with one authoritative page per role (examples + structure), jump to the skills
-        section for ATS keyword coverage—then rerun the check on your updated resume.
+        section for ATS keyword coverage, then rerun the check on your updated resume.
       </p>
       <div className="mt-4">
         <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800/80">

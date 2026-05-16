@@ -25,7 +25,7 @@ export function ResumeBulletConversionBlocks({ roleKeywordLabel }: Props) {
           These lines are illustrative. Your resume still needs role-specific keywords to pass ATS.
         </p>
         <p className="mt-2 text-sm text-amber-950/90">
-          Paste a job description and compare—see missing skills and weak alignment before you send
+          Paste a job description and compare, see missing skills and weak alignment before you send
           the application.
         </p>
         <p className="mt-4 text-xs font-medium text-amber-950/80">Takes 10 seconds • No signup required</p>
@@ -50,11 +50,11 @@ export function ResumeBulletConversionBlocks({ roleKeywordLabel }: Props) {
           Example gap (illustrative)
         </p>
         <p className="mt-2 text-sm text-slate-800">
-          <span className="font-semibold">Your resume vs posting:</span> ~52% keyword overlap — weak
+          <span className="font-semibold">Your resume vs posting:</span> ~52% keyword overlap - weak
           on SQL depth and experiment design language for this role.
         </p>
         <p className="mt-2 text-sm text-slate-600">
-          Run the checker on your real resume and the exact posting to see your gaps—not a generic
+          Run the checker on your real resume and the exact posting to see your gaps, not a generic
           score.
         </p>
         <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">

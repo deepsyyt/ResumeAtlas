@@ -19,7 +19,7 @@ export function CopyResumeBlock({
       setStatus("Copied to clipboard");
       window.setTimeout(() => setStatus(null), 2200);
     } catch {
-      setStatus("Copy blocked — select the text and press Ctrl+C (Cmd+C on Mac).");
+      setStatus("Copy blocked - select the text and press Ctrl+C (Cmd+C on Mac).");
       window.setTimeout(() => setStatus(null), 4000);
     }
   }, [body]);

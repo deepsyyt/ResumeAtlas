@@ -59,12 +59,12 @@ const faqItems = [
   {
     question: "How many jobs should I list in work experience?",
     answer:
-      "List the roles that are relevant to the job you want, usually the last 10–15 years. Early-career candidates often show internships and part-time work; senior candidates can summarize older roles in one line without full bullet banks.",
+      "List the roles that are relevant to the job you want, usually the last 10-15 years. Early-career candidates often show internships and part-time work; senior candidates can summarize older roles in one line without full bullet banks.",
   },
   {
     question: "How do I format work experience on a resume?",
     answer:
-      "Use a clear line for Job title | Company | City (optional) | Dates. Under each role add 3–6 bullets that start with a verb, name scope/tools, and include outcomes (%, $, time saved, volume) when truthful.",
+      "Use a clear line for Job title | Company | City (optional) | Dates. Under each role add 3-6 bullets that start with a verb, name scope/tools, and include outcomes (%, $, time saved, volume) when truthful.",
   },
   {
     question: "What should I write for work experience on a resume?",
@@ -186,12 +186,12 @@ export default function ResumeWorkExperienceExamplesPage() {
           <pre className="mt-4 overflow-x-auto rounded-xl bg-white p-4 text-left text-xs leading-relaxed text-slate-800 ring-1 ring-slate-900/5 sm:text-sm">
             {`EXPERIENCE
 
-Senior Product Analyst | Northwind Labs | Remote | 2021 – Present
+Senior Product Analyst | Northwind Labs | Remote | 2021 - Present
 • Defined KPIs for onboarding funnel; partnered with PM on tests that improved day-7 activation by 9%.
 • Built self-serve dashboards in Mode + dbt models used weekly by GTM leadership.
 • Cut ad-hoc SQL requests ~5 hours/week by documenting reusable queries and data definitions.
 
-Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
+Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 - 2021
 • Automated weekly inventory reporting in Excel + SQL; reduced compile time from 12 hours to 90 minutes.
 • Supported promotion analysis that lowered stockouts by 11% in a pilot region.`}
           </pre>
@@ -231,7 +231,7 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 – 2021
               roadmap terms, mirror honest wording from the target JD.
             </li>
             <li>
-              <strong>Overly dense blocks:</strong> 8–10 bullets per role reduce readability; keep
+              <strong>Overly dense blocks:</strong> 8-10 bullets per role reduce readability; keep
               the strongest proof first.
             </li>
             <li>

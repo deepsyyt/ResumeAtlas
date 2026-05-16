@@ -2,11 +2,11 @@ import type { RoleSlug } from "@/app/lib/seoPages";
 import type { KeywordIntentContent } from "../types";
 import { cluster, ex, page } from "../helpers";
 
-/** Tools & platforms vocabulary for ATS—vendors, clouds, and productized systems */
+/** Tools & platforms vocabulary for ATS, vendors, clouds, and productized systems */
 export const TOOLS_PLATFORMS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
   "data-scientist": page(
     "Tools and platform keywords for data scientist resumes: notebooks, warehouses, experiment systems, and ML platforms.",
-    "Job descriptions often name specific vendors and platforms. Match them literally when truthful, and pair each with how you used it (datasets, environments, governance)—not just that it appears on your resume.",
+    "Job descriptions often name specific vendors and platforms. Match them literally when truthful, and pair each with how you used it (datasets, environments, governance), not just that it appears on your resume.",
     [
       cluster(
         "Notebooks, IDEs & collaboration",
@@ -114,7 +114,7 @@ export const TOOLS_PLATFORMS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       { section: "experience", advice: "One bullet per important platform: what you built or fixed there." },
       { section: "skills", advice: "Group by Data / Experimentation / ML Platform / Cloud." },
       { section: "summary", advice: "If you’re cloud-heavy, name primary cloud once." },
-      { section: "experience", advice: "Avoid claiming admin access unless true—‘used’ vs ‘owned’ matters." },
+      { section: "experience", advice: "Avoid claiming admin access unless true, ‘used’ vs ‘owned’ matters." },
     ],
     [
       "Listing cloud services without any workload or scale context.",
@@ -357,7 +357,7 @@ export const TOOLS_PLATFORMS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       { section: "experience", advice: "Reference ticketing when stakeholder intake is part of the job." },
     ],
     [
-      "Listing every BI tool—credibility drops.",
+      "Listing every BI tool, credibility drops.",
       "Warehouse named without SQL depth in bullets.",
       "No experimentation tools for growth roles.",
       "Ignoring collaboration stack when remote/async-heavy.",
@@ -366,7 +366,7 @@ export const TOOLS_PLATFORMS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
 
   "product-manager": page(
     "Tools and platform keywords for product manager resumes: roadmapping, analytics, design, and delivery.",
-    "PM postings mix roadmap tools, analytics, and delivery systems. Reflect what you actually drove—not just where you had a login.",
+    "PM postings mix roadmap tools, analytics, and delivery systems. Reflect what you actually drove, not just where you had a login.",
     [
       cluster(
         "Roadmapping & prioritization tools",
@@ -837,7 +837,7 @@ export const TOOLS_PLATFORMS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       { section: "experience", advice: "Avoid listing managed services you only configured once." },
     ],
     [
-      "Every AWS service under the sun—signals resume padding.",
+      "Every AWS service under the sun, signals resume padding.",
       "Kafka without consumer/producer ownership.",
       "Observability tools without on-call/debug usage.",
       "Identity tools without auth domain experience.",
@@ -952,7 +952,7 @@ export const TOOLS_PLATFORMS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       { section: "experience", advice: "Each platform bullet: workload + metric (latency, cost, quality)." },
       { section: "skills", advice: "Feature store name when JD mentions it explicitly." },
       { section: "summary", advice: "Cloud ML focus helps if employer is AWS/GCP/Azure heavy." },
-      { section: "experience", advice: "Registry/tools without governance story feel weak—add promotion criteria." },
+      { section: "experience", advice: "Registry/tools without governance story feel weak, add promotion criteria." },
     ],
     [
       "SageMaker listed without training or endpoint story.",
@@ -1071,7 +1071,7 @@ export const TOOLS_PLATFORMS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
       { section: "skills", advice: "Align Kubernetes distro and GitOps tool with employer." },
       { section: "experience", advice: "Quantify reliability improvements: MTTR, frequency, failure rate." },
       { section: "skills", advice: "Include observability vendor when JD lists it." },
-      { section: "summary", advice: "SRE vs platform engineer vs DevOps—pick the label the job uses." },
+      { section: "summary", advice: "SRE vs platform engineer vs DevOps, pick the label the job uses." },
       { section: "experience", advice: "Security scanning tools need policy outcomes, not just installation." },
     ],
     [
@@ -1190,7 +1190,7 @@ export const TOOLS_PLATFORMS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
     [
       { section: "skills", advice: "Group by Delivery / Auth / Data / Payments to show breadth cleanly." },
       { section: "experience", advice: "Cross-link layers: UI + API + provider integration + metric." },
-      { section: "skills", advice: "Include Stripe/auth when JD lists them—very common." },
+      { section: "skills", advice: "Include Stripe/auth when JD lists them, very common." },
       { section: "summary", advice: "SaaS product vs internal tools shifts which platforms matter." },
       { section: "experience", advice: "Preview environments and monorepos signal mature team experience." },
     ],

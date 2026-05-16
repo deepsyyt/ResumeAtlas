@@ -18,22 +18,22 @@ import { TOOL_CLUSTER_PRIMARY } from "@/app/lib/toolClusterPages";
 
 const GATE_COPY: Record<(typeof DIAGNOSTIC_GATES)[number], { title: string; body: string }> = {
   A: {
-    title: "Gate A — Parse hygiene",
+    title: "Gate A - Parse hygiene",
     body:
-      "If text, headings, and bullets do not extract cleanly, downstream matching is noisy. This gate asks whether applicant tracking systems can ingest your resume reliably—not whether it looks pretty.",
+      "If text, headings, and bullets do not extract cleanly, downstream matching is noisy. This gate asks whether applicant tracking systems can ingest your resume reliably, not whether it looks pretty.",
   },
   B: {
-    title: "Gate B — Posting vocabulary & required skill debt",
+    title: "Gate B - Posting vocabulary & required skill debt",
     body:
       "Does your resume surface the posting’s vocabulary where it is truthful? Required skill debt flags hard requirements from the job description that are missing or only weakly evidenced.",
   },
   C: {
-    title: "Gate C — Semantic fit & evidence density",
+    title: "Gate C - Semantic fit & evidence density",
     body:
       "Do responsibilities read like the role in this posting, and do bullets carry outcome proof (scope, metrics, ownership) where recruiters skim first?",
   },
   D: {
-    title: "Gate D — Skim friction & truth envelope",
+    title: "Gate D - Skim friction & truth envelope",
     body:
       "Can a recruiter extract role and impact in seconds, and do claims stay inside what you can defend in an interview? The truth envelope rejects cosmetic keyword stuffing.",
   },
@@ -43,22 +43,22 @@ const SSR_FAQ = [
   {
     question: "What is posting fit diagnosis?",
     answer:
-      "Posting fit diagnosis is how ResumeAtlas frames resume-versus-job-description analysis: vocabulary coverage against the posting, required skill debt, semantic fit, evidence density, parse hygiene, skim friction, and truth-envelope alignment—named consistently in the product and in this page’s HTML.",
+      "Posting fit diagnosis is how ResumeAtlas frames resume-versus-job-description analysis: vocabulary coverage against the posting, required skill debt, semantic fit, evidence density, parse hygiene, skim friction, and truth-envelope alignment, named consistently in the product and in this page’s HTML.",
   },
   {
     question: "Is posting fit the same as an employer’s ATS score?",
     answer:
-      "Employers use different systems and weight signals differently. ResumeAtlas gives directional diagnostics to prioritize edits before you apply—not a hiring guarantee.",
+      "Employers use different systems and weight signals differently. ResumeAtlas gives directional diagnostics to prioritize edits before you apply, not a hiring guarantee.",
   },
   {
     question: "Where do keyword gaps fit?",
     answer:
-      "Keyword and skill gaps are part of Gate B (posting vocabulary coverage and required skill debt). Full tailoring still requires evidence and semantic fit (Gates C–D).",
+      "Keyword and skill gaps are part of Gate B (posting vocabulary coverage and required skill debt). Full tailoring still requires evidence and semantic fit (Gates C-D).",
   },
   {
     question: "What is parse hygiene (Gate A)?",
     answer:
-      "Parse hygiene reflects whether your file structure is likely to be read correctly by ATS parsers—distinct from whether you match the posting’s language.",
+      "Parse hygiene reflects whether your file structure is likely to be read correctly by ATS parsers, distinct from whether you match the posting’s language.",
   },
 ] as const;
 
@@ -93,7 +93,7 @@ export function PostingFitSsrShell() {
           </h1>
           <p className="mt-4 text-base leading-relaxed text-slate-700 sm:text-lg">
             Paste your resume and the exact posting you are applying to. You get a structured readout
-            aligned to Gates A–D: parse hygiene, posting vocabulary and required skill debt, semantic fit
+            aligned to Gates A-D: parse hygiene, posting vocabulary and required skill debt, semantic fit
             and evidence density, then skim friction and truth-envelope alignment. Diagnostic registry
             version <span className="font-mono text-sm">{DIAGNOSTIC_REGISTRY_VERSION}</span> defines the
             vocabulary you see in the product and on this page.
@@ -126,7 +126,7 @@ export function PostingFitSsrShell() {
       <section className="border-b border-slate-200 bg-slate-50/70">
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Gates A–D (indexed diagnostic model)
+            Gates A-D (indexed diagnostic model)
           </h2>
           <ol className="mt-4 space-y-4">
             {DIAGNOSTIC_GATES.map((g) => (
@@ -149,13 +149,13 @@ export function PostingFitSsrShell() {
           </h2>
           <p className="mt-2 text-sm text-slate-600 sm:text-base">
             These labels are the same primitives referenced by the analyzer contract and glossary
-            pages—no paraphrase drift between SEO and product.
+            pages, no paraphrase drift between SEO and product.
           </p>
           <dl className="mt-6 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-slate-50/40">
             {DIAGNOSTIC_PRIMITIVES.map((p) => (
               <div key={p.id} className="px-4 py-4 sm:px-5" id={p.publicSlug}>
                 <dt className="text-sm font-semibold text-slate-900">
-                  <span className="font-mono text-xs text-slate-500">{p.id}</span> — {p.label}{" "}
+                  <span className="font-mono text-xs text-slate-500">{p.id}</span> - {p.label}{" "}
                   <span className="text-slate-500">(Gate {p.gate})</span>
                 </dt>
                 <dd className="mt-1 text-sm leading-relaxed text-slate-700">{p.shortDefinition}</dd>
@@ -189,12 +189,12 @@ export function PostingFitSsrShell() {
             Fixture: sample posting-fit snapshot (illustrative)
           </h2>
           <p className="mt-2 text-sm text-slate-700">
-            Synthetic example for HTML crawlability—not your data. Same primitive names as live output.
+            Synthetic example for HTML crawlability, not your data. Same primitive names as live output.
           </p>
           <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 bg-white">
             <table className="min-w-full text-left text-sm text-slate-800">
               <caption className="border-b border-slate-200 bg-slate-50 px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">
-                Demo fixture — software engineer vs B2B SaaS posting (abbreviated)
+                Demo fixture - software engineer vs B2B SaaS posting (abbreviated)
               </caption>
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50 text-xs uppercase text-slate-600">
@@ -217,7 +217,7 @@ export function PostingFitSsrShell() {
                 <tr className="border-b border-slate-100">
                   <td className="px-4 py-2 font-medium">required_skill_debt</td>
                   <td className="px-4 py-2">B</td>
-                  <td className="px-4 py-2">Posting requires on-call ownership evidence—missing in bullets.</td>
+                  <td className="px-4 py-2">Posting requires on-call ownership evidence, missing in bullets.</td>
                 </tr>
                 <tr className="border-b border-slate-100">
                   <td className="px-4 py-2 font-medium">preferred_skill_delta</td>

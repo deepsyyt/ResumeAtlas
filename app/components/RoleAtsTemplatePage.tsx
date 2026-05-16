@@ -48,7 +48,7 @@ export function RoleAtsTemplatePage({ role }: { role: RoleAtsTemplateKey }) {
             ATS resume keywords for this role
           </h2>
           <p className="mt-2 text-sm text-slate-600 sm:text-base">
-            Mirror these only where they match your real stack—keyword stuffing hurts interviews and
+            Mirror these only where they match your real stack, keyword stuffing hurts interviews and
             can backfire with recruiters.
           </p>
           <p className="mt-4 rounded-lg bg-slate-50 p-3 text-sm font-medium leading-relaxed text-slate-800 ring-1 ring-slate-900/5">
@@ -76,7 +76,7 @@ export function RoleAtsTemplatePage({ role }: { role: RoleAtsTemplateKey }) {
             your real experience.
           </p>
           <div className="mt-4 max-w-lg">
-            <CopyResumeBlock eyebrow="Starter" title={`${b.h1} — plain text`} body={b.copySnippet} />
+            <CopyResumeBlock eyebrow="Starter" title={`${b.h1} - plain text`} body={b.copySnippet} />
           </div>
         </section>
 

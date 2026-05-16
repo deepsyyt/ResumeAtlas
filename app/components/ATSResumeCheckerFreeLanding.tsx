@@ -20,7 +20,7 @@ import {
 const path = TOOL_CLUSTER_ATS_FREE.path;
 
 /**
- * ATS compliance / parsing / score positioning — distinct from the JD matcher
+ * ATS compliance / parsing / score positioning - distinct from the JD matcher
  * (`/check-resume-against-job-description`).
  */
 export function ATSResumeCheckerFreeLanding() {
@@ -145,19 +145,19 @@ export function ATSResumeCheckerFreeLanding() {
           </div>
           <ul className="mt-4 list-disc pl-5 space-y-1.5 text-sm text-slate-700">
             <li>
-              <strong className="text-slate-900">Parsing accuracy</strong> — can an ATS map your
+              <strong className="text-slate-900">Parsing accuracy</strong> - can an ATS map your
               content into experience and skills fields?
             </li>
             <li>
-              <strong className="text-slate-900">Section detection</strong> — are headings like
+              <strong className="text-slate-900">Section detection</strong> - are headings like
               Experience and Skills easy to recognize?
             </li>
             <li>
-              <strong className="text-slate-900">Formatting issues</strong> — tables, columns, and
+              <strong className="text-slate-900">Formatting issues</strong> - tables, columns, and
               layouts that often break parsers
             </li>
             <li>
-              <strong className="text-slate-900">Keyword signal (with a posting)</strong> — if you
+              <strong className="text-slate-900">Keyword signal (with a posting)</strong> - if you
               paste a job description, you also get JD keyword overlap; otherwise the scan stays
               resume-first.
             </li>
@@ -178,13 +178,13 @@ export function ATSResumeCheckerFreeLanding() {
           </h2>
           <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
             <li>
-              <strong className="text-slate-900">80–100%</strong> — strong ATS compatibility
+              <strong className="text-slate-900">80-100%</strong> - strong ATS compatibility
             </li>
             <li>
-              <strong className="text-slate-900">60–79%</strong> — minor improvements likely help
+              <strong className="text-slate-900">60-79%</strong> - minor improvements likely help
             </li>
             <li>
-              <strong className="text-slate-900">Below 60%</strong> — higher risk of being filtered
+              <strong className="text-slate-900">Below 60%</strong> - higher risk of being filtered
               before a human review
             </li>
           </ul>
@@ -216,23 +216,23 @@ export function ATSResumeCheckerFreeLanding() {
           </p>
           <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
             <li>
-              <strong className="text-slate-900">Single column</strong> — linear flow from top to
+              <strong className="text-slate-900">Single column</strong> - linear flow from top to
               bottom
             </li>
             <li>
-              <strong className="text-slate-900">Standard headings</strong> — for example
+              <strong className="text-slate-900">Standard headings</strong> - for example
               Experience, Education, Skills, and a short Summary
             </li>
             <li>
-              <strong className="text-slate-900">No tables</strong> — avoid tables and multi-column
+              <strong className="text-slate-900">No tables</strong> - avoid tables and multi-column
               layouts for structure when you can use headings and bullets instead
             </li>
             <li>
-              <strong className="text-slate-900">Plain bullets</strong> — dated roles, one bullet
+              <strong className="text-slate-900">Plain bullets</strong> - dated roles, one bullet
               style, measurable outcomes where possible
             </li>
             <li>
-              <strong className="text-slate-900">No critical text in images</strong> — logos and
+              <strong className="text-slate-900">No critical text in images</strong> - logos and
               icons should not carry skills or job titles the ATS must read
             </li>
           </ul>
@@ -294,7 +294,7 @@ export function ATSResumeCheckerFreeLanding() {
           </h2>
           <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
             This page is built around <strong className="text-slate-900">ATS compatibility</strong>{" "}
-            — parsing, structure, and readability — not full job matching to a posting unless you
+            - parsing, structure, and readability - not full job matching to a posting unless you
             optionally paste a job description.
           </p>
           <p className="mt-3 text-sm sm:text-base text-slate-700">
@@ -312,7 +312,7 @@ export function ATSResumeCheckerFreeLanding() {
             >
               {RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR}
             </Link>{" "}
-            — same tool, phrased the way many people search. Searching for{" "}
+            - same tool, phrased the way many people search. Searching for{" "}
             <Link
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"

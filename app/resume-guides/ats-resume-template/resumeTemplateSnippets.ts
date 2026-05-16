@@ -4,13 +4,13 @@ export const SNIPPET_GENERAL_FRESHER = `JORDAN LEE
 Boston, MA · jordan.lee@email.com · (555) 010-0199 · linkedin.com/in/jordanlee
 
 SUMMARY
-Economics graduate targeting operations analytics roles. Internship-proven at turning messy operational data into weekly KPI packs, exec-ready Excel readouts, and SQL-backed answers for account managers—comfortable owning the loop from raw tables to clear stakeholder updates under tight deadlines.
+Economics graduate targeting operations analytics roles. Internship-proven at turning messy operational data into weekly KPI packs, exec-ready Excel readouts, and SQL-backed answers for account managers, comfortable owning the loop from raw tables to clear stakeholder updates under tight deadlines.
 
 SKILLS
 SQL · Microsoft Excel · Google Sheets · Tableau (basics) · Python (pandas, introductory)
 
 EXPERIENCE
-Operations Analytics Intern · Acme Logistics · Jun 2023–Aug 2024
+Operations Analytics Intern · Acme Logistics · Jun 2023-Aug 2024
 • Built weekly KPI pack in Excel; reduced prep time from roughly 4 hours to under 90 minutes.
 • Joined and cleaned shipment-level tables (5k+ rows/week) for ad-hoc questions from account managers.
 
@@ -34,7 +34,7 @@ SKILLS
 SQL · dbt · Looker · Google Analytics · Snowflake (basics) · Python · A/B testing
 
 EXPERIENCE
-Data Analyst · BrightCo · Mar 2022–Present
+Data Analyst · BrightCo · Mar 2022-Present
 • Owned self-serve funnel dashboards for growth; highlighted stages with largest drop-off, supporting tests that improved trial-to-paid conversion.
 • Standardized event definitions with PM + engineering; cut conflicting metric labels across four squads.
 
@@ -64,19 +64,19 @@ SKILLS
 Product discovery · Roadmapping · PRDs · Jira · SQL (light) · A/B tests · Stakeholder management
 
 EXPERIENCE
-Associate Product Manager · CloudApp Inc · Jan 2021–Present
+Associate Product Manager · CloudApp Inc · Jan 2021-Present
 • Prioritized onboarding backlog with design and engineering; improved day-7 activation by 9% after two release cycles.
 • Ran weekly triage with customer success; converted top ticket themes into roadmap bets with measurable success criteria.
 
 PROJECTS
 API usage-based pricing exploration · 0→1 discovery · cross-functional working group
-• Interviewed 14 customers, mapped jobs-to-be-done, and shipped a one-pager with success metrics and risk flags—used by leadership to greenlight a scoped MVP track.
+• Interviewed 14 customers, mapped jobs-to-be-done, and shipped a one-pager with success metrics and risk flags, used by leadership to greenlight a scoped MVP track.
 
 Self-serve onboarding teardown · Personal case study · public SaaS product
 • Recorded 10-session funnel analysis with annotated screenshots and experiment backlog; practice artifact for stakeholder reviews and PM interviews.
 
 Enterprise SSO readiness competitive matrix · PM interview prep · three public vendors
-• Compared SCIM/SAML depth, audit logs, and SLA posture in a shareable sheet plus narrative on GTM risk—used as a live walkthrough artifact.
+• Compared SCIM/SAML depth, audit logs, and SLA posture in a shareable sheet plus narrative on GTM risk, used as a live walkthrough artifact.
 
 “Power user” workflow research sprint · 5 interviews · B2B tool you already use
 • Synthesized jobs-to-be-done into a FigJam map and opportunity tree tagged by impact vs. effort; informed a mock PRD outline for a settings overhaul.
@@ -94,12 +94,12 @@ SKILLS
 SQL · Python · Tableau · Excel · Snowflake · dbt · Statistics · Experiment readouts
 
 PROFESSIONAL EXPERIENCE
-Senior Data Analyst · Northwind Analytics · 2021–Present
+Senior Data Analyst · Northwind Analytics · 2021-Present
 • Modeled cohort retention in SQL + dbt; surfaced drivers used by leadership in quarterly planning.
 • Partnered with PM on experiment design and readouts for pricing page tests (traffic in the mid‑six figures monthly).
 • Built Tableau dashboards adopted by sales and CS; cut time-to-answer for recurring questions by roughly half.
 
-Data Analyst · Lakeside Retail · 2019–2021
+Data Analyst · Lakeside Retail · 2019-2021
 • Automated weekly sales flash reports in SQL + Excel; replaced manual pulls that previously took most of a day.
 • Documented metric definitions in a shared glossary; reduced conflicting KPIs across merchandising and finance.
 

@@ -6,7 +6,7 @@ import { cluster, ex, page } from "../helpers";
 export const TECHNICAL_SKILLS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = {
   "data-scientist": page(
     "Technical skills keywords for data scientist resumes: modeling, Python/SQL depth, and ML engineering adjacent tooling.",
-    "This guide groups technical skills the way strong job descriptions do: core modeling, data manipulation, experimentation, and production touchpoints. Mirror the posting’s taxonomy and prove depth with how you applied each skill—not a flat keyword list.",
+    "This guide groups technical skills the way strong job descriptions do: core modeling, data manipulation, experimentation, and production touchpoints. Mirror the posting’s taxonomy and prove depth with how you applied each skill, not a flat keyword list.",
     [
       cluster(
         "Modeling & statistics",
@@ -112,14 +112,14 @@ export const TECHNICAL_SKILLS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
     [
       { section: "skills", advice: "Group skills by Modeling / Engineering / Experimentation to mirror JD sections." },
       { section: "skills", advice: "Put the highest-signal libraries first; avoid alphabetical soup." },
-      { section: "experience", advice: "Repeat 3–5 must-have skills inside bullets with context (dataset, constraint, outcome)." },
+      { section: "experience", advice: "Repeat 3-5 must-have skills inside bullets with context (dataset, constraint, outcome)." },
       { section: "summary", advice: "Name stack + domain (e.g., experimentation + personalization) in one line." },
       { section: "experience", advice: "If you used PyTorch lightly, say ‘fine-tuned’ vs. ‘research-level architecture design’ honestly." },
     ],
     [
       "Listing every sklearn model name without evidence you tuned or shipped with them.",
       "Claiming deep learning depth with only coursework-level projects.",
-      "Burying SQL—many DS roles still filter heavily on SQL proficiency.",
+      "Burying SQL, many DS roles still filter heavily on SQL proficiency.",
       "Putting tools you only interacted with in a demo once.",
     ]
   ),
@@ -232,12 +232,12 @@ export const TECHNICAL_SKILLS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
     [
       { section: "skills", advice: "Order by relevance to target role; repeat top skills in experience for ATS reinforcement." },
       { section: "experience", advice: "Attach metrics to skill usage: latency, uptime, cost, defect rate." },
-      { section: "skills", advice: "Separate ‘proficient’ vs ‘exposure’ if needed—but be honest." },
+      { section: "skills", advice: "Separate ‘proficient’ vs ‘exposure’ if needed, but be honest." },
       { section: "summary", advice: "One line on specialty: backend APIs, frontend perf, infra, etc." },
-      { section: "experience", advice: "Mention scale: RPS, QPS, GB/day, team size—skills without scope look generic." },
+      { section: "experience", advice: "Mention scale: RPS, QPS, GB/day, team size, skills without scope look generic." },
     ],
     [
-      "Listing 40 skills—signals breadth without depth.",
+      "Listing 40 skills, signals breadth without depth.",
       "Framework names without production experience.",
       "Omitting testing/CI when job stresses quality.",
       "Ignoring cloud when posting is cloud-native.",
@@ -305,7 +305,7 @@ export const TECHNICAL_SKILLS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
         ],
         [
           ex("Statistics", "Built CIs for campaign lift estimates used in budget decisions."),
-          ex("Experiments", "Partnered on experiment spec—metrics, segments, and guardrails."),
+          ex("Experiments", "Partnered on experiment spec, metrics, segments, and guardrails."),
         ]
       ),
       cluster(
@@ -353,7 +353,7 @@ export const TECHNICAL_SKILLS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       { section: "skills", advice: "Lead with SQL + primary BI tool from the posting." },
       { section: "experience", advice: "Tie skills to decisions: ‘SQL + Looker → leadership reallocated budget’." },
       { section: "skills", advice: "Include experimentation stats terms when role owns test readouts." },
-      { section: "summary", advice: "Mention domains: marketing, finance, product—skills gain meaning with domain." },
+      { section: "summary", advice: "Mention domains: marketing, finance, product, skills gain meaning with domain." },
       { section: "experience", advice: "Reference semantic layers/metric ownership when you governed definitions." },
     ],
     [
@@ -950,7 +950,7 @@ export const TECHNICAL_SKILLS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       ),
     ],
     [
-      { section: "skills", advice: "Split Modeling / Data / Serving / Ops—avoid one undifferentiated list." },
+      { section: "skills", advice: "Split Modeling / Data / Serving / Ops, avoid one undifferentiated list." },
       { section: "experience", advice: "Prove production: latency SLOs, drift incidents, retraining triggers." },
       { section: "skills", advice: "Include feature-store/pipeline terms when JD does." },
       { section: "summary", advice: "Name domain: ads, recommendations, risk, NLP." },
@@ -1070,7 +1070,7 @@ export const TECHNICAL_SKILLS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       ),
     ],
     [
-      { section: "skills", advice: "Mirror JD: Kubernetes vs Nomad vs ECS—be precise." },
+      { section: "skills", advice: "Mirror JD: Kubernetes vs Nomad vs ECS, be precise." },
       { section: "experience", advice: "Quantify DORA-style metrics where possible: frequency, lead time, failure rate." },
       { section: "skills", advice: "Include observability stack names when listed." },
       { section: "summary", advice: "Clarify SRE vs platform vs pure CI focus." },
@@ -1189,7 +1189,7 @@ export const TECHNICAL_SKILLS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       ),
     ],
     [
-      { section: "skills", advice: "Split Frontend / Backend / Data / Quality—avoid one long list." },
+      { section: "skills", advice: "Split Frontend / Backend / Data / Quality, avoid one long list." },
       { section: "experience", advice: "Prefer bullets spanning layers: UI + API + metric." },
       { section: "skills", advice: "Highlight integrations (payments, auth) when JD does." },
       { section: "summary", advice: "Clarify product type and your strongest side if T-shaped." },

@@ -259,7 +259,7 @@ function extractJdAnchorPhrases(jobDescription: string, max: number): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
   for (let raw of parts) {
-    raw = raw.replace(/^[\s\-–—]+|[\s\-–—]+$/g, "").trim();
+    raw = raw.replace(/^[\s\-–, ]+|[\s\-–, ]+$/g, "").trim();
     if (raw.length < 8 || raw.length > 70) continue;
     if (/^\d|years?\s+of|minimum|preferred|required\b/i.test(raw)) continue;
     const k = raw.toLowerCase();
@@ -545,7 +545,7 @@ RULES:
   - direct variations (e.g., "fraud detection" → "fraud analysis")
   - transferable equivalents (e.g., "fraud detection" → "anomaly detection", "risk pattern identification")
 - Max 5 expansions per skill
-- Keep phrases concise (2–5 words)
+- Keep phrases concise (2-5 words)
 - Avoid generic fluff
 
 IMPORTANT:
@@ -665,7 +665,7 @@ async function mapSkillsToIntents(
   if (!apiKey) return fallbackIntentClustering(jobDescription, targetSkills);
 
   const SYSTEM = `You are a resume strategist converting skills into intent clusters.
-Return 4–6 clusters that are domain intents (not generic categories).
+Return 4-6 clusters that are domain intents (not generic categories).
 Each input skill must appear in exactly one cluster (best effort).
 Use natural intent names like:
 - Risk & Investigation
@@ -746,7 +746,7 @@ Cluster the target skills into intent clusters that best match the job descripti
 
 const RECOMPOSE_SYSTEM_PROMPT = `You are a senior resume strategist specializing in job-specific experience rewriting.
 
-Your objective is to transform the candidate’s resume so it feels like it was originally written for the given job description — while remaining truthful.
+Your objective is to transform the candidate’s resume so it feels like it was originally written for the given job description - while remaining truthful.
 
 CRITICAL RULES:
 1. NEVER fabricate new roles, companies, or unrelated projects.
@@ -754,14 +754,14 @@ CRITICAL RULES:
    - Reframe existing bullets.
    - Expand bullets.
    - Add supporting bullets ONLY when logically consistent with the existing role.
-3. Maintain factual integrity — no fake domain claims.
-4. Avoid keyword stuffing — use natural, recruiter-friendly language.
+3. Maintain factual integrity - no fake domain claims.
+4. Avoid keyword stuffing - use natural, recruiter-friendly language.
 5. Each company must have a clear thematic alignment with the job.
 
 RECOMPOSITION STRATEGY (PHASE 1):
 
-STEP 1 — JOB INTENT CLUSTERING
-Convert missing skills into 4–6 intent clusters such as:
+STEP 1 - JOB INTENT CLUSTERING
+Convert missing skills into 4-6 intent clusters such as:
 - Risk / Fraud / Investigation
 - Operations / Process / Workflow
 - KPIs / Performance Tracking
@@ -769,13 +769,13 @@ Convert missing skills into 4–6 intent clusters such as:
 - Stakeholder / Vendor Management
 - Customer Experience / Decision Systems
 
-STEP 2 — COMPANY INTENT ASSIGNMENT
+STEP 2 - COMPANY INTENT ASSIGNMENT
 For each company:
-- Assign 1–2 dominant intent clusters.
+- Assign 1-2 dominant intent clusters.
 - Base this on the closest match with existing experience.
 - Ensure different companies emphasize different intents where possible.
 
-STEP 3 — EXPERIENCE RECOMPOSITION
+STEP 3 - EXPERIENCE RECOMPOSITION
 For each company:
 - PRESERVE strong bullets that already show concrete impact or clearly aligned skills.
 - ONLY rewrite bullets that are vague, generic, or missing important required skills.
@@ -798,19 +798,19 @@ REQUIRED SKILL COVERAGE (MANDATORY):
   - Do NOT force unrelated skills into one bullet.
 
 IMPACT QUANTIFICATION (MANDATORY, BULLET-LEVEL):
-- Add quantification to 2–3 experience bullets across the resume when plausibly inferable.
+- Add quantification to 2-3 experience bullets across the resume when plausibly inferable.
 - Quantification must appear inside bullet points (not separate metadata).
-- If exact values are uncertain, use safe approximations/ranges (for example: "improved throughput by ~10–15%" or "reduced turnaround time by about 20%").
+- If exact values are uncertain, use safe approximations/ranges (for example: "improved throughput by ~10-15%" or "reduced turnaround time by about 20%").
 - Do NOT fabricate highly specific numbers that are not supported by context.
 
 Strength-first rule:
 - Prioritize and amplify evidence from the candidate’s existing strengths (matched skills) by rephrasing them into job-relevant intent language.
 - Only use missing skills for targeted, non-spam gap filling within those rewritten bullets.
 
-STEP 4 — BULLET RULES
+STEP 4 - BULLET RULES
 Each bullet must:
 - Start with a strong action verb.
-- Be between 18–28 words.
+- Be between 18-28 words.
 - Reflect 1 primary intent (no mixing).
 - Include domain-relevant phrasing where natural.
 - Do NOT aggressively add new numeric metrics in this phase; only preserve or mildly clarify impact that is already implied. A separate layer will handle stronger quantification.
@@ -824,7 +824,7 @@ Bullet-to-bullet variation (MANDATORY):
 - Within each company, the FIRST WORD of each bullet must be different.
 - If you are about to start a bullet with a verb already used as the first word for that company, choose a different strong verb instead.
 
-STEP 5 — SAFE DOMAIN ADAPTATION
+STEP 5 - SAFE DOMAIN ADAPTATION
 If direct experience is missing:
 - Use transferable framing:
   - anomaly detection → risk pattern identification;
@@ -834,11 +834,11 @@ If direct experience is missing:
   - “supporting”, “enabling”, “contributing to”.
 - NEVER claim direct ownership of domain-specific processes unless clearly implied.
 
-STEP 6 — SUMMARY REWRITE
+STEP 6 - SUMMARY REWRITE
 Rewrite the summary to:
 - Clearly state the job domain and focus in the FIRST sentence (this is mandatory).
 - Avoid generic “AI/ML” or generic “data scientist” language.
-- Include 2–3 high-value intent concepts from the job (for example risk analysis, operational KPIs, decision systems).
+- Include 2-3 high-value intent concepts from the job (for example risk analysis, operational KPIs, decision systems).
 - Emphasize business impact, decision-making, and domain alignment over tools.
 - Sound confident and targeted, not like a generic AI-generated summary.
 
@@ -865,11 +865,11 @@ const SUMMARY_ONLY_SYSTEM = `You rewrite ONLY the candidate's professional summa
 Rules:
 - Clearly state the job domain and focus in the FIRST sentence (mandatory).
 - Avoid generic "AI/ML" or vague role labels unless the JD centers on them.
-- Naturally weave in 2–3 high-value concepts from the job (tools, domains, outcomes) only when supported by the resume — never invent employers, credentials, or tools.
+- Naturally weave in 2-3 high-value concepts from the job (tools, domains, outcomes) only when supported by the resume - never invent employers, credentials, or tools.
 - Emphasize impact, scope, and alignment with THIS posting over buzzwords.
-- 3–5 sentences, confident and human; not robotic keyword stuffing.
+- 3-5 sentences, confident and human; not robotic keyword stuffing.
 - If the resume has no summary, write one from the structured resume (experience, skills, title) that fits the JD honestly.
-- Where plausible, include 1–2 numeric signals (years of experience, team size, scale, % improvement) only when inferable from the resume; otherwise use non-numeric impact language. Do not fabricate precise metrics.`;
+- Where plausible, include 1-2 numeric signals (years of experience, team size, scale, % improvement) only when inferable from the resume; otherwise use non-numeric impact language. Do not fabricate precise metrics.`;
 
 async function rewriteSummaryOnlyForJd(
   structuredResume: ResumeDocument,
@@ -899,7 +899,7 @@ ${jd}
 ${gapBlock}MATCHED STRENGTHS (elevate where true):
 ${matchedSkills.join(", ")}
 
-CURRENT SUMMARY (may be empty — if empty, derive from resume body):
+CURRENT SUMMARY (may be empty - if empty, derive from resume body):
 ${current || "(none)"}
 
 STRUCTURED RESUME (for facts only):
@@ -995,7 +995,7 @@ async function recomposeExperience(
   const jd = jobDescription.slice(0, llm.recomposeJdChars);
   const gapBlock = explicitSkillGaps
     ? `MISSING / GAP SKILLS (honest coverage; verbatim where required):\n${targetSkills.join(", ")}\n\nREQUIRED MISSING (strict):\n${requiredSkills.join(", ")}`
-    : `KEYWORD STATUS: Prior scan found no missing skills — optimize for role fit, clarity, and impact anyway.\nJD ALIGNMENT TARGETS (use this language naturally; do not claim new tools):\n${targetSkills.join(", ")}`;
+    : `KEYWORD STATUS: Prior scan found no missing skills - optimize for role fit, clarity, and impact anyway.\nJD ALIGNMENT TARGETS (use this language naturally; do not claim new tools):\n${targetSkills.join(", ")}`;
 
   const userPrompt = `JOB DESCRIPTION:
 ${jd}
@@ -1095,7 +1095,7 @@ function mergeRecomposed(
       .map((b) => normalizeInlineText(b));
     if (originalBullets.length === 0 || newBullets.length === 0) return exp;
 
-    // Preserve 1–2 of the strongest original bullets to keep authenticity.
+    // Preserve 1-2 of the strongest original bullets to keep authenticity.
     const keepCount = Math.min(
       2,
       Math.max(1, Math.round(originalBullets.length * 0.3))
@@ -2004,7 +2004,7 @@ export async function POST(request: Request) {
     );
     quantifiedAchievements = Math.max(quantifiedAchievements, structuralDiff.newMetrics);
     // Structural diff can count extra index-level text changes (recompose, reorder) not in bulletChangeMap.
-    // Use that only for scoring — the summary panel should match tracked bulletChanges / highlights.
+    // Use that only for scoring - the summary panel should match tracked bulletChanges / highlights.
     let bulletImprovementsForScore = trackedRewrites;
     const trackedLineChanges = trackedRewrites + bulletsAdded;
     if (trackedLineChanges === 0 && structuralDiff.changedBullets > 0) {
@@ -2058,7 +2058,7 @@ export async function POST(request: Request) {
     let scoreAfter: number;
 
     if (k === 0 && b === 0 && q === 0) {
-      // No concrete improvements detected – keep score unchanged
+      // No concrete improvements detected - keep score unchanged
       scoreAfter = scoreBefore;
     } else {
       const keywordScore = Math.min(k * 2, 20);

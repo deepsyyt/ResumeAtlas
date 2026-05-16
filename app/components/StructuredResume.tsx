@@ -412,7 +412,7 @@ export function StructuredResume({
         </section>
       )}
 
-      {/* Skills — same order as resumeDocumentToPlainText */}
+      {/* Skills - same order as resumeDocumentToPlainText */}
       {skills.length > 0 && (
         <section className="border-t border-slate-100 pt-4 mt-4">
           <div className="mb-2 flex items-center justify-between gap-2">

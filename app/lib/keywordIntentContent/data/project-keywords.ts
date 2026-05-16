@@ -110,9 +110,9 @@ export const PROJECT_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       ),
     ],
     [
-      { section: "experience", advice: "Projects can live in Experience or Projects—avoid duplicating verbatim." },
+      { section: "experience", advice: "Projects can live in Experience or Projects, avoid duplicating verbatim." },
       { section: "experience", advice: "Use STAR implicitly: context, approach, tools, metric." },
-      { section: "skills", advice: "Don’t replace skills with project keywords—skills stay scannable nouns." },
+      { section: "skills", advice: "Don’t replace skills with project keywords, skills stay scannable nouns." },
       { section: "summary", advice: "Name 1 flagship project domain if it defines your brand." },
       { section: "experience", advice: "Link to Git only if repo is polished and relevant." },
     ],
@@ -144,7 +144,7 @@ export const PROJECT_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
           "internal tooling",
         ],
         [
-          ex("Side project", "Built production SaaS MVP with auth, billing, and admin—100+ paying users."),
+          ex("Side project", "Built production SaaS MVP with auth, billing, and admin, 100+ paying users."),
           ex("Team project", "Owned payments reconciliation service; on-call rotation for domain."),
         ]
       ),
@@ -230,16 +230,16 @@ export const PROJECT_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       ),
     ],
     [
-      { section: "experience", advice: "1–2 flagship projects with metrics beat 5 shallow ones." },
+      { section: "experience", advice: "1-2 flagship projects with metrics beat 5 shallow ones." },
       { section: "experience", advice: "Open-source: link + stars/contributors if impressive." },
-      { section: "skills", advice: "Project tech can echo skills section—keep wording consistent." },
+      { section: "skills", advice: "Project tech can echo skills section, keep wording consistent." },
       { section: "summary", advice: "Highlight project if it’s strongest proof (career pivot, freelance)." },
-      { section: "experience", advice: "Avoid confidential details—use scale bands if needed." },
+      { section: "experience", advice: "Avoid confidential details, use scale bands if needed." },
     ],
     [
       "Projects with no link between tech and outcome.",
       "Buzzword architecture with no constraints or tradeoffs.",
-      "Fake metrics—interviews will dig.",
+      "Fake metrics, interviews will dig.",
       "Outdated stack presented as current without context.",
     ]
   ),
@@ -354,7 +354,7 @@ export const PROJECT_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       { section: "experience", advice: "Quantify decisions: budget, roadmap, staffing." },
       { section: "skills", advice: "Tools in skills; project narrative in experience." },
       { section: "summary", advice: "Name vertical (marketing, finance) if projects are domain-specific." },
-      { section: "experience", advice: "Academic projects OK early-career—tie methods to job needs." },
+      { section: "experience", advice: "Academic projects OK early-career, tie methods to job needs." },
     ],
     [
       "Charts without decisions.",
@@ -366,7 +366,7 @@ export const PROJECT_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
 
   "product-manager": page(
     "Project keywords for product manager resumes: outcomes, scope, and cross-functional delivery.",
-    "PM projects are product initiatives: problem, approach, launch, metrics—avoid feature laundry lists.",
+    "PM projects are product initiatives: problem, approach, launch, metrics, avoid feature laundry lists.",
     [
       cluster(
         "Problem & customer evidence",
@@ -474,7 +474,7 @@ export const PROJECT_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       { section: "summary", advice: "Flagship launch: name metric + timeframe." },
       { section: "experience", advice: "Redact sensitive numbers with ranges if needed." },
       { section: "skills", advice: "Tools belong in skills; outcomes in project bullets." },
-      { section: "experience", advice: "Show conflict/tradeoff when memorable—scope vs. time." },
+      { section: "experience", advice: "Show conflict/tradeoff when memorable, scope vs. time." },
     ],
     [
       "Feature lists without user/business outcome.",
@@ -712,7 +712,7 @@ export const PROJECT_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
     [
       { section: "experience", advice: "Portfolio projects: link + short metric; keep professional tone." },
       { section: "experience", advice: "Open-source: contribution type (bugfix, feature) + impact." },
-      { section: "skills", advice: "Stack keywords echo between skills and project—consistent spelling." },
+      { section: "skills", advice: "Stack keywords echo between skills and project, consistent spelling." },
       { section: "summary", advice: "Highlight flagship UI project if career-defining." },
       { section: "experience", advice: "Mobile/responsive keywords when product is mobile-heavy." },
     ],
@@ -832,7 +832,7 @@ export const PROJECT_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
     [
       { section: "experience", advice: "Projects emphasize correctness for money systems; latency for user-facing." },
       { section: "experience", advice: "Use scale bands if exact numbers confidential." },
-      { section: "skills", advice: "Consistent naming: Postgres vs PostgreSQL—match JD." },
+      { section: "skills", advice: "Consistent naming: Postgres vs PostgreSQL, match JD." },
       { section: "summary", advice: "Payments/platform/ads domain helps keyword relevance." },
       { section: "experience", advice: "Open-source: focus on merge outcomes, users, or adoption." },
     ],
@@ -951,7 +951,7 @@ export const PROJECT_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
     ],
     [
       { section: "experience", advice: "MLE projects need both offline and online story when possible." },
-      { section: "experience", advice: "Redact sensitive model details—focus on methodology class." },
+      { section: "experience", advice: "Redact sensitive model details, focus on methodology class." },
       { section: "skills", advice: "Align framework names with what you actually tuned in projects." },
       { section: "summary", advice: "Name domain: ads, recommendations, risk, NLP." },
       { section: "experience", advice: "Kaggle projects: position as rigorous methodology + rank, not only score." },
@@ -1073,7 +1073,7 @@ export const PROJECT_KEYWORDS_BY_ROLE: Record<RoleSlug, KeywordIntentContent> = 
       { section: "experience", advice: "Platform projects need customers: engineering teams, product, security." },
       { section: "experience", advice: "Quantify developer time saved or incident reduction." },
       { section: "skills", advice: "Tooling names consistent with project narrative." },
-      { section: "summary", advice: "SRE vs DevOps vs platform—match job title language." },
+      { section: "summary", advice: "SRE vs DevOps vs platform, match job title language." },
       { section: "experience", advice: "Large migrations: risks mitigated (rollback, phased rollout)." },
     ],
     [

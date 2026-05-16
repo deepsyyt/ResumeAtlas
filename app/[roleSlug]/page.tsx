@@ -76,7 +76,7 @@ export default function RoleHubPage({ params }: { params: PageParams }) {
     {
       question: `How many pages should a ${roleLower} resume be?`,
       answer:
-        "Most early- and mid-career candidates can keep their resume to one page. If you have 8–10+ years of experience, a focused two-page resume is fine as long as every line adds signal for the type of roles you are targeting.",
+        "Most early- and mid-career candidates can keep their resume to one page. If you have 8-10+ years of experience, a focused two-page resume is fine as long as every line adds signal for the type of roles you are targeting.",
     },
     {
       question: `How do I tailor my ${roleLower} resume to a specific job description?`,

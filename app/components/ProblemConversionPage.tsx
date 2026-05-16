@@ -389,7 +389,7 @@ export function ProblemConversionPage({ config }: Props) {
         </Link>
       </div>
 
-      {/* 7–8. Flexibility + time (shared) */}
+      {/* 7-8. Flexibility + time (shared) */}
       <FlexibilitySection />
       <TimeSavingSection />
 

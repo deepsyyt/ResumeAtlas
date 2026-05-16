@@ -27,7 +27,7 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
     h1: "Data Analyst Resume Example & Template (ATS-Friendly + Sample Projects)",
     metaDescription:
       "Data analyst resume example and copy-paste template: SQL, Python, Power BI, metrics, and sample bullets for data analytics roles. ATS-friendly format, then match to any job description.",
-    exampleTitle: "Data Analyst – Resume Example",
+    exampleTitle: "Data Analyst - Resume Example",
     summary:
       "Data analyst with 4+ years of experience turning messy data into clear, actionable insights for product, marketing, and operations teams across B2B SaaS.",
     bullets: [
@@ -43,7 +43,7 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
     h1: "Business Analyst Resume Example",
     metaDescription:
       "ATS‑optimized Business Analyst resume example with clear impact, stakeholder communication, and requirements gathering experience.",
-    exampleTitle: "Business Analyst – Resume Example",
+    exampleTitle: "Business Analyst - Resume Example",
     summary:
       "Business analyst with 5+ years of experience translating complex business problems into simple requirements, dashboards, and process improvements.",
     bullets: [
@@ -59,7 +59,7 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
     h1: "Frontend Developer Resume Example",
     metaDescription:
       "Frontend Developer resume example that passes ATS with modern React, TypeScript, accessibility, and performance optimization keywords.",
-    exampleTitle: "Frontend Developer – Resume Example",
+    exampleTitle: "Frontend Developer - Resume Example",
     summary:
       "Frontend developer specializing in React and TypeScript, focused on building fast, accessible interfaces that meet product and UX goals.",
     bullets: [
@@ -75,7 +75,7 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
     h1: "Backend Developer Resume Example",
     metaDescription:
       "Backend Developer resume example with ATS‑friendly keywords for APIs, microservices, databases, and cloud infrastructure.",
-    exampleTitle: "Backend Developer – Resume Example",
+    exampleTitle: "Backend Developer - Resume Example",
     summary:
       "Backend developer with 5+ years of experience designing APIs and microservices in Node.js and Java, focused on reliability and performance.",
     bullets: [
@@ -91,7 +91,7 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
     h1: "Machine Learning Engineer Resume Example",
     metaDescription:
       "Machine Learning Engineer resume example that highlights Python, ML frameworks, and production model deployment in an ATS‑friendly way.",
-    exampleTitle: "Machine Learning Engineer – Resume Example",
+    exampleTitle: "Machine Learning Engineer - Resume Example",
     summary:
       "Machine learning engineer with experience taking models from notebooks to production, focusing on reliability, monitoring, and business impact.",
     bullets: [
@@ -107,7 +107,7 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
     h1: "Data Scientist Resume Example",
     metaDescription:
       "Data Scientist resume example with ATS‑ready language for experimentation, machine learning, and stakeholder storytelling.",
-    exampleTitle: "Data Scientist – Resume Example",
+    exampleTitle: "Data Scientist - Resume Example",
     summary:
       "Data scientist with 6+ years of experience designing experiments, building ML models, and communicating insights to executives.",
     bullets: [
@@ -123,7 +123,7 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
     h1: "Product Manager Resume Example & Template (ATS-Friendly + Real Projects)",
     metaDescription:
       "Product manager resume examples, sample resume, and templates: roadmaps, metrics, B2B and API PM angles, product lead and data PM keywords. Copy-paste ATS-friendly resume for product management; match any job description.",
-    exampleTitle: "Product Manager – Resume Example",
+    exampleTitle: "Product Manager - Resume Example",
     summary:
       "Product manager with 7+ years of experience owning B2B SaaS products from discovery to launch, focused on impact and execution.",
     bullets: [
@@ -139,7 +139,7 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
     h1: "Software Engineer Resume Example",
     metaDescription:
       "Software Engineer resume example focused on clean code, teamwork, and delivering features that matter, written for ATS scanners and hiring managers.",
-    exampleTitle: "Software Engineer – Resume Example",
+    exampleTitle: "Software Engineer - Resume Example",
     summary:
       "Software engineer with 4+ years of experience building full‑stack features in high‑growth product teams using TypeScript and Node.js.",
     bullets: [
@@ -155,7 +155,7 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
     h1: "DevOps Engineer Resume Example",
     metaDescription:
       "DevOps Engineer resume example with ATS‑optimized keywords for CI/CD, cloud, Kubernetes, monitoring, and reliability.",
-    exampleTitle: "DevOps Engineer – Resume Example",
+    exampleTitle: "DevOps Engineer - Resume Example",
     summary:
       "DevOps engineer focused on reliable deployments, observability, and helping development teams ship quickly and safely.",
     bullets: [
@@ -171,7 +171,7 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
     h1: "Full‑Stack Developer Resume Example",
     metaDescription:
       "Full‑Stack Developer resume example that balances frontend UX, backend reliability, and ATS‑friendly technical keywords.",
-    exampleTitle: "Full‑Stack Developer – Resume Example",
+    exampleTitle: "Full‑Stack Developer - Resume Example",
     summary:
       "Full‑stack developer comfortable across React, Node.js, and SQL, focused on end‑to‑end ownership and customer impact.",
     bullets: [

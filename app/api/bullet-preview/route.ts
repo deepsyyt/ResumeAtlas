@@ -8,7 +8,7 @@ const SYSTEM_PROMPT = `You are a resume optimization assistant. Rewrite the give
 Rules:
 - Start with a strong action verb (e.g. Developed, Led, Implemented).
 - Include measurable impact if possible (%, numbers, scale).
-- Weave in 1–2 relevant keywords from the job context if they fit naturally.
+- Weave in 1-2 relevant keywords from the job context if they fit naturally.
 - Keep a realistic, professional tone.
 - Maximum 25 words.
 - Output ONLY the rewritten bullet. No quotes, no preamble, no explanation.`;

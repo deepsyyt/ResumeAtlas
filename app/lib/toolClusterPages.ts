@@ -38,7 +38,7 @@ export type ToolClusterPageConfig = {
   ctaAnchor: string;
   /** Unique H2 block per URL (reduces duplicate-content risk vs other tool pages). */
   differentiatorHeading: string;
-  /** 2–4 short paragraphs; must differ materially from other cluster pages. */
+  /** 2-4 short paragraphs; must differ materially from other cluster pages. */
   differentiatorBody: string[];
   /** One paragraph weaving in long-tail / variant phrases for broader query coverage. */
   serpVariantsParagraph: string;
@@ -158,9 +158,9 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   clusterLinkAnchor: RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
   ...CLUSTER_JD_MATCH_TOOL_COPY,
   titleAbsolute:
-    "Posting Fit Diagnosis — Match Resume to Job Description (Free) | ResumeAtlas",
-  ogTitle: "Posting fit diagnosis — resume vs job description (free)",
-  twitterTitle: "Posting fit diagnosis — resume vs job description",
+    "Posting Fit Diagnosis - Match Resume to Job Description (Free) | ResumeAtlas",
+  ogTitle: "Posting fit diagnosis - resume vs job description (free)",
+  twitterTitle: "Posting fit diagnosis - resume vs job description",
   ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   exampleJobRequires: "Python, SQL, stakeholder communication, and experimentation.",
   exampleResumeContains: "Python, dashboards, and ad-hoc analysis.",
@@ -182,7 +182,7 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
     {
       question: "What does it mean to match a resume to a job description?",
       answer:
-        "It means comparing your resume to one specific posting so you can tailor: add evidence where keywords are missing, rewrite bullets for fit, and show outcomes the JD cares about—honestly. For layout and parsing risk without a JD, use the ATS checker.",
+        "It means comparing your resume to one specific posting so you can tailor: add evidence where keywords are missing, rewrite bullets for fit, and show outcomes the JD cares about, honestly. For layout and parsing risk without a JD, use the ATS checker.",
     },
     {
       question: "Why is ATS matching important?",
@@ -241,7 +241,7 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
     {
       question: "What is an ATS resume checker?",
       answer:
-        "It analyzes how well your resume is likely to perform in applicant tracking systems based on structure, formatting, and readability — how the system reads your file — not full job-description matching unless you add a posting.",
+        "It analyzes how well your resume is likely to perform in applicant tracking systems based on structure, formatting, and readability - how the system reads your file - not full job-description matching unless you add a posting.",
     },
     {
       question: "Is this ATS checker free?",
@@ -261,7 +261,7 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
     {
       question: "What score is good for ATS?",
       answer:
-        "Scores from 80% and up are generally strong for ATS readability; 60–79% usually means targeted fixes; below 60% often correlates with higher filter risk.",
+        "Scores from 80% and up are generally strong for ATS readability; 60-79% usually means targeted fixes; below 60% often correlates with higher filter risk.",
     },
   ],
 };
@@ -275,7 +275,7 @@ export const TOOL_CLUSTER_SCORE: ToolClusterPageConfig = {
     "Free resume score checker: compare your resume to a job description and see match score, missing keywords, and improvements. No signup.",
   ogTitle: "Resume Score Checker vs Job Description (Free ATS Match)",
   ogDescription:
-    "Get a resume match score against your target role, plus keyword gaps and suggestions—instantly and free.",
+    "Get a resume match score against your target role, plus keyword gaps and suggestions, instantly and free.",
   twitterTitle: "Resume Score Checker (Free)",
   twitterDescription: "See your resume match score vs the job description.",
   h1: "Resume Score Checker Online Free",
@@ -288,11 +288,11 @@ export const TOOL_CLUSTER_SCORE: ToolClusterPageConfig = {
   ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   differentiatorHeading: "How Resume Score Is Calculated",
   differentiatorBody: [
-    "Your score summarizes how well your resume aligns with the pasted job description—especially keyword coverage, skills overlap, and whether your experience reads relevant to that posting. It is an estimate meant to mirror what many systems reward: clear match to the role’s stated requirements.",
+    "Your score summarizes how well your resume aligns with the pasted job description, especially keyword coverage, skills overlap, and whether your experience reads relevant to that posting. It is an estimate meant to mirror what many systems reward: clear match to the role’s stated requirements.",
     "Scores are not published by employers and can vary by ATS. Treat the number as a directional signal: if it is low, your first lever is usually stronger alignment to the job description (keywords + outcomes), not a fancier template.",
   ],
   serpVariantsParagraph:
-    "Users often look for a resume score checker, job match score for resumes, resume rating vs job description, or ATS match score. This page is built around resume scoring against a specific JD—so you can see where your application might look weak before you submit.",
+    "Users often look for a resume score checker, job match score for resumes, resume rating vs job description, or ATS match score. This page is built around resume scoring against a specific JD, so you can see where your application might look weak before you submit.",
   howItWorksHeading: "How your resume score is generated",
   whyMatchHeading: "Why score-based feedback improves resume decisions",
   resultsHeading: "What you see in a resume score report",
@@ -306,7 +306,7 @@ export const TOOL_CLUSTER_SCORE: ToolClusterPageConfig = {
     {
       question: "What does a resume score mean?",
       answer:
-        "It reflects how closely your resume aligns with the job description for skills and keywords—similar to what many ATS use as a signal.",
+        "It reflects how closely your resume aligns with the job description for skills and keywords, similar to what many ATS use as a signal.",
     },
     {
       question: "Is the resume score the same as an employer’s ATS score?",
@@ -384,14 +384,14 @@ export const TOOL_CLUSTER_COMPAT: ToolClusterPageConfig = {
   path: "/ats-compatibility-check",
   breadcrumbName: "ATS Compatibility Check",
   clusterLinkAnchor: "ATS compatibility check",
-  titleAbsolute: "ATS Compatibility Check — Free Resume vs Job Description Test",
+  titleAbsolute: "ATS Compatibility Check - Free Resume vs Job Description Test",
   description:
     "Run an ATS compatibility check: compare your resume with a job description for keyword fit, structure, and gaps. Free, no signup.",
-  ogTitle: "ATS Compatibility Check — Free Resume vs Job Description Test",
+  ogTitle: "ATS Compatibility Check - Free Resume vs Job Description Test",
   ogDescription:
     "Test ATS compatibility before you apply. See how your resume lines up with the posting.",
   twitterTitle: "ATS Compatibility Check",
-  twitterDescription: "Test resume ATS compatibility vs the job description—free.",
+  twitterDescription: "Test resume ATS compatibility vs the job description, free.",
   h1: "ATS Compatibility Check Online Free",
   intro:
     "Test whether your resume is both machine-readable and role-aligned, so ATS parsing issues or weak keyword alignment do not block interviews.",
@@ -406,7 +406,7 @@ export const TOOL_CLUSTER_COMPAT: ToolClusterPageConfig = {
     "Pair keyword alignment with simple structure: standard headings (Experience, Education, Skills), one main column, and plain text for important skills. That combination usually improves both machine readability and recruiter skim speed.",
   ],
   serpVariantsParagraph:
-    "Common queries include ATS compatibility test, ATS friendly resume check, resume parser compatibility, and ATS readable resume format. This page emphasizes compatibility in the broad sense—language match to the job plus structure that parsers typically handle well.",
+    "Common queries include ATS compatibility test, ATS friendly resume check, resume parser compatibility, and ATS readable resume format. This page emphasizes compatibility in the broad sense, language match to the job plus structure that parsers typically handle well.",
   howItWorksHeading: "How ATS compatibility checking works",
   whyMatchHeading: "Why compatibility is both content and structure",
   resultsHeading: "What your compatibility report includes",

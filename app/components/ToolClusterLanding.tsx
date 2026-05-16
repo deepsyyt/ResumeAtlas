@@ -113,7 +113,7 @@ export function ToolClusterLanding({ config, hidePrimaryHero, omitStructuredData
             </li>
             <li>
               <strong>Posting vocabulary &amp; required skill debt:</strong> surfaced inside this
-              workbench (Gate B)—not a separate keyword vanity URL.
+              workbench (Gate B), not a separate keyword vanity URL.
             </li>
             <li>
               <strong>ATS checker:</strong> diagnose parsing, structure, and formatting risk.

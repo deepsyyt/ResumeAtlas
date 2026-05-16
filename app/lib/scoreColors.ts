@@ -1,8 +1,8 @@
 /**
  * Universal score color thresholds for the ATS dashboard.
  *
- * Overall ATS Score: 85–100 Strong match (Green), 70–84 Moderate (Yellow),
- *                    50–69 Weak (Orange), <50 Poor (Red)
+ * Overall ATS Score: 85-100 Strong match (Green), 70-84 Moderate (Yellow),
+ *                    50-69 Weak (Orange), <50 Poor (Red)
  *
  * Metrics use per-metric Good / Medium / Bad thresholds (see below).
  */
@@ -24,7 +24,7 @@ const BANDS: Record<ScoreBand, { hex: string; bgHex: string }> = {
   poor:      { hex: "#EF4444", bgHex: "#FEF2F2" },   // Red
 };
 
-/** Overall ATS score only: 85+ Green, 70–84 Yellow, 50–69 Orange, <50 Red. */
+/** Overall ATS score only: 85+ Green, 70-84 Yellow, 50-69 Orange, <50 Red. */
 export function getScoreStyle(score: number): ScoreStyle {
   const s = Math.max(0, Math.min(100, Math.round(score)));
   if (s >= 85) return { band: "strong", ...BANDS.strong, label: "Strong match" };
@@ -83,7 +83,7 @@ export function getATSVerdictLines(score: number): ATSVerdictLines {
   };
 }
 
-/** ATS score ring: 85+ Green, 70–84 Yellow, 50–69 Orange, <50 Red. */
+/** ATS score ring: 85+ Green, 70-84 Yellow, 50-69 Orange, <50 Red. */
 export function getATSRingHex(score: number): string {
   const s = Math.max(0, Math.min(100, Math.round(score)));
   if (s >= 85) return BANDS.strong.hex;
@@ -92,7 +92,7 @@ export function getATSRingHex(score: number): string {
   return BANDS.poor.hex;
 }
 
-/** Keyword coverage: Good >80, Medium 60–80, Bad <60. */
+/** Keyword coverage: Good >80, Medium 60-80, Bad <60. */
 export function getKeywordCoverageStyle(score: number): ScoreStyle {
   const s = Math.max(0, Math.min(100, Math.round(score)));
   if (s > 80) return { band: "strong", ...BANDS.strong, label: "Good coverage" };
@@ -107,7 +107,7 @@ export function getKeywordCoverageLabel(score: number): string {
   return "Missing critical keywords";
 }
 
-/** Semantic similarity: Good >80, Medium 65–80, Bad <65. */
+/** Semantic similarity: Good >80, Medium 65-80, Bad <65. */
 export function getSemanticStyle(score: number): ScoreStyle {
   const s = Math.max(0, Math.min(100, Math.round(score)));
   if (s > 80) return { band: "strong", ...BANDS.strong, label: "Strong role alignment" };
@@ -115,7 +115,7 @@ export function getSemanticStyle(score: number): ScoreStyle {
   return { band: "poor", ...BANDS.poor, label: "Low role alignment" };
 }
 
-/** Experience alignment: Good >85, Medium 70–85, Bad <70 (score-based). Years logic unchanged. */
+/** Experience alignment: Good >85, Medium 70-85, Bad <70 (score-based). Years logic unchanged. */
 export type ExperienceCondition = "above" | "exact" | "slightly_below" | "far_below";
 
 export function getExperienceAlignmentStyle(
@@ -165,7 +165,7 @@ export function getExperienceAlignmentStyle(
   return { condition: "far_below", style: { band: "poor", ...BANDS.poor, label: "Far below requirement" } };
 }
 
-/** Impact score: Good >75, Medium 55–75, Bad <55. */
+/** Impact score: Good >75, Medium 55-75, Bad <55. */
 export function getImpactStyle(score: number): ScoreStyle {
   const s = Math.max(0, Math.min(100, Math.round(score)));
   if (s > 75) return { band: "strong", ...BANDS.strong, label: "Strong impact" };
@@ -173,7 +173,7 @@ export function getImpactStyle(score: number): ScoreStyle {
   return { band: "poor", ...BANDS.poor, label: "Add more metrics" };
 }
 
-/** Resume quality: Good >80, Medium 60–80, Bad <60. */
+/** Resume quality: Good >80, Medium 60-80, Bad <60. */
 export function getResumeQualityStyle(score: number): ScoreStyle {
   const s = Math.max(0, Math.min(100, Math.round(score)));
   if (s > 80) return { band: "strong", ...BANDS.strong, label: "Good" };

@@ -7,7 +7,7 @@ import type { RoleSlug } from "@/app/lib/seoPages";
 
 export type PillarAnchorId = "summary" | "skills" | "projects" | "bullet-points";
 
-/** Render order of semantic chunks—omit blocks not listed; skip at render time if data empty. */
+/** Render order of semantic chunks, omit blocks not listed; skip at render time if data empty. */
 export const PILLAR_SEMANTIC_LAYOUT_BLOCKS = [
   "meta",
   "recruiter",
@@ -46,7 +46,7 @@ export type SemanticPrimaryIntent =
   | "credibility"
   | "evaluation";
 
-/** Surface / interaction pattern — must differ by section to avoid template collapse. */
+/** Surface / interaction pattern - must differ by section to avoid template collapse. */
 export type SemanticEvidenceStyle =
   | "before_after"
   | "review_notes"
@@ -82,7 +82,7 @@ export type SeniorityMatrix = Partial<
 
 export type AntiPattern = {
   pattern: string;
-  /** Reviewer cognition — how it gets interpreted. */
+  /** Reviewer cognition - how it gets interpreted. */
   reviewerRead: string;
 };
 
@@ -120,7 +120,7 @@ export type SemanticSectionCopyLabels = Partial<{
 
 export type SemanticSection = {
   sectionId: PillarAnchorId;
-  /** Visible H2 — must not be a single generic noun (“Skills”). `id` stays on `<h2>`. */
+  /** Visible H2 - must not be a single generic noun (“Skills”). `id` stays on `<h2>`. */
   h2Title: string;
   primaryIntent: SemanticPrimaryIntent;
   /** Optional secondary tag for internal QA / future structured data. */
@@ -141,15 +141,15 @@ export type SemanticSection = {
   recruiterInterpretation: string[];
 
   /**
-   * “Negative expertise”: what strong screeners distrust or discount—nuance + trust.
+   * “Negative expertise”: what strong screeners distrust or discount, nuance + trust.
    * Kept separate from antiPatterns (which are pattern → reviewer read pairs in UI).
    */
   negativeExpertise?: string[];
 
-  /** ATS lens: short, section-specific—no repeated global “ATS looks for keywords” screeds. */
+  /** ATS lens: short, section-specific, no repeated global “ATS looks for keywords” screeds. */
   atsInterpretation: string[];
 
-  /** Contrarian / perspective lines — originality + trust signal; keep sparse. */
+  /** Contrarian / perspective lines - originality + trust signal; keep sparse. */
   contrarianHooks: string[];
 
   antiPatterns: AntiPattern[];
@@ -161,7 +161,7 @@ export type SemanticSection = {
 
   seniorityMatrix?: SeniorityMatrix;
 
-  /** One or more evidence surfaces — order is render order. */
+  /** One or more evidence surfaces - order is render order. */
   evidenceBlocks: SemanticEvidenceBlock[];
 };
 
@@ -185,13 +185,13 @@ const SWE_SKILLS: SemanticSection = {
   primaryIntent: "verification",
   secondaryIntent: "credibility",
   copyLabels: {
-    recruiterHeading: "How engineers get stack-matched—or downgraded—in a skim",
+    recruiterHeading: "How engineers get stack-matched, or downgraded, in a skim",
     evidenceHeading: "Verification table + brittle patterns",
     negativeHeading: "What senior screeners quietly distrust here",
   },
   recruiterInterpretation: [
     "Most screeners use the skills block as a fast JD overlap check, then immediately hunt the same terms inside experience. Mismatch between a ‘primary’ skill and zero contextual use is one of the strongest negative signals.",
-    "When a heavy tool (Kubernetes, Kafka, a major cloud) appears without deployment, scale, observability, or failure context in the rest of the resume, experienced reviewers often downgrade it to familiarity—not operating ownership.",
+    "When a heavy tool (Kubernetes, Kafka, a major cloud) appears without deployment, scale, observability, or failure context in the rest of the resume, experienced reviewers often downgrade it to familiarity, not operating ownership.",
     "Seniority is inferred less from the length of the skills list than from whether the stack aligns with the problems you claim to have solved repeatedly.",
   ],
   atsInterpretation: [
@@ -199,11 +199,11 @@ const SWE_SKILLS: SemanticSection = {
     "Keep synonymous stacks honest: if the JD says ‘TypeScript’ and you only show ‘JavaScript’, expect both parser friction and skepticism unless the posting allows it.",
   ],
   contrarianHooks: [
-    "Many resumes over-optimize for ATS recall and become unreadable to hiring managers—dense comma lists of cloud services can lower perceived seniority because they signal breadth inflation, not depth.",
+    "Many resumes over-optimize for ATS recall and become unreadable to hiring managers, dense comma lists of cloud services can lower perceived seniority because they signal breadth inflation, not depth.",
   ],
   negativeExpertise: [
     "Inflated breadth (ten ‘production’ technologies with no corroborating incidents, scale, or ownership story) is often modeled as resume gaming, not seniority.",
-    "Mentioning Redis, Kafka, Kubernetes, or similar without invalidation/lag/throughput/SLO/incident context frequently reads as shallow exposure—reviewers pattern-match on missing engineering aftermath.",
+    "Mentioning Redis, Kafka, Kubernetes, or similar without invalidation/lag/throughput/SLO/incident context frequently reads as shallow exposure, reviewers pattern-match on missing engineering aftermath.",
     "Skills that only exist in this block and never appear next to constraints in bullets are treated as keyword padding unless you are clearly early-career.",
   ],
   antiPatterns: [
@@ -219,7 +219,7 @@ const SWE_SKILLS: SemanticSection = {
     },
   ],
   roleSpecificSignals: [
-    "Latency, throughput, error budgets, incident response, and CI/CD are proof-adjacent signals—if you claim them here, reviewers expect them in bullets with numbers or concrete events.",
+    "Latency, throughput, error budgets, incident response, and CI/CD are proof-adjacent signals, if you claim them here, reviewers expect them in bullets with numbers or concrete events.",
     "API and data-store keywords carry more weight when paired with reliability or scale language elsewhere, not in isolation.",
   ],
   entityZone: {
@@ -290,12 +290,12 @@ const SWE_SKILLS: SemanticSection = {
         {
           pattern: "Listing CI/CD without ever describing a deployment you improved or guarded.",
           reviewerRead:
-            "Often read as toolchain tourism unless junior—reviewers expect time saved, rollback stories, gates, or failure prevention.",
+            "Often read as toolchain tourism unless junior, reviewers expect time saved, rollback stories, gates, or failure prevention.",
         },
         {
           pattern: 'Microservices count without cohesion: "many services," no coupling or ownership story.',
           reviewerRead:
-            "Can signal resume gaming: distributed systems credibility comes from interfaces, migrations, outages, SLAs—not service count.",
+            "Can signal resume gaming: distributed systems credibility comes from interfaces, migrations, outages, SLAs, not service count.",
         },
       ],
     },
@@ -317,7 +317,7 @@ const SWE_BULLETS: SemanticSection = {
     "anti_patterns",
   ],
   metaEyebrow: "Impact evidence",
-  h2Title: "Bullets that prove engineering impact—not task participation",
+  h2Title: "Bullets that prove engineering impact, not task participation",
   primaryIntent: "proof",
   secondaryIntent: "impact",
   copyLabels: {
@@ -327,7 +327,7 @@ const SWE_BULLETS: SemanticSection = {
   },
   recruiterInterpretation: [
     "Strong engineer resumes pass a ‘replacement test’: if another candidate could paste the same line without lying, it is weak. Specific systems, constraints, and measurable deltas are how you defend uniqueness.",
-    "Backend-heavy profiles without latency, throughput, traffic, datastore scale, incidents resolved, test reliability, or cost signals often stall at senior screening—even when keyword coverage looks fine.",
+    "Backend-heavy profiles without latency, throughput, traffic, datastore scale, incidents resolved, test reliability, or cost signals often stall at senior screening, even when keyword coverage looks fine.",
     "Reviewers scan for causal structure: situation or constraint → what you built/changed → quantified downstream effect on users, reliability, velocity, or cost.",
   ],
   atsInterpretation: [
@@ -338,7 +338,7 @@ const SWE_BULLETS: SemanticSection = {
     "Listing every sprint task you touched convinces parsers faster than humans; hiring managers overweight a handful of decisive outcomes.",
   ],
   negativeExpertise: [
-    "Percent lifts without baseline, timeframe, cohort, or system boundary often read as fabricated—experienced reviewers discount them unless the interview backs the claim.",
+    "Percent lifts without baseline, timeframe, cohort, or system boundary often read as fabricated, experienced reviewers discount them unless the interview backs the claim.",
     "Metrics that contradict the implied seniority signal (tiny lifts presented as transformational) undermine trust faster than vague bullets.",
     "‘AI-enabled’ shipping lines without evaluation, data volume, guardrails, or production boundary sound like marketing copy, not engineering evidence.",
   ],
@@ -355,13 +355,13 @@ const SWE_BULLETS: SemanticSection = {
     },
   ],
   roleSpecificSignals: [
-    "p95/p99 latency, uptime, defect escape rate, CI time, infra cost deltas, incident MTTR—these differentiate senior claims when accurate.",
+    "p95/p99 latency, uptime, defect escape rate, CI time, infra cost deltas, incident MTTR, these differentiate senior claims when accurate.",
     "Ownership verbs (shipped, owned, led migration) carry weight only when the bullet still contains constraint + outcome specifics.",
   ],
   entityZone: {
     instructionalScope: "outcome_metrics",
     proseRule:
-      "Instructional text emphasizes metrics categories and causal structure—not re-listing every tool from Skills. Concrete tools belong inside example rewrites.",
+      "Instructional text emphasizes metrics categories and causal structure, not re-listing every tool from Skills. Concrete tools belong inside example rewrites.",
     avoidRestating: [
       "Re-listing the top 10 stack tokens from ROLE_CONTENT_MAP in exposition paragraphs.",
     ],
@@ -397,26 +397,26 @@ const SWE_BULLETS: SemanticSection = {
         {
           weak: "Worked on backend APIs for the checkout team.",
           strong:
-            "Cut p95 checkout API latency by 38% by profiling hot queries, tightening indexes, and adding a bounded cache—reducing payment timeouts during peak traffic.",
+            "Cut p95 checkout API latency by 38% by profiling hot queries, tightening indexes, and adding a bounded cache, reducing payment timeouts during peak traffic.",
         },
         {
           weak: "Improved CI/CD for the engineering org.",
           strong:
-            "Reduced median deploy duration from 28m to 9m by restructuring GitHub Actions workflows, layering artifacts, and gating risky steps—fewer rollback events post-release.",
+            "Reduced median deploy duration from 28m to 9m by restructuring GitHub Actions workflows, layering artifacts, and gating risky steps, fewer rollback events post-release.",
         },
         {
           weak: "Used AWS and Kubernetes in production.",
           strong:
-            "Led a zero-downtime migration of stateful workloads to Kubernetes, defining readiness gates and rollback playbooks—zero Sev-1 outages during migration.",
+            "Led a zero-downtime migration of stateful workloads to Kubernetes, defining readiness gates and rollback playbooks, zero Sev-1 outages during migration.",
         },
       ],
     },
     {
       style: "review_notes",
       notes: [
-        "Margin note — Senior screen: ‘Where is the outage, SLA, saturation, or cost story if they claim scale?’",
-        "Margin note — HM skim: ‘Do two bullets suffice to explain why we should interview them over the next ten files?’",
-        "Margin note — Staff bar: ‘Initiated vs participated: who else could claim the same wording?’",
+        "Margin note - Senior screen: ‘Where is the outage, SLA, saturation, or cost story if they claim scale?’",
+        "Margin note - HM skim: ‘Do two bullets suffice to explain why we should interview them over the next ten files?’",
+        "Margin note - Staff bar: ‘Initiated vs participated: who else could claim the same wording?’",
       ],
     },
     {
@@ -424,7 +424,7 @@ const SWE_BULLETS: SemanticSection = {
       items: [
         {
           pattern:
-            "Quantified KPIs without baseline, timeframe, or cohort—'% lift' alone.",
+            "Quantified KPIs without baseline, timeframe, or cohort, '% lift' alone.",
           reviewerRead:
             "Experienced reviewers treat these as placeholders unless context appears in interview; weakens credibility on paper.",
         },
@@ -442,7 +442,7 @@ const SWE_SUMMARY: SemanticSection = {
   sectionId: "summary",
   layout: ["meta", "contrarian", "negative_expertise", "recruiter", "proof_signals", "evidence", "ats"],
   metaEyebrow: "First skim",
-  h2Title: "Summary: two lines for fit—then the quiet credibility checks",
+  h2Title: "Summary: two lines for fit, then the quiet credibility checks",
   primaryIntent: "screening",
   secondaryIntent: "evaluation",
   copyLabels: {
@@ -451,7 +451,7 @@ const SWE_SUMMARY: SemanticSection = {
     evidenceHeading: "Fast-reject patterns vs stronger openers",
   },
   recruiterInterpretation: [
-    "On most SWE pipelines, the summary buys you a few seconds of attention before the reader jumps to impact lines. It should answer: level, stack focus, and the type of problems you compress—not a mission statement.",
+    "On most SWE pipelines, the summary buys you a few seconds of attention before the reader jumps to impact lines. It should answer: level, stack focus, and the type of problems you compress, not a mission statement.",
     "Generic ‘passionate engineer’ language rarely changes decisions; concrete scope language (systems, scale, ownership) does. If your summary could fit any graduate, it is doing no screening work.",
   ],
   negativeExpertise: [
@@ -462,7 +462,7 @@ const SWE_SUMMARY: SemanticSection = {
     "Over-optimizing the summary for keyword recall can backfire: when it reads like a tag cloud, hiring managers assume the rest of the file will feel synthetic too.",
   ],
   atsInterpretation: [
-    "ATS may still tokenize the summary—keep honest overlaps with the posting—but humans overweight specificity; redundant JD echo without proof lines weakens both passes.",
+    "ATS may still tokenize the summary, keep honest overlaps with the posting, but humans overweight specificity; redundant JD echo without proof lines weakens both passes.",
   ],
   antiPatterns: [],
   roleSpecificSignals: [
@@ -472,7 +472,7 @@ const SWE_SUMMARY: SemanticSection = {
   entityZone: {
     instructionalScope: "role_identity",
     proseRule:
-      "Keep named tools here minimal—identity and problem class only. Park deep stack proof in Skills; park outcomes in Bullets.",
+      "Keep named tools here minimal, identity and problem class only. Park deep stack proof in Skills; park outcomes in Bullets.",
     avoidRestating: [
       "Repeating the full skills inventory or project catalog in the summary.",
     ],
@@ -481,9 +481,9 @@ const SWE_SUMMARY: SemanticSection = {
     {
       style: "review_notes",
       notes: [
-        "Margin note — HM: ‘Can I predict what their best bullet will be from line one?’",
-        "Margin note — Staff bar: ‘Do they sound like they shrink ambiguity, or decorate it?’",
-        "Margin note — Skeptic: ‘Is any line here legally true for 50 other applicants?’",
+        "Margin note - HM: ‘Can I predict what their best bullet will be from line one?’",
+        "Margin note - Staff bar: ‘Do they sound like they shrink ambiguity, or decorate it?’",
+        "Margin note - Skeptic: ‘Is any line here legally true for 50 other applicants?’",
       ],
     },
     {
@@ -492,7 +492,7 @@ const SWE_SUMMARY: SemanticSection = {
         {
           pattern: "Opening with adjectives (“results-driven, innovative”) instead of scope.",
           reviewerRead:
-            "Often skipped mentally—screeners look for nouns of ownership and environment (team size, product surface, prod scale).",
+            "Often skipped mentally, screeners look for nouns of ownership and environment (team size, product surface, prod scale).",
         },
         {
           pattern: "Promising ‘end-to-end ownership’ with no later proof of delivery or operations.",
@@ -517,7 +517,7 @@ const SWE_PROJECTS: SemanticSection = {
     "entity_zone",
   ],
   metaEyebrow: "Build narrative",
-  h2Title: "Projects: prove build judgment—not a portfolio dump",
+  h2Title: "Projects: prove build judgment, not a portfolio dump",
   primaryIntent: "credibility",
   secondaryIntent: "proof",
   copyLabels: {
@@ -531,13 +531,13 @@ const SWE_PROJECTS: SemanticSection = {
     "Architecture without aftermath (on-call pain, regressions prevented, phased rollout risk) reads as diagrams, not accountability.",
   ],
   negativeExpertise: [
-    "Tutorial-scale apps presented with production verbs (‘scaled’, ‘enterprise-grade’) invite harsh scrutiny—credibility resets on proof of constraints.",
+    "Tutorial-scale apps presented with production verbs (‘scaled’, ‘enterprise-grade’) invite harsh scrutiny, credibility resets on proof of constraints.",
     "'Group project' blur where your slice is unknowable triggers ‘cannot attribute impact’ deductions.",
     "Metrics on toy datasets or hypothetical users are frequently ignored for senior leveling unless framed as methodological proof for a deliberate scope.",
   ],
   contrarianHooks: [],
   atsInterpretation: [
-    "Keywords still help if they mirror stacks you honestly used—parity matters more here than synonym stuffing.",
+    "Keywords still help if they mirror stacks you honestly used, parity matters more here than synonym stuffing.",
   ],
   antiPatterns: [],
   roleSpecificSignals: [
@@ -594,7 +594,7 @@ const SWE_PROJECTS: SemanticSection = {
         {
           pattern: "‘Led microservices architecture’ with no data flow, failure mode, or migration story.",
           reviewerRead:
-            "Often interpreted as resume theater—credible senior work names interfaces, contracts, and operational outcomes.",
+            "Often interpreted as resume theater, credible senior work names interfaces, contracts, and operational outcomes.",
         },
         {
           pattern: "AI/GenAI side project with no evaluation, safety boundary, or user workflow.",

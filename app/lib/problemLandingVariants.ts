@@ -1,6 +1,6 @@
 import { PROBLEM_SLUGS, type ProblemSlug } from "@/app/lib/problemPages";
 
-/** Visitor intent — drives tone, preview emphasis, and CTAs */
+/** Visitor intent - drives tone, preview emphasis, and CTAs */
 export type ProblemIntent = "frustration" | "diagnostic" | "technical" | "tactical" | "comparison";
 
 /** What the product preview visually emphasizes */

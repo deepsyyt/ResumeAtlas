@@ -1,11 +1,11 @@
 /**
- * Posting-fit diagnosis engine — single source of truth for diagnostic primitives.
+ * Posting-fit diagnosis engine - single source of truth for diagnostic primitives.
  * All UI labels, SEO copy, API field names, and glossary slugs MUST derive from this registry.
  *
  * @see docs/operations/DIAGNOSTICS_ENGINE_IMPLEMENTATION.md
  */
 
-/** Gate model: ordered screening model (A–D). Do not renumber without bumping REGISTRY_VERSION. */
+/** Gate model: ordered screening model (A-D). Do not renumber without bumping REGISTRY_VERSION. */
 export const DIAGNOSTIC_GATES = ["A", "B", "C", "D"] as const;
 export type DiagnosticGate = (typeof DIAGNOSTIC_GATES)[number];
 
@@ -65,7 +65,7 @@ export const DIAGNOSTIC_PRIMITIVES: readonly DiagnosticPrimitive[] = [
     publicSlug: "parse-hygiene",
     label: "Parse hygiene",
     shortDefinition:
-      "How reliably applicant tracking systems can extract text, sections, and bullets from your file—not visual design taste.",
+      "How reliably applicant tracking systems can extract text, sections, and bullets from your file, not visual design taste.",
     gate: "A",
     analyzerResponseKeys: ["parse_hygiene", "ats_score"],
     relatedPrimitiveIds: ["skim_friction", "posting_vocabulary_coverage"],
@@ -76,7 +76,7 @@ export const DIAGNOSTIC_PRIMITIVES: readonly DiagnosticPrimitive[] = [
     publicSlug: "posting-vocabulary-coverage",
     label: "Posting vocabulary coverage",
     shortDefinition:
-      "Literal overlap between this job posting’s vocabulary and your resume—before semantic fit.",
+      "Literal overlap between this job posting’s vocabulary and your resume, before semantic fit.",
     gate: "B",
     analyzerResponseKeys: ["keyword_coverage", "matched_skills", "missing_skills"],
     relatedPrimitiveIds: ["required_skill_debt", "semantic_fit_gap"],
@@ -109,7 +109,7 @@ export const DIAGNOSTIC_PRIMITIVES: readonly DiagnosticPrimitive[] = [
     publicSlug: "semantic-fit-gap",
     label: "Semantic fit gap",
     shortDefinition:
-      "Whether your responsibilities read like the role in the posting—not just keyword overlap.",
+      "Whether your responsibilities read like the role in the posting, not just keyword overlap.",
     gate: "C",
     analyzerResponseKeys: ["semantic_similarity"],
     relatedPrimitiveIds: ["posting_vocabulary_coverage", "evidence_density"],
@@ -168,9 +168,9 @@ export function primitiveIdFromAnalyzerKey(key: string): DiagnosticPrimitiveId |
 /** API: one scored dimension (extend /api/analyze to emit this shape over time). */
 export interface DiagnosticDimensionScore {
   primitive_id: DiagnosticPrimitiveId;
-  /** 0–100 normalized score when applicable; null if not computed for this run. */
+  /** 0-100 normalized score when applicable; null if not computed for this run. */
   score: number | null;
-  /** Machine-readable detail keys only—no prose in API. */
+  /** Machine-readable detail keys only, no prose in API. */
   detail_keys?: readonly string[];
 }
 
