@@ -309,11 +309,27 @@ export function roleResumeSamplePath(role: RoleSlug): string {
   return `/${role}-resume-guide#bullet-points`;
 }
 
+/** Roles with indexed `/resume-examples/{role}` pages (subset of cluster; excludes data-engineer). */
+const RESUME_EXAMPLE_CLUSTER_ROLE_SLUGS = new Set<RoleSlug>([
+  "data-analyst",
+  "software-engineer",
+  "product-manager",
+  "business-analyst",
+  "data-scientist",
+  "machine-learning-engineer",
+  "devops-engineer",
+  "frontend-developer",
+  "backend-developer",
+]);
+
 /**
- * Public URL for “resume example” intent: consolidated `/{role}-resume-guide` for standalone roles;
- * otherwise the merged page sample anchor (same as {@link roleResumeSamplePath}).
+ * Public URL for “resume example” intent: `/resume-examples/{role}` for high-demand cluster roles;
+ * otherwise consolidated `/{role}-resume-guide` or sample anchor.
  */
 export function resumeExamplePublicPath(role: RoleSlug): string {
+  if (RESUME_EXAMPLE_CLUSTER_ROLE_SLUGS.has(role)) {
+    return `/resume-examples/${role}`;
+  }
   for (const r of ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE) {
     if (r === role) return `/${role}-resume-guide`;
   }

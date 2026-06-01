@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { LastUpdated } from "@/app/components/LastUpdated";
+import { RoleClusterNavSection } from "@/app/components/RoleClusterNavSection";
+import { SeoBreadcrumbs } from "@/app/components/SeoBreadcrumbs";
 import {
   allCategorizedTerms,
   getPilotKeywordConfig,
@@ -11,14 +13,11 @@ import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
-import { getSiteUrl } from "@/app/lib/siteUrl";
-import { absoluteCanonicalUrl } from "@/app/lib/searchIntentSeo";
 
 type Props = { slug: PilotKeywordSlug };
 
 export function PilotKeywordsGuidePage({ slug }: Props) {
   const config = getPilotKeywordConfig(slug);
-  const canonicalBase = getSiteUrl().replace(/\/$/, "");
   const categorizedCount = allCategorizedTerms(config).length;
 
   const faqSchema = {
@@ -31,31 +30,16 @@ export function PilotKeywordsGuidePage({ slug }: Props) {
     })),
   };
 
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${canonicalBase}/` },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: `${config.roleName} resume keywords`,
-        item: absoluteCanonicalUrl(config.path),
-      },
-    ],
-  };
-
   return (
     <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/50">
         <div className="mx-auto max-w-4xl px-4 pb-10 pt-6 sm:px-6 sm:pb-12 sm:pt-8 lg:px-8">
-          <nav className="mb-3 text-left text-[11px] text-slate-500 sm:text-xs">
-            <Link href="/" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-              Home
-            </Link>
-            <span className="mx-1.5 text-slate-400">/</span>
-            <span>{config.roleName} resume keywords</span>
-          </nav>
+          <SeoBreadcrumbs
+            kind="keywords"
+            currentLabel={`${config.roleName} Resume Keywords`}
+            currentPath={config.path}
+            className="mb-3"
+          />
           <div className="text-center">
             <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
               {config.h1}
@@ -203,43 +187,47 @@ export function PilotKeywordsGuidePage({ slug }: Props) {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900">Related pages</h2>
-          <h3 className="mt-4 text-sm font-semibold text-slate-800">Keyword lists</h3>
-          <ul className="mt-2 space-y-2 text-sm">
-            {config.relatedKeywordPages.map((link) => (
-              <li key={link.path}>
+        {slug === "data-engineer" ? (
+          <RoleClusterNavSection currentPath={config.path} />
+        ) : (
+          <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+            <h2 className="text-xl font-semibold tracking-tight text-slate-900">Related pages</h2>
+            <h3 className="mt-4 text-sm font-semibold text-slate-800">Keyword lists</h3>
+            <ul className="mt-2 space-y-2 text-sm">
+              {config.relatedKeywordPages.map((link) => (
+                <li key={link.path}>
+                  <Link
+                    href={link.path}
+                    className="font-medium text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <h3 className="mt-6 text-sm font-semibold text-slate-800">Resume examples & format</h3>
+            <ul className="mt-2 space-y-2 text-sm">
+              {config.relatedGuidePages.map((link) => (
+                <li key={link.path}>
+                  <Link
+                    href={link.path}
+                    className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
                 <Link
-                  href={link.path}
-                  className="font-medium text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <h3 className="mt-6 text-sm font-semibold text-slate-800">Resume examples & format</h3>
-          <ul className="mt-2 space-y-2 text-sm">
-            {config.relatedGuidePages.map((link) => (
-              <li key={link.path}>
-                <Link
-                  href={link.path}
+                  href={ATS_RESUME_TEMPLATE_GUIDE_PATH}
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  {link.label}
+                  ATS resume template & format guide
                 </Link>
               </li>
-            ))}
-            <li>
-              <Link
-                href={ATS_RESUME_TEMPLATE_GUIDE_PATH}
-                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                ATS resume template & format guide
-              </Link>
-            </li>
-          </ul>
-        </section>
+            </ul>
+          </section>
+        )}
 
         <section id="faq">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">FAQs</h2>
@@ -265,11 +253,6 @@ export function PilotKeywordsGuidePage({ slug }: Props) {
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
     </main>
   );

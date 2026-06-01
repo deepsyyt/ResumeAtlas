@@ -377,8 +377,8 @@ export const PILOT_KEYWORD_PAGES: Record<PilotKeywordSlug, PilotKeywordPageConfi
       { path: "/business-intelligence-resume-keywords", label: "Business intelligence resume keywords" },
     ],
     relatedGuidePages: [
-      { path: "/data-scientist-resume-guide", label: "Data scientist resume example" },
-      { path: "/data-analyst-resume-guide", label: "Data analyst resume example" },
+      { path: "/data-engineer-resume-guide", label: "Data engineer resume guide" },
+      { path: "/resume-examples/data-engineer", label: "Data engineer resume example" },
     ],
     faq: [
       {

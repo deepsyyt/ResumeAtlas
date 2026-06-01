@@ -28,9 +28,21 @@ import type { JDAnalysisResult } from "@/app/lib/jdAnalysis";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import type { AnalysisQuotaStatus } from "@/app/lib/quota";
 import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
-import { KEYWORD_PAGES, type RoleSlug } from "@/app/lib/seoPages";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+} from "@/app/lib/internalLinks";
+import {
+  homeTopExampleLinks,
+  homeTopKeywordLinks,
+  RESUME_EXAMPLES_HUB_PATH,
+  RESUME_GUIDES_HUB_PATH,
+  RESUME_KEYWORDS_HUB_PATH,
+} from "@/app/lib/seoHubPages";
+import { KEYWORD_PAGES, resumeExamplePublicPath, type RoleSlug } from "@/app/lib/seoPages";
 import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIntentSeo";
 import { isResumeBulletRole } from "@/app/lib/resumeBulletPointContent";
+import { ATS_RESUME_CHECKER_PATH } from "@/app/lib/roleClusterLinks";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
 import { gtagEvent, gtagSetUserId } from "@/app/lib/gtagClient";
@@ -1286,6 +1298,89 @@ export default function HomeClient({
           </div>
 
           <section
+            className="mt-4 sm:mt-5 w-full rounded-xl border border-slate-200 bg-white px-3 py-4 sm:px-5 sm:py-5 shadow-sm"
+            aria-labelledby="home-discover-heading"
+          >
+            <h2
+              id="home-discover-heading"
+              className="text-center text-base font-semibold tracking-tight text-slate-900 sm:text-lg"
+            >
+              Resume resources (one click)
+            </h2>
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+              <Link
+                href={RESUME_EXAMPLES_HUB_PATH}
+                className="rounded-lg border border-sky-200 bg-sky-50/80 px-3 py-3 text-center text-sm font-semibold text-sky-950 hover:bg-sky-100"
+              >
+                Top resume examples
+              </Link>
+              <Link
+                href={RESUME_KEYWORDS_HUB_PATH}
+                className="rounded-lg border border-sky-200 bg-sky-50/80 px-3 py-3 text-center text-sm font-semibold text-sky-950 hover:bg-sky-100"
+              >
+                Top resume keywords
+              </Link>
+              <Link
+                href={ATS_RESUME_CHECKER_PATH}
+                className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-center text-sm font-semibold text-slate-900 hover:bg-slate-100"
+              >
+                ATS checker
+              </Link>
+              <Link
+                href={CHECK_RESUME_AGAINST_JD_PATH}
+                className="rounded-lg border border-slate-900 bg-slate-900 px-3 py-3 text-center text-sm font-semibold text-white hover:bg-slate-800"
+              >
+                JD checker
+              </Link>
+            </div>
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:text-left">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Popular examples
+                </p>
+                <ul className="mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1 text-sm sm:justify-start">
+                  {homeTopExampleLinks().map((item) => (
+                    <li key={item.path} className="list-none">
+                      <Link
+                        href={item.path}
+                        className="text-sky-800 font-medium underline underline-offset-2 hover:text-sky-950"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Popular keywords
+                </p>
+                <ul className="mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1 text-sm sm:justify-start">
+                  {homeTopKeywordLinks().map((item) => (
+                    <li key={item.path} className="list-none">
+                      <Link
+                        href={item.path}
+                        className="text-sky-800 font-medium underline underline-offset-2 hover:text-sky-950"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <p className="mt-3 text-center text-xs text-slate-500">
+              <Link href={RESUME_GUIDES_HUB_PATH} className="text-sky-700 underline underline-offset-2">
+                Resume guides hub
+              </Link>
+              {" · "}
+              <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className="text-sky-700 underline underline-offset-2">
+                Compare resume to a job description
+              </Link>
+            </p>
+          </section>
+
+          <section
             className="mt-1 sm:mt-2 w-full rounded-xl bg-slate-50 px-3 py-4 sm:px-4 sm:py-4"
             aria-labelledby="home-capabilities-heading"
           >
@@ -1635,8 +1730,19 @@ export default function HomeClient({
               Browse by role
             </h2>
             <p className="mt-2 text-sm text-slate-600 leading-snug">
-              One authoritative page per role: examples, ATS keywords, section patterns, and (where available)
-              bullet examples, jump links anchor to the section you need.
+              Pick a role below, or open the{" "}
+              <Link href={RESUME_EXAMPLES_HUB_PATH} className="font-medium text-sky-800 underline underline-offset-2">
+                examples
+              </Link>
+              ,{" "}
+              <Link href={RESUME_GUIDES_HUB_PATH} className="font-medium text-sky-800 underline underline-offset-2">
+                guides
+              </Link>
+              , or{" "}
+              <Link href={RESUME_KEYWORDS_HUB_PATH} className="font-medium text-sky-800 underline underline-offset-2">
+                keywords
+              </Link>{" "}
+              hub.
             </p>
           </div>
           <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 list-none m-0 p-0">
@@ -1652,10 +1758,18 @@ export default function HomeClient({
                   <ul className="mt-3 space-y-2 text-sm list-none m-0 p-0">
                     <li>
                       <Link
-                        href={pillarPath}
+                        href={resumeExamplePublicPath(slug)}
                         className="text-sky-800 font-medium underline underline-offset-2 hover:text-sky-950"
                       >
-                        Resume guide (examples + outline)
+                        Resume example
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href={pillarPath}
+                        className="text-sky-700 underline underline-offset-2 hover:text-sky-950"
+                      >
+                        Resume guide
                       </Link>
                     </li>
                     <li>
@@ -1663,7 +1777,7 @@ export default function HomeClient({
                         href={roleResumeKeywordsPath(slug)}
                         className="text-sky-700 underline underline-offset-2 hover:text-sky-950"
                       >
-                        ATS keywords
+                        Resume keywords
                       </Link>
                     </li>
                     {isResumeBulletRole(slug) ? (

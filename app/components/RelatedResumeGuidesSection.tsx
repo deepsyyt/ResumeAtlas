@@ -26,6 +26,9 @@ export function RelatedResumeGuidesSection({
       <h2 className="text-lg font-semibold tracking-tight text-slate-900 mb-3">
         Related resources
       </h2>
+      <p className="mb-3 text-sm text-slate-600">
+        Prefer your role&apos;s example, guide, and keyword pages—then use the free checker tools.
+      </p>
       <ul className="list-disc pl-5 space-y-1 text-sm">
         {links.map(({ path, label }) => (
           <li key={path}>

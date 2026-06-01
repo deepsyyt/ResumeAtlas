@@ -8,6 +8,15 @@ import {
 import { INDEXED_PROBLEM_SLUGS } from "@/app/lib/problemPages";
 import { ALT_ROLE_KEYWORD_SLUGS, getAltRoleKeywordConfig } from "@/app/lib/altRoleKeywordPages";
 import { PILOT_KEYWORD_SLUGS, getPilotKeywordConfig } from "@/app/lib/pilotKeywordPages";
+import { DATA_ENGINEER_RESUME_GUIDE_PATH } from "@/app/lib/dataEngineerResumeGuide";
+import {
+  RESUME_GUIDES_HUB_PATH,
+  RESUME_KEYWORDS_HUB_PATH,
+} from "@/app/lib/seoHubPages";
+import {
+  RESUME_EXAMPLE_CLUSTER_SLUGS,
+  resumeExampleClusterPath,
+} from "@/app/lib/resumeExampleClusterPages";
 
 const LEGAL_PATHS = [
   "/contact",
@@ -25,6 +34,8 @@ function priorityForPath(pathname: string): number {
     return 0.91;
   }
   if (pathname === "/resume-examples") return 0.86;
+  if (pathname === "/resume-keywords" || pathname === "/resume-guides") return 0.87;
+  if (pathname.startsWith("/resume-examples/")) return 0.88;
   if (pathname.startsWith("/problems/")) return 0.92;
   if (pathname.startsWith("/how-ats-")) return 0.92;
   if (
@@ -172,11 +183,42 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
   }
 
   entries.push({
+    url: `${base}${DATA_ENGINEER_RESUME_GUIDE_PATH}`,
+    lastModified: new Date("2026-06-01"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath(DATA_ENGINEER_RESUME_GUIDE_PATH),
+  });
+
+  const seoHubLastMod = new Date("2026-06-01");
+  entries.push({
     url: `${base}/resume-examples`,
-    lastModified: new Date("2026-04-09"),
+    lastModified: seoHubLastMod,
     changeFrequency: "weekly" as const,
     priority: priorityForPath("/resume-examples"),
   });
+  entries.push({
+    url: `${base}${RESUME_KEYWORDS_HUB_PATH}`,
+    lastModified: seoHubLastMod,
+    changeFrequency: "weekly" as const,
+    priority: priorityForPath(RESUME_KEYWORDS_HUB_PATH),
+  });
+  entries.push({
+    url: `${base}${RESUME_GUIDES_HUB_PATH}`,
+    lastModified: seoHubLastMod,
+    changeFrequency: "weekly" as const,
+    priority: priorityForPath(RESUME_GUIDES_HUB_PATH),
+  });
+
+  const resumeExampleClusterLastMod = new Date("2026-06-01");
+  for (const clusterSlug of RESUME_EXAMPLE_CLUSTER_SLUGS) {
+    const clusterPath = resumeExampleClusterPath(clusterSlug);
+    entries.push({
+      url: `${base}${clusterPath}`,
+      lastModified: resumeExampleClusterLastMod,
+      changeFrequency: "monthly" as const,
+      priority: priorityForPath(clusterPath),
+    });
+  }
 
   const problemsHubLastMod = new Date("2026-03-25");
   // `/problems` hub is intentionally low-demand (noindex set on the page).

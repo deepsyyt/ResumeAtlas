@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { LastUpdated } from "@/app/components/LastUpdated";
-import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
+import { RoleClusterNavSection } from "@/app/components/RoleClusterNavSection";
+import { SeoBreadcrumbs } from "@/app/components/SeoBreadcrumbs";
 import { KeywordApplicationModule } from "@/app/components/seo/KeywordApplicationModule";
 import { RoleKeywordClustersSection } from "@/app/components/seo/RoleKeywordClustersSection";
 import { RoleKeywordIntentHubBlock } from "@/app/components/seo/RoleKeywordIntentHubBlock";
 import {
   KEYWORD_PAGES,
   type RoleSlug,
-  roleResumeSamplePath,
+  resumeExamplePublicPath,
 } from "@/app/lib/seoPages";
 import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 import { CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
@@ -38,7 +39,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
 
   const roleSlug = params.role;
   const roleContent = ROLE_CONTENT_MAP[roleSlug];
-  const resumeSamplePath = roleResumeSamplePath(roleSlug);
+  const resumeExamplePath = resumeExamplePublicPath(roleSlug);
   const mergedGuidePath = roleResumePillarPath(roleSlug);
   const canonicalBase = getSiteUrl().replace(/\/$/, "");
   const keywordHubTitle = roleResumeKeywordsH1(roleSlug);
@@ -78,25 +79,6 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
 
   const faqSchema = roleKeywordsFaqSchema(roleSlug);
 
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: `${canonicalBase}/`,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: `${config.roleName} resume keywords`,
-        item: `${canonicalBase}${roleResumeKeywordsPath(roleSlug)}`,
-      },
-    ],
-  } as const;
-
   const itemListSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -112,13 +94,12 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
     <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-10 sm:pb-12">
-          <nav className="mb-3 text-[11px] sm:text-xs text-slate-500 text-left">
-            <Link href="/" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
-              Home
-            </Link>
-            <span className="mx-1.5 text-slate-400">/</span>
-            <span>{config.roleName} resume keywords</span>
-          </nav>
+          <SeoBreadcrumbs
+            kind="keywords"
+            currentLabel={`${config.roleName} Resume Keywords`}
+            currentPath={keywordsPublicPath}
+            className="mb-3"
+          />
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
               {keywordHubTitle}
@@ -428,40 +409,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           </section>
         ) : null}
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900">
-            Related resume guides
-          </h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Deepen your {config.roleName.toLowerCase()} resume with these high-signal pages.
-          </p>
-          <ul className="mt-4 space-y-2 text-sm">
-            <li>
-              <Link
-                href={`${mergedGuidePath}#projects`}
-                className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
-              >
-                {config.roleName} resume projects →
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={mergedGuidePath}
-                className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
-              >
-                {config.roleName} resume guide →
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={`${keywordsPublicPath}#top-keywords`}
-                className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
-              >
-                {config.roleName} ATS keyword checklist →
-              </Link>
-            </li>
-          </ul>
-        </section>
+        <RoleClusterNavSection currentPath={keywordsPublicPath} />
 
         <section id="checklist" className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
@@ -570,20 +518,23 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               </li>
               <li>
                 <Link
-                  href={resumeSamplePath}
+                  href={resumeExamplePath}
                   className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
                 >
-                  {config.roleName} Resume Example
+                  {config.roleName} resume example
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={mergedGuidePath}
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {config.roleName} resume guide
                 </Link>
               </li>
             </ul>
           </div>
         </section>
-
-        <RelatedResumeGuidesSection
-          currentPath={roleResumeKeywordsPath(roleSlug)}
-          className="border-t border-slate-200 pt-6"
-        />
 
         <section id="faq">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
@@ -611,11 +562,6 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <script
         type="application/ld+json"

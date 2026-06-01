@@ -9,6 +9,11 @@ import {
   isPilotKeywordPath,
 } from "@/app/lib/pilotKeywordPages";
 import { KEYWORD_PAGES, RESUME_PAGES, type RoleSlug } from "@/app/lib/seoPages";
+import {
+  getRoleClusterNavLinks,
+  resolveRoleClusterKeyFromPath,
+  roleClusterInternalLinks,
+} from "@/app/lib/roleClusterLinks";
 import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIntentSeo";
 
 export type InternalLink = { path: string; label: string };
@@ -81,6 +86,8 @@ const ARTICLE_LINKS: InternalLink[] = [
     label: "Customize resume without lying",
   },
   { path: "/resume-examples", label: "Resume examples by role" },
+  { path: "/resume-keywords", label: "Resume keywords by role" },
+  { path: "/resume-guides", label: "Resume guides by role" },
   {
     path: roleResumePillarPath("data-analyst"),
     label: "Data analyst resume bullet examples",
@@ -134,6 +141,7 @@ export const ALL_SEO_LINKS: InternalLink[] = [
   ...ALT_ROLE_KEYWORD_HUB_LINKS,
   ...PILOT_KEYWORD_HUB_LINKS,
   ...ROLE_PILLAR_LINKS,
+  ...roleClusterInternalLinks(),
 ];
 
 // Paths that are already heavily linked in "Popular Resume Examples" (first 6) and "ATS Keyword Guides" (first 6).
@@ -148,14 +156,14 @@ const FEATURED_PATHS = new Set<string>([
 const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   [CHECK_RESUME_AGAINST_JD_PATH]: [
     "/ats-resume-checker",
+    "/resume-examples",
+    "/resume-keywords",
+    "/resume-guides",
     "/customize-resume-without-lying",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
-    RESUME_SKILLS_GUIDE_PATH,
     "/problems/ats-rejecting-my-resume",
-    roleResumePillarPath("software-engineer"),
-    roleResumePillarPath("data-scientist"),
-    roleResumePillarPath("product-manager"),
+    "/resume-examples/data-analyst",
+    "/data-analyst-resume-keywords",
   ],
   [ATS_RESUME_TEMPLATE_GUIDE_PATH]: [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -187,25 +195,48 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   ],
   "/data-analyst-resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,
+    "/ats-resume-checker",
     "/power-bi-resume-keywords",
-    "/sql-developer-resume-keywords",
-    "/data-engineer-resume-keywords",
-    "/business-intelligence-resume-keywords",
-    "/business-systems-analyst-resume-keywords",
+    "/resume-examples/data-analyst",
     roleResumePillarPath("data-analyst"),
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    "/resume-examples",
   ],
   "/data-engineer-resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,
+    "/ats-resume-checker",
     "/sql-developer-resume-keywords",
-    "/data-analyst-resume-keywords",
-    "/data-scientist-resume-keywords",
-    roleResumeKeywordsPath("devops-engineer"),
-    roleResumePillarPath("data-scientist"),
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    "/resume-examples/data-engineer",
+    "/data-engineer-resume-guide",
+  ],
+  "/resume-keywords": [
+    CHECK_RESUME_AGAINST_JD_PATH,
     "/ats-resume-checker",
     "/resume-examples",
+    "/resume-guides",
+    "/data-analyst-resume-keywords",
+    "/data-engineer-resume-keywords",
+  ],
+  "/resume-guides": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/ats-resume-checker",
+    "/resume-examples",
+    "/resume-keywords",
+    "/data-analyst-resume-guide",
+    "/data-engineer-resume-guide",
+  ],
+  "/resume-examples": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/ats-resume-checker",
+    "/resume-keywords",
+    "/resume-guides",
+    "/resume-examples/data-analyst",
+    "/resume-examples/software-engineer",
+  ],
+  "/data-engineer-resume-guide": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/ats-resume-checker",
+    "/resume-examples/data-engineer",
+    "/data-engineer-resume-keywords",
+    "/sql-developer-resume-keywords",
   ],
   "/sql-developer-resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -229,12 +260,10 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   ],
   "/data-scientist-resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,
-    "/data-engineer-resume-keywords",
-    "/sql-developer-resume-keywords",
-    roleResumePillarPath("data-scientist"),
+    "/ats-resume-checker",
     roleResumeKeywordsPath("machine-learning-engineer"),
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    "/resume-examples",
+    "/resume-examples/data-scientist",
+    roleResumePillarPath("data-scientist"),
   ],
   "/business-analyst-resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -246,14 +275,10 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   ],
   "/data-scientist-resume-guide": [
     CHECK_RESUME_AGAINST_JD_PATH,
+    "/ats-resume-checker",
+    "/resume-examples/data-scientist",
     roleResumeKeywordsPath("data-scientist"),
-    roleResumePillarPath("machine-learning-engineer"),
-    "/customize-resume-without-lying",
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    "/resume-examples",
-    "/check-resume-against-job-description",
-    roleResumePillarPath("software-engineer"),
-    roleResumePillarPath("product-manager"),
+    roleResumeKeywordsPath("machine-learning-engineer"),
   ],
   "/resume-score-checker": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -266,15 +291,12 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   ],
   "/ats-resume-checker": [
     CHECK_RESUME_AGAINST_JD_PATH,
-    "/check-resume-against-job-description",
+    "/resume-examples",
+    "/resume-keywords",
+    "/resume-guides",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     RESUME_WORK_EXPERIENCE_GUIDE_PATH,
     RESUME_SKILLS_GUIDE_PATH,
-    CHECK_RESUME_AGAINST_JD_PATH,
-    roleResumePillarPath("software-engineer"),
-    roleResumePillarPath("product-manager"),
-    roleResumePillarPath("data-scientist"),
-    roleResumePillarPath("business-analyst"),
   ],
   "/ats-compatibility-check": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -296,24 +318,21 @@ const PATH_BY_PATH = (() => {
   return m;
 })();
 
-/** Build 6-8 semantic path recommendations for a given page (topic cluster). */
+/** Build semantic path recommendations for a given page (topic cluster). */
 function getSemanticPathsFor(currentPath: string): string[] {
   const normalized = currentPath.replace(/\/$/, "") || "/";
+
+  if (resolveRoleClusterKeyFromPath(normalized)) {
+    return getRoleClusterNavLinks(normalized).map((l) => l.path);
+  }
+
   const explicit = SEMANTIC_RECOMMENDATIONS[normalized];
   if (explicit) return explicit;
 
   const pillarMatch = normalized.match(/^\/([a-z0-9-]+)-resume-guide$/);
   if (pillarMatch) {
     const role = pillarMatch[1] as RoleSlug;
-    return [
-      CHECK_RESUME_AGAINST_JD_PATH,
-      roleResumeKeywordsPath(role),
-      roleResumePillarPath(role),
-      "/customize-resume-without-lying",
-      ATS_RESUME_TEMPLATE_GUIDE_PATH,
-      "/resume-examples",
-      "/check-resume-against-job-description",
-    ].filter((p) => PATH_BY_PATH[p] != null);
+    return getRoleClusterNavLinks(roleResumePillarPath(role)).map((l) => l.path);
   }
 
   const altSlug = isAltRoleKeywordPath(normalized);
@@ -347,15 +366,7 @@ function getSemanticPathsFor(currentPath: string): string[] {
   const keywordHubMatch = normalized.match(/^\/([a-z0-9-]+)-resume-keywords$/);
   if (keywordHubMatch && KEYWORD_PAGES[keywordHubMatch[1] as RoleSlug]) {
     const role = keywordHubMatch[1] as RoleSlug;
-    return [
-      CHECK_RESUME_AGAINST_JD_PATH,
-      roleResumeKeywordsPath(role),
-      roleResumePillarPath(role),
-      "/ats-resume-checker",
-      ATS_RESUME_TEMPLATE_GUIDE_PATH,
-      "/resume-examples",
-      "/customize-resume-without-lying",
-    ].filter((p) => PATH_BY_PATH[p] != null);
+    return getRoleClusterNavLinks(roleResumeKeywordsPath(role)).map((l) => l.path);
   }
 
   const roleOnlyHub = normalized.match(/^\/([a-z0-9-]+)$/);
@@ -395,6 +406,11 @@ export function getRelatedResumeGuides(
   count: number = DEFAULT_RELATED_COUNT
 ): InternalLink[] {
   const normalized = currentPath.replace(/\/$/, "") || "/";
+
+  if (resolveRoleClusterKeyFromPath(normalized)) {
+    return getRoleClusterNavLinks(normalized).slice(0, count);
+  }
+
   const semanticPaths = getSemanticPathsFor(currentPath).filter((p) => p !== normalized);
   const seen = new Set<string>();
   const out: InternalLink[] = [];

@@ -48,6 +48,21 @@ const RESUME_EXAMPLE_STANDALONE_ROLES = [
   "full-stack-developer",
 ];
 
+/** High-demand “resume example” pages at `/resume-examples/{slug}` (align with app/lib/resumeExampleClusterPages.ts). */
+const RESUME_EXAMPLE_CLUSTER_SLUGS = [
+  "data-analyst",
+  "software-engineer",
+  "product-manager",
+  "data-engineer",
+  "business-analyst",
+  "data-scientist",
+  "machine-learning-engineer",
+  "devops-engineer",
+  "frontend-developer",
+  "backend-developer",
+];
+const RESUME_EXAMPLE_CLUSTER_SET = new Set(RESUME_EXAMPLE_CLUSTER_SLUGS);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Avoid EPERM on .next when project is in OneDrive (use a separate build dir)
@@ -300,18 +315,35 @@ const nextConfig = {
       },
     ]);
 
-    const legacyHyphenExampleRedirects = ROLE_SLUGS.flatMap((role) => [
+    const legacyHyphenExampleRedirects = [
+      ...ROLE_SLUGS.flatMap((role) => {
+        const destination = RESUME_EXAMPLE_CLUSTER_SET.has(role)
+          ? `/resume-examples/${role}`
+          : pillar(role);
+        return [
+          {
+            source: `/${role}-resume-example`,
+            destination,
+            permanent: true,
+          },
+          {
+            source: `/${role}-resume-example/`,
+            destination,
+            permanent: true,
+          },
+        ];
+      }),
       {
-        source: `/${role}-resume-example`,
-        destination: pillar(role),
+        source: "/data-engineer-resume-example",
+        destination: "/resume-examples/data-engineer",
         permanent: true,
       },
       {
-        source: `/${role}-resume-example/`,
-        destination: pillar(role),
+        source: "/data-engineer-resume-example/",
+        destination: "/resume-examples/data-engineer",
         permanent: true,
       },
-    ]);
+    ];
 
     const seoBulletRedirects = ROLE_SLUGS.flatMap((role) => [
       {

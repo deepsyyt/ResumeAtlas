@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { RoleClusterNavSection } from "@/app/components/RoleClusterNavSection";
+import { SeoBreadcrumbs } from "@/app/components/SeoBreadcrumbs";
 import { DataAnalystResumeExampleMain } from "@/app/data-analyst-resume-example/DataAnalystResumeExampleMain";
 import { ProductManagerResumeExampleMain } from "@/app/product-manager-resume-example/ProductManagerResumeExampleMain";
 import {
@@ -16,6 +18,8 @@ import {
   roleResumeExamplePath,
   roleResumeKeywordsPath,
 } from "@/app/lib/searchIntentSeo";
+import { resumeExamplePublicPath } from "@/app/lib/seoPages";
+import { isResumeExampleClusterSlug } from "@/app/lib/resumeExampleClusterPages";
 import type { ResumeSeoTopic } from "@/app/lib/resumeTopicTypes";
 import { ResumeTopicSectionForGuide } from "@/app/components/resumeTopicGuide";
 import { PostingFitAnalyticsRoot } from "@/app/components/postingFit/PostingFitAnalyticsRoot";
@@ -85,6 +89,9 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
   if (!config) notFound();
 
   const role = params.roleSlug;
+  const clusterExamplePath = isResumeExampleClusterSlug(role)
+    ? resumeExamplePublicPath(role)
+    : null;
   const showFullSampleAppendix = role === "product-manager";
   const isDataAnalyst = role === "data-analyst";
   const keywordsPagePath = roleResumeKeywordsPath(role);
@@ -104,6 +111,12 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
       <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/60">
         <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-16 lg:px-8">
+          <SeoBreadcrumbs
+            kind="guide"
+            currentLabel={`${config.roleName} Resume Guide`}
+            currentPath={roleResumeExamplePath(role)}
+            className="mb-4 text-left"
+          />
           <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
             {heroHeading}
           </h1>
@@ -111,14 +124,36 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
             {heroIntro}
           </p>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700">
-            For ATS keyword lists and missing terms from a job description, use the{" "}
-            <Link
-              href={keywordsPagePath}
-              className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-            >
-              {roleLower} resume keywords
-            </Link>{" "}
-            page. Bullet patterns and templates stay on this guide.
+            {clusterExamplePath ? (
+              <>
+                Full ATS sample with recruiter review:{" "}
+                <Link
+                  href={clusterExamplePath}
+                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {roleLower} resume example
+                </Link>
+                . Keywords:{" "}
+                <Link
+                  href={keywordsPagePath}
+                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {roleLower} resume keywords
+                </Link>
+                . Section patterns and bullets stay on this guide.
+              </>
+            ) : (
+              <>
+                For ATS keyword lists and missing terms from a job description, use the{" "}
+                <Link
+                  href={keywordsPagePath}
+                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {roleLower} resume keywords
+                </Link>{" "}
+                page. Bullet patterns and templates stay on this guide.
+              </>
+            )}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             {(isDataAnalyst ? (["resume-example", "ats-template", "skills", "resume-bullet-points-h2", "faq"] as const) : MERGED_TOPICS).map((t) => (
@@ -231,6 +266,10 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
           <ProductManagerResumeExampleMain omitHero />
         </section>
       ) : null}
+
+      <div className="mx-auto max-w-3xl px-4 pb-14 sm:px-6 lg:px-8">
+        <RoleClusterNavSection currentPath={roleResumeExamplePath(role)} />
+      </div>
     </main>
     </>
   );
