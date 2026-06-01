@@ -525,6 +525,16 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: "/ats-keywords",
+        destination: "/resume-keywords",
+        permanent: true,
+      },
+      {
+        source: "/ats-keywords/",
+        destination: "/resume-keywords",
+        permanent: true,
+      },
+      {
         source: "/ats-keywords-data-scientist-resumes",
         destination: "/data-scientist-resume-keywords",
         permanent: true,

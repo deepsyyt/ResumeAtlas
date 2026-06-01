@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { RoleSeoHubPage } from "@/app/components/RoleSeoHubPage";
 import {
   CLUSTER_RESUME_KEYWORDS_INDEX_METADATA,
-  getResumeKeywordsHubItems,
+  getResumeKeywordsHubSections,
   RESUME_KEYWORDS_HUB_PATH,
 } from "@/app/lib/seoHubPages";
 import { absoluteCanonicalUrl } from "@/app/lib/searchIntentSeo";
@@ -31,8 +31,7 @@ export default function ResumeKeywordsHubPage() {
       hubTitle="Resume Keywords"
       h1={`Resume Keywords by Role (${CONTENT_FRESHNESS_YEAR})`}
       hubDescription={meta.description}
-      items={getResumeKeywordsHubItems()}
-      listHeading="ATS keyword guides by role"
+      sections={getResumeKeywordsHubSections()}
     />
   );
 }

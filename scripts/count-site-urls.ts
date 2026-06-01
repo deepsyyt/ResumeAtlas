@@ -37,7 +37,6 @@ const EXTRA_STATIC_PATHS: string[] = [
   "/how-it-works",
   "/optimize",
   "/auth/callback",
-  "/ats-keywords",
   "/business-analyst-vs-data-analyst-resume",
   "/data-analyst-interview-questions",
   "/data-analyst-cover-letter-example",
@@ -61,6 +60,7 @@ const REDIRECT_ONLY_PATHS: string[] = [
   "/tableau-data-analyst-resume-example",
   "/ats-resume-template-software-engineer",
   "/resume-keyword-scanner",
+  "/ats-keywords",
 ];
 
 function norm(p: string): string {
@@ -112,6 +112,8 @@ function main() {
   for (const slug of PROBLEM_REDIRECT_SOURCE_SLUGS) {
     addRedirect("/problems/" + slug);
   }
+
+  addRedirect("/ats-keywords");
 
   for (const role of ROLES) {
     addRedirect("/" + role);

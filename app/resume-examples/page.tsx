@@ -14,8 +14,6 @@ import {
 
 } from "@/app/lib/seoPages";
 
-import { roleResumeKeywordsPath } from "@/app/lib/searchIntentSeo";
-
 import { LastUpdated } from "@/app/components/LastUpdated";
 import { SeoBreadcrumbs } from "@/app/components/SeoBreadcrumbs";
 import {
@@ -359,47 +357,17 @@ export default function ResumeExamplesIndexPage() {
         </div>
 
         <div className="border-t border-slate-200 pt-6 mt-6">
-
           <h2 className="text-base font-semibold text-slate-900">ATS resume keywords by role</h2>
-
-          <p className="text-sm text-slate-500 mt-1">
-
-            Keyword lists and job-description gap scans (separate from example pages).
-
+          <p className="mt-1 text-sm text-slate-500">
+            All keyword guides—including data engineer, SQL developer, and Power BI—live on the resume
+            keywords hub.
           </p>
-
-          <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-
-            {(Object.keys(KEYWORD_PAGES) as RoleSlug[])
-
-              .sort((a, b) => KEYWORD_PAGES[a].roleName.localeCompare(KEYWORD_PAGES[b].roleName))
-
-              .map((role) => (
-
-                <li key={role}>
-
-                  <Link href={roleResumeKeywordsPath(role)} className="text-sky-700 hover:underline">
-
-                    {KEYWORD_PAGES[role].roleName} resume keywords
-
-                  </Link>
-
-                </li>
-
-              ))}
-
-            <li>
-
-              <Link href="/data-engineer-resume-keywords" className="text-sky-700 hover:underline">
-
-                Data engineer resume keywords
-
-              </Link>
-
-            </li>
-
-          </ul>
-
+          <Link
+            href={RESUME_KEYWORDS_HUB_PATH}
+            className="mt-3 inline-flex font-semibold text-sky-800 hover:underline"
+          >
+            Browse all resume keyword guides →
+          </Link>
         </div>
 
       </section>

@@ -172,11 +172,14 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     });
   }
 
+  const seoHubLastMod = new Date("2026-06-02");
+
+  // Pilot keyword pages are listed on /resume-keywords (not a separate /ats-keywords index).
   for (const pilotSlug of PILOT_KEYWORD_SLUGS) {
     const pilotPath = getPilotKeywordConfig(pilotSlug).path;
     entries.push({
       url: `${base}${pilotPath}`,
-      lastModified: resumeGuideLastMod,
+      lastModified: seoHubLastMod,
       changeFrequency: "monthly" as const,
       priority: priorityForPath(pilotPath),
     });
@@ -184,12 +187,10 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
 
   entries.push({
     url: `${base}${DATA_ENGINEER_RESUME_GUIDE_PATH}`,
-    lastModified: new Date("2026-06-01"),
+    lastModified: seoHubLastMod,
     changeFrequency: "monthly" as const,
     priority: priorityForPath(DATA_ENGINEER_RESUME_GUIDE_PATH),
   });
-
-  const seoHubLastMod = new Date("2026-06-01");
   entries.push({
     url: `${base}/resume-examples`,
     lastModified: seoHubLastMod,
@@ -209,7 +210,7 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     priority: priorityForPath(RESUME_GUIDES_HUB_PATH),
   });
 
-  const resumeExampleClusterLastMod = new Date("2026-06-01");
+  const resumeExampleClusterLastMod = seoHubLastMod;
   for (const clusterSlug of RESUME_EXAMPLE_CLUSTER_SLUGS) {
     const clusterPath = resumeExampleClusterPath(clusterSlug);
     entries.push({

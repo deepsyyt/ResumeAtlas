@@ -24,7 +24,12 @@ export type HubLinkItem = {
   path: string;
   label: string;
   description?: string;
-  tier?: "primary" | "secondary";
+  tier?: "primary" | "secondary" | "pilot";
+};
+
+export type HubLinkSection = {
+  title: string;
+  items: HubLinkItem[];
 };
 
 export const CLUSTER_RESUME_KEYWORDS_INDEX_METADATA = {
@@ -82,20 +87,30 @@ export function getResumeExamplesHubItems(): HubLinkItem[] {
   return [...cluster, ...other].sort((a, b) => a.label.localeCompare(b.label));
 }
 
-export function getResumeKeywordsHubItems(): HubLinkItem[] {
-  const core = (Object.keys(KEYWORD_PAGES) as RoleSlug[]).map((role) => ({
-    path: roleResumeKeywordsPath(role),
-    label: `${KEYWORD_PAGES[role].roleName} resume keywords`,
-    tier: "primary" as const,
-  }));
-  const pilot = PILOT_KEYWORD_SLUGS.map((slug) => {
+function pilotKeywordHubItems(): HubLinkItem[] {
+  return PILOT_KEYWORD_SLUGS.map((slug) => {
     const c = getPilotKeywordConfig(slug);
+    const description =
+      c.description.length > 150 ? `${c.description.slice(0, 150).trim()}…` : c.description;
     return {
       path: c.path,
       label: `${c.roleName} resume keywords`,
-      tier: "primary" as const,
+      description,
+      tier: "pilot" as const,
     };
   });
+}
+
+/** Hub sections: pilots first (inside /resume-keywords), then core roles, then alt titles. */
+export function getResumeKeywordsHubSections(): HubLinkSection[] {
+  const pilots = pilotKeywordHubItems();
+  const core = (Object.keys(KEYWORD_PAGES) as RoleSlug[])
+    .map((role) => ({
+      path: roleResumeKeywordsPath(role),
+      label: `${KEYWORD_PAGES[role].roleName} resume keywords`,
+      tier: "primary" as const,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
   const alt = ALT_ROLE_KEYWORD_SLUGS.map((slug) => {
     const c = ALT_ROLE_KEYWORD_PAGES[slug];
     return {
@@ -103,8 +118,26 @@ export function getResumeKeywordsHubItems(): HubLinkItem[] {
       label: `${c.roleName} resume keywords`,
       tier: "secondary" as const,
     };
-  });
-  return [...core, ...pilot, ...alt].sort((a, b) => a.label.localeCompare(b.label));
+  }).sort((a, b) => a.label.localeCompare(b.label));
+
+  return [
+    {
+      title: "Data engineering, SQL & Power BI keyword guides",
+      items: pilots,
+    },
+    {
+      title: "Core role keyword guides",
+      items: core,
+    },
+    {
+      title: "More roles",
+      items: alt,
+    },
+  ];
+}
+
+export function getResumeKeywordsHubItems(): HubLinkItem[] {
+  return getResumeKeywordsHubSections().flatMap((section) => section.items);
 }
 
 export function getResumeGuidesHubItems(): HubLinkItem[] {

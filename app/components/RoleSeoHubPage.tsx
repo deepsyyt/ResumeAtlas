@@ -6,7 +6,7 @@ import {
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 import { CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
-import type { HubLinkItem } from "@/app/lib/seoHubPages";
+import type { HubLinkItem, HubLinkSection } from "@/app/lib/seoHubPages";
 import { ATS_RESUME_CHECKER_PATH } from "@/app/lib/roleClusterLinks";
 
 type Props = {
@@ -14,17 +14,49 @@ type Props = {
   hubTitle: string;
   hubDescription: string;
   h1: string;
-  items: HubLinkItem[];
-  /** Optional section title override */
+  items?: HubLinkItem[];
+  /** When set, renders grouped sections (e.g. pilot keyword guides inside the hub). */
+  sections?: HubLinkSection[];
+  /** Optional section title override (flat list mode only). */
   listHeading?: string;
 };
+
+function HubItemCard({ item }: { item: HubLinkItem }) {
+  const isSecondary = item.tier === "secondary";
+  return (
+    <li
+      className={
+        isSecondary
+          ? undefined
+          : "rounded-xl border border-sky-200 bg-sky-50/40 p-4 list-none"
+      }
+    >
+      <Link
+        href={item.path}
+        className={
+          isSecondary
+            ? "text-sky-700 hover:underline"
+            : "font-semibold text-slate-900 hover:underline"
+        }
+      >
+        {item.label}
+      </Link>
+      {item.description ? (
+        <p className={`mt-1 text-xs text-slate-600 ${isSecondary ? "" : "line-clamp-2"}`}>
+          {item.description}
+        </p>
+      ) : null}
+    </li>
+  );
+}
 
 export function RoleSeoHubPage({
   hubPath,
   hubTitle,
   hubDescription,
   h1,
-  items,
+  items = [],
+  sections,
   listHeading = "Browse by role",
 }: Props) {
   const primary = items.filter((i) => i.tier !== "secondary");
@@ -60,34 +92,48 @@ export function RoleSeoHubPage({
         </div>
       </section>
 
-      <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
-        <h2 className="text-lg font-semibold text-slate-900">{listHeading}</h2>
-        <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {primary.map((item) => (
-            <li key={item.path} className="rounded-xl border border-sky-200 bg-sky-50/40 p-4">
-              <Link href={item.path} className="font-semibold text-slate-900 hover:underline">
-                {item.label}
-              </Link>
-              {item.description ? (
-                <p className="mt-1 text-xs text-slate-600 line-clamp-2">{item.description}</p>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-        {secondary.length > 0 ? (
+      <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 space-y-10">
+        {sections?.length ? (
+          sections.map((section) => (
+            <div key={section.title}>
+              <h2 className="text-lg font-semibold text-slate-900">{section.title}</h2>
+              {section.items[0]?.tier === "secondary" ? (
+                <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 text-sm list-none m-0 p-0">
+                  {section.items.map((item) => (
+                    <HubItemCard key={item.path} item={item} />
+                  ))}
+                </ul>
+              ) : (
+                <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 list-none m-0 p-0">
+                  {section.items.map((item) => (
+                    <HubItemCard key={item.path} item={item} />
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))
+        ) : (
           <>
-            <h2 className="mt-10 text-base font-semibold text-slate-800">More roles</h2>
-            <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 text-sm">
-              {secondary.map((item) => (
-                <li key={item.path}>
-                  <Link href={item.path} className="text-sky-700 hover:underline">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">{listHeading}</h2>
+              <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 list-none m-0 p-0">
+                {primary.map((item) => (
+                  <HubItemCard key={item.path} item={item} />
+                ))}
+              </ul>
+            </div>
+            {secondary.length > 0 ? (
+              <div>
+                <h2 className="text-base font-semibold text-slate-800">More roles</h2>
+                <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 text-sm list-none m-0 p-0">
+                  {secondary.map((item) => (
+                    <HubItemCard key={item.path} item={item} />
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </>
-        ) : null}
+        )}
       </section>
     </main>
   );
