@@ -359,8 +359,8 @@ export default function ResumeExamplesIndexPage() {
         <div className="border-t border-slate-200 pt-6 mt-6">
           <h2 className="text-base font-semibold text-slate-900">ATS resume keywords by role</h2>
           <p className="mt-1 text-sm text-slate-500">
-            All keyword guides—including data engineer, SQL developer, and Power BI—live on the resume
-            keywords hub.
+            All keyword guides—including data engineer, SQL, Power BI, BSA, systems analyst, and
+            business intelligence—live on the resume keywords hub.
           </p>
           <Link
             href={RESUME_KEYWORDS_HUB_PATH}

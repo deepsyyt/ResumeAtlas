@@ -162,17 +162,18 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     });
   }
 
+  const seoHubLastMod = new Date("2026-06-02");
+
+  // Alt + pilot keyword pages are featured on /resume-keywords (not separate hub indexes).
   for (const altSlug of ALT_ROLE_KEYWORD_SLUGS) {
     const altPath = getAltRoleKeywordConfig(altSlug).path;
     entries.push({
       url: `${base}${altPath}`,
-      lastModified: resumeGuideLastMod,
+      lastModified: seoHubLastMod,
       changeFrequency: "monthly" as const,
       priority: priorityForPath(altPath),
     });
   }
-
-  const seoHubLastMod = new Date("2026-06-02");
 
   // Pilot keyword pages are listed on /resume-keywords (not a separate /ats-keywords index).
   for (const pilotSlug of PILOT_KEYWORD_SLUGS) {

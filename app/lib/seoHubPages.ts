@@ -36,7 +36,7 @@ export const CLUSTER_RESUME_KEYWORDS_INDEX_METADATA = {
   path: RESUME_KEYWORDS_HUB_PATH,
   title: `Resume Keywords by Role (${CONTENT_FRESHNESS_YEAR} ATS Lists)${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Browse ATS resume keyword guides by role: data analyst, software engineer, data engineer, SQL, Power BI, and more. One hub → role keyword page → free JD matcher.",
+    "Browse ATS resume keyword guides by role: data engineer, SQL, Power BI, business systems analyst, systems analyst, business intelligence, and core tech roles. One hub → keyword page → free JD matcher.",
   ogTitle: `Resume Keywords by Role | ResumeAtlas`,
   ogDescription: `ATS resume keyword lists by role for ${CONTENT_FRESHNESS_YEAR} job searches.`,
 };
@@ -87,23 +87,38 @@ export function getResumeExamplesHubItems(): HubLinkItem[] {
   return [...cluster, ...other].sort((a, b) => a.label.localeCompare(b.label));
 }
 
+function hubDescriptionSnippet(text: string, max = 150): string {
+  return text.length > max ? `${text.slice(0, max).trim()}…` : text;
+}
+
 function pilotKeywordHubItems(): HubLinkItem[] {
   return PILOT_KEYWORD_SLUGS.map((slug) => {
     const c = getPilotKeywordConfig(slug);
-    const description =
-      c.description.length > 150 ? `${c.description.slice(0, 150).trim()}…` : c.description;
     return {
       path: c.path,
       label: `${c.roleName} resume keywords`,
-      description,
+      description: hubDescriptionSnippet(c.description),
       tier: "pilot" as const,
     };
   });
 }
 
-/** Hub sections: pilots first (inside /resume-keywords), then core roles, then alt titles. */
+function altKeywordHubItems(): HubLinkItem[] {
+  return ALT_ROLE_KEYWORD_SLUGS.map((slug) => {
+    const c = ALT_ROLE_KEYWORD_PAGES[slug];
+    return {
+      path: c.path,
+      label: `${c.roleName} resume keywords`,
+      description: hubDescriptionSnippet(c.description),
+      tier: "pilot" as const,
+    };
+  }).sort((a, b) => a.label.localeCompare(b.label));
+}
+
+/** Hub sections: featured pilots & alt titles, then core role keyword guides. */
 export function getResumeKeywordsHubSections(): HubLinkSection[] {
   const pilots = pilotKeywordHubItems();
+  const alt = altKeywordHubItems();
   const core = (Object.keys(KEYWORD_PAGES) as RoleSlug[])
     .map((role) => ({
       path: roleResumeKeywordsPath(role),
@@ -111,14 +126,6 @@ export function getResumeKeywordsHubSections(): HubLinkSection[] {
       tier: "primary" as const,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
-  const alt = ALT_ROLE_KEYWORD_SLUGS.map((slug) => {
-    const c = ALT_ROLE_KEYWORD_PAGES[slug];
-    return {
-      path: c.path,
-      label: `${c.roleName} resume keywords`,
-      tier: "secondary" as const,
-    };
-  }).sort((a, b) => a.label.localeCompare(b.label));
 
   return [
     {
@@ -126,12 +133,12 @@ export function getResumeKeywordsHubSections(): HubLinkSection[] {
       items: pilots,
     },
     {
-      title: "Core role keyword guides",
-      items: core,
+      title: "Business systems analyst, systems analyst & BI keyword guides",
+      items: alt,
     },
     {
-      title: "More roles",
-      items: alt,
+      title: "Core role keyword guides",
+      items: core,
     },
   ];
 }
