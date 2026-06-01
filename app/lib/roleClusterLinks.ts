@@ -1,8 +1,3 @@
-import {
-  CHECK_RESUME_AGAINST_JD_PATH,
-  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
-  type InternalLink,
-} from "@/app/lib/internalLinks";
 import { DATA_ENGINEER_RESUME_GUIDE_PATH } from "@/app/lib/dataEngineerResumeGuide";
 import {
   isResumeExampleClusterSlug,
@@ -11,6 +6,13 @@ import {
 } from "@/app/lib/resumeExampleClusterPages";
 import { KEYWORD_PAGES, resumeExamplePublicPath, type RoleSlug } from "@/app/lib/seoPages";
 import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIntentSeo";
+
+/** Avoid importing `internalLinks` here — that module imports this file and causes a TDZ cycle at build. */
+export type RoleClusterLink = { path: string; label: string };
+
+export const CHECK_RESUME_AGAINST_JD_PATH = "/check-resume-against-job-description" as const;
+export const CHECK_RESUME_AGAINST_JD_PRIMARY_CTA =
+  "Check resume against job description (free tool)" as const;
 
 /** Roles with a three-page cluster (example + guide + keywords). */
 export type RoleClusterKey = RoleSlug | "data-engineer";
@@ -28,7 +30,7 @@ export type RoleClusterTriangle = {
 
 export const ATS_RESUME_CHECKER_PATH = "/ats-resume-checker" as const;
 
-export const MONEY_PAGE_LINKS: readonly InternalLink[] = [
+export const MONEY_PAGE_LINKS: readonly RoleClusterLink[] = [
   { path: CHECK_RESUME_AGAINST_JD_PATH, label: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA },
   { path: ATS_RESUME_CHECKER_PATH, label: "ATS resume checker" },
 ];
@@ -37,7 +39,7 @@ export const MONEY_PAGE_LINKS: readonly InternalLink[] = [
  * Controlled cross-links between keyword hubs (adjacent stacks only).
  * Do not add unrelated roles (e.g. data analyst → product manager).
  */
-export const ROLE_KEYWORD_ADJACENCY: Readonly<Record<string, readonly InternalLink[]>> = {
+export const ROLE_KEYWORD_ADJACENCY: Readonly<Record<string, readonly RoleClusterLink[]>> = {
   "/data-analyst-resume-keywords": [
     { path: "/power-bi-resume-keywords", label: "Power BI resume keywords" },
   ],
@@ -142,16 +144,16 @@ export function resolveRoleClusterKeyFromPath(path: string): RoleClusterKey | nu
 }
 
 /** Triangle + money pages + at most one adjacent keyword hub. Excludes current path. */
-export function getRoleClusterNavLinks(currentPath: string): InternalLink[] {
+export function getRoleClusterNavLinks(currentPath: string): RoleClusterLink[] {
   const key = resolveRoleClusterKeyFromPath(currentPath);
   if (!key) return [];
 
   const n = normalizeClusterPath(currentPath);
   const tri = getRoleClusterTriangle(key);
-  const out: InternalLink[] = [];
+  const out: RoleClusterLink[] = [];
   const seen = new Set<string>();
 
-  function add(link: InternalLink) {
+  function add(link: RoleClusterLink) {
     const p = normalizeClusterPath(link.path);
     if (p === n || seen.has(p)) return;
     seen.add(p);
@@ -178,8 +180,8 @@ export function getRoleClusterNavLinks(currentPath: string): InternalLink[] {
 }
 
 /** Register cluster example URLs for semantic link resolution. */
-export function roleClusterInternalLinks(): InternalLink[] {
-  const links: InternalLink[] = [];
+export function roleClusterInternalLinks(): RoleClusterLink[] {
+  const links: RoleClusterLink[] = [];
   for (const key of ALL_ROLE_CLUSTER_KEYS) {
     const tri = getRoleClusterTriangle(key);
     links.push({ path: tri.examplePath, label: tri.exampleLabel });
