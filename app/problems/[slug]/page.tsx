@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { ProblemConversionPage } from "@/app/components/ProblemConversionPage";
 import {
   PROBLEM_PAGES,
@@ -14,13 +14,6 @@ type PageParams = { slug: string };
 
 const DEDICATED_PAGE_SLUGS = new Set<ProblemSlug>(["resume-not-getting-interviews"]);
 const REDIRECT_SOURCE_SET = new Set<string>(PROBLEM_REDIRECT_SOURCE_SLUGS);
-const LEGACY_PROBLEM_REDIRECTS: Record<string, string> = {
-  "why-am-i-not-getting-interviews": "/problems/resume-not-getting-interviews",
-  "applied-to-200-jobs-no-response": "/problems/no-response-after-applying",
-  "resume-not-passing-ats": "/problems/ats-rejecting-my-resume",
-  "how-to-tailor-resume-to-job-description": "/problems/resume-vs-job-description",
-  "why-recruiters-ignore-resume": "/problems/resume-not-getting-interviews",
-};
 
 export function generateStaticParams(): { slug: ProblemSlug }[] {
   return PROBLEM_SLUGS.filter(
@@ -53,9 +46,8 @@ export function generateMetadata({
 }
 
 export default function ProblemPage({ params }: { params: PageParams }) {
-  const legacyTarget = LEGACY_PROBLEM_REDIRECTS[params.slug];
-  if (legacyTarget) {
-    permanentRedirect(legacyTarget);
+  if (REDIRECT_SOURCE_SET.has(params.slug)) {
+    notFound();
   }
 
   const config = PROBLEM_PAGES[params.slug as ProblemSlug];

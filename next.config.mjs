@@ -70,6 +70,15 @@ const nextConfig = {
         source: "/:roleSlug-resume-guide/",
         destination: "/:roleSlug/resume-example",
       },
+      // Keyword intent (`/{role}-resume-keywords`) internally serves `/{role}/keywords`.
+      {
+        source: "/:roleSlug-resume-keywords",
+        destination: "/:roleSlug/keywords",
+      },
+      {
+        source: "/:roleSlug-resume-keywords/",
+        destination: "/:roleSlug/keywords",
+      },
     ];
   },
   async redirects() {
@@ -192,16 +201,29 @@ const nextConfig = {
       ROLE_KEYWORD_INTENTS.flatMap((intent) => [
         {
           source: `/${role}/keywords/${intent}`,
-          destination: pillar(role),
+          destination: `/${role}-resume-keywords#${intent}`,
           permanent: true,
         },
         {
           source: `/${role}/keywords/${intent}/`,
-          destination: pillar(role),
+          destination: `/${role}-resume-keywords#${intent}`,
           permanent: true,
         },
       ]),
     );
+
+    const roleKeywordsHubRedirects = ROLE_SLUGS.flatMap((role) => [
+      {
+        source: `/${role}/keywords`,
+        destination: `/${role}-resume-keywords`,
+        permanent: true,
+      },
+      {
+        source: `/${role}/keywords/`,
+        destination: `/${role}-resume-keywords`,
+        permanent: true,
+      },
+    ]);
 
     const roleHubRedirects = ROLE_SLUGS.flatMap((role) => {
       return [
@@ -225,21 +247,18 @@ const nextConfig = {
           destination: `/${role}`,
           permanent: true,
         },
-        {
-          source: `/${role}/keywords`,
-          destination: pillar(role),
-          permanent: true,
-        },
-        {
-          source: `/${role}/keywords/`,
-          destination: pillar(role),
-          permanent: true,
-        },
       ];
     });
 
     const resumeGuideTopicRedirects = ROLE_SLUGS.flatMap((role) => {
-      const topics = ["bullet-points", "skills", "summary", "projects"];
+      const topics = [
+        "bullet-points",
+        "skills",
+        "summary",
+        "projects",
+        "responsibilities",
+        "experience-examples",
+      ];
       return topics.flatMap((topic) => [
         {
           source: `/${role}/resume/${topic}`,
@@ -281,7 +300,7 @@ const nextConfig = {
       },
     ]);
 
-    const legacyHyphenExampleAndKeywordRedirects = ROLE_SLUGS.flatMap((role) => [
+    const legacyHyphenExampleRedirects = ROLE_SLUGS.flatMap((role) => [
       {
         source: `/${role}-resume-example`,
         destination: pillar(role),
@@ -292,19 +311,9 @@ const nextConfig = {
         destination: pillar(role),
         permanent: true,
       },
-      {
-        source: `/${role}-resume-keywords`,
-        destination: pillar(role),
-        permanent: true,
-      },
-      {
-        source: `/${role}-resume-keywords/`,
-        destination: pillar(role),
-        permanent: true,
-      },
     ]);
 
-    const seoBulletRedirects = RESUME_BULLET_ROLES.flatMap((role) => [
+    const seoBulletRedirects = ROLE_SLUGS.flatMap((role) => [
       {
         source: `/seo/bullet-points-${role}-resume`,
         destination: pillar(role),
@@ -317,6 +326,39 @@ const nextConfig = {
       },
     ]);
 
+    const legacyThinPageRedirects = [
+      {
+        source: "/data-analyst-sql-resume-keywords",
+        destination: "/data-analyst-resume-keywords",
+        permanent: true,
+      },
+      {
+        source: "/data-analyst-sql-resume-keywords/",
+        destination: "/data-analyst-resume-keywords",
+        permanent: true,
+      },
+      {
+        source: "/tableau-data-analyst-resume-example",
+        destination: "/data-analyst-resume-guide",
+        permanent: true,
+      },
+      {
+        source: "/tableau-data-analyst-resume-example/",
+        destination: "/data-analyst-resume-guide",
+        permanent: true,
+      },
+      {
+        source: "/ats-resume-template-software-engineer",
+        destination: "/ats-resume-template",
+        permanent: true,
+      },
+      {
+        source: "/ats-resume-template-software-engineer/",
+        destination: "/ats-resume-template",
+        permanent: true,
+      },
+    ];
+
     return [
       ...pathnameBulletRedirects,
       ...hyphenBulletRedirects,
@@ -325,8 +367,10 @@ const nextConfig = {
       ...roleKeywordIntentRedirects,
       ...roleHubRedirects,
       ...standaloneRoleHubToPillarRedirects,
-      ...legacyHyphenExampleAndKeywordRedirects,
+      ...roleKeywordsHubRedirects,
+      ...legacyHyphenExampleRedirects,
       ...seoBulletRedirects,
+      ...legacyThinPageRedirects,
       ...resumeGuideTopicRedirects,
       {
         source: "/resume-vs-job-description-checker",
@@ -355,6 +399,66 @@ const nextConfig = {
       },
       {
         source: "/resume-keyword-scanner/",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/resume-keywords-scanner",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/resume-keywords-scanner/",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/keyword-scanner",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/keyword-scanner/",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/compare-resume-to-job-description",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/compare-resume-to-job-description/",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/tailor-resume-to-job-description",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/tailor-resume-to-job-description/",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/job-description-keyword-finder",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/job-description-keyword-finder/",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/resume-keyword-checker",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/resume-keyword-checker/",
         destination: "/check-resume-against-job-description",
         permanent: true,
       },
@@ -390,17 +494,22 @@ const nextConfig = {
       },
       {
         source: "/ats-keywords-data-scientist-resumes",
-        destination: "/data-scientist-resume-guide",
+        destination: "/data-scientist-resume-keywords",
         permanent: true,
       },
       {
         source: "/ats-keywords-data-scientist-resumes/",
-        destination: "/data-scientist-resume-guide",
+        destination: "/data-scientist-resume-keywords",
         permanent: true,
       },
       {
         source: "/ats-keywords/:role",
-        destination: "/:role-resume-guide",
+        destination: "/:role-resume-keywords",
+        permanent: true,
+      },
+      {
+        source: "/ats-keywords/:role/",
+        destination: "/:role-resume-keywords",
         permanent: true,
       },
       {
@@ -455,6 +564,46 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: "/resume-guides/ats-friendly-resume-example",
+        destination: "/ats-resume-template",
+        permanent: true,
+      },
+      {
+        source: "/resume-guides/ats-friendly-resume-example/",
+        destination: "/ats-resume-template",
+        permanent: true,
+      },
+      {
+        source: "/resume-guides/resume-format-guide",
+        destination: "/ats-resume-template",
+        permanent: true,
+      },
+      {
+        source: "/resume-guides/resume-format-guide/",
+        destination: "/ats-resume-template",
+        permanent: true,
+      },
+      {
+        source: "/resume-guides/resume-template-for-job-application",
+        destination: "/ats-resume-template",
+        permanent: true,
+      },
+      {
+        source: "/resume-guides/resume-template-for-job-application/",
+        destination: "/ats-resume-template",
+        permanent: true,
+      },
+      {
+        source: "/resume-guides/resume-projects-examples",
+        destination: "/resume-guides/resume-work-experience-examples",
+        permanent: true,
+      },
+      {
+        source: "/resume-guides/resume-projects-examples/",
+        destination: "/resume-guides/resume-work-experience-examples",
+        permanent: true,
+      },
+      {
         source: "/ats-resume-template-data-analyst",
         destination: "/data-analyst-resume-guide",
         permanent: true,
@@ -474,7 +623,37 @@ const nextConfig = {
         destination: "/product-manager-resume-guide",
         permanent: true,
       },
-      // Legacy /seo/* URLs handled by middleware.ts → /{role}-resume-guide#{topic}
+      // Legacy /seo/* and /{role}/keywords/* handled by middleware.ts
+      {
+        source: "/problems",
+        destination: "/problems/resume-not-getting-interviews",
+        permanent: true,
+      },
+      {
+        source: "/problems/",
+        destination: "/problems/resume-not-getting-interviews",
+        permanent: true,
+      },
+      {
+        source: "/problems/resume-vs-job-description",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/problems/resume-vs-job-description/",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/problems/missing-keywords-in-resume",
+        destination: "/problems/ats-rejecting-my-resume",
+        permanent: true,
+      },
+      {
+        source: "/problems/missing-keywords-in-resume/",
+        destination: "/problems/ats-rejecting-my-resume",
+        permanent: true,
+      },
       // Problems intent deduplication (keep only one pillar page per intent)
       {
         source: "/problems/why-am-i-not-getting-interviews",
@@ -508,12 +687,12 @@ const nextConfig = {
       },
       {
         source: "/problems/how-to-tailor-resume-to-job-description",
-        destination: "/problems/resume-vs-job-description",
+        destination: "/check-resume-against-job-description",
         permanent: true,
       },
       {
         source: "/problems/how-to-tailor-resume-to-job-description/",
-        destination: "/problems/resume-vs-job-description",
+        destination: "/check-resume-against-job-description",
         permanent: true,
       },
       {

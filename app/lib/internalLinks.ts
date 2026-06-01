@@ -1,5 +1,15 @@
+import {
+  ALT_ROLE_KEYWORD_PAGES,
+  ALT_ROLE_KEYWORD_SLUGS,
+  isAltRoleKeywordPath,
+} from "@/app/lib/altRoleKeywordPages";
+import {
+  PILOT_KEYWORD_PAGES,
+  PILOT_KEYWORD_SLUGS,
+  isPilotKeywordPath,
+} from "@/app/lib/pilotKeywordPages";
 import { KEYWORD_PAGES, RESUME_PAGES, type RoleSlug } from "@/app/lib/seoPages";
-import { roleResumePillarPath } from "@/app/lib/searchIntentSeo";
+import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIntentSeo";
 
 export type InternalLink = { path: string; label: string };
 
@@ -92,18 +102,39 @@ const ARTICLE_LINKS: InternalLink[] = [
     label: "Product manager resume bullet examples",
   },
   {
-    path: "/problems/resume-vs-job-description",
-    label: "Resume vs job description mismatch",
+    path: CHECK_RESUME_AGAINST_JD_PATH,
+    label: "Compare resume to job description",
   },
 ];
 
-/** One pillar URL per role (keywords + example + bullets consolidated). */
+/** One pillar URL per role (example + bullets; keyword lists live on *-resume-keywords). */
 const ROLE_PILLAR_LINKS: InternalLink[] = (Object.keys(KEYWORD_PAGES) as RoleSlug[]).map((role) => {
   const page = RESUME_PAGES[`${role}-resume-example` as keyof typeof RESUME_PAGES];
   return { path: roleResumePillarPath(role), label: page.h1 };
 });
 
-export const ALL_SEO_LINKS: InternalLink[] = [...ARTICLE_LINKS, ...ROLE_PILLAR_LINKS];
+const ROLE_KEYWORD_HUB_LINKS: InternalLink[] = (Object.keys(KEYWORD_PAGES) as RoleSlug[]).map((role) => ({
+  path: roleResumeKeywordsPath(role),
+  label: `${KEYWORD_PAGES[role].roleName} resume keywords`,
+}));
+
+const ALT_ROLE_KEYWORD_HUB_LINKS: InternalLink[] = ALT_ROLE_KEYWORD_SLUGS.map((slug) => {
+  const page = ALT_ROLE_KEYWORD_PAGES[slug];
+  return { path: page.path, label: `${page.roleName} resume keywords` };
+});
+
+const PILOT_KEYWORD_HUB_LINKS: InternalLink[] = PILOT_KEYWORD_SLUGS.map((slug) => {
+  const page = PILOT_KEYWORD_PAGES[slug];
+  return { path: page.path, label: `${page.roleName} resume keywords` };
+});
+
+export const ALL_SEO_LINKS: InternalLink[] = [
+  ...ARTICLE_LINKS,
+  ...ROLE_KEYWORD_HUB_LINKS,
+  ...ALT_ROLE_KEYWORD_HUB_LINKS,
+  ...PILOT_KEYWORD_HUB_LINKS,
+  ...ROLE_PILLAR_LINKS,
+];
 
 // Paths that are already heavily linked in "Popular Resume Examples" (first 6) and "ATS Keyword Guides" (first 6).
 const POPULAR_PILLAR_PATHS = new Set(ROLE_PILLAR_LINKS.slice(0, 6).map((l) => l.path));
@@ -121,7 +152,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     RESUME_WORK_EXPERIENCE_GUIDE_PATH,
     RESUME_SKILLS_GUIDE_PATH,
-    "/problems/resume-vs-job-description",
+    "/problems/ats-rejecting-my-resume",
     roleResumePillarPath("software-engineer"),
     roleResumePillarPath("data-scientist"),
     roleResumePillarPath("product-manager"),
@@ -154,8 +185,68 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     roleResumePillarPath("software-engineer"),
     roleResumePillarPath("data-scientist"),
   ],
+  "/data-analyst-resume-keywords": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/power-bi-resume-keywords",
+    "/sql-developer-resume-keywords",
+    "/data-engineer-resume-keywords",
+    "/business-intelligence-resume-keywords",
+    "/business-systems-analyst-resume-keywords",
+    roleResumePillarPath("data-analyst"),
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    "/resume-examples",
+  ],
+  "/data-engineer-resume-keywords": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/sql-developer-resume-keywords",
+    "/data-analyst-resume-keywords",
+    "/data-scientist-resume-keywords",
+    roleResumeKeywordsPath("devops-engineer"),
+    roleResumePillarPath("data-scientist"),
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    "/ats-resume-checker",
+    "/resume-examples",
+  ],
+  "/sql-developer-resume-keywords": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/data-analyst-resume-keywords",
+    "/data-engineer-resume-keywords",
+    roleResumePillarPath("data-analyst"),
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    "/ats-resume-checker",
+    "/resume-examples",
+    "/business-intelligence-resume-keywords",
+  ],
+  "/power-bi-resume-keywords": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/business-intelligence-resume-keywords",
+    "/data-analyst-resume-keywords",
+    "/sql-developer-resume-keywords",
+    roleResumePillarPath("data-analyst"),
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    "/ats-resume-checker",
+    "/resume-examples",
+  ],
+  "/data-scientist-resume-keywords": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/data-engineer-resume-keywords",
+    "/sql-developer-resume-keywords",
+    roleResumePillarPath("data-scientist"),
+    roleResumeKeywordsPath("machine-learning-engineer"),
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    "/resume-examples",
+  ],
+  "/business-analyst-resume-keywords": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/business-systems-analyst-resume-keywords",
+    "/systems-analyst-resume-keywords",
+    roleResumePillarPath("business-analyst"),
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    "/resume-examples",
+  ],
   "/data-scientist-resume-guide": [
     CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumeKeywordsPath("data-scientist"),
     roleResumePillarPath("machine-learning-engineer"),
     "/customize-resume-without-lying",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
@@ -179,18 +270,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     RESUME_WORK_EXPERIENCE_GUIDE_PATH,
     RESUME_SKILLS_GUIDE_PATH,
-    "/problems/resume-vs-job-description",
-    roleResumePillarPath("software-engineer"),
-    roleResumePillarPath("product-manager"),
-    roleResumePillarPath("data-scientist"),
-    roleResumePillarPath("business-analyst"),
-  ],
-  "/problems/resume-vs-job-description": [
     CHECK_RESUME_AGAINST_JD_PATH,
-    "/check-resume-against-job-description",
-    "/ats-resume-checker",
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
-    RESUME_SKILLS_GUIDE_PATH,
     roleResumePillarPath("software-engineer"),
     roleResumePillarPath("product-manager"),
     roleResumePillarPath("data-scientist"),
@@ -227,11 +307,54 @@ function getSemanticPathsFor(currentPath: string): string[] {
     const role = pillarMatch[1] as RoleSlug;
     return [
       CHECK_RESUME_AGAINST_JD_PATH,
+      roleResumeKeywordsPath(role),
       roleResumePillarPath(role),
       "/customize-resume-without-lying",
       ATS_RESUME_TEMPLATE_GUIDE_PATH,
       "/resume-examples",
       "/check-resume-against-job-description",
+    ].filter((p) => PATH_BY_PATH[p] != null);
+  }
+
+  const altSlug = isAltRoleKeywordPath(normalized);
+  if (altSlug) {
+    const page = ALT_ROLE_KEYWORD_PAGES[altSlug];
+    return [
+      CHECK_RESUME_AGAINST_JD_PATH,
+      ...page.relatedKeywordPages.map((l) => l.path),
+      ...page.relatedGuidePages.map((l) => l.path),
+      "/ats-resume-checker",
+      ATS_RESUME_TEMPLATE_GUIDE_PATH,
+      "/resume-examples",
+      "/customize-resume-without-lying",
+    ].filter((p) => PATH_BY_PATH[p] != null);
+  }
+
+  const pilotSlug = isPilotKeywordPath(normalized);
+  if (pilotSlug) {
+    const page = PILOT_KEYWORD_PAGES[pilotSlug];
+    return [
+      CHECK_RESUME_AGAINST_JD_PATH,
+      ...page.relatedKeywordPages.map((l) => l.path),
+      ...page.relatedGuidePages.map((l) => l.path),
+      "/ats-resume-checker",
+      ATS_RESUME_TEMPLATE_GUIDE_PATH,
+      "/resume-examples",
+      "/customize-resume-without-lying",
+    ].filter((p) => PATH_BY_PATH[p] != null);
+  }
+
+  const keywordHubMatch = normalized.match(/^\/([a-z0-9-]+)-resume-keywords$/);
+  if (keywordHubMatch && KEYWORD_PAGES[keywordHubMatch[1] as RoleSlug]) {
+    const role = keywordHubMatch[1] as RoleSlug;
+    return [
+      CHECK_RESUME_AGAINST_JD_PATH,
+      roleResumeKeywordsPath(role),
+      roleResumePillarPath(role),
+      "/ats-resume-checker",
+      ATS_RESUME_TEMPLATE_GUIDE_PATH,
+      "/resume-examples",
+      "/customize-resume-without-lying",
     ].filter((p) => PATH_BY_PATH[p] != null);
   }
 

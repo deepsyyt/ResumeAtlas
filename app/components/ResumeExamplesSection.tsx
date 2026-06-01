@@ -15,7 +15,7 @@ export function ResumeExamplesSection() {
       label: "Data Scientist resume bullet points",
     },
     {
-      href: "/software-engineer-resume-guide#skills",
+      href: "/software-engineer-resume-keywords",
       label: "Software Engineer resume skills",
     },
   ];

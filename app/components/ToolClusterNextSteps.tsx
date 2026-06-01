@@ -1,10 +1,26 @@
 import Link from "next/link";
 
-const ROLE_PILLARS: { pillar: string; label: string }[] = [
-  { pillar: "/data-scientist-resume-guide", label: "Data Scientist" },
-  { pillar: "/software-engineer-resume-guide", label: "Software Engineer" },
-  { pillar: "/product-manager-resume-guide", label: "Product Manager" },
-  { pillar: "/data-analyst-resume-guide", label: "Data Analyst" },
+const ROLE_PILLARS: { pillar: string; keywords: string; label: string }[] = [
+  {
+    pillar: "/data-scientist-resume-guide",
+    keywords: "/data-scientist-resume-keywords",
+    label: "Data Scientist",
+  },
+  {
+    pillar: "/software-engineer-resume-guide",
+    keywords: "/software-engineer-resume-keywords",
+    label: "Software Engineer",
+  },
+  {
+    pillar: "/product-manager-resume-guide",
+    keywords: "/product-manager-resume-keywords",
+    label: "Product Manager",
+  },
+  {
+    pillar: "/data-analyst-resume-guide",
+    keywords: "/data-analyst-resume-keywords",
+    label: "Data Analyst",
+  },
 ];
 
 /**
@@ -24,7 +40,7 @@ export function ToolClusterNextSteps() {
       </h2>
       <p className="mt-2 text-sm text-emerald-900/90 leading-relaxed">
         Improve your score with one authoritative page per role (examples + structure), jump to the skills
-        section for ATS keyword coverage, then rerun the check on your updated resume.
+        keyword hub for ATS coverage, then rerun the check on your updated resume.
       </p>
       <div className="mt-4">
         <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800/80">
@@ -41,10 +57,10 @@ export function ToolClusterNextSteps() {
               </Link>
               <span className="text-emerald-800/70"> · </span>
               <Link
-                href={`${item.pillar}#skills`}
+                href={item.keywords}
                 className="underline underline-offset-2 hover:text-emerald-950"
               >
-                ATS keywords section
+                ATS keyword list
               </Link>
             </li>
           ))}

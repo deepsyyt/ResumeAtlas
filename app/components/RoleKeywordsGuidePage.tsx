@@ -1,18 +1,24 @@
 import Link from "next/link";
+import { LastUpdated } from "@/app/components/LastUpdated";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
 import { KeywordApplicationModule } from "@/app/components/seo/KeywordApplicationModule";
+import { RoleKeywordClustersSection } from "@/app/components/seo/RoleKeywordClustersSection";
+import { RoleKeywordIntentHubBlock } from "@/app/components/seo/RoleKeywordIntentHubBlock";
 import {
   KEYWORD_PAGES,
   type RoleSlug,
   roleResumeSamplePath,
 } from "@/app/lib/seoPages";
 import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
-import { INTENT_HUB_BLURBS } from "@/app/lib/keywordIntentHubBlurbs";
+import { CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
 import {
-  ROLE_KEYWORD_INTENTS,
-  keywordIntentLabel,
-  type RoleKeywordIntent,
-} from "@/app/lib/roleSeo";
+  ROLE_KEYWORDS_FAQ,
+  ROLE_KEYWORDS_SCOPE_NOTE,
+  ROLE_KEYWORDS_SECONDARY_H2,
+  ROLE_KEYWORDS_SENIORITY,
+  roleKeywordsFaqSchema,
+} from "@/app/lib/roleKeywordsPageConfig";
+import { ROLE_KEYWORD_INTENTS, type RoleKeywordIntent } from "@/app/lib/roleSeo";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
@@ -20,10 +26,9 @@ import {
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 import {
-  roleResumeKeywordsHubMeta,
+  roleResumeKeywordsH1,
   roleResumePillarPath,
   roleResumeKeywordsPath,
-  stripResumeAtlasTitleSuffix,
 } from "@/app/lib/searchIntentSeo";
 
 type PageParams = { role: RoleSlug };
@@ -36,11 +41,22 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
   const resumeSamplePath = roleResumeSamplePath(roleSlug);
   const mergedGuidePath = roleResumePillarPath(roleSlug);
   const canonicalBase = getSiteUrl().replace(/\/$/, "");
-  const keywordHubTitle = stripResumeAtlasTitleSuffix(roleResumeKeywordsHubMeta(roleSlug).title);
-  const isDevOpsKeywordsPage = roleSlug === "devops-engineer";
-  const isSoftwareKeywordsPage = roleSlug === "software-engineer";
-  const isBackendKeywordsPage = roleSlug === "backend-developer";
+  const keywordHubTitle = roleResumeKeywordsH1(roleSlug);
+  const keywordsPublicPath = roleResumeKeywordsPath(roleSlug);
   const isDataAnalystKeywordsPage = roleSlug === "data-analyst";
+  const isMachineLearningEngineerPage = roleSlug === "machine-learning-engineer";
+  const scopeNote = ROLE_KEYWORDS_SCOPE_NOTE[roleSlug];
+  const secondaryH2 = ROLE_KEYWORDS_SECONDARY_H2[roleSlug];
+  const clusterSectionTitle =
+    roleSlug === "software-engineer"
+      ? "Software engineer keyword clusters"
+      : roleSlug === "devops-engineer"
+        ? "DevOps tools vs concepts"
+        : roleSlug === "backend-developer"
+          ? "Backend developer keyword clusters"
+          : roleSlug === "data-scientist"
+            ? "Data scientist keyword clusters"
+            : `${config.roleName} resume keyword clusters`;
   const topKeywords = (roleContent.topKeywords ?? roleContent.tools).slice(0, 20);
   const exampleBullets = roleContent.exampleBullets ?? roleContent.examplePhrases;
   const toolSet = new Set(roleContent.tools.map((t) => t.toLowerCase()));
@@ -50,63 +66,17 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
     .slice(0, 8);
   const topKeywordCopyBlock = topKeywords.slice(0, 10).join(", ");
   const topMissingKeywordList = roleContent.tools.slice(0, 4);
-  const checklistKeywords = topKeywords.slice(0, 12);
+  const checklistKeywords = topKeywords.slice(0, 20);
+  const seniorityBlock = ROLE_KEYWORDS_SENIORITY[roleSlug];
   const introFreshnessEcho =
     roleSlug === "devops-engineer"
       ? "These DevOps resume keywords reflect what hiring teams and ATS systems prioritize in 2026, including tools, cloud platforms, and measurable impact language. "
       : "";
-  const exactQueryMatchLine =
-    isSoftwareKeywordsPage || isBackendKeywordsPage
-      ? `${config.roleName} resume keywords and technical skills include tools like ${roleContent.tools
-          .slice(0, 3)
-          .join(", ")}, plus delivery terms ATS and recruiters prioritize for this role.`
-      : `${config.roleName} resume keywords include tools like ${roleContent.tools
-          .slice(0, 3)
-          .join(", ")}, along with concepts recruiters and ATS systems prioritize for this role.`;
+  const exactQueryMatchLine = `${config.roleName} resume keywords include tools like ${roleContent.tools
+    .slice(0, 3)
+    .join(", ")}, plus terms ATS and recruiters prioritize for this role.`;
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    dateModified: "2026-03-17",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: `What keywords do ATS look for in ${config.roleName.toLowerCase()} resumes?`,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "ATS compare your resume to the job description and look for overlapping skills, tools, and concepts. Include the core technologies, domain terms, and responsibilities listed in the posting where they genuinely match your experience.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: `How many keywords should my ${config.roleName.toLowerCase()} resume include?`,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "Focus on coverage, not a specific number. Make sure each critical requirement from the job description appears in your summary, skills, and experience bullets where it is genuinely part of your background.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Is keyword stuffing a good idea for ATS?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "No. Repeating keywords unnaturally can look spammy to recruiters and does not guarantee a higher score. Use keywords in context inside clear, outcome‑driven bullets that describe real work you have done.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Do ATS systems check keywords in resumes?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "Yes. ATS systems compare keywords in your resume against the job description, but context matters. Keywords inside clear, evidence-based bullets usually perform better than long keyword-only lists.",
-        },
-      },
-    ],
-  };
+  const faqSchema = roleKeywordsFaqSchema(roleSlug);
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -121,7 +91,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
       {
         "@type": "ListItem",
         position: 2,
-        name: `${config.roleName} resume guide & keywords`,
+        name: `${config.roleName} resume keywords`,
         item: `${canonicalBase}${roleResumeKeywordsPath(roleSlug)}`,
       },
     ],
@@ -131,7 +101,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: `${config.roleName} top resume keywords`,
-    itemListElement: topKeywords.slice(0, 10).map((keyword, index) => ({
+    itemListElement: topKeywords.slice(0, 20).map((keyword, index) => ({
       "@type": "ListItem",
       position: index + 1,
       name: keyword,
@@ -143,60 +113,42 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
       <section className="border-b border-slate-200 bg-slate-50/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-10 sm:pb-12">
           <nav className="mb-3 text-[11px] sm:text-xs text-slate-500 text-left">
-            <Link
-              href={mergedGuidePath}
-              className="text-sky-700 hover:text-sky-900 underline underline-offset-2"
-            >
-              {config.roleName} resume example
+            <Link href="/" className="text-sky-700 hover:text-sky-900 underline underline-offset-2">
+              Home
             </Link>
             <span className="mx-1.5 text-slate-400">/</span>
-            <span>Keywords (complete guide)</span>
+            <span>{config.roleName} resume keywords</span>
           </nav>
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
               {keywordHubTitle}
             </h1>
+            <LastUpdated
+              className="mt-3 text-xs text-slate-500"
+              label={CONTENT_LAST_UPDATED_LABEL}
+            />
             <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
               {introFreshnessEcho}
-              This hub maps high-intent {config.roleName.toLowerCase()} resume keywords for ATS and recruiters:
-              core terms, technical skills, tools, action verbs, projects, and summary patterns. Pick a
-              category below, then mirror the job description where it matches your real experience, before
-              you run a resume keyword scan or compare your resume to that posting.
+              Copy-ready {config.roleName.toLowerCase()} resume keywords recruiters and ATS look for—grouped by
+              tools, skills, and verbs. Mirror terms from the job description where they match your real work,
+              then scan for gaps against that posting.
             </p>
+            {scopeNote ? (
+              <p className="mt-3 text-sm text-amber-900/90 max-w-2xl mx-auto rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2">
+                {scopeNote}
+              </p>
+            ) : null}
             <p className="mt-3 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto">{exactQueryMatchLine}</p>
-            {isSoftwareKeywordsPage ? (
-              <p className="mt-3 text-sm text-slate-700 max-w-2xl mx-auto">
-                This page is the ATS keyword/technical-skills owner for software engineer queries. For full
-                resume example, sample, and template intent, use{" "}
-                <Link
-                  href="/software-engineer-resume-guide"
-                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  software engineer resume guide
-                </Link>
-                . For copy-ready line banks, use{" "}
-                <Link
-                  href="/software-engineer-resume-guide#bullet-points"
-                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  the bullet section
-                </Link>
-                .
-              </p>
-            ) : null}
-            {isBackendKeywordsPage ? (
-              <p className="mt-3 text-sm text-slate-700 max-w-2xl mx-auto">
-                This page is the ATS keyword/technical-skills owner for backend developer queries. For
-                full resume example, sample, and template intent, use{" "}
-                <Link
-                  href="/backend-developer-resume-guide"
-                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  backend developer resume guide
-                </Link>
-                .
-              </p>
-            ) : null}
+            <p className="mt-3 text-sm text-slate-700 max-w-2xl mx-auto">
+              For resume examples, templates, and bullet banks, use the{" "}
+              <Link
+                href={mergedGuidePath}
+                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+              >
+                {config.roleName.toLowerCase()} resume example guide
+              </Link>
+              . This URL is for keyword lists and job-description matching only.
+            </p>
             <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm">
               <a href="#top-keywords" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
                 Top keywords
@@ -249,9 +201,19 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
       </section>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
+        {secondaryH2 ? (
+          <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">{secondaryH2}</h2>
+            <p className="mt-2 text-sm text-slate-700">
+              Use this section when your search or job posting uses alternate wording. The full categorized
+              lists below include tools, technical skills, and action verbs.
+            </p>
+          </section>
+        ) : null}
+
         <section id="top-keywords" className="rounded-2xl border border-sky-200 bg-sky-50/50 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Top {config.roleName} Resume Keywords (2026)
+            Quick copy: top {config.roleName.toLowerCase()} ATS keywords
           </h2>
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="rounded-xl border border-slate-200 bg-white p-4">
@@ -289,8 +251,15 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
 
         <section id="example-bullets" className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Example Resume Bullets Using These Keywords
+            How to use these keywords in resume bullets
           </h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Short patterns below—see{" "}
+            <Link href={`${mergedGuidePath}#bullet-points`} className="font-medium text-sky-800 underline">
+              full {config.roleName.toLowerCase()} bullet examples
+            </Link>{" "}
+            for a complete sample resume.
+          </p>
           <ul className="mt-4 list-disc space-y-2 pl-5 text-sm sm:text-base text-slate-700">
             {exampleBullets.map((line) => (
               <li key={line}>{line}</li>
@@ -333,97 +302,46 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               </div>
             </div>
           </section>
-        ) : null}
-
-        {isSoftwareKeywordsPage && roleContent.keywordClusters ? (
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+        ) : seniorityBlock ? (
+          <section className="rounded-2xl border border-violet-200 bg-violet-50/40 p-6 sm:p-8">
             <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-              Software engineer keyword clusters
+              {seniorityBlock.title}
             </h2>
             <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">
-                  Backend keywords
-                </h3>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
-                  {(roleContent.keywordClusters.backend ?? []).map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">
-                  Frontend keywords
-                </h3>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
-                  {(roleContent.keywordClusters.frontend ?? []).map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">
-                  DevOps / Platform keywords
-                </h3>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
-                  {(roleContent.keywordClusters.devops ?? []).map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
+              {seniorityBlock.tiers.map((tier) => (
+                <div key={tier.label} className="rounded-xl border border-slate-200 bg-white p-4">
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">{tier.label}</h3>
+                  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+                    {tier.keywords.map((keyword) => (
+                      <li key={keyword}>{keyword}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </section>
         ) : null}
 
-        {isDevOpsKeywordsPage && roleContent.keywordClusters ? (
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
-            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-              DevOps Tools vs Concepts
-            </h2>
-            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">Tools</h3>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
-                  {(roleContent.keywordClusters.tools ?? []).map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">Concepts</h3>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
-                  {(roleContent.keywordClusters.concepts ?? []).map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </section>
-        ) : null}
+        <RoleKeywordClustersSection
+          roleName={config.roleName}
+          title={clusterSectionTitle}
+          roleContent={roleContent}
+        />
 
         <section aria-labelledby="kw-categories-heading">
           <h2
             id="kw-categories-heading"
             className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900"
           >
-            Keyword categories
+            {config.roleName} resume keywords by category (ATS checklist)
           </h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-700">
+            Expand each category for a full keyword list and phrasing patterns. These sections replace thin
+            one-line summaries—use them as your master checklist before tailoring to a job description.
+          </p>
           <ul className="mt-6 space-y-8 list-none p-0 m-0">
             {ROLE_KEYWORD_INTENTS.map((intent: RoleKeywordIntent) => (
-              <li
-                key={intent}
-                className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 sm:p-6"
-              >
-                <Link
-                  href={`/${roleSlug}/keywords/${intent}`}
-                  className="text-lg font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
-                >
-                  {keywordIntentLabel(intent)} →
-                </Link>
-                <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
-                  {INTENT_HUB_BLURBS[intent]}
-                </p>
-              </li>
+              <RoleKeywordIntentHubBlock key={intent} role={roleSlug} intent={intent} />
             ))}
           </ul>
         </section>
@@ -484,6 +402,32 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           </section>
         ) : null}
 
+        {isMachineLearningEngineerPage ? (
+          <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-6 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+              Machine learning resume keywords that need production proof
+            </h2>
+            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm sm:text-base text-slate-700">
+              <li>
+                <strong className="text-slate-900">"deep learning"</strong> without model type, metric, or
+                deployment context.
+              </li>
+              <li>
+                <strong className="text-slate-900">"built models"</strong> without data volume, retraining, or
+                monitoring story.
+              </li>
+              <li>
+                <strong className="text-slate-900">"TensorFlow / PyTorch"</strong> listed only in skills with no
+                serving or pipeline bullets.
+              </li>
+              <li>
+                <strong className="text-slate-900">"MLOps"</strong> without CI/CD, registry, or incident language
+                when the JD owns reliability.
+              </li>
+            </ul>
+          </section>
+        ) : null}
+
         <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900">
             Related resume guides
@@ -510,10 +454,10 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             </li>
             <li>
               <Link
-                href={`${mergedGuidePath}#skills`}
+                href={`${keywordsPublicPath}#top-keywords`}
                 className="text-sky-700 font-medium underline underline-offset-2 hover:text-sky-900"
               >
-                {config.roleName} resume skills examples →
+                {config.roleName} ATS keyword checklist →
               </Link>
             </li>
           </ul>
@@ -529,7 +473,16 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           </p>
           <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Copy checklist</p>
-            <p className="mt-2 text-sm text-slate-700">{checklistKeywords.join(" | ")}</p>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {checklistKeywords.map((keyword) => (
+                <li
+                  key={keyword}
+                  className="list-none rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-800"
+                >
+                  {keyword}
+                </li>
+              ))}
+            </ul>
           </div>
           {isDataAnalystKeywordsPage ? (
             <div className="mt-5 text-sm text-slate-700">
@@ -637,21 +590,19 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             {config.roleName} Resume Keywords - FAQs
           </h2>
           <div className="mt-6 space-y-4">
-            {(faqSchema.mainEntity as { name: string; acceptedAnswer: { text: string } }[]).map(
-              (q) => (
-                <details
-                  key={q.name}
-                  className="group rounded-xl border border-slate-200 bg-white px-4 py-3"
-                >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
-                    <h3 className="text-sm font-semibold text-slate-900">{q.name}</h3>
-                    <span className="text-slate-400 text-xs group-open:hidden">+</span>
-                    <span className="text-slate-400 text-xs hidden group-open:inline">−</span>
-                  </summary>
-                  <p className="mt-2 text-sm text-slate-600">{q.acceptedAnswer.text}</p>
-                </details>
-              )
-            )}
+            {ROLE_KEYWORDS_FAQ[roleSlug].map((item) => (
+              <details
+                key={item.question}
+                className="group rounded-xl border border-slate-200 bg-white px-4 py-3"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+                  <h3 className="text-sm font-semibold text-slate-900">{item.question}</h3>
+                  <span className="text-slate-400 text-xs group-open:hidden">+</span>
+                  <span className="text-slate-400 text-xs hidden group-open:inline">−</span>
+                </summary>
+                <p className="mt-2 text-sm text-slate-600">{item.answer}</p>
+              </details>
+            ))}
           </div>
         </section>
       </div>

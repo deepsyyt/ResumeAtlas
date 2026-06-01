@@ -38,19 +38,17 @@ export function resolveProblemInterviewCallout(
   if (p === "/problems/resume-not-getting-interviews") {
     return null;
   }
-  if (p === "/problems/missing-keywords-in-resume" || p === "/problems/resume-vs-job-description") {
-    return null;
-  }
   if (p === "/problems/ats-rejecting-my-resume") {
     return null;
   }
 
-  const isRoleResumeTopicPath = /^\/[^/]+\/resume\/[^/]+$/.test(p);
   const isRoleKeywordsPath =
-    /^\/[^/]+\/keywords(\/[^/]+)?$/.test(p) ||
     /^\/[^/]+-resume-keywords$/.test(p) ||
-    /^\/[^/]+-resume-guide$/.test(p);
-  if (p === "/ats-keywords" || p.startsWith("/ats-keywords/") || isRoleResumeTopicPath || isRoleKeywordsPath) {
+    /^\/[^/]+-resume-guide$/.test(p) ||
+    /^\/(business-systems-analyst|systems-analyst|business-intelligence|data-engineer|sql-developer|power-bi)-resume-keywords$/.test(
+      p
+    );
+  if (p === "/ats-keywords" || isRoleKeywordsPath) {
     return {
       prefix: "Worried about keyword gaps on your resume? ",
       linkText: "Scan your resume against a job posting",

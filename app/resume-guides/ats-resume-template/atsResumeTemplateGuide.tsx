@@ -294,7 +294,7 @@ export function AtsResumeTemplateGuide() {
             </li>
             <li>
               <Link
-                href="/ats-resume-template-software-engineer"
+                href="/software-engineer-resume-keywords"
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 ATS resume template  -  software engineer (keyword strip + starter text)
@@ -536,15 +536,15 @@ export function AtsResumeTemplateGuide() {
           </p>
           <p className="mt-4 text-sm text-slate-600 sm:text-base">
             Go deeper by role:{" "}
-            <Link href="/data-analyst-resume-guide#skills" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
+            <Link href="/data-analyst-resume-keywords" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
               data analyst keywords
             </Link>
             ,{" "}
-            <Link href="/product-manager-resume-guide#skills" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
+            <Link href="/product-manager-resume-keywords" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
               product manager keywords
             </Link>
             ,{" "}
-            <Link href="/software-engineer-resume-guide#skills" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
+            <Link href="/software-engineer-resume-keywords" className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
               software engineer keywords
             </Link>
             .

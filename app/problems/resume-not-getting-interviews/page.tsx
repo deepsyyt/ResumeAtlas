@@ -178,11 +178,11 @@ export default function ResumeNotGettingInterviewsLandingPage() {
             <li>
               <strong>Software Engineer:</strong> weak delivery proof (latency, uptime, CI/CD) often
               blocks interviews.{" "}
-              <Link href="/software-engineer-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/software-engineer-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 See role fix
               </Link>
               {" · "}
-              <Link href="/software-engineer/keywords/technical-skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/software-engineer-resume-keywords#technical-skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 keywords
               </Link>
             </li>
@@ -192,7 +192,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
                 See role fix
               </Link>
               {" · "}
-              <Link href="/data-scientist/keywords/core-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/data-scientist-resume-keywords#core-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 keywords
               </Link>
             </li>
@@ -203,7 +203,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
                 See role fix
               </Link>
               {" · "}
-              <Link href="/product-manager/keywords/projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              <Link href="/product-manager-resume-keywords#projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                 keywords
               </Link>
             </li>
@@ -537,8 +537,11 @@ export default function ResumeNotGettingInterviewsLandingPage() {
                 </Link>
               </li>
               <li>
-                <Link href="/problems" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
-                  All problem pages
+                <Link
+                  href="/problems/no-response-after-applying"
+                  className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  No response after applying
                 </Link>
               </li>
             </ul>

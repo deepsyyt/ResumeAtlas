@@ -72,7 +72,7 @@ export default function HowItWorksPage() {
               </a>{" "}
               or{" "}
               <a
-                href="/software-engineer-resume-guide#skills"
+                href="/software-engineer-resume-keywords"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 Software Engineer resume skills

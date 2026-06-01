@@ -154,13 +154,12 @@ export function toolClusterBreadcrumbSchema(config: ToolClusterPageConfig) {
 
 export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   path: CHECK_RESUME_AGAINST_JD_PATH,
-  breadcrumbName: "Posting fit diagnosis",
+  breadcrumbName: "Resume keyword scanner",
   clusterLinkAnchor: RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
   ...CLUSTER_JD_MATCH_TOOL_COPY,
-  titleAbsolute:
-    "Posting Fit Diagnosis - Match Resume to Job Description (Free) | ResumeAtlas",
-  ogTitle: "Posting fit diagnosis - resume vs job description (free)",
-  twitterTitle: "Posting fit diagnosis - resume vs job description",
+  titleAbsolute: CLUSTER_JD_MATCH_TOOL_COPY.titleAbsolute,
+  ogTitle: CLUSTER_JD_MATCH_TOOL_COPY.ogTitle,
+  twitterTitle: CLUSTER_JD_MATCH_TOOL_COPY.twitterTitle,
   ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   exampleJobRequires: "Python, SQL, stakeholder communication, and experimentation.",
   exampleResumeContains: "Python, dashboards, and ad-hoc analysis.",
@@ -169,14 +168,22 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   exampleFixLine:
     "Fix first: add one SQL project bullet and one experiment-impact bullet where truthful.",
   keywords: [
+    "resume keyword scanner",
+    "keyword scanner",
+    "resume keywords scanner",
+    "resume keyword checker",
+    "job description keyword finder",
+    "cv keyword scanner",
     "match resume to job description",
+    "compare resume to job description",
+    "tailor resume to job description",
     "resume vs job description checker",
     "compare resume to job posting",
-    "tailor resume to job description",
     "resume job description match",
     "resume matching tool",
     "optimize resume for job description",
-    "job description and resume match",
+    "scan resume for keywords",
+    "discover the keywords you're missing",
   ],
   faq: [
     {

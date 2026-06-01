@@ -18,7 +18,7 @@ export function postingFitWorkbenchBreadcrumbJsonLd() {
       {
         "@type": LIST_ITEM,
         position: 2,
-        name: "Posting fit diagnosis",
+        name: "Resume keyword scanner",
         item: base,
       },
     ],
@@ -34,7 +34,7 @@ export function postingFitWebApplicationJsonLd(config: ToolClusterPageConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "ResumeAtlas posting fit diagnosis",
+    name: "ResumeAtlas resume keyword scanner",
     url: toolClusterAbsoluteUrl(config.path),
     applicationCategory: "BusinessApplication",
     operatingSystem: "All",

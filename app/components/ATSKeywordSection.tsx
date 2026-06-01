@@ -28,7 +28,7 @@ export function ATSKeywordSection() {
         {items.map(([role, page]) => (
           <li key={role}>
             <Link
-              href={`/${role}-resume-guide#skills`}
+              href={`/${role}-resume-keywords`}
               className="text-sky-700 hover:underline text-xs sm:text-sm"
             >
               {page.h1}

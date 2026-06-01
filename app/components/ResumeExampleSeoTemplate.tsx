@@ -4,6 +4,7 @@ import {
   resumeExamplePublicPath,
   type RoleSlug,
 } from "@/app/lib/seoPages";
+import { roleResumeKeywordsPath } from "@/app/lib/searchIntentSeo";
 import type { StandaloneResumeExampleRole } from "@/app/lib/resumeExampleSeoTemplate";
 
 type FooterRole = StandaloneResumeExampleRole | "data-scientist";
@@ -26,11 +27,14 @@ export function ResumeExampleSeoIntro({ role }: { role: string }) {
 
 export function ResumeExampleTopAtsKeywordsSection({
   role,
+  roleSlug,
   keywords,
 }: {
   role: string;
+  roleSlug?: RoleSlug;
   keywords: string[];
 }) {
+  const keywordsHref = roleSlug ? roleResumeKeywordsPath(roleSlug) : undefined;
   return (
     <section aria-labelledby="resume-example-ats-keywords">
       <h2 id="resume-example-ats-keywords" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
@@ -41,6 +45,14 @@ export function ResumeExampleTopAtsKeywordsSection({
           <li key={k}>{k}</li>
         ))}
       </ul>
+      {keywordsHref ? (
+        <p className="mt-3 text-sm text-slate-600">
+          Full checklist and JD gap scan →{" "}
+          <Link href={keywordsHref} className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
+            {role.toLowerCase()} resume keywords
+          </Link>
+        </p>
+      ) : null}
     </section>
   );
 }

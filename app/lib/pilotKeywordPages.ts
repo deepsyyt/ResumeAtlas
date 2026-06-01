@@ -1,0 +1,1203 @@
+import { CONTENT_FRESHNESS_YEAR } from "@/app/lib/contentFreshness";
+import { RESUME_ATLAS_TITLE_SUFFIX } from "@/app/lib/searchIntentSeo";
+
+export type PilotKeywordSlug = "data-engineer" | "sql-developer" | "power-bi";
+
+export type KeywordCategoryBlock = {
+  heading: string;
+  terms: string[];
+};
+
+export type PilotKeywordSeniorityTier = {
+  label: string;
+  keywords: string[];
+};
+
+export type PilotKeywordPageConfig = {
+  slug: PilotKeywordSlug;
+  path: string;
+  roleName: string;
+  h1: string;
+  title: string;
+  description: string;
+  intro: string;
+  roleOverview: string;
+  scopeNote: string;
+  keywordCategories: KeywordCategoryBlock[];
+  seniority: { title: string; tiers: PilotKeywordSeniorityTier[] };
+  tools: string[];
+  domainVerbs: string[];
+  topKeywords: string[];
+  exampleBullets: string[];
+  keywordMistakes: string[];
+  placementStrategy: { section: string; guidance: string }[];
+  resumeSnippets: { label: string; text: string }[];
+  howResumeAtlasScores: string;
+  relatedKeywordPages: { path: string; label: string }[];
+  relatedGuidePages: { path: string; label: string }[];
+  faq: { question: string; answer: string }[];
+};
+
+function pathFor(slug: PilotKeywordSlug): string {
+  return `/${slug}-resume-keywords`;
+}
+
+export const PILOT_KEYWORD_PAGES: Record<PilotKeywordSlug, PilotKeywordPageConfig> = {
+  "data-engineer": {
+    slug: "data-engineer",
+    path: pathFor("data-engineer"),
+    roleName: "Data Engineer",
+    h1: `Data Engineer Resume Keywords (${CONTENT_FRESHNESS_YEAR} ATS Guide)`,
+    title: `150+ Data Engineer Resume Keywords That Pass ATS (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
+    description:
+      "Data engineer resume keywords for ATS: Spark, Airflow, Snowflake, Databricks, Kafka, ETL, dbt, AWS. Copy 150+ terms, bullets, and scan your resume vs the JD free.",
+    intro:
+      "Data engineer resume keywords that match how ATS and hiring managers read pipeline, warehouse, and orchestration roles in 2026—grouped by stack, seniority, and where to place terms so they count as proof, not stuffing.",
+    roleOverview:
+      "Data engineers build and operate the pipelines, warehouses, and batch or streaming jobs that feed analytics and product features. Recruiters scan for orchestration (Airflow, Dagster), compute (Spark, SQL engines), cloud data platforms (Snowflake, BigQuery, Redshift, Databricks), ingestion (Kafka, Kinesis), and reliability practices (data quality, SLAs, observability). Your resume should show ownership of end-to-end data movement—not only tool names—with outcomes like latency, cost, freshness, and defect rates.",
+    scopeNote:
+      "This page targets data engineer, analytics engineer (pipeline-heavy), and ETL developer titles. For dashboard-centric analytics roles, use data analyst keywords. For modeling and experiments, use data scientist keywords. For BI semantic layers and executive reporting, use business intelligence keywords.",
+    keywordCategories: [
+      {
+        heading: "Core skills",
+        terms: [
+          "Data engineering",
+          "ETL",
+          "ELT",
+          "Data pipelines",
+          "Data modeling",
+          "Dimensional modeling",
+          "Data warehouse",
+          "Data lake",
+          "Batch processing",
+          "Stream processing",
+          "Data quality",
+          "Data governance",
+          "Schema design",
+          "Incremental loads",
+          "Idempotent pipelines",
+          "Reverse ETL",
+          "Data contracts",
+          "Metadata management",
+          "Pipeline monitoring",
+        ],
+      },
+      {
+        heading: "Technical skills",
+        terms: [
+          "Apache Spark",
+          "PySpark",
+          "SQL",
+          "Python",
+          "Scala",
+          "Distributed systems",
+          "Partitioning",
+          "Parquet",
+          "Avro",
+          "CDC",
+          "Change data capture",
+          "API ingestion",
+          "REST ingestion",
+          "Data lineage",
+          "Orchestration",
+          "Workflow scheduling",
+          "Query optimization",
+          "Window functions",
+          "Data replication",
+          "Lakehouse",
+          "Object storage",
+          "Serverless compute",
+        ],
+      },
+      {
+        heading: "Tools",
+        terms: [
+          "Apache Airflow",
+          "Dagster",
+          "Prefect",
+          "dbt",
+          "Fivetran",
+          "Airbyte",
+          "Apache Kafka",
+          "Spark SQL",
+          "Great Expectations",
+          "Terraform",
+          "Docker",
+          "Kubernetes",
+          "Git",
+          "CI/CD",
+          "Jenkins",
+          "GitHub Actions",
+          "Luigi",
+          "Apache Flink",
+          "Debezium",
+          "dbt Cloud",
+          "Monte Carlo",
+          "Soda",
+        ],
+      },
+      {
+        heading: "Platforms & cloud",
+        terms: [
+          "Snowflake",
+          "Databricks",
+          "Amazon Redshift",
+          "Google BigQuery",
+          "AWS Glue",
+          "Amazon S3",
+          "AWS Lambda",
+          "Amazon Kinesis",
+          "Azure Data Factory",
+          "Azure Synapse",
+          "Google Cloud Storage",
+          "GCP Dataflow",
+          "Delta Lake",
+          "Iceberg",
+          "Hive",
+          "HDFS",
+          "Amazon EMR",
+          "AWS Step Functions",
+          "GCP Composer",
+          "Azure Databricks",
+          "Redshift Spectrum",
+          "S3 data lake",
+        ],
+      },
+      {
+        heading: "Methodologies",
+        terms: [
+          "Medallion architecture",
+          "Bronze silver gold",
+          "Kimball",
+          "Star schema",
+          "Slowly changing dimensions",
+          "SCD Type 2",
+          "Data mesh",
+          "FinOps",
+          "Cost optimization",
+          "SLA monitoring",
+          "Incident response",
+          "Root cause analysis",
+          "Agile",
+          "Code review",
+          "Infrastructure as code",
+          "Backfill jobs",
+          "Dead letter queues",
+          "Exactly-once delivery",
+          "Data observability",
+          "Pipeline versioning",
+        ],
+      },
+      {
+        heading: "Certifications (when relevant)",
+        terms: [
+          "AWS Certified Data Engineer",
+          "Databricks Certified Data Engineer",
+          "Google Professional Data Engineer",
+          "SnowPro Core",
+          "Azure Data Engineer Associate",
+          "Confluent Kafka certification",
+        ],
+      },
+    ],
+    seniority: {
+      title: "Data engineer keywords by experience level",
+      tiers: [
+        {
+          label: "Entry-level",
+          keywords: [
+            "SQL",
+            "Python",
+            "ETL scripts",
+            "Airflow basics",
+            "Git",
+            "Unit tests",
+            "Documentation",
+            "Staging tables",
+            "Data validation",
+            "Ticket-driven fixes",
+            "Jupyter",
+            "CSV ingestion",
+          ],
+        },
+        {
+          label: "Mid-level",
+          keywords: [
+            "Apache Spark",
+            "dbt models",
+            "Snowflake",
+            "Pipeline ownership",
+            "Data quality checks",
+            "Kafka consumers",
+            "CI/CD for data",
+            "On-call rotation",
+            "Cost monitoring",
+            "Cross-team stakeholders",
+            "Dimensional models",
+            "Incremental models",
+          ],
+        },
+        {
+          label: "Senior-level",
+          keywords: [
+            "Architecture reviews",
+            "Platform standards",
+            "Mentoring",
+            "SLA design",
+            "Capacity planning",
+            "Multi-tenant warehouses",
+            "Streaming at scale",
+            "Governance policies",
+            "Vendor evaluation",
+            "Roadmap prioritization",
+            "Reliability targets",
+            "Executive metrics",
+          ],
+        },
+      ],
+    },
+    tools: [
+      "Apache Spark",
+      "Airflow",
+      "Snowflake",
+      "Databricks",
+      "dbt",
+      "Kafka",
+      "AWS",
+      "Python",
+      "SQL",
+      "Terraform",
+    ],
+    domainVerbs: [
+      "built",
+      "orchestrated",
+      "migrated",
+      "optimized",
+      "instrumented",
+      "automated",
+      "modeled",
+      "validated",
+      "deployed",
+      "reduced",
+    ],
+    topKeywords: [
+      "Data engineer",
+      "ETL",
+      "ELT",
+      "Data pipelines",
+      "Apache Spark",
+      "Apache Airflow",
+      "Snowflake",
+      "Databricks",
+      "dbt",
+      "Apache Kafka",
+      "AWS",
+      "Python",
+      "SQL",
+      "Data warehouse",
+      "Data lake",
+      "Batch processing",
+      "Stream processing",
+      "Data quality",
+      "Terraform",
+      "Parquet",
+    ],
+    exampleBullets: [
+      "Built PySpark ETL jobs on Databricks processing 2.1B events/day, cutting batch runtime from 4.2h to 95 minutes via partition pruning and broadcast joins.",
+      "Orchestrated 40+ Airflow DAGs feeding Snowflake marts with SLA monitoring, improving on-time freshness from 91% to 99.2% over two quarters.",
+      "Migrated legacy on-prem SQL Server ETL to AWS Glue and S3 landing zones, reducing monthly pipeline compute cost by 34% while preserving audit trails.",
+      "Implemented Kafka-to-Snowflake streaming ingestion with schema registry checks, lowering bad-record rates in production feeds by 78%.",
+      "Authored dbt models and tests for finance revenue marts, surfacing contract-level discrepancies before month-end close twice in a row.",
+      "Designed medallion (bronze/silver/gold) tables in Delta Lake with incremental merges, enabling analysts to query trusted datasets 6 hours earlier.",
+      "Automated data quality suites with Great Expectations on critical pipelines, preventing three P1 incidents tied to null key violations.",
+      "Partnered with analytics on dimensional models (star schema, SCD Type 2) used by 120+ Looker users without manual spreadsheet exports.",
+      "Tuned Snowflake warehouses and clustering keys for top spend queries, saving ~$18K/quarter in credits without hurting dashboard latency.",
+      "Led Terraform modules for CI/CD data infrastructure (Docker, GitHub Actions), standardizing deploys across four product squads.",
+    ],
+    keywordMistakes: [
+      "Listing Spark, Airflow, or Snowflake without pipeline scope, data volume, or reliability outcomes in the same bullets.",
+      "Copying data analyst dashboard keywords when the job description owns ingestion, orchestration, and warehouse modeling.",
+      "Stuffing 80 tools in a skills block while experience bullets only mention generic “worked with data.”",
+      "Using data scientist ML terms (experiments, causal inference) for pure platform or ETL engineer roles.",
+      "Omitting cloud provider context (AWS, GCP, Azure) when the posting names specific managed services.",
+      "Describing batch jobs without freshness SLAs, failure handling, or idempotency language recruiters expect.",
+      "Ignoring orchestration and data quality terms that appear in the first screen of the JD.",
+      "Claiming Kafka or streaming experience without consumer groups, topics, lag, or schema evolution proof.",
+      "Single-column resume layouts with tables or icons that break ATS parsing of tool names.",
+      "One generic resume for “data roles” instead of mirroring the posting’s stack (e.g., Databricks vs Redshift).",
+    ],
+    placementStrategy: [
+      {
+        section: "Headline",
+        guidance:
+          "Use the exact title from the posting (Data Engineer, Analytics Engineer, ETL Developer) plus one anchor stack term, e.g. “Data Engineer | Spark, Airflow, Snowflake.”",
+      },
+      {
+        section: "Summary",
+        guidance:
+          "Two to three sentences: years of experience, pipeline types (batch/stream), primary platforms, and one metric (cost, latency, volume, quality).",
+      },
+      {
+        section: "Skills",
+        guidance:
+          "Group by Orchestration, Compute, Warehouse, Cloud, and Quality. List only tools you can defend in interviews—15–25 terms max.",
+      },
+      {
+        section: "Experience",
+        guidance:
+          "Each bullet: verb + system built + stack + metric. Pair Spark with partition strategy; Airflow with DAG count and SLA; Snowflake with modeling or cost wins.",
+      },
+      {
+        section: "Projects",
+        guidance:
+          "Highlight end-to-end pipelines (source → transform → warehouse) and tests you ran. Link public repos only if they reinforce the same stack as the JD.",
+      },
+    ],
+    resumeSnippets: [
+      {
+        label: "Summary",
+        text: "Data engineer with 5+ years building batch and streaming pipelines on AWS and Snowflake. Own Airflow orchestration, PySpark transforms, and dbt marts used by analytics and product teams; focused on freshness SLAs and data quality.",
+      },
+      {
+        label: "Skills line",
+        text: "Python · SQL · PySpark · Airflow · dbt · Snowflake · Databricks · Kafka · AWS (S3, Glue, Lambda) · Terraform · Great Expectations · Git · CI/CD",
+      },
+      {
+        label: "Experience opener",
+        text: "Built and operated production ETL/ELT pipelines feeding enterprise Snowflake warehouses, partnering with analytics on dimensional models and stakeholder reporting deadlines.",
+      },
+    ],
+    howResumeAtlasScores:
+      "ResumeAtlas compares your resume text to the job description the way many ATS matchers do: required tools (Spark, Airflow, warehouse platforms), pipeline verbs, and cloud terms weighted against where they appear. You get a gap list for missing keywords and weak bullets so you can add truthful proof before applying—not generic synonym stuffing.",
+    relatedKeywordPages: [
+      { path: "/data-analyst-resume-keywords", label: "Data analyst resume keywords" },
+      { path: "/sql-developer-resume-keywords", label: "SQL developer resume keywords" },
+      { path: "/power-bi-resume-keywords", label: "Power BI resume keywords" },
+      { path: "/data-scientist-resume-keywords", label: "Data scientist resume keywords" },
+      { path: "/business-intelligence-resume-keywords", label: "Business intelligence resume keywords" },
+    ],
+    relatedGuidePages: [
+      { path: "/data-scientist-resume-guide", label: "Data scientist resume example" },
+      { path: "/data-analyst-resume-guide", label: "Data analyst resume example" },
+    ],
+    faq: [
+      {
+        question: "What are the best data engineer resume keywords for ATS?",
+        answer:
+          "Prioritize terms from the job description: orchestration (Airflow, Dagster), compute (Spark, SQL), warehouse/lake platforms (Snowflake, Databricks, BigQuery), streaming (Kafka), IaC (Terraform), and data quality. Mirror the employer’s exact product names.",
+      },
+      {
+        question: "How many data engineer keywords should be on a resume?",
+        answer:
+          "Aim for 25–35 relevant terms used naturally across summary, skills, and bullets—not a single dense list. Each major tool should appear near an outcome (volume, runtime, cost, defect rate, SLA).",
+      },
+      {
+        question: "Are data engineer and data analyst resume keywords the same?",
+        answer:
+          "Overlap exists on SQL and Python, but data engineer postings emphasize pipelines, orchestration, warehouses, and streaming. Use this page for DE titles; use the data analyst page for reporting and dashboard-heavy roles.",
+      },
+      {
+        question: "Should I include Spark and Airflow on every data engineer resume?",
+        answer:
+          "Only if you have real projects or jobs using them. If the JD requires Spark, show PySpark scope (batch size, optimization). If it requires Airflow, mention DAG ownership and SLAs—not just the logo.",
+      },
+      {
+        question: "What ATS keywords matter for Snowflake vs Databricks?",
+        answer:
+          "Snowflake JDs often stress warehousing, roles, clustering, and cost. Databricks JDs stress Spark, Delta Lake, notebooks, and Unity Catalog. Copy the platform language from the posting verbatim.",
+      },
+      {
+        question: "How do I show Kafka experience on a data engineer resume?",
+        answer:
+          "Reference topics, consumers/producers, schema registry, lag, or streaming joins—and tie them to freshness or defect metrics. Avoid listing Kafka without operational detail.",
+      },
+      {
+        question: "Is dbt a data engineer or analyst keyword?",
+        answer:
+          "Both. Analytics engineers use dbt heavily; data engineers list dbt when they own warehouse transformations and tests. Include dbt if you authored models, tests, or docs—not only consumed dashboards.",
+      },
+      {
+        question: "What certifications help data engineer ATS scans?",
+        answer:
+          "AWS Data Engineer, Databricks Data Engineer, Google Professional Data Engineer, and SnowPro can match filtered reqs. List them only if earned or in progress with clear status.",
+      },
+      {
+        question: "How is analytics engineer different from data engineer on a resume?",
+        answer:
+          "Analytics engineer JDs skew dbt, warehouse modeling, and stakeholder metrics; data engineer JDs skew ingestion, Spark, Airflow, and platform reliability. Pick keywords from the title and first third of the description.",
+      },
+      {
+        question: "How do I find missing data engineer keywords before applying?",
+        answer:
+          "Paste your resume and the job description into ResumeAtlas’s free checker to see gap terms and weak bullets, then add keywords only where you have defensible experience.",
+      },
+    ],
+  },
+  "sql-developer": {
+    slug: "sql-developer",
+    path: pathFor("sql-developer"),
+    roleName: "SQL Developer",
+    h1: `SQL Developer Resume Keywords (${CONTENT_FRESHNESS_YEAR} ATS Guide)`,
+    title: `120+ SQL Developer Resume Keywords That Pass ATS (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
+    description:
+      "SQL developer resume keywords for ATS: T-SQL, PostgreSQL, query tuning, stored procedures, indexes, ETL. Copy 120+ terms and scan your resume vs the job description free.",
+    intro:
+      "SQL developer resume keywords aligned to how ATS and DBAs screen application and warehouse roles—query craft, performance tuning, procedural SQL, and platform-specific terms you can defend in interviews.",
+    roleOverview:
+      "SQL developers design, optimize, and maintain database logic that applications and analytics depend on. Hiring teams look for dialect fluency (T-SQL, PL/SQL, PostgreSQL, MySQL), performance tuning (indexes, execution plans, statistics), procedural objects (stored procedures, functions, views), data modeling basics, and safe change practices (migrations, code review, backups). Strong resumes pair tool names with throughput, latency, accuracy, or incident outcomes—not a bare list of database brands.",
+    scopeNote:
+      "This page is for SQL developer, database developer, and T-SQL/PL/SQL-heavy roles. For pipeline orchestration (Airflow, Spark), use data engineer keywords. For dashboard and BI delivery, use data analyst or business intelligence keywords.",
+    keywordCategories: [
+      {
+        heading: "Core skills",
+        terms: [
+          "SQL development",
+          "Transact-SQL",
+          "T-SQL",
+          "PL/SQL",
+          "PostgreSQL",
+          "Microsoft SQL Server",
+          "Oracle Database",
+          "MySQL",
+          "Query optimization",
+          "Query tuning",
+          "Execution plans",
+          "Index design",
+          "Stored procedures",
+          "User-defined functions",
+          "Views",
+          "Triggers",
+          "Database design",
+          "Normalization",
+          "Referential integrity",
+          "Data modeling",
+        ],
+      },
+      {
+        heading: "Technical skills",
+        terms: [
+          "Window functions",
+          "CTEs",
+          "Common table expressions",
+          "Joins",
+          "Subqueries",
+          "Pivot queries",
+          "Dynamic SQL",
+          "Parameterized queries",
+          "Temp tables",
+          "Table variables",
+          "Partitioning",
+          "Columnstore indexes",
+          "Statistics maintenance",
+          "Deadlock analysis",
+          "Blocking sessions",
+          "Isolation levels",
+          "Transactions",
+          "ACID",
+          "Concurrency control",
+          "Query hints",
+        ],
+      },
+      {
+        heading: "Tools",
+        terms: [
+          "SQL Server Management Studio",
+          "SSMS",
+          "Azure Data Studio",
+          "pgAdmin",
+          "DBeaver",
+          "Oracle SQL Developer",
+          "Toad",
+          "Redgate",
+          "Flyway",
+          "Liquibase",
+          "SSIS",
+          "dbt",
+          "Git",
+          "ER/Studio",
+          "dbdiagram.io",
+          "SQL Profiler",
+          "Extended Events",
+          "AWS RDS",
+          "sqlcmd",
+          "bcp",
+        ],
+      },
+      {
+        heading: "Platforms & cloud",
+        terms: [
+          "Amazon RDS",
+          "Amazon Aurora",
+          "Azure SQL Database",
+          "Azure SQL Managed Instance",
+          "Google Cloud SQL",
+          "Snowflake SQL",
+          "Synapse dedicated SQL pool",
+          "BigQuery SQL",
+          "Redshift",
+          "Always On availability groups",
+          "Replication",
+          "Log shipping",
+          "Backup and restore",
+          "Point-in-time recovery",
+          "High availability",
+          "Disaster recovery",
+        ],
+      },
+      {
+        heading: "Methodologies",
+        terms: [
+          "Code review",
+          "Peer review",
+          "Database migrations",
+          "Version control",
+          "Agile",
+          "Incident response",
+          "Root cause analysis",
+          "Change management",
+          "Capacity planning",
+          "Performance baselines",
+          "SLA monitoring",
+          "Data quality checks",
+          "Unit testing SQL",
+          "Regression testing",
+          "Documentation standards",
+        ],
+      },
+      {
+        heading: "Certifications (when relevant)",
+        terms: [
+          "Microsoft Certified: Azure Database Administrator",
+          "Oracle Database SQL Certified Associate",
+          "Oracle PL/SQL Developer Certified Associate",
+          "IBM Db2 certification",
+          "AWS Database Specialty",
+        ],
+      },
+    ],
+    seniority: {
+      title: "SQL developer keywords by experience level",
+      tiers: [
+        {
+          label: "Entry-level",
+          keywords: [
+            "SELECT",
+            "INSERT",
+            "UPDATE",
+            "JOINs",
+            "GROUP BY",
+            "Basic indexes",
+            "CRUD",
+            "Simple stored procedures",
+            "Data validation queries",
+            "Ticket fixes",
+            "Documentation",
+            "Git basics",
+          ],
+        },
+        {
+          label: "Mid-level",
+          keywords: [
+            "Query tuning",
+            "Execution plans",
+            "Index strategy",
+            "Stored procedures",
+            "ETL SQL",
+            "Migration scripts",
+            "Performance testing",
+            "Replication support",
+            "On-call",
+            "Cross-team reviews",
+            "Dimensional queries",
+            "Reporting extracts",
+          ],
+        },
+        {
+          label: "Senior-level",
+          keywords: [
+            "Architecture guidance",
+            "Capacity planning",
+            "HA/DR design",
+            "Mentoring",
+            "Standards ownership",
+            "Production incident lead",
+            "Platform upgrades",
+            "Cost optimization",
+            "Security reviews",
+            "Partitioning strategy",
+            "Vendor escalation",
+            "Roadmap input",
+          ],
+        },
+      ],
+    },
+    tools: [
+      "T-SQL",
+      "PostgreSQL",
+      "SQL Server",
+      "Oracle",
+      "MySQL",
+      "SSMS",
+      "Query tuning",
+      "Stored procedures",
+      "Indexes",
+      "SSIS",
+    ],
+    domainVerbs: [
+      "optimized",
+      "authored",
+      "refactored",
+      "tuned",
+      "migrated",
+      "automated",
+      "indexed",
+      "validated",
+      "deployed",
+      "reduced",
+    ],
+    topKeywords: [
+      "SQL developer",
+      "T-SQL",
+      "PostgreSQL",
+      "SQL Server",
+      "Query optimization",
+      "Stored procedures",
+      "Indexes",
+      "Execution plans",
+      "PL/SQL",
+      "ETL",
+      "Database design",
+      "Performance tuning",
+      "Views",
+      "Functions",
+      "Triggers",
+      "Migrations",
+      "Replication",
+      "Azure SQL",
+      "Oracle",
+      "Data modeling",
+    ],
+    exampleBullets: [
+      "Rewrote 40+ legacy T-SQL reports into set-based queries, cutting average runtime from 18 minutes to under 90 seconds on SQL Server 2019.",
+      "Designed covering indexes and updated statistics on a 800M-row fact table, reducing nightly ETL blocking incidents by 72%.",
+      "Authored idempotent migration scripts in Flyway for PostgreSQL schema changes across dev/stage/prod with zero failed deploys over 12 releases.",
+      "Built parameterized stored procedures for a billing API team, eliminating SQL injection risk and standardizing access patterns for 6 applications.",
+      "Tuned PL/SQL packages in Oracle 19c using AWR snapshots, lowering peak CPU on month-end close jobs from 89% to 41%.",
+      "Automated index maintenance and integrity checks with SQL Agent jobs, preventing three P1 outages tied to fragmented heaps.",
+      "Partnered with data engineers on SSIS packages loading Azure SQL, documenting source-to-target mappings used by analytics stakeholders.",
+      "Refactored dynamic SQL modules to use sp_executesql with plan guides, stabilizing plan cache churn that caused morning latency spikes.",
+      "Implemented row-level security patterns in SQL Server for multi-tenant SaaS data, passing external audit with no critical findings.",
+      "Mentored junior developers on reading execution plans and index seeks vs scans, improving PR review turnaround by 30%.",
+    ],
+    keywordMistakes: [
+      "Listing SQL Server, Oracle, and PostgreSQL without showing which dialect you used in production bullets.",
+      "Copying data engineer Spark/Airflow keywords when the posting is pure SQL development and tuning.",
+      "Claiming “advanced SQL” with only SELECT statements and no tuning, indexing, or procedural proof.",
+      "Omitting execution plan, index, or runtime language for performance-focused roles.",
+      "Stuffing 50 database acronyms in skills while experience mentions only “wrote queries.”",
+      "Using data analyst dashboard terms without ETL, stored procedure, or schema ownership when the JD is developer-heavy.",
+      "Ignoring cloud-managed database names (Azure SQL, RDS, Cloud SQL) when they appear in the first screen of the JD.",
+      "Describing migrations without tools (Flyway, Liquibase) or rollback strategy.",
+      "Failing to mention transaction, locking, or concurrency context for high-write systems.",
+      "One generic resume for all “data jobs” instead of mirroring the posting’s dialect and platform.",
+    ],
+    placementStrategy: [
+      {
+        section: "Headline",
+        guidance:
+          "Mirror the posting title (SQL Developer, Database Developer, T-SQL Developer) and one anchor: “SQL Developer | T-SQL · SQL Server · Query Tuning.”",
+      },
+      {
+        section: "Summary",
+        guidance:
+          "State years of experience, primary dialect/platform, and one metric (runtime reduction, incident reduction, rows processed, deploy frequency).",
+      },
+      {
+        section: "Skills",
+        guidance:
+          "Group by Dialect, Performance, Procedural SQL, Tools, Cloud DB. List 12–20 terms you can whiteboard in an interview.",
+      },
+      {
+        section: "Experience",
+        guidance:
+          "Each bullet: verb + object (procedure, index, migration) + dialect/platform + measurable outcome. Mention execution plans when you tuned queries.",
+      },
+      {
+        section: "Projects",
+        guidance:
+          "Show schema design, migration, or tuning projects with before/after timings. Avoid unrelated ML or dashboard-only work unless the JD asks.",
+      },
+    ],
+    resumeSnippets: [
+      {
+        label: "Summary",
+        text: "SQL developer with 6+ years on Microsoft SQL Server and PostgreSQL—stored procedures, performance tuning, and migration automation for high-volume transactional and reporting workloads.",
+      },
+      {
+        label: "Skills line",
+        text: "T-SQL · PostgreSQL · SQL Server · Oracle PL/SQL · Query tuning · Execution plans · Indexes · Stored procedures · Flyway · SSIS · Azure SQL · Git",
+      },
+      {
+        label: "Experience opener",
+        text: "Owned database layer changes for customer billing services—authored T-SQL modules, tuned ETL SQL, and partnered with app teams on parameterized access patterns and release windows.",
+      },
+    ],
+    howResumeAtlasScores:
+      "ResumeAtlas matches your resume to the job description for dialect terms (T-SQL vs PL/SQL), performance vocabulary (indexes, execution plans), procedural objects, and platform names. You see missing phrases and weak bullets before applying—so you add keywords next to real tuning or migration outcomes.",
+    relatedKeywordPages: [
+      { path: "/data-analyst-resume-keywords", label: "Data analyst resume keywords" },
+      { path: "/data-engineer-resume-keywords", label: "Data engineer resume keywords" },
+      { path: "/power-bi-resume-keywords", label: "Power BI resume keywords" },
+      { path: "/business-intelligence-resume-keywords", label: "Business intelligence resume keywords" },
+    ],
+    relatedGuidePages: [
+      { path: "/data-analyst-resume-guide", label: "Data analyst resume example" },
+      { path: "/data-scientist-resume-guide", label: "Data scientist resume example" },
+    ],
+    faq: [
+      {
+        question: "What are the best SQL developer resume keywords for ATS?",
+        answer:
+          "Use the job description’s dialect and platform first: T-SQL, PL/SQL, PostgreSQL, Oracle, SQL Server, MySQL. Add performance terms (indexes, execution plans, tuning) and procedural objects (stored procedures, functions) when listed.",
+      },
+      {
+        question: "Should I list both SQL Server and Oracle on my resume?",
+        answer:
+          "Only if you have production experience in both. Otherwise lead with the platform in the posting and mention others as exposure, not as equal expertise.",
+      },
+      {
+        question: "How is a SQL developer different from a data analyst on a resume?",
+        answer:
+          "SQL developers emphasize database logic, tuning, migrations, and procedural code. Data analysts emphasize dashboards, stakeholder metrics, and BI tools. Use this page for developer titles; use the data analyst page for analytics roles.",
+      },
+      {
+        question: "What keywords matter for query tuning roles?",
+        answer:
+          "Execution plans, indexes (clustered, nonclustered, covering), statistics, waits, blocking, and before/after runtime or CPU metrics in bullets—not just the phrase “query optimization.”",
+      },
+      {
+        question: "Do I need cloud database keywords as a SQL developer?",
+        answer:
+          "If the JD names Azure SQL, RDS, Aurora, or Cloud SQL, mirror those exactly. Managed services still need tuning, security, and migration language.",
+      },
+      {
+        question: "Should SSIS appear on a SQL developer resume?",
+        answer:
+          "Include SSIS when you built or maintained packages loading warehouses or apps. Skip it for pure OLTP tuning roles unless the posting requires it.",
+      },
+      {
+        question: "How many SQL keywords should I include?",
+        answer:
+          "Aim for 20–30 relevant terms woven through skills and bullets. Avoid a 60-line skills dump with no outcomes.",
+      },
+      {
+        question: "Are stored procedures still ATS keywords?",
+        answer:
+          "Yes for enterprise SQL Server and Oracle roles. Mention procedures, functions, and views you authored—not only ad hoc SELECT work.",
+      },
+      {
+        question: "How do SQL developer and data engineer keywords overlap?",
+        answer:
+          "Overlap on SQL, ETL, and warehouses. Data engineer postings add orchestration and Spark; SQL developer postings go deeper on tuning and procedural SQL. Pick the page that matches the title.",
+      },
+      {
+        question: "How do I find missing SQL keywords before applying?",
+        answer:
+          "Paste your resume and the job description into ResumeAtlas’s free checker to see gap terms, then add them only where you have defensible examples.",
+      },
+    ],
+  },
+  "power-bi": {
+    slug: "power-bi",
+    path: pathFor("power-bi"),
+    roleName: "Power BI",
+    h1: `Power BI Resume Keywords (${CONTENT_FRESHNESS_YEAR} ATS Guide)`,
+    title: `110+ Power BI Resume Keywords That Pass ATS (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
+    description:
+      "Power BI resume keywords for ATS: DAX, Power Query, semantic models, dataflows, RLS, Fabric. Copy 110+ terms and scan your resume vs the job description free.",
+    intro:
+      "Power BI resume keywords for BI developer and analyst roles where the posting names Microsoft Power BI, DAX, semantic models, and Fabric—grouped for ATS scans and recruiter skims, with placement guidance that keeps terms tied to outcomes.",
+    roleOverview:
+      "Power BI specialists turn warehouse and application data into governed datasets, reports, and dashboards executives actually use. Recruiters filter for Power Query (M), data modeling (star schema, relationships), DAX measures, publishing (apps, workspaces), refresh automation, row-level security, and increasingly Microsoft Fabric / OneLake. Your resume should show report adoption, refresh reliability, and metric definitions—not only that you opened Desktop.",
+    scopeNote:
+      "This page is for Power BI–centric titles and JDs (Power BI Developer, Power BI Analyst, Fabric analytics). For tool-agnostic BI or mixed Tableau/Looker roles, use business intelligence resume keywords. For general analytics without a BI tool mandate, use data analyst keywords.",
+    keywordCategories: [
+      {
+        heading: "Core skills",
+        terms: [
+          "Power BI",
+          "Microsoft Power BI",
+          "Power BI Desktop",
+          "Power BI Service",
+          "DAX",
+          "Power Query",
+          "M language",
+          "Data modeling",
+          "Semantic model",
+          "Star schema",
+          "Relationships",
+          "Measures",
+          "Calculated columns",
+          "Dashboards",
+          "Paginated reports",
+          "KPIs",
+          "Self-service BI",
+          "Report publishing",
+          "Workspace governance",
+          "Certified datasets",
+        ],
+      },
+      {
+        heading: "Technical skills",
+        terms: [
+          "DAX measures",
+          "CALCULATE",
+          "Time intelligence",
+          "YTD",
+          "Rolling averages",
+          "Context transition",
+          "Row-level security",
+          "RLS",
+          "Object-level security",
+          "Incremental refresh",
+          "Composite models",
+          "Aggregations",
+          "Field parameters",
+          "What-if parameters",
+          "Query folding",
+          "DirectQuery",
+          "Import mode",
+          "Dual storage mode",
+          "Performance Analyzer",
+          "VertiPaq",
+        ],
+      },
+      {
+        heading: "Tools",
+        terms: [
+          "Power BI Desktop",
+          "Power BI Service",
+          "Power BI Report Builder",
+          "Power BI Mobile",
+          "Power Query Editor",
+          "Tabular Editor",
+          "DAX Studio",
+          "ALM Toolkit",
+          "XMLA endpoint",
+          "On-premises data gateway",
+          "Data gateway",
+          "Power Automate",
+          "SharePoint integration",
+          "Teams integration",
+          "Deployment pipelines",
+          "Git integration",
+          "Microsoft Fabric",
+          "OneLake",
+          "Lakehouse",
+          "Dataflows Gen2",
+        ],
+      },
+      {
+        heading: "Data sources & platforms",
+        terms: [
+          "SQL Server",
+          "Azure SQL",
+          "Snowflake connector",
+          "SharePoint lists",
+          "Excel",
+          "CSV",
+          "REST API",
+          "OData",
+          "Analysis Services",
+          "Azure Analysis Services",
+          "Dynamics 365",
+          "SAP connector",
+          "Oracle connector",
+          "PostgreSQL",
+          "Dataverse",
+          "Azure Data Lake",
+        ],
+      },
+      {
+        heading: "Methodologies",
+        terms: [
+          "Requirements gathering",
+          "Wireframes",
+          "UX for reports",
+          "Metric definitions",
+          "Data governance",
+          "Documentation",
+          "Agile",
+          "Stakeholder demos",
+          "UAT",
+          "Change management",
+          "Version control",
+          "Release management",
+          "Capacity planning",
+          "Refresh scheduling",
+          "Incident support",
+          "Adoption tracking",
+        ],
+      },
+      {
+        heading: "Certifications (when relevant)",
+        terms: [
+          "Microsoft Certified: Power BI Data Analyst Associate",
+          "PL-300",
+          "Microsoft Fabric Analytics Engineer Associate",
+          "DP-600",
+          "Azure Data Fundamentals",
+        ],
+      },
+    ],
+    seniority: {
+      title: "Power BI keywords by experience level",
+      tiers: [
+        {
+          label: "Entry-level",
+          keywords: [
+            "Power BI Desktop",
+            "Import mode",
+            "Basic DAX",
+            "Charts",
+            "Slicers",
+            "Power Query",
+            "Excel source",
+            "SharePoint publish",
+            "Report formatting",
+            "Documentation",
+            "SQL SELECT",
+            "Ad hoc reports",
+          ],
+        },
+        {
+          label: "Mid-level",
+          keywords: [
+            "Semantic models",
+            "DAX measures",
+            "RLS",
+            "Gateway setup",
+            "Incremental refresh",
+            "Workspace apps",
+            "Stakeholder training",
+            "Performance tuning",
+            "Dataflows",
+            "Star schema",
+            "Deployment pipelines",
+            "UAT sign-off",
+          ],
+        },
+        {
+          label: "Senior-level",
+          keywords: [
+            "Fabric migration",
+            "Governance standards",
+            "Certified datasets",
+            "Center of excellence",
+            "Capacity admin",
+            "Premium capacity",
+            "Enterprise rollout",
+            "Metric catalog",
+            "Cross-org adoption",
+            "Mentoring",
+            "Vendor management",
+            "Executive dashboards",
+          ],
+        },
+      ],
+    },
+    tools: [
+      "Power BI Desktop",
+      "DAX",
+      "Power Query",
+      "Power BI Service",
+      "Microsoft Fabric",
+      "Tabular Editor",
+      "SQL",
+      "Azure",
+      "RLS",
+      "Dataflows",
+    ],
+    domainVerbs: [
+      "built",
+      "modeled",
+      "published",
+      "automated",
+      "standardized",
+      "optimized",
+      "governed",
+      "trained",
+      "visualized",
+      "reduced",
+    ],
+    topKeywords: [
+      "Power BI",
+      "DAX",
+      "Power Query",
+      "Semantic model",
+      "Dashboards",
+      "Power BI Service",
+      "Data modeling",
+      "Row-level security",
+      "Incremental refresh",
+      "Microsoft Fabric",
+      "Star schema",
+      "KPI",
+      "Self-service",
+      "Paginated reports",
+      "Dataflows",
+      "Gateway",
+      "Tabular Editor",
+      "DirectQuery",
+      "Import mode",
+      "Report publishing",
+    ],
+    exampleBullets: [
+      "Built a Power BI executive revenue app with 12 DAX measures and RLS by region, replacing 6 static Excel packs and saving ~9 hours of leadership prep weekly.",
+      "Modeled a star-schema semantic model in Power BI Desktop (Import) over Azure SQL, cutting report refresh failures from 11% to under 2% via incremental refresh policies.",
+      "Authored 40+ reusable DAX measures with documented definitions, aligning finance and sales on one set of pipeline KPIs for QBR decks.",
+      "Implemented row-level security and workspace roles for 300+ field users, passing internal audit with no critical access findings.",
+      "Optimized DirectQuery dashboards using Performance Analyzer and aggregations, reducing p95 load time from 14s to 4s on a 50M-row fact table.",
+      "Automated Power Query dataflows from SharePoint and SQL sources, improving dataset freshness from daily to hourly for operations teams.",
+      "Led migration of legacy SSRS reports to Power BI paginated reports, retiring 18 reports while preserving pixel-perfect finance layouts.",
+      "Partnered with stakeholders on wireframes and UAT, increasing monthly active viewers of the customer health dashboard by 34%.",
+      "Configured on-premises gateway clusters and deployment pipelines across dev/test/prod, standardizing releases for five analytics squads.",
+      "Trained 25 analysts on self-service datasets and certified models, lowering ad-hoc request volume to central BI by 41% in two quarters.",
+    ],
+    keywordMistakes: [
+      "Listing Power BI without DAX, modeling, or publishing outcomes in the same bullets.",
+      "Using Tableau-only language on a Power BI–only posting (worksheets, LOD) instead of datasets, measures, and apps.",
+      "Claiming Fabric or Premium features without workspace, capacity, or migration context you can explain.",
+      "Stuffing CALCULATE and time-intelligence terms with no examples of measures you shipped.",
+      "Ignoring gateway, refresh, or RLS keywords when the JD owns enterprise deployment—not just desktop report building.",
+      "Copying data scientist ML keywords for a reporting role that only needs semantic models and dashboards.",
+      "Omitting SQL or source-system terms when the JD connects Power BI to Azure SQL, Snowflake, or Dynamics.",
+      "Describing “dashboards” without users, decisions, or adoption metrics.",
+      "One resume for all BI tools with no primary stack when the title says Power BI Developer.",
+      "Screenshots-only portfolios with no ATS-readable tool names in the resume body.",
+    ],
+    placementStrategy: [
+      {
+        section: "Headline",
+        guidance:
+          "Use the exact title (Power BI Developer, BI Analyst – Power BI) plus anchors: “Power BI | DAX · Semantic Models · Fabric.”",
+      },
+      {
+        section: "Summary",
+        guidance:
+          "Two sentences: years on Power BI, modeling + DAX focus, and one outcome (refresh reliability, hours saved, adoption, load-time improvement).",
+      },
+      {
+        section: "Skills",
+        guidance:
+          "Group DAX, Power Query, Modeling, Service/Admin, Sources (SQL, SharePoint). Keep to tools you can demo live.",
+      },
+      {
+        section: "Experience",
+        guidance:
+          "Bullets: built/published + dataset/report name + technique (RLS, incremental refresh, DAX) + stakeholder or performance metric.",
+      },
+      {
+        section: "Projects",
+        guidance:
+          "Include a semantic model or app link description in text (not only images). Mention row counts or refresh windows when credible.",
+      },
+    ],
+    resumeSnippets: [
+      {
+        label: "Summary",
+        text: "Power BI developer with 5+ years building governed semantic models, DAX measures, and executive dashboards on Azure SQL and SharePoint sources—focused on refresh reliability, RLS, and adoption.",
+      },
+      {
+        label: "Skills line",
+        text: "Power BI Desktop & Service · DAX · Power Query (M) · Semantic modeling · RLS · Incremental refresh · Fabric · Tabular Editor · SQL · Azure SQL · Deployment pipelines",
+      },
+      {
+        label: "Experience opener",
+        text: "Owned the customer analytics workspace in Power BI Service—modeled facts/dimensions, published apps to 200+ users, and partnered with finance on certified datasets for recurring leadership reporting.",
+      },
+    ],
+    howResumeAtlasScores:
+      "ResumeAtlas compares your resume text to the job description for Power BI–specific phrases (DAX, Power Query, semantic model, RLS, Fabric) and generic BI terms. You get a prioritized gap list so you can align bullets with the posting before apply—not generic keyword stuffing.",
+    relatedKeywordPages: [
+      { path: "/business-intelligence-resume-keywords", label: "Business intelligence resume keywords" },
+      { path: "/data-analyst-resume-keywords", label: "Data analyst resume keywords" },
+      { path: "/sql-developer-resume-keywords", label: "SQL developer resume keywords" },
+    ],
+    relatedGuidePages: [
+      { path: "/data-analyst-resume-guide", label: "Data analyst resume example" },
+      { path: "/business-analyst-resume-guide", label: "Business analyst resume example" },
+    ],
+    faq: [
+      {
+        question: "What are the best Power BI resume keywords for ATS?",
+        answer:
+          "Mirror the JD: Power BI Desktop/Service, DAX, Power Query, semantic model, dashboards, RLS, incremental refresh, gateway, and Fabric if listed. Use the employer’s exact product names.",
+      },
+      {
+        question: "Should I list DAX functions by name on my resume?",
+        answer:
+          "Mention DAX, measures, time intelligence, and CALCULATE only if you built real measures. A laundry list of functions without context adds little ATS value.",
+      },
+      {
+        question: "How is Power BI different from business intelligence keywords on a resume?",
+        answer:
+          "Power BI pages stress Microsoft stack terms (DAX, Power Query, Fabric). Broader BI pages include Tableau, Looker, and cross-tool governance. Use this page when Power BI is the primary tool in the title.",
+      },
+      {
+        question: "Do I need Microsoft Fabric keywords in 2026?",
+        answer:
+          "Include Fabric, OneLake, or lakehouse when the posting mentions them. Otherwise Desktop + Service + gateway language is enough for many roles.",
+      },
+      {
+        question: "What keywords matter for Power BI developer vs analyst roles?",
+        answer:
+          "Developers: modeling, DAX, RLS, deployment pipelines, performance tuning. Analysts: dashboards, stakeholder requirements, KPI definitions, adoption. Pull verbs from the first third of the JD.",
+      },
+      {
+        question: "Should I mention row-level security on a Power BI resume?",
+        answer:
+          "Yes when you implemented RLS or workspace roles. Pair with user counts, audit outcomes, or departments scoped—proof beats the acronym alone.",
+      },
+      {
+        question: "How do Power BI and data analyst resumes overlap?",
+        answer:
+          "Both use SQL and dashboards. Power BI roles emphasize semantic models, DAX, and Service publishing. Use the data analyst page when tools are mixed or unspecified.",
+      },
+      {
+        question: "Is Power Query the same as Power BI on ATS?",
+        answer:
+          "Related but distinct. List both when you transform data in Power Query and publish in Service. Mention M or dataflows if you used them.",
+      },
+      {
+        question: "What certifications help Power BI ATS filters?",
+        answer:
+          "PL-300 (Power BI Data Analyst Associate) is the most common. Fabric/DP-600 matters for Fabric-forward JDs. List only earned or in-progress credentials.",
+      },
+      {
+        question: "How do I find missing Power BI keywords before applying?",
+        answer:
+          "Paste your resume and the job description into ResumeAtlas’s free checker to see gap phrases, then add them beside bullets you can defend in a technical interview.",
+      },
+    ],
+  },
+};
+
+export const PILOT_KEYWORD_SLUGS = Object.keys(PILOT_KEYWORD_PAGES) as PilotKeywordSlug[];
+
+export function getPilotKeywordConfig(slug: PilotKeywordSlug): PilotKeywordPageConfig {
+  return PILOT_KEYWORD_PAGES[slug];
+}
+
+export function isPilotKeywordPath(pathname: string): PilotKeywordSlug | null {
+  const normalized = pathname.replace(/\/$/, "");
+  for (const slug of PILOT_KEYWORD_SLUGS) {
+    if (normalized === pathFor(slug)) return slug;
+  }
+  return null;
+}
+
+/** Flat list of all categorized terms (for counts and chips). */
+export function allCategorizedTerms(config: PilotKeywordPageConfig): string[] {
+  return config.keywordCategories.flatMap((c) => c.terms);
+}

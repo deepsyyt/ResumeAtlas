@@ -14,6 +14,7 @@ import {
   absoluteCanonicalUrl,
   roleResumeExampleListMeta,
   roleResumeExamplePath,
+  roleResumeKeywordsPath,
 } from "@/app/lib/searchIntentSeo";
 import type { ResumeSeoTopic } from "@/app/lib/resumeTopicTypes";
 import { ResumeTopicSectionForGuide } from "@/app/components/resumeTopicGuide";
@@ -86,21 +87,14 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
   const role = params.roleSlug;
   const showFullSampleAppendix = role === "product-manager";
   const isDataAnalyst = role === "data-analyst";
-  const isDataScientist = role === "data-scientist";
-  const isSoftwareEngineer = role === "software-engineer";
-  const isBackendDeveloper = role === "backend-developer";
+  const keywordsPagePath = roleResumeKeywordsPath(role);
+  const roleLower = config.roleName.toLowerCase();
   const heroHeading = isDataAnalyst
     ? "Data Analyst Resume Example That Gets Interviews (2026)"
     : `${config.roleName} resume example, sample & template`;
   const heroIntro = isDataAnalyst
     ? "Use recruiter-ready examples, ATS-friendly templates, and proven bullet points for SQL, Excel, Python, Tableau, Power BI, and analytics roles."
-    : isDataScientist
-    ? "Use this page for full data scientist resume examples and template structure, the keyword list and bullet patterns are linked below as on-page sections."
-    : isSoftwareEngineer
-    ? "Use this page for full software engineer resume example/sample/template intent, keywords and bullet sections are linked below on the same URL."
-    : isBackendDeveloper
-    ? "Use this page for full backend developer resume example/sample/template intent, for ATS keyword checklists, jump to the keywords section below."
-    : `These section-by-section patterns reflect how hiring teams and ATS tools read ${config.roleName.toLowerCase()} resumes in ${CONTENT_FRESHNESS_YEAR} - plain-text structure, proof in bullets, and honest posting-aligned keywords. Use it as a sample outline, then compare your resume to a job description to close gaps before you apply.`;
+    : `These section-by-section patterns reflect how hiring teams and ATS tools read ${roleLower} resumes in ${CONTENT_FRESHNESS_YEAR}—plain-text structure, proof in bullets, and honest posting-aligned language. Use it as a sample outline, then compare your resume to a job description to close gaps before you apply.`;
 
   return (
     <>
@@ -116,94 +110,16 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
           <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
             {heroIntro}
           </p>
-          {isDataScientist ? (
-            <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700">
-              For ATS terms, use{" "}
-              <Link
-                href="#skills"
-                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                data scientist resume keywords
-              </Link>
-              . For copy-ready line banks, use{" "}
-              <Link
-                href="#bullet-points"
-                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                data scientist resume bullet points
-              </Link>
-              .
-            </p>
-          ) : null}
-          {isBackendDeveloper ? (
-            <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700">
-              For ATS terms, use{" "}
-              <Link
-                href="#skills"
-                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                backend developer resume keywords
-              </Link>
-              . For project and bullet patterns, use this page&apos;s{" "}
-              <Link
-                href="#projects"
-                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                projects
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="#bullet-points"
-                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                bullet points
-              </Link>{" "}
-              sections.
-            </p>
-          ) : null}
-          {isSoftwareEngineer ? (
-            <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700">
-              For ATS terms, use{" "}
-              <Link
-                href="#skills"
-                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                software engineer resume keywords
-              </Link>
-              . For line banks by level, use{" "}
-              <Link
-                href="#bullet-points"
-                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                software engineer resume bullet points
-              </Link>
-              .
-            </p>
-          ) : null}
-          {isSoftwareEngineer ? (
-            <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-700">
-              Looking for summary or objective wording? Start in{" "}
-              <Link
-                href="#summary"
-                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                summary examples
-              </Link>{" "}
-              and adapt wording to your target stack and level.
-            </p>
-          ) : null}
-          {isDataScientist ? (
-            <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-700">
-              Looking for summary or objective wording? Start in{" "}
-              <Link
-                href="#summary"
-                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                summary examples
-              </Link>{" "}
-              and adapt to your target role level.
-            </p>
-          ) : null}
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700">
+            For ATS keyword lists and missing terms from a job description, use the{" "}
+            <Link
+              href={keywordsPagePath}
+              className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
+              {roleLower} resume keywords
+            </Link>{" "}
+            page. Bullet patterns and templates stay on this guide.
+          </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             {(isDataAnalyst ? (["resume-example", "ats-template", "skills", "resume-bullet-points-h2", "faq"] as const) : MERGED_TOPICS).map((t) => (
               <Link
@@ -271,7 +187,11 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
               role={params.roleSlug}
               topic={topic}
               anchorId={anchorForTopic(topic)}
-              showRoleSpecificContext={isDataScientist || isSoftwareEngineer ? topic === "summary" : true}
+              showRoleSpecificContext={
+                role === "data-scientist" || role === "software-engineer"
+                  ? topic === "summary"
+                  : true
+              }
             />
           ))}
 

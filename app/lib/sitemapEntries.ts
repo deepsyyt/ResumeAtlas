@@ -6,7 +6,8 @@ import {
   type RoleSlug,
 } from "@/app/lib/seoPages";
 import { INDEXED_PROBLEM_SLUGS } from "@/app/lib/problemPages";
-import { ROLE_ATS_PATH } from "@/app/lib/roleAtsTemplateConfig";
+import { ALT_ROLE_KEYWORD_SLUGS, getAltRoleKeywordConfig } from "@/app/lib/altRoleKeywordPages";
+import { PILOT_KEYWORD_SLUGS, getPilotKeywordConfig } from "@/app/lib/pilotKeywordPages";
 
 const LEGAL_PATHS = [
   "/contact",
@@ -24,20 +25,19 @@ function priorityForPath(pathname: string): number {
     return 0.91;
   }
   if (pathname === "/resume-examples") return 0.86;
-  if (pathname === "/problems") return 0.95;
   if (pathname.startsWith("/problems/")) return 0.92;
   if (pathname.startsWith("/how-ats-")) return 0.92;
   if (
     pathname === "/ats-resume-template" ||
     pathname === "/resume-guides/resume-work-experience-examples" ||
     pathname === "/resume-guides/resume-skills-examples" ||
-    pathname === "/common-resume-mistakes-fail-ats" ||
     pathname === "/customize-resume-without-lying"
   ) {
     return 0.85;
   }
   if (pathname.startsWith("/ats-resume-template-")) return 0.84;
   if (pathname.endsWith("-resume-guide")) return 0.84;
+  if (pathname.endsWith("-resume-keywords")) return 0.86;
   if (
     /^\/[a-z0-9-]+$/.test(pathname) &&
     Object.prototype.hasOwnProperty.call(KEYWORD_PAGES, pathname.slice(1))
@@ -107,15 +107,6 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/resume-guides/resume-skills-examples"),
   });
-  const roleAtsTemplateLastMod = guideClusterLastMod;
-  for (const path of Object.values(ROLE_ATS_PATH)) {
-    entries.push({
-      url: `${base}${path}`,
-      lastModified: roleAtsTemplateLastMod,
-      changeFrequency: "monthly" as const,
-      priority: priorityForPath(path),
-    });
-  }
   entries.push({
     url: `${base}/customize-resume-without-lying`,
     lastModified: new Date("2026-04-02"),
@@ -150,6 +141,33 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
       lastModified: resumeGuideLastMod,
       changeFrequency: "monthly" as const,
       priority: priorityForPath(resumeGuidePath),
+    });
+    const resumeKeywordsPath = `/${slug}-resume-keywords`;
+    entries.push({
+      url: `${base}${resumeKeywordsPath}`,
+      lastModified: resumeGuideLastMod,
+      changeFrequency: "monthly" as const,
+      priority: priorityForPath(resumeKeywordsPath),
+    });
+  }
+
+  for (const altSlug of ALT_ROLE_KEYWORD_SLUGS) {
+    const altPath = getAltRoleKeywordConfig(altSlug).path;
+    entries.push({
+      url: `${base}${altPath}`,
+      lastModified: resumeGuideLastMod,
+      changeFrequency: "monthly" as const,
+      priority: priorityForPath(altPath),
+    });
+  }
+
+  for (const pilotSlug of PILOT_KEYWORD_SLUGS) {
+    const pilotPath = getPilotKeywordConfig(pilotSlug).path;
+    entries.push({
+      url: `${base}${pilotPath}`,
+      lastModified: resumeGuideLastMod,
+      changeFrequency: "monthly" as const,
+      priority: priorityForPath(pilotPath),
     });
   }
 

@@ -50,30 +50,30 @@ export const CLUSTER_HOME_METADATA = {
 /** Resume ↔ this job description (tailor / compare / match). */
 export const CLUSTER_JD_MATCH_TOOL_COPY = {
   titleAbsolute:
-    "Posting Fit Diagnosis - Match Resume to Job Description (Free, 2026) | ResumeAtlas",
+    `Compare Resume to Job Description (Free) - Resume Keyword Scanner (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Posting fit diagnosis: compare your resume to a specific job description for required skill debt, posting vocabulary coverage, semantic fit, evidence density, parse hygiene, skim friction, and truth-envelope alignment. Free, instant, no signup.",
-  ogTitle: "Posting fit diagnosis - resume vs job description (free, 2026) | ResumeAtlas",
+    "Free resume keyword scanner and job-description matcher: tailor your resume, compare it to a posting, and see missing ATS keywords before you apply. Paste resume + JD, instant results, no signup.",
+  ogTitle: `Compare resume to job description free - keyword scanner (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
   ogDescription:
-    "Structured resume vs posting diagnostics, gates A-D, built for long, modern job descriptions.",
-  twitterTitle: "Posting fit diagnosis - resume vs job description (free)",
+    "Tailor resume to job description, find missing keywords, and compare resume vs posting in one free scan.",
+  twitterTitle: "Compare resume to job description (free keyword scanner)",
   twitterDescription:
-    "Compare resume to the posting: vocabulary, hard gaps, fit, and proof, in one flow.",
-  h1: "Posting fit diagnosis: match your resume to this job description",
+    "Match resume to JD, find keyword gaps, and tailor before you apply.",
+  h1: "Compare your resume to a job description (free keyword scanner)",
   intro:
-    "Paste your resume and the exact job posting. ResumeAtlas frames the readout as posting fit diagnosis: vocabulary against the posting, required skill debt, semantic fit, evidence density, parse hygiene, skim friction, and truth-envelope alignment, so you tailor to this job description with defensible edits, not generic polish.",
+    "Paste your resume and the exact job posting. See missing keywords, weak coverage vs the posting, and match-style gaps so you can tailor your resume to this job description with honest edits—not generic keyword stuffing.",
   topStripStrong:
-    "Resume-to-job-description matching: use the same posting text you will apply with.",
-  webAppName: "ResumeAtlas posting fit diagnosis",
+    "Resume vs job description: keyword scan + match readout for the posting you paste.",
+  webAppName: "Resume keyword scanner and job description matcher",
   webAppDescription:
-    "Posting fit diagnosis: compare resume text to a job posting for vocabulary coverage, required skill debt, semantic fit, evidence density, parse hygiene, skim friction, and truth-envelope alignment before you apply.",
+    "Compare resume to job description, find missing ATS keywords, and prioritize tailoring edits before you apply.",
   differentiatorHeading: "Different from keyword-only scans and ATS-only checks",
   differentiatorBody: [
     "Posting vocabulary coverage and required skill debt are surfaced as Gate B signals on this workbench, without splitting into a separate vanity “keyword tool” URL.",
     "An ATS checker emphasizes whether machines can read your layout and sections. That matters, but it does not replace proving fit to this posting. Use the ATS checker when structure and parsing are the question; use this page when you have a real JD and need alignment and tailoring priorities.",
   ],
   serpVariantsParagraph:
-    "People search compare resume to job description free, tailor resume to job description, resume job description match, resume vs JD, resume matching, and optimize resume for job description. This URL is ResumeAtlas’s canonical answer: paste resume + posting, read gaps for that job, then edit.",
+    "People search resume keyword scanner, keyword scanner, tailor resume to job description, compare resume to job description free, job description keyword finder, resume job description match, and resume matching tool. This URL is the single canonical tool for all of them: paste resume + posting, read keyword and fit gaps, then edit.",
   howItWorksHeading: "How resume-to-job-description matching works",
   whyMatchHeading: "Why one tailored resume beats mass generic applications",
   resultsHeading: "What the match-style readout highlights",
@@ -144,10 +144,10 @@ export const CLUSTER_ATS_GUIDE_METADATA = {
   path: ATS_RESUME_TEMPLATE_GUIDE_PATH,
   title: `ATS Resume Template That Passes Screening (Free + Copyable, ${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Free ATS resume template with Word downloads, examples, formatting rules, and keywords designed to pass applicant tracking systems.",
-  ogTitle: `ATS Resume Template That Passes Screening (Free + Copyable, ${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
+    `Free ATS resume template (${CONTENT_FRESHNESS_YEAR}): copyable layout, Word downloads, format rules, and examples that pass applicant tracking systems—not role keyword lists (those live on role keyword pages).`,
+  ogTitle: `ATS Resume Template & Format (${CONTENT_FRESHNESS_YEAR}) - Pass ATS Screening${RESUME_ATLAS_TITLE_SUFFIX}`,
   ogDescription:
-    "Free ATS resume template with Word downloads, examples, formatting rules, and keywords designed to pass applicant tracking systems.",
+    "ATS resume format, template, and examples: layout and parsing rules to pass screening. Use the JD matcher to scan keywords for a specific posting.",
   openGraphUrl: abs(ATS_RESUME_TEMPLATE_GUIDE_PATH),
 };
 

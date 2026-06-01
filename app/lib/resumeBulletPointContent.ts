@@ -266,8 +266,8 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     relatedSearches: [
       { label: "data analyst resume summary examples", href: "/data-analyst-resume-guide#summary" },
       { label: "entry-level data analyst resume bullet points", href: "/data-analyst-resume-guide#bullet-points" },
-      { label: "data analyst SQL keywords checklist", href: "/data-analyst-resume-guide#skills" },
-      { label: "data analyst ATS keyword list", href: "/data-analyst-resume-guide#skills" },
+      { label: "data analyst SQL keywords checklist", href: "/data-analyst-resume-keywords" },
+      { label: "data analyst ATS keyword list", href: "/data-analyst-resume-keywords" },
     ],
     levelCards: {
       "entry-level": {
@@ -408,7 +408,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     relatedSearches: [
       { label: "business analyst resume summary examples", href: "/business-analyst-resume-guide#summary" },
       { label: "entry-level business analyst resume bullet points", href: "/business-analyst-resume-guide#bullet-points" },
-      { label: "business analyst resume keywords", href: "/business-analyst-resume-guide#skills" },
+      { label: "business analyst resume keywords", href: "/business-analyst-resume-keywords" },
       { label: "business analyst interview questions", href: "/data-analyst-interview-questions" },
     ],
     levelCards: {
@@ -551,7 +551,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       { label: "data scientist resume summary", href: "/data-scientist-resume-guide#summary" },
       { label: "data scientist resume objective", href: "/data-scientist-resume-guide#summary" },
       { label: "data scientist resume template", href: "/data-scientist-resume-guide" },
-      { label: "data scientist resume keywords", href: "/data-scientist-resume-guide#skills" },
+      { label: "data scientist resume keywords", href: "/data-scientist-resume-keywords" },
     ],
     levelCards: {
       "entry-level": {
@@ -693,7 +693,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
       { label: "software engineer resume summary", href: "/software-engineer-resume-guide#summary" },
       { label: "software engineer resume template", href: "/software-engineer-resume-guide" },
       { label: "software engineer resume sample", href: "/software-engineer-resume-guide" },
-      { label: "software engineer resume keywords", href: "/software-engineer-resume-guide#skills" },
+      { label: "software engineer resume keywords", href: "/software-engineer-resume-keywords" },
     ],
     levelCards: {
       "entry-level": {

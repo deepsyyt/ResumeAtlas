@@ -29,7 +29,7 @@ import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import type { AnalysisQuotaStatus } from "@/app/lib/quota";
 import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
 import { KEYWORD_PAGES, type RoleSlug } from "@/app/lib/seoPages";
-import { roleResumePillarPath } from "@/app/lib/searchIntentSeo";
+import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIntentSeo";
 import { isResumeBulletRole } from "@/app/lib/resumeBulletPointContent";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
@@ -1660,7 +1660,7 @@ export default function HomeClient({
                     </li>
                     <li>
                       <Link
-                        href={`${pillarPath}#skills`}
+                        href={roleResumeKeywordsPath(slug)}
                         className="text-sky-700 underline underline-offset-2 hover:text-sky-950"
                       >
                         ATS keywords

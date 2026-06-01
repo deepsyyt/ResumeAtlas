@@ -86,17 +86,17 @@ export function PostingFitSsrShell() {
       <section className="border-b border-slate-200 bg-white" id="posting-fit-diagnosis">
         <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-widest text-sky-800">
-            ResumeAtlas posting-fit diagnosis engine
+            Free resume keyword scanner · resume vs job description
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            Posting fit diagnosis: match your resume to this job description
+            Compare your resume to a job description (find missing keywords)
           </h1>
           <p className="mt-4 text-base leading-relaxed text-slate-700 sm:text-lg">
-            Paste your resume and the exact posting you are applying to. You get a structured readout
-            aligned to Gates A-D: parse hygiene, posting vocabulary and required skill debt, semantic fit
-            and evidence density, then skim friction and truth-envelope alignment. Diagnostic registry
-            version <span className="font-mono text-sm">{DIAGNOSTIC_REGISTRY_VERSION}</span> defines the
-            vocabulary you see in the product and on this page.
+            Paste your resume and the exact posting you are applying to. See missing ATS keywords, weak
+            coverage vs the job description, and a structured posting-fit readout (parse hygiene, vocabulary
+            gaps, semantic fit, and evidence). Diagnostic registry version{" "}
+            <span className="font-mono text-sm">{DIAGNOSTIC_REGISTRY_VERSION}</span> defines the vocabulary
+            in the product and on this page.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a
@@ -105,7 +105,7 @@ export function PostingFitSsrShell() {
               data-analytics-event="posting_fit_tier_s_cta_clicked"
               data-analytics-location="ssr_shell_hero"
             >
-              Run posting fit diagnosis
+              Scan resume for missing keywords
             </a>
             <Link
               href="/methodology"

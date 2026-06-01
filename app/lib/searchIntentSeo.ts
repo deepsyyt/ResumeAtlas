@@ -6,6 +6,8 @@ import {
   type ResumeSlug,
   type RoleSlug,
 } from "@/app/lib/seoPages";
+import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
+import { ROLE_KEYWORDS_PRIMARY_H2 } from "@/app/lib/roleKeywordsPageConfig";
 import { RESUME_EXAMPLE_SERP_TITLE_YEAR } from "@/app/lib/resumeExampleSeoTemplate";
 
 export const RESUME_ATLAS_TITLE_SUFFIX = " | ResumeAtlas" as const;
@@ -20,15 +22,15 @@ export function stripResumeAtlasTitleSuffix(title: string): string {
 /**
  * Canonical URL owners (indexed) vs. query intent - use when writing titles, descriptions, and internal links.
  *
- * **`/{role}-resume-guide`** - Single pillar per role: examples, keywords, bullets, summaries, skills, and
- * projects on one authoritative URL (anchors for deep jumps). Consolidates legacy
- * `-resume-example`, `-resume-keywords`, and bullet-hub URLs via 301s.
+ * **`/{role}-resume-guide`** - Example, template, bullets, summary, and projects (guide intent).
+ *
+ * **`/{role}-resume-keywords`** - ATS keyword lists and JD-gap scanning (keyword intent). Serves `/{role}/keywords`.
  *
  * **`/{role}`** - Career / interview-framed hub (indexed only when there is no standalone pillar takeover in
  * `seoPages.ts`; otherwise noindex with canonical to `/{role}-resume-guide`).
  *
- * **Thin-content avoidance:** `/{role}/keywords/{intent}` and legacy hyphen keyword URLs **301** to the pillar.
- * Thin `/{role}/resume/{topic}` routes remain noindex with canonical to fragment on the pillar where mapped.
+ * **Thin-content avoidance:** `/{role}/keywords/{intent}` **301** to `/{role}-resume-keywords#{intent}`.
+ * Thin `/{role}/resume/{topic}` routes remain noindex with canonical to fragment on the guide where mapped.
  */
 
 export function absoluteCanonicalUrl(path: string): string {
@@ -47,9 +49,9 @@ export function roleResumeExamplePath(role: RoleSlug): string {
   return roleResumePillarPath(role);
 }
 
-/** Keyword hub merges into pillar; canonical is the pillar URL (no duplicate owners). */
+/** Public URL for role keyword intent (indexed; not the example guide). */
 export function roleResumeKeywordsPath(role: RoleSlug): string {
-  return roleResumePillarPath(role);
+  return `/${role}-resume-keywords`;
 }
 
 export function roleResumeExampleListMeta(role: RoleSlug): { title: string; description: string } {
@@ -82,44 +84,65 @@ export function roleResumeExampleListMeta(role: RoleSlug): { title: string; desc
         ? "Use a DevOps resume example with cloud, CI/CD, reliability, and ATS-safe structure for recruiter scans."
       : sample?.metaDescription ??
         `ATS-friendly ${rn.toLowerCase()} resume example with summary, skills, projects, and bullet patterns on one page.`;
+  const keywordHubHint = ` ATS keyword checklists for this role are on ${roleResumeKeywordsPath(role)}—not this page.`;
   const description =
     role === "software-engineer"
-      ? baseDesc
-      : `${baseDesc} Patterns align with ${CONTENT_FRESHNESS_YEAR} ATS and recruiter expectations. Use it as a resume template and sample: mirror the sections, then match your resume to a job description with our free tools before you apply.`;
+      ? `${baseDesc}${keywordHubHint}`
+      : `${baseDesc} Patterns align with ${CONTENT_FRESHNESS_YEAR} ATS and recruiter expectations. Use it as a resume template and sample: mirror the sections, then match your resume to a job description with our free tools before you apply.${keywordHubHint}`;
   return { title, description };
 }
 
+const ROLE_KEYWORDS_SERP_TOOL_HINT: Record<RoleSlug, string> = {
+  "data-analyst": "SQL, Python, Power BI, dashboards",
+  "data-scientist": "Python, SQL, ML, experimentation",
+  "software-engineer": "TypeScript, React, APIs, cloud, testing",
+  "product-manager": "roadmaps, discovery, metrics, launches",
+  "business-analyst": "requirements, BPMN, Power BI, stakeholder alignment",
+  "frontend-developer": "React, TypeScript, accessibility, performance",
+  "backend-developer": "APIs, microservices, databases, cloud, reliability",
+  "machine-learning-engineer": "Python, PyTorch, model deployment, MLOps",
+  "devops-engineer": "Kubernetes, Terraform, CI/CD, AWS, observability",
+  "full-stack-developer": "React, Node.js, SQL, REST APIs, full-stack delivery",
+};
+
+function roleKeywordsSerpTitle(roleName: string, role: RoleSlug): string {
+  const shortName =
+    role === "devops-engineer" ? "DevOps" : roleName;
+  return `${shortName} Resume Keywords (${CONTENT_FRESHNESS_YEAR}) - Free ATS List${RESUME_ATLAS_TITLE_SUFFIX}`;
+}
+
+const ROLE_KEYWORDS_CTR_DESCRIPTION: Partial<Record<RoleSlug, string>> = {
+  "data-analyst":
+    "Free data analyst resume keywords for ATS: SQL, Python, Power BI, dashboards, and experiment language. Copy the list, then scan your resume against the job description for missing terms.",
+  "data-scientist":
+    "Data scientist resume keywords recruiters search for—Python, SQL, ML, experimentation, deployment. Free ATS checklist; paste your JD to see keyword gaps before you apply.",
+  "devops-engineer":
+    "DevOps resume keywords for ATS: Kubernetes, Terraform, CI/CD, AWS, SRE. Free copy-ready list plus job-description scan to find missing tools and reliability terms.",
+  "machine-learning-engineer":
+    "Machine learning engineer resume keywords with MLOps and production focus. Free ATS list; compare your resume to the posting to fix weak ML keyword coverage.",
+};
+
+function roleKeywordsSerpDescription(role: RoleSlug): string {
+  const ctr = ROLE_KEYWORDS_CTR_DESCRIPTION[role];
+  if (ctr) return ctr;
+  const roleLower = KEYWORD_PAGES[role].roleName.toLowerCase();
+  const tools = ROLE_CONTENT_MAP[role].tools.slice(0, 5).join(", ");
+  const hint = ROLE_KEYWORDS_SERP_TOOL_HINT[role];
+  return `Copy-ready ${roleLower} resume keywords for ATS (${hint}). Core tools: ${tools}. Paste your job description to see missing keywords before you apply.`;
+}
+
+/** SERP title + meta for indexed `/{role}-resume-keywords` pages (keyword intent only). */
 export function roleResumeKeywordsHubMeta(role: RoleSlug): { title: string; description: string } {
-  const { roleName, metaDescription } = KEYWORD_PAGES[role];
-  const title =
-    role === "devops-engineer"
-      ? `DevOps Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR} Tools + Skills List)${RESUME_ATLAS_TITLE_SUFFIX}`
-      : role === "data-scientist"
-        ? `Data Scientist Resume Keywords (Data Science ATS Checklist ${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
-      : role === "software-engineer"
-        ? `Software Engineer Resume Keywords (ATS Technical Skills Checklist ${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
-      : role === "data-analyst"
-        ? `Data Analyst Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR} Checklist + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
-      : role === "product-manager"
-        ? `Product Manager Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
-      : role === "backend-developer"
-        ? `Backend Developer Resume Keywords (ATS Technical Skills Checklist ${CONTENT_FRESHNESS_YEAR} + Examples)${RESUME_ATLAS_TITLE_SUFFIX}`
-      : `${roleName} Resume Keywords (${CONTENT_FRESHNESS_YEAR}) - ATS Skills & Keywords${RESUME_ATLAS_TITLE_SUFFIX}`;
-  const description =
-    role === "devops-engineer"
-      ? "Use proven DevOps resume keywords for AWS, Kubernetes, CI/CD, Terraform, Docker, monitoring, and automation."
-      : role === "data-scientist"
-        ? "Data scientist and data science resume keywords checklist for ATS: Python, SQL, ML, experimentation, and copy-ready examples to close keyword gaps."
-      : role === "software-engineer"
-        ? "Software engineer ATS keywords and technical skills checklist for backend, frontend, APIs, cloud, testing, and measurable delivery terms."
-      : role === "data-analyst"
-        ? "Data analyst resume keywords with ATS checklist, SQL/Excel/dashboard terms, and high-impact bullet examples to close keyword gaps fast."
-      : role === "product-manager"
-        ? "Best product manager resume keywords for roadmap, discovery, metrics, launches, and ATS screening with examples."
-      : role === "backend-developer"
-        ? "Backend developer ATS keywords and technical skills checklist for APIs, microservices, databases, caching, cloud, and reliability terms."
-      : `${metaDescription} Includes ATS-friendly skills, role terms, and action language used in ${CONTENT_FRESHNESS_YEAR} hiring. Browse by category, then validate against a real posting with ResumeAtlas keyword scan and JD match tools.`;
-  return { title, description };
+  const { roleName } = KEYWORD_PAGES[role];
+  return {
+    title: roleKeywordsSerpTitle(roleName, role),
+    description: roleKeywordsSerpDescription(role),
+  };
+}
+
+/** On-page H1 for keyword hubs (matches query intent, shorter than SERP title). */
+export function roleResumeKeywordsH1(role: RoleSlug): string {
+  return ROLE_KEYWORDS_PRIMARY_H2[role];
 }
 
 export function roleResumeKeywordIntentMeta(

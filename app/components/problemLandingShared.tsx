@@ -410,7 +410,10 @@ export function GuidesFooterLinks() {
           </Link>
         </li>
         <li>
-          <Link href="/problems" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+          <Link
+            href="/problems/resume-not-getting-interviews"
+            className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+          >
             All job-search problem pages
           </Link>
         </li>

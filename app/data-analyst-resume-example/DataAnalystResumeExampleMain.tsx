@@ -130,7 +130,7 @@ export function DataAnalystResumeExampleMain({ omitHero = false }: { omitHero?: 
             <p className="mt-3 max-w-2xl text-sm text-slate-600">
               Need keyword targeting before editing bullets? Use the{" "}
               <Link
-                href="/data-analyst-resume-guide#skills"
+                href="/data-analyst-resume-keywords"
                 className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 Data Analyst resume keywords hub
@@ -226,7 +226,7 @@ export function DataAnalystResumeExampleMain({ omitHero = false }: { omitHero?: 
             <li>
               Mirror keywords from the target job description (use this{" "}
               <Link
-                href="/data-analyst-resume-guide#skills"
+                href="/data-analyst-resume-keywords"
                 className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 data analyst keyword list
@@ -248,7 +248,11 @@ export function DataAnalystResumeExampleMain({ omitHero = false }: { omitHero?: 
             ))}
           </ul>
           <p className="mt-3 text-sm text-slate-600">
-            Use only skills you can prove in your bullets. Need formatting help? See{" "}
+            Use only skills you can prove in your bullets. For the full ATS keyword list and JD gap scan, see{" "}
+            <Link href="/data-analyst-resume-keywords" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
+              data analyst resume keywords
+            </Link>
+            . Need formatting help? See{" "}
             <Link href={RESUME_SKILLS_GUIDE_PATH} className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
               resume skills examples
             </Link>

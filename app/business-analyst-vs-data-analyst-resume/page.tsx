@@ -34,7 +34,7 @@ export default function BusinessAnalystVsDataAnalystResumePage() {
             business analyst resume examples
           </Link>
           . For the full keyword checklist, use the{" "}
-          <Link href="/data-analyst-resume-guide#skills" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
+          <Link href="/data-analyst-resume-keywords" className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900">
             data analyst resume keywords hub
           </Link>
           .

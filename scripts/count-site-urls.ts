@@ -1,11 +1,19 @@
 /**
  * One-off inventory: unique pathnames (leading slash, no trailing slash except /).
  * Run: npx --yes tsx scripts/count-site-urls.ts
+ *
+ * Legacy paths (/{role}/resume/*, /{role}/keywords/*, /seo/*, thin redirects) are
+ * listed under "redirect-only" — they 301 in next.config/middleware, not App Router pages.
  */
 import { getDedupedSitemapEntries } from "../app/lib/sitemapEntries";
 import { KEYWORD_PAGES, type RoleSlug } from "../app/lib/seoPages";
+import { ALT_ROLE_KEYWORD_SLUGS, getAltRoleKeywordConfig } from "../app/lib/altRoleKeywordPages";
+import { PILOT_KEYWORD_SLUGS, getPilotKeywordConfig } from "../app/lib/pilotKeywordPages";
 import { ROLE_KEYWORD_INTENTS } from "../app/lib/roleSeo";
-import { PROBLEM_SLUGS } from "../app/lib/problemPages";
+import {
+  INDEXED_PROBLEM_SLUGS,
+  PROBLEM_REDIRECT_SOURCE_SLUGS,
+} from "../app/lib/problemPages";
 import {
   RESUME_BULLET_ROLES,
   RESUME_BULLET_LEVELS,
@@ -17,33 +25,42 @@ const RESUME_TOPICS = [
   "bullet-points",
   "skills",
   "summary",
-  "responsibilities",
   "projects",
+  "responsibilities",
   "experience-examples",
 ] as const;
 
-/** Extra app page routes not covered by sitemap or expansions below. */
-const EXTRA_PATHS: string[] = [
-  "/problems",
+/** App routes that exist as pages (not redirect-only). */
+const EXTRA_STATIC_PATHS: string[] = [
   "/tools",
   "/faq",
   "/how-it-works",
   "/optimize",
   "/auth/callback",
   "/ats-keywords",
-  "/ats-resume-checker-free",
-  "/ats-compatibility-check",
-  "/common-resume-mistakes-fail-ats",
-  "/how-ats-scans-resumes",
-  "/resume-score-checker",
-  "/resume-guides/ats-resume-template",
   "/business-analyst-vs-data-analyst-resume",
   "/data-analyst-interview-questions",
   "/data-analyst-cover-letter-example",
+  "/manifest.webmanifest",
+];
+
+/** Known legacy URLs — 301 only (no page.tsx). */
+const REDIRECT_ONLY_PATHS: string[] = [
+  "/problems",
+  "/common-resume-mistakes-fail-ats",
+  "/how-ats-scans-resumes",
+  "/resume-guides/ats-resume-template",
+  "/resume-guides/ats-friendly-resume-example",
+  "/resume-guides/resume-format-guide",
+  "/resume-guides/resume-template-for-job-application",
+  "/resume-guides/resume-projects-examples",
+  "/ats-resume-checker-free",
+  "/ats-compatibility-check",
+  "/resume-score-checker",
   "/data-analyst-sql-resume-keywords",
   "/tableau-data-analyst-resume-example",
-  "/manifest.webmanifest",
-  "/.well-known/appspecific/com.chrome.devtools.json",
+  "/ats-resume-template-software-engineer",
+  "/resume-keyword-scanner",
 ];
 
 function norm(p: string): string {
@@ -53,93 +70,82 @@ function norm(p: string): string {
 }
 
 function main() {
-  const paths = new Set<string>();
+  const indexed = new Set<string>();
+  const redirectOnly = new Set<string>();
 
-  const add = (p: string) => paths.add(norm(p));
+  const addIndexed = (p: string) => indexed.add(norm(p));
+  const addRedirect = (p: string) => redirectOnly.add(norm(p));
 
   let sitemapCount = 0;
   for (const e of getDedupedSitemapEntries()) {
     try {
-      add(new URL(e.url).pathname);
+      addIndexed(new URL(e.url).pathname);
       sitemapCount += 1;
     } catch {
       /* skip */
     }
   }
 
-  let intentCount = 0;
+  for (const slug of ALT_ROLE_KEYWORD_SLUGS) {
+    addIndexed(getAltRoleKeywordConfig(slug).path);
+  }
+  for (const slug of PILOT_KEYWORD_SLUGS) {
+    addIndexed(getPilotKeywordConfig(slug).path);
+  }
+
   for (const role of ROLES) {
+    addRedirect("/" + role + "/keywords");
     for (const intent of ROLE_KEYWORD_INTENTS) {
-      add("/" + role + "/keywords/" + intent);
-      intentCount += 1;
+      addRedirect("/" + role + "/keywords/" + intent);
     }
   }
 
-  let resumeTopicCount = 0;
   for (const role of ROLES) {
     for (const t of RESUME_TOPICS) {
-      add("/" + role + "/resume/" + t);
-      resumeTopicCount += 1;
+      addRedirect("/" + role + "/resume/" + t);
     }
   }
 
-  let problemCount = 0;
-  for (const slug of PROBLEM_SLUGS) {
-    add("/problems/" + slug);
-    problemCount += 1;
+  for (const slug of INDEXED_PROBLEM_SLUGS) {
+    addIndexed("/problems/" + slug);
+  }
+  for (const slug of PROBLEM_REDIRECT_SOURCE_SLUGS) {
+    addRedirect("/problems/" + slug);
   }
 
-  let roleHubCount = 0;
   for (const role of ROLES) {
-    add("/" + role);
-    roleHubCount += 1;
+    addRedirect("/" + role);
+    addRedirect("/ats-keywords/" + role);
   }
 
-  let atsKeywordsRoleRedirectCount = 0;
   for (const role of ROLES) {
-    add("/ats-keywords/" + role);
-    atsKeywordsRoleRedirectCount += 1;
+    addIndexed("/" + role + "-resume-guide");
+    addIndexed("/" + role + "-resume-keywords");
   }
 
-  /** Legacy bullet pathname shapes (still routable in dev; production requests 301 to `/{role}-resume-guide`). */
-  let internalBulletCount = 0;
   for (const role of RESUME_BULLET_ROLES) {
-    add("/resume-bullet-points/" + role);
-    internalBulletCount += 1;
+    addRedirect("/resume-bullet-points/" + role);
     for (const level of RESUME_BULLET_LEVELS) {
-      add("/resume-bullet-points/" + role + "/" + level);
-      internalBulletCount += 1;
+      addRedirect("/resume-bullet-points/" + role + "/" + level);
     }
   }
 
-  let extraAdded = 0;
-  for (const p of EXTRA_PATHS) {
-    add(p);
-    extraAdded += 1;
+  for (const p of EXTRA_STATIC_PATHS) addIndexed(p);
+  for (const p of REDIRECT_ONLY_PATHS) addRedirect(p);
+
+  const indexedSorted = Array.from(indexed).sort((a, b) => a.localeCompare(b));
+  const redirectSorted = Array.from(redirectOnly).sort((a, b) => a.localeCompare(b));
+
+  console.log("=== ResumeAtlas URL inventory ===\n");
+  console.log("Indexed app routes (sitemap + pillars): " + indexedSorted.length);
+  console.log("Redirect-only legacy paths:              " + redirectSorted.length);
+  console.log("Sitemap rows processed:                  " + sitemapCount);
+  console.log("\n--- Indexed (keep) ---");
+  for (const p of indexedSorted) {
+    console.log("https://resumeatlas.io" + p);
   }
-
-  const sorted = Array.from(paths).sort((a, b) => a.localeCompare(b));
-  const overlapNote =
-    sitemapCount > paths.size
-      ? "Sitemap rows can dedupe to fewer unique paths than row count."
-      : "";
-
-  console.log(JSON.stringify({ siteUrl: "https://resumeatlas.io" }, null, 0));
-  console.log("");
-  console.log("=== ResumeAtlas URL inventory (pathname-level) ===\n");
-  console.log("Unique pathnames:     " + paths.size);
-  console.log("from sitemap rows:  " + sitemapCount + " (before cross-bucket dedupe)");
-  console.log("/{role}/keywords/*: " + intentCount + " (expanded)");
-  console.log("/{role}/resume/*:   " + resumeTopicCount + " (expanded)");
-  console.log("/problems/{slug}:   " + problemCount);
-  console.log("/{role} hubs:       " + roleHubCount);
-  console.log("/ats-keywords/{r}:  " + atsKeywordsRoleRedirectCount);
-  console.log("/resume-bullet-points/* (internal): " + internalBulletCount);
-  console.log("extra static paths: " + extraAdded);
-  if (overlapNote) console.log(overlapNote);
-  console.log("");
-  console.log("All paths (sorted):");
-  for (const p of sorted) {
+  console.log("\n--- Redirect-only (no page.tsx) ---");
+  for (const p of redirectSorted) {
     console.log("https://resumeatlas.io" + p);
   }
 }

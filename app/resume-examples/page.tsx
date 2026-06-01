@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
+  KEYWORD_PAGES,
   RESUME_PAGES,
   type RoleSlug,
   ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE,
   resumeExamplePublicPath,
 } from "@/app/lib/seoPages";
+import { roleResumeKeywordsPath } from "@/app/lib/searchIntentSeo";
 import { LastUpdated } from "@/app/components/LastUpdated";
 import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
@@ -116,27 +118,20 @@ export default function ResumeExamplesIndexPage() {
         </div>
 
         <div className="border-t border-slate-200 pt-6">
-          <h2 className="text-base font-semibold text-slate-900">More resume writing resources</h2>
+          <h2 className="text-base font-semibold text-slate-900">ATS resume keywords by role</h2>
           <p className="text-sm text-slate-500 mt-1">
-            Deep dives for bullet points, skills, summaries, and projects.
+            Keyword lists and job-description gap scans (separate from example guides).
           </p>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li>
-              <Link
-                href="/data-scientist-resume-guide#bullet-points"
-                className="text-sky-700 hover:underline"
-              >
-                Data Scientist resume bullet points
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/software-engineer-resume-guide#skills"
-                className="text-sky-700 hover:underline"
-              >
-                Software Engineer resume skills
-              </Link>
-            </li>
+          <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+            {(Object.keys(KEYWORD_PAGES) as RoleSlug[])
+              .sort((a, b) => KEYWORD_PAGES[a].roleName.localeCompare(KEYWORD_PAGES[b].roleName))
+              .map((role) => (
+                <li key={role}>
+                  <Link href={roleResumeKeywordsPath(role)} className="text-sky-700 hover:underline">
+                    {KEYWORD_PAGES[role].roleName} resume keywords
+                  </Link>
+                </li>
+              ))}
           </ul>
         </div>
       </section>

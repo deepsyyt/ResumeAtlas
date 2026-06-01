@@ -4,6 +4,8 @@ import {
   resolveAnthropicModelCandidates,
 } from "@/app/lib/anthropicModels";
 
+export const dynamic = "force-dynamic";
+
 const API_URL = "https://api.anthropic.com/v1/messages";
 
 export async function GET() {
@@ -73,6 +75,16 @@ export async function GET() {
     const errorType = parseAnthropicErrorType(responseText);
     const isModelUnavailable = response.status === 404 && errorType === "not_found_error";
     if (!isModelUnavailable) {
+      let upstreamMessage: string | null = null;
+      try {
+        const parsed = JSON.parse(responseText) as {
+          error?: { message?: unknown };
+        };
+        upstreamMessage =
+          typeof parsed.error?.message === "string" ? parsed.error.message : null;
+      } catch {
+        /* ignore */
+      }
       return NextResponse.json(
         {
           ok: false,
@@ -82,6 +94,7 @@ export async function GET() {
           discoveredModelIds,
           upstreamStatus: response.status,
           upstreamErrorType: errorType,
+          upstreamMessage,
         },
         { status: 502 }
       );

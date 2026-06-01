@@ -315,7 +315,7 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 - 2021
             </li>
             <li>
               <Link
-                href="/data-scientist-resume-guide#skills"
+                href="/data-scientist-resume-keywords"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Data scientist resume keywords
@@ -323,7 +323,7 @@ Data Analyst | Harbor Retail Co. | Chicago, IL | 2018 - 2021
             </li>
             <li>
               <Link
-                href="/devops-engineer-resume-guide#skills"
+                href="/devops-engineer-resume-keywords"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 DevOps engineer resume keywords

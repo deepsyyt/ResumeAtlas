@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ALT_ROLE_KEYWORD_SLUGS, getAltRoleKeywordConfig } from "@/app/lib/altRoleKeywordPages";
+import { PILOT_KEYWORD_SLUGS, getPilotKeywordConfig } from "@/app/lib/pilotKeywordPages";
 import { KEYWORD_PAGES } from "@/app/lib/seoPages";
 import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
@@ -42,7 +44,7 @@ export default function ATSKeywordsIndexPage() {
           {items.map((p) => (
             <li key={p.slug} className="rounded-xl border border-slate-200 bg-white p-4">
               <Link
-                href={`/${p.slug}-resume-guide#skills`}
+                href={`/${p.slug}-resume-keywords`}
                 className="font-semibold text-slate-900 hover:underline"
               >
                 {p.h1}
@@ -51,6 +53,43 @@ export default function ATSKeywordsIndexPage() {
             </li>
           ))}
         </ul>
+
+        <div>
+          <h2 className="text-base font-semibold text-slate-900">SQL, engineering &amp; Power BI</h2>
+          <ul className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 text-sm">
+            {PILOT_KEYWORD_SLUGS.map((slug) => {
+              const page = getPilotKeywordConfig(slug);
+              return (
+                <li key={slug} className="rounded-xl border border-slate-200 bg-white p-4">
+                  <Link href={page.path} className="font-semibold text-slate-900 hover:underline">
+                    {page.roleName} resume keywords
+                  </Link>
+                  <p className="mt-1 text-xs text-slate-500">{page.description.slice(0, 120)}…</p>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        <div>
+          <h2 className="text-base font-semibold text-slate-900">Related analyst &amp; BI titles</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Separate keyword lists when the job title is not a core data analyst or business analyst role.
+          </p>
+          <ul className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 text-sm">
+            {ALT_ROLE_KEYWORD_SLUGS.map((slug) => {
+              const page = getAltRoleKeywordConfig(slug);
+              return (
+                <li key={slug} className="rounded-xl border border-slate-200 bg-white p-4">
+                  <Link href={page.path} className="font-semibold text-slate-900 hover:underline">
+                    {page.roleName} resume keywords
+                  </Link>
+                  <p className="mt-1 text-xs text-slate-500">{page.description.slice(0, 120)}…</p>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
 
         <div className="border-t border-slate-200 pt-6">
           <h2 className="text-base font-semibold text-slate-900">Turn keywords into great content</h2>

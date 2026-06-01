@@ -6,6 +6,7 @@ import type { ResumeSeoTopic as Topic } from "@/app/lib/resumeTopicTypes";
 import { CONTENT_FRESHNESS_YEAR } from "@/app/lib/contentFreshness";
 import { getPillarSemanticSection } from "@/app/lib/pillarSemanticPlans";
 import { PillarSemanticSection } from "@/app/components/PillarSemanticSection";
+import { roleResumeKeywordsPath } from "@/app/lib/searchIntentSeo";
 
 const ROLE_NAMES: Record<RoleSlug, string> = {
   "data-analyst": "Data Analyst",
@@ -736,37 +737,6 @@ function buildBulletExamples(role: RoleSlug, topic: Topic): BulletExample[] {
   }
 }
 
-/** Title/description for legacy `/{role}/resume/{topic}` routes (see `app/[roleSlug]/resume/[topic]/page.tsx`). */
-export function generateRoleResumeTopicLegacyMetadata(
-  role: RoleSlug,
-  topic: Topic
-): Metadata {
-  const roleName = ROLE_NAMES[role];
-  const topicPhrase = topicToKeywordPhrase(topic);
-
-  const title =
-    topic === "bullet-points"
-      ? `${roleName} Resume Bullet Points (${CONTENT_FRESHNESS_YEAR} Examples + ATS Keywords)`
-      : `${roleName} Resume ${topicPhrase} (${CONTENT_FRESHNESS_YEAR} Examples + ATS Tips)`;
-  const description =
-    topic === "projects"
-      ? `Explore ATS-optimized project examples for ${roleName.toLowerCase()} resumes. Includes real projects, impact-focused bullets, and tips to showcase your work effectively.`
-      : topic === "experience-examples"
-        ? `Explore ATS-optimized experience examples for ${roleName.toLowerCase()} resumes. Includes ready-to-use bullets, guidance, and tips to improve your work history section.`
-        : topic === "bullet-points"
-          ? `Use ${CONTENT_FRESHNESS_YEAR} ${roleName.toLowerCase()} resume bullet point examples with ATS keywords, measurable outcomes, and copy-ready lines aligned to job descriptions.`
-          : `Explore ATS-optimized ${topicPhrase.toLowerCase()} for ${roleName.toLowerCase()} resumes. Includes real examples, tips, and templates to improve your resume and pass ATS screening.`;
-
-  return {
-    title,
-    description,
-    alternates: {
-      canonical: `/${role}/resume/${topic}`,
-    },
-    robots: { index: false, follow: true },
-  };
-}
-
 export function ResumeTopicSectionForGuide({
   role,
   topic,
@@ -807,6 +777,19 @@ export function ResumeTopicSectionForGuide({
       <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
         {topicPhrase}
       </h2>
+
+      {topic === "skills" ? (
+        <p className="text-sm text-slate-700 leading-relaxed">
+          For the full ATS keyword list and missing terms from a job description, see{" "}
+          <a
+            href={roleResumeKeywordsPath(role)}
+            className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+          >
+            {roleName.toLowerCase()} resume keywords
+          </a>
+          . Below is a short skills-section pattern for this guide.
+        </p>
+      ) : null}
 
       <section className="space-y-3">
         <h3 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">

@@ -271,12 +271,12 @@ export function ProblemConversionPage({ config }: Props) {
             </p>
             <ul className="mt-2 list-disc pl-5 space-y-1 text-sm text-slate-700">
               <li>
-                <Link href="/software-engineer-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/software-engineer-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Software Engineer resume skills
                 </Link>
               </li>
               <li>
-                <Link href="/data-scientist-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
+                <Link href="/data-scientist-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
                   Data Scientist resume skills
                 </Link>
               </li>
@@ -299,9 +299,9 @@ export function ProblemConversionPage({ config }: Props) {
                 <strong>If you&apos;re a Software Engineer:</strong> missing delivery keywords like
                 APIs, CI/CD, reliability, or latency can lower match.
                 <span className="ml-1">
-                  <Link href="/software-engineer-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix skills</Link>
+                  <Link href="/software-engineer-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix skills</Link>
                   {" · "}
-                  <Link href="/software-engineer-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Engineer keywords</Link>
+                  <Link href="/software-engineer-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Engineer keywords</Link>
                 </span>
               </li>
               <li>
@@ -310,7 +310,7 @@ export function ProblemConversionPage({ config }: Props) {
                 <span className="ml-1">
                   <Link href="/data-scientist-resume-guide#projects" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix projects</Link>
                   {" · "}
-                  <Link href="/data-scientist-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Scientist keywords</Link>
+                  <Link href="/data-scientist-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Scientist keywords</Link>
                 </span>
               </li>
               <li>
@@ -319,7 +319,7 @@ export function ProblemConversionPage({ config }: Props) {
                 <span className="ml-1">
                   <Link href="/product-manager-resume-guide#summary" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">Fix summary</Link>
                   {" · "}
-                  <Link href="/product-manager-resume-guide#skills" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">PM keywords</Link>
+                  <Link href="/product-manager-resume-keywords" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">PM keywords</Link>
                 </span>
               </li>
             </ul>

@@ -162,7 +162,11 @@ export function ProductManagerResumeExampleMain({ omitHero = false }: { omitHero
 
       <div className="mx-auto max-w-3xl space-y-14 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         <div className="space-y-4">
-          <ResumeExampleTopAtsKeywordsSection role={ROLE} keywords={DEFAULT_TOP_ATS_KEYWORDS["product-manager"]} />
+          <ResumeExampleTopAtsKeywordsSection
+            role={ROLE}
+            roleSlug="product-manager"
+            keywords={DEFAULT_TOP_ATS_KEYWORDS["product-manager"]}
+          />
           <Link
             href={KEYWORD_SCANNER_HREF}
             className="inline-flex text-sm font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"

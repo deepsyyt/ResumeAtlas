@@ -111,6 +111,22 @@ export default function ResumeSkillsExamplesPage() {
             role-specific terms from the job description, grouped in plain text categories, and
             backed by proof in your experience bullets.
           </p>
+          <p className="mx-auto mt-4 max-w-2xl rounded-lg border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950 text-left">
+            <strong className="font-semibold">Not the same as role keyword lists.</strong> This page
+            shows how to format the <em>skills section</em> on your resume. For copy-ready ATS keyword
+            checklists by job title (data analyst, software engineer, etc.), open that role&apos;s{" "}
+            <Link href="/ats-keywords" className="font-semibold text-sky-800 underline underline-offset-2">
+              resume keywords hub
+            </Link>
+            . To scan a specific job description, use the{" "}
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="font-semibold text-sky-800 underline underline-offset-2"
+            >
+              resume keyword scanner
+            </Link>
+            .
+          </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
@@ -253,7 +269,7 @@ export default function ResumeSkillsExamplesPage() {
             </li>
             <li>
               <Link
-                href="/problems/resume-vs-job-description"
+                href="/check-resume-against-job-description"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Resume vs job description mismatch
@@ -261,7 +277,7 @@ export default function ResumeSkillsExamplesPage() {
             </li>
             <li>
               <Link
-                href="/data-scientist-resume-guide#skills"
+                href="/data-scientist-resume-keywords"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Data scientist resume keywords
@@ -269,7 +285,7 @@ export default function ResumeSkillsExamplesPage() {
             </li>
             <li>
               <Link
-                href="/devops-engineer-resume-guide#skills"
+                href="/devops-engineer-resume-keywords"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 DevOps engineer resume keywords

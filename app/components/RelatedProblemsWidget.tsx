@@ -64,10 +64,10 @@ export function RelatedProblemsWidget({ entries, siteUrl }: Props) {
           </ul>
           <p className="mt-6 text-center text-sm sm:text-left">
             <Link
-              href="/problems"
+              href="/problems/resume-not-getting-interviews"
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
-              Browse all problem pages
+              More job-search problem guides
             </Link>
           </p>
         </div>

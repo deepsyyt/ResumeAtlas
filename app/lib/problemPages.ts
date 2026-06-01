@@ -48,6 +48,10 @@ export const PROBLEM_REDIRECT_SOURCE_SLUGS = [
   "resume-not-passing-ats",
   "how-to-tailor-resume-to-job-description",
   "why-recruiters-ignore-resume",
+  /** Noindex canonical; 301 to JD checker (`next.config.mjs`). */
+  "resume-vs-job-description",
+  /** Noindex canonical; 301 to indexed ATS problem page. */
+  "missing-keywords-in-resume",
 ] as const satisfies readonly ProblemSlug[];
 
 export type ProblemSlug = (typeof PROBLEM_SLUGS)[number];
