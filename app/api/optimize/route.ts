@@ -6,7 +6,15 @@ import {
   RESUME_TEXT_MAX_WORDS,
 } from "@/app/lib/inputWordLimits";
 import {
+  appendBulletToExperience,
+  mergeExperienceWithRecomposed,
+  pickProjectIndexForNewBullet,
+  type RecomposedExperienceCompany,
+} from "@/app/lib/optimizeExperience";
+import {
+  finalizeResumeSkillSections,
   resumeDocumentToPlainText,
+  syncResumeSkills,
   type ResumeDocument,
 } from "@/app/lib/resumeDocument";
 import { resolveAnthropicModelCandidates } from "@/app/lib/anthropicModels";
@@ -276,6 +284,9 @@ type BulletWithContext = {
   /** Top-level bullet: "${exp}:${i}"; project bullet: "${exp}:p${proj}:${i}" */
   bulletKey: string;
   text: string;
+  company?: string;
+  role?: string;
+  projectTitle?: string;
 };
 
 type GlobalStyle = {
@@ -312,12 +323,6 @@ type BulletChangeInternal = {
   improved: string;
   addedKeywords: string[];
   quantified: boolean;
-};
-
-type RecomposedExperienceCompany = {
-  company: string;
-  role: string;
-  bullets: string[];
 };
 
 type RecomposedExperience = {
@@ -757,6 +762,10 @@ CRITICAL RULES:
 3. Maintain factual integrity - no fake domain claims.
 4. Avoid keyword stuffing - use natural, recruiter-friendly language.
 5. Each company must have a clear thematic alignment with the job.
+6. When an experience entry has a "projects" array, keep bullets inside the matching project only.
+   - Use the same project titles as the input (e.g. "Project 1: …").
+   - NEVER move work from one project/client to another project or company.
+   - Role-level "bullets" are only for lines that are not under a project heading.
 
 RECOMPOSITION STRATEGY (PHASE 1):
 
@@ -781,6 +790,7 @@ For each company:
 - ONLY rewrite bullets that are vague, generic, or missing important required skills.
 - Maintain a consistent narrative across bullets.
 - Ensure bullets feel cohesive and role-specific.
+- For roles with multiple projects: assign intent per project; rewrite bullets within that project only.
 
 REQUIRED SKILL COVERAGE (MANDATORY):
 - You are given a list of REQUIRED missing skills.
@@ -815,6 +825,10 @@ Each bullet must:
 - Include domain-relevant phrasing where natural.
 - Do NOT aggressively add new numeric metrics in this phase; only preserve or mildly clarify impact that is already implied. A separate layer will handle stronger quantification.
 - Sound like it belongs to THIS job description.
+- Read like a real person wrote it for a hiring manager, not an AI template.
+- Avoid generic filler openings and closings such as:
+  - "Results-driven", "dynamic professional", "leveraged", "utilized", "responsible for", "worked on", "helped with", "various", "etc."
+- Prefer concrete subject + action + outcome wording from the candidate's actual work context.
 
 Bullet-to-bullet variation (MANDATORY):
 - Within each company, vary the focus:
@@ -855,10 +869,15 @@ OUTPUT FORMAT (STRICT JSON):
     {
       "company": "...",
       "role": "...",
-      "bullets": ["...", "..."]
+      "bullets": ["..."],
+      "projects": [
+        { "title": "Project 1: Client or initiative name", "bullets": ["...", "..."] }
+      ]
     }
   ]
-}`;
+}
+
+If the input resume has no projects for a role, omit "projects" for that role. If it has projects, you MUST return "projects" with matching titles.`;
 
 const SUMMARY_ONLY_SYSTEM = `You rewrite ONLY the candidate's professional summary for a specific job. Output STRICT JSON with a single key "summary" (string). No markdown, no other keys.
 
@@ -869,7 +888,8 @@ Rules:
 - Emphasize impact, scope, and alignment with THIS posting over buzzwords.
 - 3-5 sentences, confident and human; not robotic keyword stuffing.
 - If the resume has no summary, write one from the structured resume (experience, skills, title) that fits the JD honestly.
-- Where plausible, include 1-2 numeric signals (years of experience, team size, scale, % improvement) only when inferable from the resume; otherwise use non-numeric impact language. Do not fabricate precise metrics.`;
+- Where plausible, include 1-2 numeric signals (years of experience, team size, scale, % improvement) only when inferable from the resume; otherwise use non-numeric impact language. Do not fabricate precise metrics.
+- Keep phrasing specific and plain-English. Avoid AI-sounding cliches like "passionate", "results-driven", "seasoned professional", "proven track record", "cutting-edge", or "synergized".`;
 
 async function rewriteSummaryOnlyForJd(
   structuredResume: ResumeDocument,
@@ -1072,46 +1092,9 @@ function mergeRecomposed(
 
   if (!Array.isArray(expIn)) return original;
 
-  const newExperience = original.experience.map((exp) => {
-    if (!exp.company) return exp;
-    if (exp.projects && exp.projects.length > 0) {
-      return exp;
-    }
-    const companyName = exp.company.toLowerCase();
-    const match = recomposed.experience.find(
-      (r) =>
-        typeof r.company === "string" &&
-        r.company &&
-        (r.company.toLowerCase().includes(companyName) ||
-          companyName.includes(r.company.toLowerCase()))
-    );
-    if (!match || !Array.isArray(match.bullets) || match.bullets.length === 0) {
-      return exp;
-    }
-
-    const originalBullets = exp.bullets ?? [];
-    const newBullets = match.bullets
-      .filter((b) => typeof b === "string" && b.trim().length > 0)
-      .map((b) => normalizeInlineText(b));
-    if (originalBullets.length === 0 || newBullets.length === 0) return exp;
-
-    // Preserve 1-2 of the strongest original bullets to keep authenticity.
-    const keepCount = Math.min(
-      2,
-      Math.max(1, Math.round(originalBullets.length * 0.3))
-    );
-    const preserved = originalBullets.slice(0, keepCount);
-
-    // Take a subset of recomposed bullets so total per company stays reasonable.
-    const maxTotal = Math.max(keepCount + 2, 6);
-    const rewriteSlots = Math.max(0, maxTotal - keepCount);
-    const rewritten = newBullets.slice(0, rewriteSlots);
-
-    return {
-      ...exp,
-      bullets: [...preserved, ...rewritten],
-    };
-  });
+  const newExperience = original.experience.map((exp) =>
+    mergeExperienceWithRecomposed(exp, expIn)
+  );
 
   return {
     ...original,
@@ -1120,6 +1103,12 @@ function mergeRecomposed(
   };
 }
 
+type BulletRewriteContext = {
+  company?: string;
+  role?: string;
+  projectTitle?: string;
+};
+
 async function rewriteBullet(
   bullet: string,
   keywords: string[],
@@ -1127,7 +1116,8 @@ async function rewriteBullet(
   model: string,
   forceQuantified: boolean,
   globalStyle: GlobalStyle,
-  maxOutputTokens: number
+  maxOutputTokens: number,
+  context?: BulletRewriteContext
 ): Promise<string> {
   const systemPrompt = `You are improving a resume bullet for ATS optimization.
 
@@ -1135,6 +1125,7 @@ You MUST:
 - Keep the original meaning.
 - Write like a strong human resume: natural rhythm, not robotic keyword stacking. Keywords should feel earned in context.
 - Start with a strong action verb.
+- Use concrete, plain language tied to real work artifacts (systems, workflows, stakeholders, outcomes), not generic corporate filler.
 - Action verb diversity:
   - Prefer a different opening verb than nearby bullets in the same role.
   - Avoid repeating the same first word across multiple rewritten bullets.
@@ -1142,6 +1133,9 @@ You MUST:
 - Do NOT add keywords in a forced or spammy way. If one or more keywords truly cannot fit this bullet without fabrication, omit only those keywords.
 - Keep it realistic (no fake metrics).
 - Maximum 28 words.
+- Avoid AI-like phrasing and banned openers: "results-driven", "dynamic", "seasoned", "passionate", "responsible for", "worked on", "helped with", "various", "etc.".
+- Avoid mechanical patterns like repetitive "by <verb>-ing" chains in every bullet.
+- Prefer active voice and one clear core outcome per bullet.
 - Quantification mode:
   - If QUANTIFY=true: add one realistic numeric metric only when it can be reasonably inferred from context.
   - This metric must be part of the bullet text and tied to an impact outcome.
@@ -1158,10 +1152,19 @@ If every keyword already appears literally, still tighten wording, leadership to
 
 Return ONLY the improved bullet. No quotes, no explanation.`;
 
+  const scopeLines: string[] = [];
+  if (context?.company?.trim()) scopeLines.push(`Company: ${context.company.trim()}`);
+  if (context?.role?.trim()) scopeLines.push(`Role: ${context.role.trim()}`);
+  if (context?.projectTitle?.trim()) {
+    scopeLines.push(
+      `Project scope (rewrite ONLY for this project; do not attribute other clients' work): ${context.projectTitle.trim()}`
+    );
+  }
+
   const userPrompt = `Bullet:
 "${bullet}"
 
-Keywords to include (subtly, where they logically fit):
+${scopeLines.length > 0 ? `ROLE CONTEXT:\n${scopeLines.join("\n")}\n\n` : ""}Keywords to include (subtly, where they logically fit):
 "${keywords.filter(Boolean).join(", ")}"
 
 QUANTIFY=${forceQuantified ? "true" : "false"}`;
@@ -1176,7 +1179,7 @@ QUANTIFY=${forceQuantified ? "true" : "false"}`;
     body: JSON.stringify({
       model,
       max_tokens: maxOutputTokens,
-      temperature: 0,
+      temperature: 0.35,
       system: systemPrompt,
       messages: [{ role: "user" as const, content: userPrompt }],
     }),
@@ -1203,7 +1206,8 @@ async function generateAlignedBullet(
   skill: string,
   apiKey: string,
   model: string,
-  llm: Pick<OptimizeLlmBudget, "generateBulletMaxTokens" | "generateJdChars">
+  llm: Pick<OptimizeLlmBudget, "generateBulletMaxTokens" | "generateJdChars">,
+  projectTitle?: string
 ): Promise<string | null> {
   const systemPrompt = `You write one realistic resume bullet aligned to a candidate's existing role.
 
@@ -1211,14 +1215,21 @@ Rules:
 - Output exactly one bullet line only.
 - Must include this required skill phrase verbatim: ${skill}
 - Keep it truthful and role-consistent.
+- When a project scope is given, the bullet must describe work for THAT project/client only.
+- The bullet must read like a natural continuation of existing bullets for the same role/project (same domain, systems, and outcomes).
+- Do NOT introduce a new initiative, client domain, workflow, or ownership scope that is absent from that role/project context.
 - 18-28 words, strong action verb, professional tone.
 - Include one impact outcome.
 - Include a quantified metric only when reasonably inferable from context.
 - Avoid fabricating precise values; prefer ranges/approximate magnitudes when uncertain.
 - No templated language or placeholders.`;
 
+  const projectLine = projectTitle?.trim()
+    ? `\nPROJECT SCOPE (this bullet must belong here only): ${projectTitle.trim()}`
+    : "";
+
   const userPrompt = `ROLE: ${role || "Unknown role"}
-COMPANY: ${company || "Unknown company"}
+COMPANY: ${company || "Unknown company"}${projectLine}
 JOB DESCRIPTION CONTEXT:
 ${jobDescription.slice(0, llm.generateJdChars)}
 
@@ -1327,6 +1338,37 @@ function allExperienceBulletTextsNormalized(exp: {
   return [...top, ...nested];
 }
 
+function pickBestExperienceIndexForSkill(
+  experience: ResumeDocument["experience"],
+  skillOrHint: string
+): number | null {
+  if (!Array.isArray(experience) || experience.length === 0) return null;
+  const skillTokens = tokenSet(skillOrHint);
+  if (skillTokens.size === 0) return null;
+
+  let bestIdx = 0;
+  let bestScore = -1;
+  for (let i = 0; i < experience.length; i++) {
+    const exp = experience[i]!;
+    const text = `${exp.role ?? ""} ${exp.company ?? ""} ${(exp.bullets ?? []).join(" ")} ${(exp.projects ?? [])
+      .map((p) => `${p.title ?? ""} ${(p.bullets ?? []).join(" ")}`)
+      .join(" ")}`;
+    const expTokens = tokenSet(text);
+    let score = 0;
+    skillTokens.forEach((t) => {
+      if (expTokens.has(t)) score++;
+    });
+    if (score > bestScore) {
+      bestScore = score;
+      bestIdx = i;
+    }
+  }
+
+  // No lexical evidence of fit across roles -> skip adding an odd/out-of-context bullet.
+  if (bestScore <= 0) return null;
+  return bestIdx;
+}
+
 function appendBulletsToBestMatchingRole(args: {
   resume: ResumeDocument;
   bullets: string[];
@@ -1372,11 +1414,8 @@ function appendBulletsToBestMatchingRole(args: {
     .filter(Boolean)
     .filter((b) => !isSimilar(b, existing));
   if (filtered.length === 0) return updated;
-  if (target.projects && target.projects.length > 0) {
-    const last = target.projects[target.projects.length - 1]!;
-    last.bullets = [...(last.bullets ?? []), ...filtered];
-  } else {
-    target.bullets.push(...filtered);
+  for (const bullet of filtered) {
+    appendBulletToExperience(target, bestIndex, bullet, bullet);
   }
   return updated;
 }
@@ -1426,6 +1465,7 @@ STRICT RULES:
 - Do NOT rewrite the resume
 - Do NOT modify existing bullets
 - ONLY suggest adding new bullet(s)
+- New bullets must fit an existing role/project narrative and cannot introduce unrelated project scope.
 - Maximum 2 bullets
 - Each bullet must include:
   - action
@@ -1657,12 +1697,16 @@ export async function POST(request: Request) {
 
     const bulletsWithContext: BulletWithContext[] = [];
     baseStructured.experience.forEach((exp, expIndex) => {
+      const company = exp.company;
+      const role = exp.role;
       (exp.bullets ?? []).forEach((text, bulletIndex) => {
         if (text && text.trim()) {
           bulletsWithContext.push({
             expIndex,
             bulletKey: `${expIndex}:${bulletIndex}`,
             text,
+            company,
+            role,
           });
         }
       });
@@ -1673,6 +1717,9 @@ export async function POST(request: Request) {
               expIndex,
               bulletKey: `${expIndex}:p${projectIndex}:${bulletIndex}`,
               text,
+              company,
+              role,
+              projectTitle: proj.title,
             });
           }
         });
@@ -1801,7 +1848,12 @@ export async function POST(request: Request) {
             model,
             shouldQuantify,
             globalStyleForThisBullet,
-            budget.bulletRewriteMaxTokens
+            budget.bulletRewriteMaxTokens,
+            {
+              company: b.company,
+              role: b.role,
+              projectTitle: b.projectTitle,
+            }
           )
         );
         if (improved && improved !== original) {
@@ -1834,8 +1886,16 @@ export async function POST(request: Request) {
       for (let i = 0; i < maxNewBullets; i++) {
         const skill = requiredNeedingNewBullets[i]!;
         if (baseStructured.experience.length === 0) break;
-        const expIndex = i % baseStructured.experience.length;
+        const expIndex = pickBestExperienceIndexForSkill(
+          baseStructured.experience,
+          skill
+        );
+        if (expIndex === null) continue;
         const exp = baseStructured.experience[expIndex]!;
+        const projectTitle =
+          exp.projects && exp.projects.length > 0
+            ? exp.projects[pickProjectIndexForNewBullet(exp, skill)]?.title
+            : undefined;
         const generated = await generateAlignedBullet(
           exp.role ?? "",
           exp.company ?? "",
@@ -1846,25 +1906,15 @@ export async function POST(request: Request) {
           {
             generateBulletMaxTokens: budget.generateBulletMaxTokens,
             generateJdChars: budget.generateJdChars,
-          }
+          },
+          projectTitle
         );
         if (!generated) continue;
         const next = normalizeInlineText(generated);
         if (!next) continue;
         const existing = new Set(allExperienceBulletTextsNormalized(exp));
         if (existing.has(next) || isSimilar(next, Array.from(existing))) continue;
-        let bulletKey: string;
-        if (exp.projects && exp.projects.length > 0) {
-          const pi = exp.projects.length - 1;
-          const proj = exp.projects[pi]!;
-          proj.bullets = proj.bullets ?? [];
-          proj.bullets.push(next);
-          bulletKey = `${expIndex}:p${pi}:${proj.bullets.length - 1}`;
-        } else {
-          exp.bullets = exp.bullets ?? [];
-          exp.bullets.push(next);
-          bulletKey = `${expIndex}:${exp.bullets.length - 1}`;
-        }
+        const bulletKey = appendBulletToExperience(exp, expIndex, next, skill);
         improvedMap[bulletKey] = next;
         upsertBulletChange(bulletChangeMap, bulletKey, "", next, [skill]);
       }
@@ -1911,8 +1961,16 @@ export async function POST(request: Request) {
         const maxCoverageNewBullets = Math.min(budget.coverageBoostMax, stillUncovered.length);
         for (let i = 0; i < maxCoverageNewBullets; i++) {
           const skill = stillUncovered[i]!;
-          const expIndex = i % optimizedStructured.experience.length;
+          const expIndex = pickBestExperienceIndexForSkill(
+            optimizedStructured.experience,
+            skill
+          );
+          if (expIndex === null) continue;
           const exp = optimizedStructured.experience[expIndex]!;
+          const projectTitle =
+            exp.projects && exp.projects.length > 0
+              ? exp.projects[pickProjectIndexForNewBullet(exp, skill)]?.title
+              : undefined;
           const generated = await generateAlignedBullet(
             exp.role ?? "",
             exp.company ?? "",
@@ -1923,25 +1981,15 @@ export async function POST(request: Request) {
             {
               generateBulletMaxTokens: budget.generateBulletMaxTokens,
               generateJdChars: budget.generateJdChars,
-            }
+            },
+            projectTitle
           );
           if (!generated) continue;
           const next = normalizeInlineText(generated);
           if (!next) continue;
           const existing = new Set(allExperienceBulletTextsNormalized(exp));
           if (existing.has(next) || isSimilar(next, Array.from(existing))) continue;
-          let bulletKey: string;
-          if (exp.projects && exp.projects.length > 0) {
-            const pi = exp.projects.length - 1;
-            const proj = exp.projects[pi]!;
-            proj.bullets = proj.bullets ?? [];
-            proj.bullets.push(next);
-            bulletKey = `${expIndex}:p${pi}:${proj.bullets.length - 1}`;
-          } else {
-            exp.bullets = exp.bullets ?? [];
-            exp.bullets.push(next);
-            bulletKey = `${expIndex}:${exp.bullets.length - 1}`;
-          }
+          const bulletKey = appendBulletToExperience(exp, expIndex, next, skill);
           improvedMap[bulletKey] = next;
           upsertBulletChange(bulletChangeMap, bulletKey, "", next, [skill]);
         }
@@ -2153,12 +2201,17 @@ export async function POST(request: Request) {
             ),
           };
 
+    optimizedStructured = syncResumeSkills(
+      finalizeResumeSkillSections(optimizedStructured)
+    );
+    optimizedText = resumeDocumentToPlainText(optimizedStructured) || optimizedText;
+
     const summaryOptimized =
       normalizeSummaryForCompare(resumeSnapshotBeforeOptimization.summary) !==
       normalizeSummaryForCompare(optimizedStructured.summary);
 
     const response: OptimizeResponse = {
-      optimizedResume: resumeDocumentToPlainText(optimizedStructured) || optimizedText,
+      optimizedResume: optimizedText,
       scoreAfter,
       roleAlignmentScore,
       matchedStrengthScore,

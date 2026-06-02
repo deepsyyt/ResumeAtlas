@@ -15,6 +15,8 @@ export type Resume = {
     projects?: { title: string; bullets: string[] }[];
   }[];
   skills: string[];
+  /** ATS subsections under Skills (programming, tools, soft skills). */
+  skillGroups?: { label: string; items: string[] }[];
   education: {
     institution: string;
     degree: string;

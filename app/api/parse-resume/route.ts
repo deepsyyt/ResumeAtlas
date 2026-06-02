@@ -6,6 +6,13 @@ import type {
   ResumeExperience,
   ResumeProject,
 } from "@/app/lib/resumeDocument";
+import { resumeDocumentFromHeuristicParsed } from "@/app/lib/resumeDocument";
+import {
+  coerceSkillGroupsFromJson,
+  finalizeResumeSkillSections,
+  syncResumeSkills,
+} from "@/app/lib/resumeSkillGroups";
+import { sanitizeResumeDocument } from "@/app/lib/resumeSanitize";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 
@@ -26,6 +33,12 @@ export type ParseResumeResponse = {
 
 const PARSER_SYSTEM_PROMPT = `You are a resume parser. Convert raw resume text into a clean structured JSON object.
 
+Most pasted resumes use this layout (treat as default):
+- Top: CONTACT label, then PROGRAMING/TOOLS lines (skillGroups — not contact info), then name, title, phone, email, LinkedIn.
+- PROFILE or PROFESSIONAL SUMMARY (summary may also appear later as a long paragraph).
+- WORK EXPERIENCE with employer, role, Project:/Project 1: subsections and bullets; date lines like "2021 - 2025"; more employers may appear AFTER education.
+- EDUCATION (degree/university/GPA only), CERTIFICATIONS, AWARDS, then additional jobs, then Soft skills.
+
 Rules:
 - Extract fields only from the resume text provided.
 - Do NOT invent companies, roles, tools, or dates.
@@ -34,6 +47,10 @@ Rules:
 - Bullets should be short achievement statements, without leading bullet characters.
 - If any field is not present, omit it or return an empty array instead of guessing.
 - IMPORTANT: When a role lists work under headings like "Project 1:", "Project 2:", or "Project: Name", do NOT flatten them into one bullet list. Use the "projects" array: each item has "title" (the full heading line as written) and "bullets" (achievements under that project only). Lines before the first project heading stay in top-level "bullets".
+- SKILLS: When the resume has separate skill blocks (e.g. Programming, Tools, Technical skills, Soft skills), use "skillGroups": [{ "label": "Programming Languages", "items": ["Python", ...] }, { "label": "Tools & Platforms", "items": [...] }, { "label": "Soft Skills", "items": [...] }]. Use ATS-friendly labels. Put languages/frameworks in Programming; platforms and software in Tools; interpersonal traits in Soft Skills. Also fill flat "skills" with all items combined.
+- LAYOUT: A leading CONTACT block may list programming languages — those are skillGroups, NOT contact lines. Contact is phone, email, city, LinkedIn only.
+- EXPERIENCE may appear more than once (e.g. jobs listed after EDUCATION) — include every role in "experience" in chronological order with correct company, role, dates, and projects[] per project heading.
+- EDUCATION must contain only degree / university / GPA lines — never job titles, soft skills, or project bullets.
 
 Return ONLY valid JSON with this exact shape (no markdown, no explanations):
 {
@@ -42,6 +59,7 @@ Return ONLY valid JSON with this exact shape (no markdown, no explanations):
   "contact": "string | null",
   "summary": "string | null",
   "skills": ["string"],
+  "skillGroups": [ { "label": "string", "items": ["string"] } ],
   "experience": [
     {
       "company": "string",
@@ -143,7 +161,7 @@ function coerceExperience(value: unknown): ResumeExperience[] {
     const dates = typeof rec.dates === "string" ? rec.dates.trim() : "";
     let bullets = coerceArray(rec.bullets);
     let projects = coerceProjects(rec.projects);
-    if (!company || !role || !dates) continue;
+    if (!company && !role) continue;
 
     if ((!projects || projects.length === 0) && bullets.length > 0) {
       const split = splitBulletsIntoProjects(bullets);
@@ -162,39 +180,9 @@ function coerceExperience(value: unknown): ResumeExperience[] {
 }
 
 function buildFallbackStructured(resumeText: string): ResumeDocument {
-  const parsed = parseResumeToJSON(resumeText);
-  const experience: ResumeExperience[] = parsed.experience.map((exp) => {
-    const bullets = exp.bullets ?? [];
-    const split = splitBulletsIntoProjects(bullets);
-    const entry: ResumeExperience = {
-      company: exp.company?.trim() || "",
-      role: exp.role?.trim() || "",
-      dates: exp.dates?.trim() || "",
-      bullets: split.topBullets,
-    };
-    if (split.projects.length > 0) entry.projects = split.projects;
-    return entry;
-  }).filter(
-    (exp) =>
-      exp.company &&
-      exp.role &&
-      (exp.bullets.length > 0 || (exp.projects && exp.projects.length > 0))
+  return sanitizeResumeDocument(
+    resumeDocumentFromHeuristicParsed(parseResumeToJSON(resumeText))
   );
-
-  return {
-    name: parsed.headerLines[0] || "",
-    title: parsed.headerLines[1] || "",
-    contact: parsed.headerLines.slice(2).join(" • "),
-    summary: parsed.summary ?? "",
-    skills: parsed.skills ?? [],
-    experience,
-    education: parsed.education.map((e) =>
-      [e.degree, e.institution, e.year].filter(Boolean).join(" • ")
-    ),
-    tools: [],
-    certifications: [],
-    awards: [],
-  };
 }
 
 export async function POST(request: Request) {
@@ -213,7 +201,6 @@ export async function POST(request: Request) {
     const model = resolveAnthropicModelCandidates()[0] ?? "claude-haiku-4-5-20251001";
 
     if (!apiKey) {
-      // Fallback to deterministic parser when LLM is not configured.
       const fallback = buildFallbackStructured(resumeText);
       return NextResponse.json({ resume: fallback } satisfies ParseResumeResponse);
     }
@@ -232,7 +219,7 @@ Return ONLY the JSON object described in the system prompt.`;
       },
       body: JSON.stringify({
         model,
-        max_tokens: 2000,
+        max_tokens: 8192,
         temperature: 0,
         system: PARSER_SYSTEM_PROMPT,
         messages: [{ role: "user" as const, content: userPrompt }],
@@ -273,7 +260,11 @@ Return ONLY the JSON object described in the system prompt.`;
       return NextResponse.json({ resume: fallback } satisfies ParseResumeResponse);
     }
 
-    const resume: ResumeDocument = {
+    const flatSkills = coerceArray(obj.skills);
+    const tools = coerceArray(obj.tools);
+    let skillGroups = coerceSkillGroupsFromJson(obj.skillGroups);
+
+    let resume: ResumeDocument = {
       name:
         typeof obj.name === "string" && obj.name.trim().length > 0
           ? obj.name.trim()
@@ -290,13 +281,15 @@ Return ONLY the JSON object described in the system prompt.`;
         typeof obj.summary === "string" && obj.summary.trim().length > 0
           ? obj.summary.trim()
           : undefined,
-      skills: coerceArray(obj.skills),
+      skills: flatSkills,
+      skillGroups,
       experience,
       education: coerceArray(obj.education),
-      tools: coerceArray(obj.tools),
+      tools,
       certifications: coerceArray(obj.certifications),
       awards: coerceArray(obj.awards),
     };
+    resume = syncResumeSkills(finalizeResumeSkillSections(resume));
 
     return NextResponse.json({ resume } satisfies ParseResumeResponse);
   } catch (err) {

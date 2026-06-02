@@ -129,8 +129,25 @@ function pdfSectionLabel(doc: PdfDoc, label: string, isFirstSection = false): vo
 }
 
 /** PDF layout aligned with app/components/StructuredResume.tsx (print styles). */
+function renderSkillGroupsPdf(doc: PdfDoc, groups: { label: string; items: string[] }[]): void {
+  const lineGap = 1.05;
+  for (const group of groups) {
+    const items = (group.items ?? [])
+      .map((item) => String(item ?? "").trim())
+      .filter(Boolean);
+    if (items.length === 0) continue;
+    const body = items.join(", ");
+    const line = `${group.label}: ${body}`;
+    doc.font("Helvetica").fontSize(PDF_BODY_PT).fillColor("#334155");
+    const h = doc.heightOfString(line, { width: contentWidth(doc), lineGap }) + 4;
+    ensureSpace(doc, h + 2);
+    doc.text(line, { align: "left", lineGap });
+    doc.moveDown(0.12);
+  }
+}
+
 function renderStructuredResumeLikeUi(doc: PdfDoc, resume: Resume): void {
-  const { basics, experience, skills, education } = resume;
+  const { basics, experience, skills, skillGroups, education } = resume;
 
   ensureSpace(doc, 72);
   doc
@@ -175,7 +192,11 @@ function renderStructuredResumeLikeUi(doc: PdfDoc, resume: Resume): void {
     doc.text(sum, { align: "left", lineGap });
   }
 
-  if (skills && skills.length > 0) {
+  if (skillGroups && skillGroups.length > 0) {
+    pdfSectionLabel(doc, "Skills", firstPdfSection);
+    firstPdfSection = false;
+    renderSkillGroupsPdf(doc, skillGroups);
+  } else if (skills && skills.length > 0) {
     pdfSectionLabel(doc, "Skills", firstPdfSection);
     firstPdfSection = false;
     const body = skills.join(" • ");

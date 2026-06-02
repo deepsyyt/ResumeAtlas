@@ -1,6 +1,7 @@
 "use client";
 
-import type { ResumeDocument } from "@/app/lib/resumeDocument";
+import type { ResumeDocument, ResumeSkillGroup } from "@/app/lib/resumeDocument";
+import { formatSkillGroupLine, getSkillGroups } from "@/app/lib/resumeDocument";
 import React from "react";
 
 type StructuredResumeProps = {
@@ -21,6 +22,7 @@ type StructuredResumeProps = {
   editable?: boolean;
   onUpdateSummary?: (value: string) => void;
   onUpdateSkills?: (value: string[]) => void;
+  onUpdateSkillGroups?: (groups: ResumeSkillGroup[]) => void;
   onUpdateExperienceBullet?: (
     expIndex: number,
     bulletIndex: number,
@@ -237,6 +239,7 @@ export function StructuredResume({
   editable = false,
   onUpdateSummary,
   onUpdateSkills,
+  onUpdateSkillGroups,
   onUpdateExperienceBullet,
   onUpdateExperienceField,
   onUpdateProjectTitle,
@@ -247,6 +250,7 @@ export function StructuredResume({
   const title = resume.title?.trim() ?? "";
   const contact = resume.contact?.trim() ?? "";
   const summary = resume.summary?.trim() ?? "";
+  const skillGroups = React.useMemo(() => getSkillGroups(resume), [resume]);
   const skills = resume.skills ?? [];
   const experience = resume.experience ?? [];
   const education = resume.education ?? [];
@@ -412,8 +416,8 @@ export function StructuredResume({
         </section>
       )}
 
-      {/* Skills - same order as resumeDocumentToPlainText */}
-      {skills.length > 0 && (
+      {/* Skills - grouped subsections (ATS-friendly); matches resumeDocumentToPlainText */}
+      {skillGroups.length > 0 && (
         <section className="border-t border-slate-100 pt-4 mt-4">
           <div className="mb-2 flex items-center justify-between gap-2">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500">
@@ -431,29 +435,45 @@ export function StructuredResume({
               </button>
             )}
           </div>
-          {editable && editing.skills ? (
-            <textarea
-              value={skills.join(", ")}
-              onChange={(e) =>
-                onUpdateSkills?.(
-                  e.target.value
-                    .split(",")
-                    .map((s) => s.trim())
-                    .filter(Boolean)
-                )
-              }
-              className="w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm leading-relaxed text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400"
-              rows={3}
-            />
-          ) : (
-            <p className="text-sm leading-relaxed text-slate-700">
-              {highlightKeywordsOnly(skills.join(" • "), highlightKeywords).map(
-                (node, i) => (
-                  <React.Fragment key={i}>{node}</React.Fragment>
-                )
-              )}
-            </p>
-          )}
+          <div className="space-y-1.5">
+            {skillGroups.map((group, groupIndex) => {
+              const line = formatSkillGroupLine(group.items);
+              return (
+                <div key={`${group.label}-${groupIndex}`} className="text-sm leading-snug text-slate-700">
+                  {editable && editing.skills ? (
+                    <>
+                      <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+                        {group.label}
+                      </span>
+                      <textarea
+                        value={line}
+                        onChange={(e) => {
+                          const items = e.target.value
+                            .split(",")
+                            .map((s) => s.trim())
+                            .filter(Boolean);
+                          const next = skillGroups.map((g, i) =>
+                            i === groupIndex ? { ...g, items } : g
+                          );
+                          onUpdateSkillGroups?.(next);
+                          onUpdateSkills?.(next.flatMap((g) => g.items));
+                        }}
+                        className="mt-1 w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm leading-relaxed text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400"
+                        rows={2}
+                      />
+                    </>
+                  ) : (
+                    <p className="m-0">
+                      <span className="font-semibold text-slate-800">{group.label}: </span>
+                      {highlightKeywordsOnly(line, highlightKeywords).map((node, i) => (
+                        <React.Fragment key={i}>{node}</React.Fragment>
+                      ))}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </section>
       )}
 
@@ -598,6 +618,32 @@ export function StructuredResume({
               </div>
             ))}
           </div>
+        </section>
+      )}
+
+      {(resume.certifications?.length ?? 0) > 0 && (
+        <section className="border-t border-slate-100 pt-4 mt-4">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">
+            Certifications
+          </h2>
+          <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
+            {resume.certifications!.map((line, idx) => (
+              <li key={idx}>{line}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {(resume.awards?.length ?? 0) > 0 && (
+        <section className="border-t border-slate-100 pt-4 mt-4">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">
+            Awards
+          </h2>
+          <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
+            {resume.awards!.map((line, idx) => (
+              <li key={idx}>{line}</li>
+            ))}
+          </ul>
         </section>
       )}
 

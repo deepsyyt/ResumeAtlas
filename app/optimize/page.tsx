@@ -9,7 +9,9 @@ import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout
 import {
   resumeDocumentFromHeuristicParsed,
   resumeDocumentToPlainText,
+  syncResumeSkills,
   type ResumeDocument,
+  type ResumeSkillGroup,
 } from "@/app/lib/resumeDocument";
 import { createClient } from "@/app/lib/supabase/client";
 import type { Resume } from "@/app/types/resume";
@@ -429,6 +431,7 @@ export default function OptimizePage() {
             : undefined,
         })),
         skills: editableResume.skills ?? [],
+        skillGroups: editableResume.skillGroups,
         education: (editableResume.education ?? []).map((line) => ({
           institution: "",
           degree: line,
@@ -715,12 +718,12 @@ export default function OptimizePage() {
               }
               onUpdateSkills={(value) =>
                 setEditableResume((prev) =>
-                  prev
-                    ? {
-                        ...prev,
-                        skills: value,
-                      }
-                    : prev
+                  prev ? syncResumeSkills({ ...prev, skills: value }) : prev
+                )
+              }
+              onUpdateSkillGroups={(groups: ResumeSkillGroup[]) =>
+                setEditableResume((prev) =>
+                  prev ? syncResumeSkills({ ...prev, skillGroups: groups }) : prev
                 )
               }
               onUpdateExperienceBullet={(expIndex, bulletIndex, value, ctx) =>

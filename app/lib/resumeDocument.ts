@@ -1,8 +1,30 @@
 import type { ParsedResume } from "@/app/lib/resumeParser";
+import {
+  finalizeResumeSkillSections,
+  formatSkillGroupLine,
+  getSkillGroups,
+  parseSkillLinesToGroups,
+  syncResumeSkills,
+} from "@/app/lib/resumeSkillGroups";
+import { sanitizeResumeDocument } from "@/app/lib/resumeSanitize";
+
+export {
+  syncResumeSkills,
+  finalizeResumeSkillSections,
+  formatSkillGroupLine,
+  getSkillGroups,
+} from "@/app/lib/resumeSkillGroups";
+export { sanitizeResumeDocument } from "@/app/lib/resumeSanitize";
 
 export type ResumeProject = {
   title: string;
   bullets: string[];
+};
+
+/** Grouped skills under the single ATS section "Skills" (e.g. Programming, Tools, Soft Skills). */
+export type ResumeSkillGroup = {
+  label: string;
+  items: string[];
 };
 
 export type ResumeExperience = {
@@ -22,7 +44,10 @@ export type ResumeDocument = {
   title?: string;
   contact?: string;
   summary?: string;
+  /** Flat list for search/legacy; kept in sync with {@link skillGroups} via {@link syncResumeSkills}. */
   skills?: string[];
+  /** ATS-friendly skill subsections (technical vs soft, tools vs languages, etc.). */
+  skillGroups?: ResumeSkillGroup[];
   experience: ResumeExperience[];
   education?: string[];
   tools?: string[];
@@ -48,7 +73,15 @@ export function resumeDocumentToPlainText(doc: ResumeDocument): string {
     lines.push("");
   }
 
-  if (Array.isArray(doc.skills) && doc.skills.length > 0) {
+  const skillGroups = getSkillGroups(doc);
+  if (skillGroups.length > 0) {
+    lines.push("Skills");
+    for (const group of skillGroups) {
+      const line = formatSkillGroupLine(group.items);
+      if (line) lines.push(`${group.label}: ${line}`);
+    }
+    lines.push("");
+  } else if (Array.isArray(doc.skills) && doc.skills.length > 0) {
     lines.push("Skills");
     lines.push(doc.skills.join(" · "));
     lines.push("");
@@ -78,6 +111,22 @@ export function resumeDocumentToPlainText(doc: ResumeDocument): string {
     }
   }
 
+  if (Array.isArray(doc.certifications) && doc.certifications.length > 0) {
+    lines.push("Certifications");
+    for (const c of doc.certifications) {
+      if (c?.trim()) lines.push(`• ${c.trim()}`);
+    }
+    lines.push("");
+  }
+
+  if (Array.isArray(doc.awards) && doc.awards.length > 0) {
+    lines.push("Awards");
+    for (const a of doc.awards) {
+      if (a?.trim()) lines.push(`• ${a.trim()}`);
+    }
+    lines.push("");
+  }
+
   if (Array.isArray(doc.education) && doc.education.length > 0) {
     lines.push("Education");
     for (const edu of doc.education) {
@@ -93,17 +142,17 @@ export function resumeDocumentToPlainText(doc: ResumeDocument): string {
 
 /** Convert heuristic section parser output into a {@link ResumeDocument}. */
 export function resumeDocumentFromHeuristicParsed(parsed: ParsedResume): ResumeDocument {
-  const headerLines = parsed.headerLines ?? [];
-  const name = headerLines[0]?.trim() || undefined;
-  const title = headerLines[1]?.trim() || undefined;
+  const name = parsed.name?.trim() || parsed.headerLines[0]?.trim() || undefined;
+  const title = parsed.title?.trim() || parsed.headerLines[1]?.trim() || undefined;
   const contact =
-    headerLines.length > 2
-      ? headerLines
+    parsed.contact?.trim() ||
+    (parsed.headerLines.length > 2
+      ? parsed.headerLines
           .slice(2)
           .map((l) => l.trim())
           .filter(Boolean)
           .join("\n")
-      : undefined;
+      : undefined);
 
   const educationLines =
     parsed.education
@@ -112,12 +161,18 @@ export function resumeDocumentFromHeuristicParsed(parsed: ParsedResume): ResumeD
       )
       .filter((s) => s.length > 0) ?? [];
 
-  return {
+  const skillLines = parsed.skillsSectionLines ?? [];
+  const skillGroups =
+    parsed.skillGroups ??
+    (skillLines.length > 0 ? parseSkillLinesToGroups(skillLines) : undefined);
+
+  const doc: ResumeDocument = {
     name,
     title,
     contact,
     summary: parsed.summary?.trim() || undefined,
     skills: parsed.skills ?? [],
+    skillGroups,
     experience: (parsed.experience ?? []).map((exp) => ({
       company: exp.company?.trim() ?? "",
       role: exp.role?.trim() ?? "",
@@ -126,5 +181,8 @@ export function resumeDocumentFromHeuristicParsed(parsed: ParsedResume): ResumeD
       projects: exp.projects,
     })),
     education: educationLines.length > 0 ? educationLines : undefined,
+    certifications: parsed.certifications,
+    awards: parsed.awards,
   };
+  return sanitizeResumeDocument(syncResumeSkills(finalizeResumeSkillSections(doc)));
 }

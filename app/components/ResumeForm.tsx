@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm, Controller } from "react-hook-form";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { Resume } from "@/app/types/resume";
 import {
   countWords,
@@ -70,7 +70,7 @@ export function ResumeForm({
   const lastAnalyzeClickAtRef = useRef(0);
   const isAtsCompliance = analysisMode === "atsCompliance";
   const isKeywordScanner = analysisMode === "keywordScanner";
-  const { register, handleSubmit, control } = useForm<GenerateInputs>({
+  const { register, handleSubmit, control, setValue } = useForm<GenerateInputs>({
     defaultValues: {
       resumeText: "",
       jobDescription: "",
@@ -79,6 +79,32 @@ export function ResumeForm({
       customRoleLevel: "",
     },
   });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const resumeFromUrl = params.get("resumeText");
+    const jdFromUrl = params.get("jobDescription");
+    if (!resumeFromUrl && !jdFromUrl) return;
+
+    if (resumeFromUrl) {
+      setValue("resumeText", clipToWordLimit(resumeFromUrl, RESUME_TEXT_MAX_WORDS), {
+        shouldDirty: true,
+      });
+    }
+    if (jdFromUrl) {
+      setValue("jobDescription", clipToWordLimit(jdFromUrl, JOB_DESCRIPTION_MAX_WORDS), {
+        shouldDirty: true,
+      });
+    }
+
+    // Remove bulky/PII query params after hydration to avoid leaking resume/JD in analytics URLs.
+    params.delete("resumeText");
+    params.delete("jobDescription");
+    const nextQuery = params.toString();
+    const nextUrl =
+      `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ""}${window.location.hash}`;
+    window.history.replaceState(window.history.state, "", nextUrl);
+  }, [setValue]);
 
   const onSubmit = (data: GenerateInputs) => {
     const now = Date.now();
