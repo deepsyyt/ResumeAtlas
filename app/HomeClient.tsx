@@ -39,40 +39,6 @@ import { getActiveFunnelId, setActiveFunnelId, startNewFunnel } from "@/app/lib/
 import { SHOW_AUTOMATIC_OPTIMIZER_PAYWALL_MODALS } from "@/app/lib/optimizerPaywallFlags";
 import { useRef } from "react";
 
-const homeFaqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "What is a good ATS resume score?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text:
-          "Most resumes that score above 75% ATS compatibility have strong keyword alignment with the job description and clearly labeled experience. Higher scores usually mean your skills and titles closely match what the role is asking for.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Can ATS reject my resume?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text:
-          "Yes. If your resume is missing required skills, uses confusing formatting, or hides important keywords in images or graphics, it may never reach a recruiter. Passing ATS checks is the first step before a human can review your profile.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How can I improve my ATS score?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text:
-          "Mirror the language of the job description, add missing but relevant keywords, and use a clean structure with clear sections for experience, skills, and education. Tools like ResumeAtlas help you spot keyword gaps and alignment issues before you apply.",
-      },
-    },
-  ],
-} as const;
-
 const homeSoftwareApplicationSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -1493,131 +1459,18 @@ export default function HomeClient({
 
       {isHome ? (
       <>
-      <section id="how-ats-works" className="border-t border-slate-200 bg-slate-50/60">
-        <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
-            How ATS Systems Scan Resumes
-          </h2>
-          <p className="mt-2 text-sm text-slate-600 leading-snug">
-            Applicant Tracking Systems (ATS) help recruiters sort and rank large volumes of
-            applications. Understanding how they scan your resume makes it easier to pass initial
-            filters and get seen by a human.
+      <section className="border-t border-slate-200 bg-slate-50/60">
+        <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+          <p className="text-sm text-slate-600 leading-snug">
+            Need parsing, formatting, and ATS score guidance?{" "}
+            <Link
+              href="/ats-resume-checker"
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              Use the free ATS resume checker
+            </Link>
+            . To match a specific posting, paste your job description in the checker above.
           </p>
-          <div className="mt-4 space-y-3">
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">
-                1. Keyword Matching
-              </h3>
-              <p className="mt-0.5 text-sm text-slate-600 leading-snug">
-                ATS platforms compare the keywords in your resume with the job description. If
-                critical skills like Python, Machine Learning, or AWS are missing or buried in long
-                paragraphs, your resume can be filtered out or ranked lower for that role.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">
-                2. Resume Parsing
-              </h3>
-              <p className="mt-0.5 text-sm text-slate-600 leading-snug">
-                Most ATS tools convert your resume into structured fields such as experience,
-                education, and skills. Overly complex templates, columns, or heavy graphics can
-                break parsing and cause important information to be missed.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">
-                3. Experience Alignment
-              </h3>
-              <p className="mt-0.5 text-sm text-slate-600 leading-snug">
-                Recruiters often filter by years of experience, seniority, and job titles. If your
-                roles and impact are not clearly labeled or aligned to the target job, the ATS may
-                not recognize you as a strong match even if you have the right background.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">4. ATS Filtering</h3>
-              <p className="mt-0.5 text-sm text-slate-600 leading-snug">
-                Some ATS systems score and rank candidates based on keyword match, relevance, and
-                experience alignment. Clear language, focused keywords, and clean structure help
-                your resume surface higher when recruiters review results.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-5 border-t border-slate-200 pt-3">
-            <p className="text-sm text-slate-700 leading-snug">
-              Next: pick your role in{" "}
-              <Link
-                href="/#browse-by-role"
-                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-              >
-                Browse by role
-              </Link>{" "}
-              for examples, keywords, and bullet patterns for that title.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-t border-slate-200 bg-white">
-        <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
-            Why ATS Rejects Many Resumes
-          </h2>
-          <p className="mt-2 text-sm text-slate-600 leading-snug">
-            Many resumes fail ATS screening before a recruiter ever reads them. Common reasons
-            include missing job keywords, incompatible formatting, lack of measurable
-            achievements, and poor alignment with the job description. ATS systems prioritize
-            resumes that clearly match the required skills and experience listed in the job
-            posting.
-          </p>
-          <ul className="mt-3 space-y-1 text-sm text-slate-700 list-disc pl-5">
-            <li>Missing required keywords</li>
-            <li>Poor formatting (tables, graphics)</li>
-            <li>Generic job descriptions</li>
-            <li>Lack of measurable achievements</li>
-          </ul>
-        </div>
-      </section>
-
-      <section id="faq" className="border-t border-slate-200 bg-white">
-        <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
-            Frequently Asked Questions
-          </h2>
-          <div className="mt-4 space-y-3">
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">
-                What is a good ATS resume score?
-              </h3>
-              <p className="mt-0.5 text-sm text-slate-600 leading-snug">
-                Most resumes that score above 75% ATS compatibility have strong keyword alignment
-                with the job description and clearly labeled experience. Higher scores usually mean
-                your skills, tools, and titles closely match what the role is asking for.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">
-                Can ATS reject my resume?
-              </h3>
-              <p className="mt-0.5 text-sm text-slate-600 leading-snug">
-                Yes. If your resume is missing required skills, uses confusing formatting, or hides
-                important keywords in images or graphics, it may never reach a recruiter. Passing
-                ATS checks is the first step before a human can review your profile.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">
-                How can I improve my ATS score?
-              </h3>
-              <p className="mt-0.5 text-sm text-slate-600 leading-snug">
-                Start by mirroring the language of the job description, adding missing but relevant
-                keywords, and structuring your resume with clear sections for experience, skills,
-                and education. Tools like ResumeAtlas help you spot keyword gaps and alignment
-                issues before you apply.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -1706,20 +1559,13 @@ export default function HomeClient({
         isSigningIn={isStartingGoogleAuth}
       />
       {isHome ? (
-        <>
-          <script
-            type="application/ld+json"
-            suppressHydrationWarning
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify(homeSoftwareApplicationSchema),
-            }}
-          />
-          <script
-            type="application/ld+json"
-            suppressHydrationWarning
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(homeFaqSchema) }}
-          />
-        </>
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(homeSoftwareApplicationSchema),
+          }}
+        />
       ) : null}
     </Root>
   );

@@ -329,7 +329,7 @@ export function ResumeKeywordScannerLanding() {
             </li>
             <li>
               <Link
-                href="/ats-resume-checker#resume-score-checker"
+                href="/ats-resume-checker#how-ats-scoring-works"
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 {CHECK_YOUR_RESUME_SCORE_ANCHOR}

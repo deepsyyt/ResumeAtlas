@@ -259,12 +259,12 @@ export function Navbar() {
             >
               Keyword scanner
             </Link>
-            <a href="/#how-ats-works" className={desktopNavLinkClass}>
+            <Link href="/ats-resume-checker#what-is-ats" className={desktopNavLinkClass}>
               How ATS Works
-            </a>
-            <a href="/#faq" className={desktopNavLinkClass}>
+            </Link>
+            <Link href="/ats-resume-checker#faq" className={desktopNavLinkClass}>
               FAQ
-            </a>
+            </Link>
           </nav>
           {authUi}
           <button
@@ -317,12 +317,16 @@ export function Navbar() {
             <Link href="/check-resume-against-job-description" className={mobileNavLinkClass} onClick={closeMobileNav}>
               Keyword scanner
             </Link>
-            <a href="/#how-ats-works" className={mobileNavLinkClass} onClick={closeMobileNav}>
+            <Link
+              href="/ats-resume-checker#what-is-ats"
+              className={mobileNavLinkClass}
+              onClick={closeMobileNav}
+            >
               How ATS Works
-            </a>
-            <a href="/#faq" className={mobileNavLinkClass} onClick={closeMobileNav}>
+            </Link>
+            <Link href="/ats-resume-checker#faq" className={mobileNavLinkClass} onClick={closeMobileNav}>
               FAQ
-            </a>
+            </Link>
           </nav>
         </div>
       ) : null}

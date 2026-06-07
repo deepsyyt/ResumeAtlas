@@ -18,7 +18,7 @@ export function postingFitWorkbenchBreadcrumbJsonLd() {
       {
         "@type": LIST_ITEM,
         position: 2,
-        name: "Resume keyword scanner",
+        name: "Resume vs job description matcher",
         item: base,
       },
     ],
@@ -34,12 +34,12 @@ export function postingFitWebApplicationJsonLd(config: ToolClusterPageConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "ResumeAtlas resume keyword scanner",
+    name: "ResumeAtlas resume vs job description matcher",
     url: toolClusterAbsoluteUrl(config.path),
     applicationCategory: "BusinessApplication",
     operatingSystem: "All",
     description:
-      "Compare a resume to a job posting for posting vocabulary coverage, required skill debt, semantic fit, evidence density, parse hygiene, skim friction, and truth-envelope alignment.",
+      "Compare resume to job description: resume match score, missing keywords, skill gaps, and AI tailoring for that posting.",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     featureList: features,
     softwareVersion: DIAGNOSTIC_REGISTRY_VERSION,

@@ -17,6 +17,7 @@ export default function CheckResumeAgainstJobDescriptionPage() {
         config={TOOL_CLUSTER_PRIMARY}
         hidePrimaryHero
         omitStructuredData
+        workbenchMode
       />
     </>
   );

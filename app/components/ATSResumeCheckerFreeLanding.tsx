@@ -1,5 +1,6 @@
 import Link from "next/link";
 import HomeClient from "@/app/HomeClient";
+import { AtsResumeCheckerGuide } from "@/app/components/AtsResumeCheckerGuide";
 import { LastUpdated } from "@/app/components/LastUpdated";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
 import { ToolClusterNextSteps } from "@/app/components/ToolClusterNextSteps";
@@ -73,42 +74,6 @@ export function ATSResumeCheckerFreeLanding() {
       <HomeClient variant="toolOnly" analysisMode="atsCompliance" />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
-        <section
-          id="ats-compatibility-check"
-          className="rounded-2xl border border-sky-200 bg-sky-50/50 p-5 sm:p-6"
-        >
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Check your resume now
-          </h2>
-          <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed">
-            Paste your resume in the form above to analyze:
-          </p>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>ATS compatibility score</li>
-            <li>Formatting and parsing risk signals</li>
-            <li>Section structure and readability</li>
-            <li>Whether essential resume elements read clearly to a parser</li>
-          </ul>
-          <p className="mt-4 text-sm text-slate-600">
-            Paste-only (no file upload). Optional job description field if you also want keyword
-            overlap vs that posting.
-          </p>
-        </section>
-
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Why this ATS score changes
-          </h2>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>Parsing quality (are sections and dates machine-readable?).</li>
-            <li>Layout simplicity (single-column, standard headings, no parser traps).</li>
-            <li>Optional keyword overlap if a target job description is provided.</li>
-          </ul>
-          <p className="mt-3 text-sm text-slate-600">
-            Use the score as a fix-priority signal, not a guaranteed pass/fail outcome.
-          </p>
-        </section>
-
         <section>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             How this free ATS resume checker works
@@ -124,8 +89,8 @@ export function ATSResumeCheckerFreeLanding() {
               structure.
             </li>
             <li>
-              <strong className="text-slate-900">Score and issue signals.</strong> You get a score
-              plus supporting metrics for structure, clarity, and readability.
+              <strong className="text-slate-900">Compatibility score and issue signals.</strong> You
+              get an ATS compatibility score plus parsing and formatting risk metrics.
             </li>
             <li>
               <strong className="text-slate-900">Fix suggestions.</strong> Use the takeaways to
@@ -134,34 +99,39 @@ export function ATSResumeCheckerFreeLanding() {
           </ol>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            {TOOL_CLUSTER_ATS_FREE.differentiatorHeading}
+        <AtsResumeCheckerGuide />
+
+        <section className="rounded-xl border border-amber-200 bg-amber-50/40 p-5 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
+            ATS resume scan vs keyword matching
           </h2>
-          <div className="mt-4 space-y-3 text-sm sm:text-base text-slate-700 leading-relaxed">
-            {TOOL_CLUSTER_ATS_FREE.differentiatorBody.map((para, i) => (
-              <p key={i}>{para}</p>
-            ))}
-          </div>
-          <ul className="mt-4 list-disc pl-5 space-y-1.5 text-sm text-slate-700">
-            <li>
-              <strong className="text-slate-900">Parsing accuracy</strong> - can an ATS map your
-              content into experience and skills fields?
-            </li>
-            <li>
-              <strong className="text-slate-900">Section detection</strong> - are headings like
-              Experience and Skills easy to recognize?
-            </li>
-            <li>
-              <strong className="text-slate-900">Formatting issues</strong> - tables, columns, and
-              layouts that often break parsers
-            </li>
-            <li>
-              <strong className="text-slate-900">Keyword signal (with a posting)</strong> - if you
-              paste a job description, you also get JD keyword overlap; otherwise the scan stays
-              resume-first.
-            </li>
-          </ul>
+          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
+            {TOOL_CLUSTER_ATS_FREE.differentiatorBody[0]}
+          </p>
+          <p className="mt-3 text-sm sm:text-base text-slate-700">
+            Compare your resume with a specific job description:{" "}
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              {COMPARE_RESUME_WITH_JD_ANCHOR}
+            </Link>
+            ,{" "}
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              {RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR}
+            </Link>
+            , or{" "}
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              {MATCH_RESUME_TO_JOB_DESCRIPTION_ANCHOR}
+            </Link>
+            .
+          </p>
         </section>
 
         <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
@@ -171,189 +141,6 @@ export function ATSResumeCheckerFreeLanding() {
         </section>
 
         <ToolClusterRelatedLinks currentPath={path} />
-
-        <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Your ATS score explained
-          </h2>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>
-              <strong className="text-slate-900">80-100%</strong> - strong ATS compatibility
-            </li>
-            <li>
-              <strong className="text-slate-900">60-79%</strong> - minor improvements likely help
-            </li>
-            <li>
-              <strong className="text-slate-900">Below 60%</strong> - higher risk of being filtered
-              before a human review
-            </li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Common ATS mistakes this scan helps surface
-          </h2>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>Tables or multi-column layouts in the text you paste</li>
-            <li>Missing or nonstandard section headings</li>
-            <li>Heavy graphics, icons, or decoration (when described in text)</li>
-            <li>Thin keyword or skills context for your target function</li>
-            <li>Inconsistent dates, titles, or bullet structure</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Best resume format for ATS
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
-            The most parser-friendly resumes are easy for both recruiters and software to read in a
-            single pass:
-          </p>
-          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
-            Use reverse-chronological format for best ATS compatibility.
-          </p>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>
-              <strong className="text-slate-900">Single column</strong> - linear flow from top to
-              bottom
-            </li>
-            <li>
-              <strong className="text-slate-900">Standard headings</strong> - for example
-              Experience, Education, Skills, and a short Summary
-            </li>
-            <li>
-              <strong className="text-slate-900">No tables</strong> - avoid tables and multi-column
-              layouts for structure when you can use headings and bullets instead
-            </li>
-            <li>
-              <strong className="text-slate-900">Plain bullets</strong> - dated roles, one bullet
-              style, measurable outcomes where possible
-            </li>
-            <li>
-              <strong className="text-slate-900">No critical text in images</strong> - logos and
-              icons should not carry skills or job titles the ATS must read
-            </li>
-          </ul>
-        </section>
-
-        <section className="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-5 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            ATS format resume template checklist (2026)
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
-            If you are searching for "ATS format resume", "best resume format for ATS systems", or
-            "ATS resume format template", this is the practical checklist to use before applying.
-          </p>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>Use one-column reverse-chronological structure.</li>
-            <li>Keep section names standard: Summary, Experience, Skills, Education.</li>
-            <li>Keep bullets concise and evidence-driven (tool + scope + outcome).</li>
-            <li>Avoid tables, icons, text boxes, and image-only design elements.</li>
-            <li>Validate ATS compatibility before each high-priority application.</li>
-          </ul>
-          <p className="mt-3 text-sm text-slate-700">
-            Want posting-level alignment too? Then run{" "}
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              compare resume with job description
-            </Link>{" "}
-            after formatting cleanup.
-          </p>
-        </section>
-
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900">
-            Real-world ATS proof example
-          </h2>
-          <p className="mt-2 text-sm text-slate-700">
-            Candidate resume had strong experience but used mixed heading styles and decorative
-            formatting.
-          </p>
-          <ul className="mt-3 list-disc pl-5 space-y-1 text-sm text-slate-700">
-            <li>Before: parser flagged weak section detection and chronology ambiguity.</li>
-            <li>Compatibility estimate: 58% before cleanup.</li>
-            <li>After fixes: one-column layout + standard headings + consistent dates.</li>
-            <li>Expected outcome: cleaner ATS parsing and stronger recruiter skim clarity.</li>
-          </ul>
-          <p className="mt-3 text-sm text-slate-700">
-            This is directional guidance, not a hiring guarantee, but it mirrors the most common ATS
-            formatting failure pattern we see.
-          </p>
-        </section>
-
-        <section
-          id="resume-score-checker"
-          className="rounded-xl border border-amber-200 bg-amber-50/40 p-5 sm:p-6"
-        >
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
-            ATS resume scan vs keyword matching
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
-            This page is built around <strong className="text-slate-900">ATS compatibility</strong>{" "}
-            - parsing, structure, and readability - not full job matching to a posting unless you
-            optionally paste a job description.
-          </p>
-          <p className="mt-3 text-sm sm:text-base text-slate-700">
-            Want to compare your resume with a specific job description?{" "}
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              {COMPARE_RESUME_WITH_JD_ANCHOR}
-            </Link>
-            . You can also use our{" "}
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              {RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR}
-            </Link>{" "}
-            - same tool, phrased the way many people search. Searching for{" "}
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              {MATCH_RESUME_TO_JOB_DESCRIPTION_ANCHOR}
-            </Link>{" "}
-            leads to the same matcher.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Improve your resume further
-          </h2>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>
-              <Link
-                href="/ats-keywords"
-                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                Find keywords for your role
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/resume-examples"
-                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                Resume examples by role
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/ats-resume-template#how-ats-scans"
-                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                Learn how ATS systems scan resumes
-              </Link>
-            </li>
-          </ul>
-        </section>
 
         <ToolClusterNextSteps />
 
@@ -375,7 +162,7 @@ export function ATSResumeCheckerFreeLanding() {
           <h2 className="text-lg sm:text-xl font-semibold tracking-tight">Final step</h2>
           <p className="mt-2 text-sm sm:text-base text-slate-200 max-w-xl mx-auto">
             Do not let formatting or parsing issues block your resume before a recruiter sees it.
-            Check your ATS score now and tighten structure first.
+            Check your ATS compatibility score now and tighten structure first.
           </p>
           <a
             href="#ats-checker-form"

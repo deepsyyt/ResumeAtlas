@@ -416,22 +416,42 @@ const nextConfig = {
       },
       {
         source: "/match-resume-to-job-description",
-        destination: "/check-resume-against-job-description",
+        destination: "/check-resume-against-job-description#tailor-resume-jd",
         permanent: true,
       },
       {
         source: "/match-resume-to-job-description/",
-        destination: "/check-resume-against-job-description",
+        destination: "/check-resume-against-job-description#tailor-resume-jd",
+        permanent: true,
+      },
+      {
+        source: "/resume-match-score",
+        destination: "/check-resume-against-job-description#resume-match-score",
+        permanent: true,
+      },
+      {
+        source: "/resume-match-score/",
+        destination: "/check-resume-against-job-description#resume-match-score",
+        permanent: true,
+      },
+      {
+        source: "/resume-job-description-match",
+        destination: "/check-resume-against-job-description#jd-match-example",
+        permanent: true,
+      },
+      {
+        source: "/resume-job-description-match/",
+        destination: "/check-resume-against-job-description#jd-match-example",
         permanent: true,
       },
       {
         source: "/resume-keyword-scanner",
-        destination: "/check-resume-against-job-description",
+        destination: "/check-resume-against-job-description#jd-keyword-matching",
         permanent: true,
       },
       {
         source: "/resume-keyword-scanner/",
-        destination: "/check-resume-against-job-description",
+        destination: "/check-resume-against-job-description#jd-keyword-matching",
         permanent: true,
       },
       {
@@ -456,22 +476,22 @@ const nextConfig = {
       },
       {
         source: "/compare-resume-to-job-description",
-        destination: "/check-resume-against-job-description",
+        destination: "/check-resume-against-job-description#compare-resume-jd",
         permanent: true,
       },
       {
         source: "/compare-resume-to-job-description/",
-        destination: "/check-resume-against-job-description",
+        destination: "/check-resume-against-job-description#compare-resume-jd",
         permanent: true,
       },
       {
         source: "/tailor-resume-to-job-description",
-        destination: "/check-resume-against-job-description",
+        destination: "/check-resume-against-job-description#tailor-resume-jd",
         permanent: true,
       },
       {
         source: "/tailor-resume-to-job-description/",
-        destination: "/check-resume-against-job-description",
+        destination: "/check-resume-against-job-description#tailor-resume-jd",
         permanent: true,
       },
       {
@@ -566,12 +586,12 @@ const nextConfig = {
       },
       {
         source: "/resume-score-checker",
-        destination: "/ats-resume-checker#resume-score-checker",
+        destination: "/ats-resume-checker#how-ats-scoring-works",
         permanent: true,
       },
       {
         source: "/resume-score-checker/",
-        destination: "/ats-resume-checker#resume-score-checker",
+        destination: "/ats-resume-checker#how-ats-scoring-works",
         permanent: true,
       },
       {

@@ -10,6 +10,7 @@ import {
   CLUSTER_JD_MATCH_TOOL_COPY,
   CLUSTER_KEYWORD_SCANNER_TOOL_COPY,
 } from "@/app/lib/canonicalIntentClusters";
+import { JD_MATCH_WORKBENCH_FAQ } from "@/app/lib/jdMatchWorkbenchFaqs";
 
 export type ToolClusterFaqItem = { question: string; answer: string };
 
@@ -154,7 +155,7 @@ export function toolClusterBreadcrumbSchema(config: ToolClusterPageConfig) {
 
 export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   path: CHECK_RESUME_AGAINST_JD_PATH,
-  breadcrumbName: "Resume keyword scanner",
+  breadcrumbName: "Resume vs job description matcher",
   clusterLinkAnchor: RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
   ...CLUSTER_JD_MATCH_TOOL_COPY,
   titleAbsolute: CLUSTER_JD_MATCH_TOOL_COPY.titleAbsolute,
@@ -168,55 +169,20 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   exampleFixLine:
     "Fix first: add one SQL project bullet and one experiment-impact bullet where truthful.",
   keywords: [
+    "compare resume to job description",
+    "resume match score",
+    "resume job description match",
     "resume keyword scanner",
-    "keyword scanner",
-    "resume keywords scanner",
+    "match resume to job description",
+    "resume vs job description checker",
+    "tailor resume to job description",
     "resume keyword checker",
     "job description keyword finder",
-    "cv keyword scanner",
-    "match resume to job description",
-    "compare resume to job description",
-    "tailor resume to job description",
-    "resume vs job description checker",
-    "compare resume to job posting",
-    "resume job description match",
     "resume matching tool",
     "optimize resume for job description",
     "scan resume for keywords",
-    "discover the keywords you're missing",
   ],
-  faq: [
-    {
-      question: "What does it mean to match a resume to a job description?",
-      answer:
-        "It means comparing your resume to one specific posting so you can tailor: add evidence where keywords are missing, rewrite bullets for fit, and show outcomes the JD cares about, honestly. For layout and parsing risk without a JD, use the ATS checker.",
-    },
-    {
-      question: "Why is ATS matching important?",
-      answer:
-        "Most companies use ATS to filter resumes. If your resume does not match the job description, it may not reach recruiters.",
-    },
-    {
-      question: "Is this resume checker free?",
-      answer:
-        "Yes, you can check your resume against a job description for free and get instant insights.",
-    },
-    {
-      question: "How can I improve my resume score?",
-      answer:
-        "Improve in this order: close must-have requirement gaps, rewrite top bullets with outcomes, and fix ATS readability issues. Prioritize high-impact edits first instead of broad rewrites.",
-    },
-    {
-      question: "Do I need to pay to use this page?",
-      answer:
-        "No. You can run the resume-vs-job-description check for free. Paid optimization is optional when you want fully rewritten, JD-aligned output and downloadable polished versions faster.",
-    },
-    {
-      question: "What if I do not have a target job description yet?",
-      answer:
-        "Use ATS readability and role-example pages first, then return here when you have one specific posting. This page is strongest for posting-specific gap diagnosis, not generic resume polishing.",
-    },
-  ],
+  faq: [...JD_MATCH_WORKBENCH_FAQ],
 };
 
 export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
@@ -224,9 +190,6 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
   breadcrumbName: "ATS Resume Checker",
   clusterLinkAnchor: "ATS resume checker",
   ...CLUSTER_ATS_CHECKER_TOOL_COPY,
-  titleAbsolute: "ATS Resume Checker Free (Score + Fix Resume Issues) | ResumeAtlas",
-  ogTitle: "ATS Resume Checker Free (Score + Fix Resume Issues)",
-  twitterTitle: "ATS Resume Checker Free (Score + Fixes)",
   ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   exampleJobRequires: "N/A (ATS readability-first scan).",
   exampleResumeContains: "Dense formatting, mixed bullet styles, and unclear section labels.",
@@ -236,15 +199,25 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
     "Fix first: one-column layout, standard headings, and consistent bullet/date formatting.",
   keywords: [
     "ATS resume checker",
+    "what is ATS",
+    "how ATS scoring works",
+    "ATS parsing",
+    "ATS keyword matching",
+    "ATS resume format",
+    "ATS resume template",
+    "ATS resume mistakes",
+    "ATS compatibility score",
     "ATS friendly resume check",
-    "resume ATS format",
     "check resume for ATS compatibility",
     "resume that will pass ATS",
-    "ATS system for resume",
     "resume formatting for ATS",
-    "ATS resume format template",
   ],
   faq: [
+    {
+      question: "What is ATS (applicant tracking system)?",
+      answer:
+        "ATS is software employers use to collect, parse, filter, and rank applications. It reads your resume into structured fields and often scores fit to a posting before a recruiter reviews it.",
+    },
     {
       question: "What is an ATS resume checker?",
       answer:
@@ -269,6 +242,11 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
       question: "What score is good for ATS?",
       answer:
         "Scores from 80% and up are generally strong for ATS readability; 60-79% usually means targeted fixes; below 60% often correlates with higher filter risk.",
+    },
+    {
+      question: "How can I improve my ATS score?",
+      answer:
+        "Simplify layout (single column, standard headings), fix parsing issues first, then align keywords with your target posting where truthful. For full job-description matching, use the resume vs job description checker after formatting cleanup.",
     },
   ],
 };
