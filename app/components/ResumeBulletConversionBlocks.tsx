@@ -31,7 +31,7 @@ export function ResumeBulletConversionBlocks({ roleKeywordLabel }: Props) {
         <p className="mt-4 text-xs font-medium text-amber-950/80">Takes 10 seconds • No signup required</p>
         <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Link
-            href="/check-resume-against-job-description#ats-checker-form"
+            href="/#ats-checker-form"
             className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
           >
             {scanLabel}

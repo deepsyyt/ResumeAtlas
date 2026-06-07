@@ -94,6 +94,15 @@ const nextConfig = {
         source: "/:roleSlug-resume-keywords/",
         destination: "/:roleSlug/keywords",
       },
+      // Role optimizer spokes (`/{slug}-resume-optimizer`) internally serve `/resume-optimizer/{slug}`.
+      {
+        source: "/:roleSlug-resume-optimizer",
+        destination: "/resume-optimizer/:roleSlug",
+      },
+      {
+        source: "/:roleSlug-resume-optimizer/",
+        destination: "/resume-optimizer/:roleSlug",
+      },
     ];
   },
   async redirects() {
@@ -405,113 +414,123 @@ const nextConfig = {
       ...legacyThinPageRedirects,
       ...resumeGuideTopicRedirects,
       {
+        source: "/check-resume-against-job-description",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/check-resume-against-job-description/",
+        destination: "/",
+        permanent: true,
+      },
+      {
         source: "/resume-vs-job-description-checker",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/resume-vs-job-description-checker/",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/match-resume-to-job-description",
-        destination: "/check-resume-against-job-description#tailor-resume-jd",
+        destination: "/#tailor-resume-jd",
         permanent: true,
       },
       {
         source: "/match-resume-to-job-description/",
-        destination: "/check-resume-against-job-description#tailor-resume-jd",
+        destination: "/#tailor-resume-jd",
         permanent: true,
       },
       {
         source: "/resume-match-score",
-        destination: "/check-resume-against-job-description#resume-match-score",
+        destination: "/#resume-match-score",
         permanent: true,
       },
       {
         source: "/resume-match-score/",
-        destination: "/check-resume-against-job-description#resume-match-score",
+        destination: "/#resume-match-score",
         permanent: true,
       },
       {
         source: "/resume-job-description-match",
-        destination: "/check-resume-against-job-description#jd-match-example",
+        destination: "/#jd-match-example",
         permanent: true,
       },
       {
         source: "/resume-job-description-match/",
-        destination: "/check-resume-against-job-description#jd-match-example",
+        destination: "/#jd-match-example",
         permanent: true,
       },
       {
         source: "/resume-keyword-scanner",
-        destination: "/check-resume-against-job-description#jd-keyword-matching",
+        destination: "/#jd-keyword-matching",
         permanent: true,
       },
       {
         source: "/resume-keyword-scanner/",
-        destination: "/check-resume-against-job-description#jd-keyword-matching",
+        destination: "/#jd-keyword-matching",
         permanent: true,
       },
       {
         source: "/resume-keywords-scanner",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/resume-keywords-scanner/",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/keyword-scanner",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/keyword-scanner/",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/compare-resume-to-job-description",
-        destination: "/check-resume-against-job-description#compare-resume-jd",
+        destination: "/#compare-resume-jd",
         permanent: true,
       },
       {
         source: "/compare-resume-to-job-description/",
-        destination: "/check-resume-against-job-description#compare-resume-jd",
+        destination: "/#compare-resume-jd",
         permanent: true,
       },
       {
         source: "/tailor-resume-to-job-description",
-        destination: "/check-resume-against-job-description#tailor-resume-jd",
+        destination: "/optimize-resume-for-job-description",
         permanent: true,
       },
       {
         source: "/tailor-resume-to-job-description/",
-        destination: "/check-resume-against-job-description#tailor-resume-jd",
+        destination: "/optimize-resume-for-job-description",
         permanent: true,
       },
       {
         source: "/job-description-keyword-finder",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/job-description-keyword-finder/",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/resume-keyword-checker",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/resume-keyword-checker/",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
@@ -698,12 +717,12 @@ const nextConfig = {
       },
       {
         source: "/problems/resume-vs-job-description",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/problems/resume-vs-job-description/",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
@@ -749,12 +768,12 @@ const nextConfig = {
       },
       {
         source: "/problems/how-to-tailor-resume-to-job-description",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {
         source: "/problems/how-to-tailor-resume-to-job-description/",
-        destination: "/check-resume-against-job-description",
+        destination: "/",
         permanent: true,
       },
       {

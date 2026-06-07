@@ -16,6 +16,7 @@ import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PATH,
+  OPTIMIZE_RESUME_FOR_JD_PATH,
 } from "@/app/lib/internalLinks";
 
 type Props = {
@@ -26,6 +27,12 @@ type Props = {
   omitStructuredData?: boolean;
   /** Streamlined JD workbench layout with commercial guide sections. */
   workbenchMode?: boolean;
+  /** When true, skip embedded workbench (homepage owns HomeClient). */
+  omitWorkbench?: boolean;
+  /** When true, omit full-page wrapper (composited into homepage). */
+  embedded?: boolean;
+  /** Streamlined homepage: skip blocks duplicated by HomeBrowseByRoleSection. */
+  homePageMode?: boolean;
 };
 
 export function ToolClusterLanding({
@@ -33,12 +40,15 @@ export function ToolClusterLanding({
   hidePrimaryHero,
   omitStructuredData,
   workbenchMode = false,
+  omitWorkbench = false,
+  embedded = false,
+  homePageMode = false,
 }: Props) {
   const path = config.path;
   const isJdWorkbench = workbenchMode && path === CHECK_RESUME_AGAINST_JD_PATH;
 
-  return (
-    <div className="min-h-screen bg-white text-slate-900">
+  const content = (
+    <>
       {!hidePrimaryHero ? (
         <>
       <section className="border-b border-slate-200 bg-slate-50/50">
@@ -102,44 +112,82 @@ export function ToolClusterLanding({
         </section>
       ) : null}
 
-      <HomeClient variant="toolOnly" />
+      {!omitWorkbench ? <HomeClient variant="toolOnly" /> : null}
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
+      {isJdWorkbench && !homePageMode ? (
+        <div className="border-b border-slate-200 bg-white">
+          <div className="mx-auto max-w-4xl px-4 py-6 text-center sm:px-6 sm:text-left lg:px-8">
+            <p className="mx-auto max-w-3xl text-sm text-slate-600">
+              Want sample JD match examples and role keyword checklists first? See{" "}
+              <Link
+                href={OPTIMIZE_RESUME_FOR_JD_PATH}
+                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                optimize resume for job description by role
+              </Link>
+              . Ready to run analysis and optimization?{" "}
+              <a
+                href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Open the free tool
+              </a>
+              .
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      <div
+        className={`max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 ${homePageMode ? "py-5 sm:py-6" : "py-8 sm:py-10"}`}
+      >
         {isJdWorkbench ? (
           <>
-            <section>
-              <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-                {config.howItWorksHeading}
-              </h2>
-              <ol className="mt-4 space-y-4 list-decimal pl-5 text-sm sm:text-base text-slate-700">
-                <li>
-                  <strong className="text-slate-900">Paste your resume and job description.</strong>{" "}
-                  Copy-paste into the fields above.
-                </li>
-                <li>
-                  <strong className="text-slate-900">Resume match score and keyword gaps.</strong> See
-                  how well you align with the posting, including missing keywords.
-                </li>
-                <li>
-                  <strong className="text-slate-900">AI resume optimization.</strong> Get JD-aligned
-                  suggestions while keeping your experience intact.
-                </li>
-                <li>
-                  <strong className="text-slate-900">Edit and download.</strong> Refine and export PDF
-                  or DOCX.
-                </li>
-              </ol>
-            </section>
+            {!homePageMode ? (
+              <section>
+                <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+                  {config.howItWorksHeading}
+                </h2>
+                <ol className="mt-4 space-y-4 list-decimal pl-5 text-sm sm:text-base text-slate-700">
+                  <li>
+                    <strong className="text-slate-900">Paste resume and job description.</strong> Copy
+                    the full posting requirements into the fields above.
+                  </li>
+                  <li>
+                    <strong className="text-slate-900">ATS match score and resume JD match.</strong> See
+                    posting-specific alignment: keyword coverage, skills evidence, and fit readout.
+                  </li>
+                  <li>
+                    <strong className="text-slate-900">Keyword gap analysis.</strong> Resume keyword scanner
+                    lists missing job description terms and skill gaps to fix first.
+                  </li>
+                  <li>
+                    <strong className="text-slate-900">AI resume optimization.</strong> Apply JD-aligned
+                    bullet rewrites and tailoring suggestions you review before export.
+                  </li>
+                  <li>
+                    <strong className="text-slate-900">Edit and download.</strong> Refine optimized bullets
+                    and export PDF or DOCX.
+                  </li>
+                </ol>
+              </section>
+            ) : null}
 
-            <JdMatchGuide />
+            <JdMatchGuide homePageMode={homePageMode} />
 
-            <PostingFitMethodologyAppendix />
+            {!homePageMode ? <PostingFitMethodologyAppendix /> : null}
 
             <section className="rounded-xl border border-amber-200 bg-amber-50/40 p-5 sm:p-6">
               <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
                 {config.differentiatorHeading}
               </h2>
-              <p className="mt-2 text-sm sm:text-base text-slate-700">{config.differentiatorBody[1]}</p>
+              <div className="mt-2 space-y-3">
+                {config.differentiatorBody.map((para, i) => (
+                  <p key={i} className="text-sm sm:text-base text-slate-700">
+                    {para}
+                  </p>
+                ))}
+              </div>
               <p className="mt-3 text-sm text-slate-700">
                 Need parsing and formatting only?{" "}
                 <Link
@@ -152,14 +200,15 @@ export function ToolClusterLanding({
               </p>
             </section>
 
-            <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                {config.serpVariantsParagraph}
-              </p>
-            </section>
+            {!homePageMode ? (
+              <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                  {config.serpVariantsParagraph}
+                </p>
+              </section>
+            ) : null}
 
-            <ToolClusterRelatedLinks currentPath={path} />
-            <ToolClusterNextSteps />
+            {!homePageMode ? <ToolClusterNextSteps /> : null}
 
             <section id="faq">
               <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
@@ -175,24 +224,28 @@ export function ToolClusterLanding({
               </div>
             </section>
 
-            <section className="rounded-2xl border border-slate-900/10 bg-slate-900 text-white p-6 sm:p-8 text-center">
-              <h2 className="text-lg sm:text-xl font-semibold tracking-tight">Final step</h2>
-              <p className="mt-2 text-sm sm:text-base text-slate-200 max-w-xl mx-auto">
-                Stop guessing why your resume is not getting shortlisted. Compare your resume with a
-                job description now and fix the gaps.
-              </p>
-              <a
-                href="#ats-checker-form"
-                className="mt-6 inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-100 transition"
-              >
-                {config.ctaAnchor}
-              </a>
-            </section>
+            {!homePageMode ? (
+              <section className="rounded-2xl border border-slate-900/10 bg-slate-900 text-white p-6 sm:p-8 text-center">
+                <h2 className="text-lg sm:text-xl font-semibold tracking-tight">Final step</h2>
+                <p className="mt-2 text-sm sm:text-base text-slate-200 max-w-xl mx-auto">
+                  Run ATS match score and keyword gap analysis, then optimize your resume for the job
+                  description you paste. Analyze fit and tailor bullets in one workflow.
+                </p>
+                <a
+                  href="#ats-checker-form"
+                  className="mt-6 inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-100 transition"
+                >
+                  {config.ctaAnchor}
+                </a>
+              </section>
+            ) : null}
 
-            <RelatedResumeGuidesSection
-              currentPath={path}
-              className="border-t border-slate-200 pt-8"
-            />
+            {!homePageMode ? (
+              <RelatedResumeGuidesSection
+                currentPath={path}
+                className="border-t border-slate-200 pt-8"
+              />
+            ) : null}
 
             <LastUpdated className="text-xs text-slate-500" />
           </>
@@ -370,7 +423,7 @@ export function ToolClusterLanding({
             <li>
               Need only missing terms list? Use{" "}
               <Link
-                href="/check-resume-against-job-description"
+                href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 resume keyword scanner
@@ -603,6 +656,16 @@ export function ToolClusterLanding({
       />
         </>
       ) : null}
+    </>
+  );
+
+  if (embedded) {
+    return content;
+  }
+
+  return (
+    <div className="min-h-screen bg-white text-slate-900">
+      {content}
     </div>
   );
 }

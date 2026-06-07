@@ -18,7 +18,7 @@ export function ResumeExampleSeoFunnel() {
           </Link>
         </li>
         <li>
-          <Link href="/check-resume-against-job-description" className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
+          <Link href="/" className="text-sky-800 underline underline-offset-2 hover:text-sky-950">
             Find missing keywords in your resume
           </Link>
         </li>

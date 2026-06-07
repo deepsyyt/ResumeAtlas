@@ -567,7 +567,7 @@ export function AtsResumeTemplateGuide() {
               {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
             <Link
-              href="/check-resume-against-job-description"
+              href="/"
               className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
             >
               Resume keyword scanner

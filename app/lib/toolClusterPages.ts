@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import {
+  CHECK_ATS_RESUME_PRIMARY_CTA,
   CHECK_RESUME_AGAINST_JD_PATH,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+  LEGACY_CHECK_RESUME_AGAINST_JD_PATH,
   RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
 } from "@/app/lib/internalLinks";
 import {
@@ -165,22 +167,31 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   exampleJobRequires: "Python, SQL, stakeholder communication, and experimentation.",
   exampleResumeContains: "Python, dashboards, and ad-hoc analysis.",
   exampleMissing: "SQL depth, experimentation, and stakeholder-facing outcomes.",
-  exampleScoreLine: "Estimated match score: 66% before targeted edits.",
+  exampleScoreLine: "ATS match score: ~66% before keyword gap fixes and AI optimization.",
   exampleFixLine:
-    "Fix first: add one SQL project bullet and one experiment-impact bullet where truthful.",
+    "After optimization: add one SQL project bullet and one experiment-impact bullet where truthful; estimated match ~78%.",
   keywords: [
     "compare resume to job description",
+    "compare resume to job posting",
     "resume match score",
+    "ATS match score",
     "resume job description match",
+    "resume JD match",
     "resume keyword scanner",
+    "resume gap analysis",
+    "keyword gap analysis",
+    "job description analysis",
     "match resume to job description",
     "resume vs job description checker",
     "tailor resume to job description",
+    "AI resume optimization",
+    "optimize resume for job description",
     "resume keyword checker",
     "job description keyword finder",
     "resume matching tool",
-    "optimize resume for job description",
     "scan resume for keywords",
+    "skill gap analysis",
+    "missing resume keywords",
   ],
   faq: [...JD_MATCH_WORKBENCH_FAQ],
 };
@@ -190,7 +201,7 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
   breadcrumbName: "ATS Resume Checker",
   clusterLinkAnchor: "ATS resume checker",
   ...CLUSTER_ATS_CHECKER_TOOL_COPY,
-  ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+  ctaAnchor: CHECK_ATS_RESUME_PRIMARY_CTA,
   exampleJobRequires: "N/A (ATS readability-first scan).",
   exampleResumeContains: "Dense formatting, mixed bullet styles, and unclear section labels.",
   exampleMissing: "Standard headings and clean parser-friendly structure.",
@@ -312,7 +323,7 @@ export const TOOL_CLUSTER_SCORE: ToolClusterPageConfig = {
 };
 
 export const TOOL_CLUSTER_KEYWORD_SCANNER: ToolClusterPageConfig = {
-  path: "/check-resume-against-job-description",
+  path: CHECK_RESUME_AGAINST_JD_PATH,
   breadcrumbName: "Resume Keyword Scanner",
   clusterLinkAnchor: "resume keyword scanner",
   ...CLUSTER_KEYWORD_SCANNER_TOOL_COPY,
@@ -431,9 +442,10 @@ export const ALL_TOOL_CLUSTER_CONFIGS: ToolClusterPageConfig[] = [
   TOOL_CLUSTER_ATS_FREE,
 ];
 
-export const TOOL_CLUSTER_PATHS_FOR_OAUTH: readonly string[] = ALL_TOOL_CLUSTER_CONFIGS.map(
-  (c) => c.path
-);
+export const TOOL_CLUSTER_PATHS_FOR_OAUTH: readonly string[] = [
+  ...ALL_TOOL_CLUSTER_CONFIGS.map((c) => c.path),
+  LEGACY_CHECK_RESUME_AGAINST_JD_PATH,
+];
 
 export function getToolClusterConfig(path: string): ToolClusterPageConfig | undefined {
   const n = path.replace(/\/$/, "") || "/";

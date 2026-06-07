@@ -261,7 +261,7 @@ export default function ResumeSkillsExamplesPage() {
             </li>
             <li>
               <Link
-                href="/check-resume-against-job-description"
+                href="/"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Resume keyword scanner
@@ -269,7 +269,7 @@ export default function ResumeSkillsExamplesPage() {
             </li>
             <li>
               <Link
-                href="/check-resume-against-job-description"
+                href="/"
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Resume vs job description mismatch

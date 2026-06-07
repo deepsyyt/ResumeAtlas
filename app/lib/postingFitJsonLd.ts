@@ -1,48 +1,43 @@
 import type { ToolClusterPageConfig } from "@/app/lib/toolClusterPages";
 import { toolClusterAbsoluteUrl } from "@/app/lib/toolClusterPages";
 import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
-import {
-  DIAGNOSTIC_PRIMITIVES,
-  DIAGNOSTIC_REGISTRY_VERSION,
-} from "@/app/lib/diagnostics/primitiveRegistry";
 
 const LIST_ITEM = "https://schema.org/ListItem";
 
 export function postingFitWorkbenchBreadcrumbJsonLd() {
-  const base = toolClusterAbsoluteUrl(CHECK_RESUME_AGAINST_JD_PATH);
+  const home = toolClusterAbsoluteUrl(CHECK_RESUME_AGAINST_JD_PATH);
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": LIST_ITEM, position: 1, name: "Home", item: toolClusterAbsoluteUrl("/") },
       {
         "@type": LIST_ITEM,
-        position: 2,
-        name: "Resume vs job description matcher",
-        item: base,
+        position: 1,
+        name: "Compare resume to job description",
+        item: home,
       },
     ],
   };
 }
 
 export function postingFitWebApplicationJsonLd(config: ToolClusterPageConfig) {
-  const features = DIAGNOSTIC_PRIMITIVES.map((p) => ({
-    "@type": "Thing",
-    name: p.label,
-    description: p.shortDefinition,
-  }));
+  const features = [
+    "ATS match score for a pasted job description",
+    "Resume keyword gap analysis and missing keywords",
+    "Resume JD match and skill gap readout",
+    "AI resume optimization and bullet tailoring",
+  ];
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "ResumeAtlas resume vs job description matcher",
+    name: "ResumeAtlas compare and optimize for job descriptions",
     url: toolClusterAbsoluteUrl(config.path),
     applicationCategory: "BusinessApplication",
     operatingSystem: "All",
     description:
-      "Compare resume to job description: resume match score, missing keywords, skill gaps, and AI tailoring for that posting.",
+      "Compare resume to job description: ATS match score, resume JD match, keyword gap analysis, missing keywords, and AI resume optimization for that posting.",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     featureList: features,
-    softwareVersion: DIAGNOSTIC_REGISTRY_VERSION,
   };
 }
 

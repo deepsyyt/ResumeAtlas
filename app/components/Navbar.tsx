@@ -16,7 +16,6 @@ type UserProfile = {
 export function Navbar() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [googleAuthStarting, setGoogleAuthStarting] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -52,20 +51,6 @@ export function Navbar() {
     });
     return () => subscription.unsubscribe();
   }, []);
-
-  useEffect(() => {
-    if (!mobileNavOpen) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMobileNavOpen(false);
-    };
-    document.addEventListener("keydown", onKeyDown);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [mobileNavOpen]);
 
   useEffect(() => {
     if (!accountMenuOpen) return;
@@ -124,12 +109,8 @@ export function Navbar() {
     (profile?.email ? profile.email[0]?.toUpperCase() : undefined) ||
     "?";
 
-  const closeMobileNav = () => setMobileNavOpen(false);
-
-  const desktopNavLinkClass =
-    "hover:underline text-white/80 hover:text-white whitespace-nowrap";
-  const mobileNavLinkClass =
-    "block rounded-lg px-3 py-3.5 text-base font-medium text-white/90 hover:bg-white/10 active:bg-white/15 transition";
+  const navLinkClass =
+    "hover:underline text-white/80 hover:text-white whitespace-nowrap text-xs sm:text-sm";
 
   const authUi = profile ? (
     <div className="relative shrink-0" ref={accountMenuRef}>
@@ -233,103 +214,15 @@ export function Navbar() {
             ResumeAtlas
           </span>
         </div>
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-3">
-          <nav
-            className="hidden lg:flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm"
-            aria-label="Primary"
-          >
-            <Link
-              href="/check-resume-against-job-description"
-              className={desktopNavLinkClass}
-              title="Check resume against job description"
-            >
-              Check resume vs job description
-            </Link>
-            <Link
-              href="/ats-resume-checker"
-              className={desktopNavLinkClass}
-              title="ATS resume checker"
-            >
-              ATS resume checker
-            </Link>
-            <Link
-              href="/check-resume-against-job-description"
-              className={desktopNavLinkClass}
-              title="Resume keyword scanner"
-            >
-              Keyword scanner
-            </Link>
-            <Link href="/ats-resume-checker#what-is-ats" className={desktopNavLinkClass}>
-              How ATS Works
-            </Link>
-            <Link href="/ats-resume-checker#faq" className={desktopNavLinkClass}>
-              FAQ
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <nav className="flex items-center gap-x-2.5 sm:gap-x-3" aria-label="Primary">
+            <Link href="/" className={navLinkClass}>
+              Home
             </Link>
           </nav>
           {authUi}
-          <button
-            type="button"
-            className="inline-flex lg:hidden h-10 w-10 items-center justify-center rounded-lg border border-white/15 text-white hover:bg-white/10 transition"
-            aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileNavOpen}
-            aria-controls="site-mobile-nav"
-            onClick={() => {
-              setAccountMenuOpen(false);
-              setMobileNavOpen((o) => !o);
-            }}
-          >
-            {mobileNavOpen ? (
-              <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
-          </button>
         </div>
       </div>
-
-      {mobileNavOpen ? (
-        <div className="lg:hidden fixed inset-0 top-14 z-50 flex flex-col bg-black/60 backdrop-blur-sm">
-          <button
-            type="button"
-            className="flex-1 min-h-[3rem] w-full cursor-default"
-            aria-label="Close menu"
-            onClick={closeMobileNav}
-          />
-          <nav
-            id="site-mobile-nav"
-            className="max-h-[min(70vh,calc(100dvh-3.5rem))] overflow-y-auto border-t border-white/10 bg-slate-950 px-3 py-2 shadow-2xl"
-            aria-label="Mobile primary"
-          >
-            <Link
-              href="/check-resume-against-job-description"
-              className={mobileNavLinkClass}
-              onClick={closeMobileNav}
-            >
-              Check resume vs job description
-            </Link>
-            <Link href="/ats-resume-checker" className={mobileNavLinkClass} onClick={closeMobileNav}>
-              ATS resume checker
-            </Link>
-            <Link href="/check-resume-against-job-description" className={mobileNavLinkClass} onClick={closeMobileNav}>
-              Keyword scanner
-            </Link>
-            <Link
-              href="/ats-resume-checker#what-is-ats"
-              className={mobileNavLinkClass}
-              onClick={closeMobileNav}
-            >
-              How ATS Works
-            </Link>
-            <Link href="/ats-resume-checker#faq" className={mobileNavLinkClass} onClick={closeMobileNav}>
-              FAQ
-            </Link>
-          </nav>
-        </div>
-      ) : null}
     </header>
   );
 }

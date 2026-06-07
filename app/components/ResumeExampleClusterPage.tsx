@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LastUpdated } from "@/app/components/LastUpdated";
+import { RoleOptimizeClusterNav } from "@/app/components/optimize/RoleOptimizeClusterNav";
 import { RoleClusterNavSection } from "@/app/components/RoleClusterNavSection";
 import { ResumeBulletPreviewCopyButton } from "@/app/components/ResumeBulletPreviewCopyButton";
 import { CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
@@ -14,6 +15,7 @@ import {
   type ResumeExampleClusterSlug,
 } from "@/app/lib/resumeExampleClusterPages";
 import { SeoBreadcrumbs } from "@/app/components/SeoBreadcrumbs";
+import { getOptimizeClusterNav } from "@/app/lib/roleOptimizer/clusterNav";
 
 type Props = { slug: ResumeExampleClusterSlug };
 
@@ -21,6 +23,7 @@ export function ResumeExampleClusterPage({ slug }: Props) {
   const config = getResumeExampleClusterConfig(slug);
   const canonicalPath = resumeExampleClusterPath(slug);
   const plainResume = resumeSampleToPlainText(config.sample);
+  const optimizeCluster = getOptimizeClusterNav(canonicalPath);
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -77,6 +80,10 @@ export function ResumeExampleClusterPage({ slug }: Props) {
       </section>
 
       <div className="mx-auto max-w-3xl space-y-12 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+        {optimizeCluster ? (
+          <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={canonicalPath} />
+        ) : null}
+
         <section id="who-for">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             Who this {config.roleNameLower} resume example is for
@@ -267,6 +274,10 @@ export function ResumeExampleClusterPage({ slug }: Props) {
             ))}
           </dl>
         </section>
+
+        {optimizeCluster ? (
+          <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={canonicalPath} />
+        ) : null}
 
         <RoleClusterNavSection currentPath={canonicalPath} />
 

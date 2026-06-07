@@ -19,8 +19,30 @@ import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIn
 export type InternalLink = { path: string; label: string };
 
 /** Primary free tool landing: JD comparison (single canonical URL for all resume-JD intents). */
-export const CHECK_RESUME_AGAINST_JD_PATH =
+export const CHECK_RESUME_AGAINST_JD_PATH = "/" as const;
+
+/** @deprecated Former tool URL; 301 → {@link CHECK_RESUME_AGAINST_JD_PATH}. Keep for OAuth/history. */
+export const LEGACY_CHECK_RESUME_AGAINST_JD_PATH =
   "/check-resume-against-job-description" as const;
+
+/** Same tool with in-page form anchor (primary funnel CTAs). */
+export const CHECK_RESUME_AGAINST_JD_FORM_HREF =
+  `${CHECK_RESUME_AGAINST_JD_PATH}#ats-checker-form` as const;
+
+/** Hub for optimize / tailor resume to job description intent (role spokes link here). */
+export const OPTIMIZE_RESUME_FOR_JD_PATH =
+  "/optimize-resume-for-job-description" as const;
+
+/** @deprecated Alias for {@link CHECK_RESUME_AGAINST_JD_FORM_HREF}. */
+export const OPTIMIZE_RESUME_FOR_JD_FORM_HREF = CHECK_RESUME_AGAINST_JD_FORM_HREF;
+
+/** Secondary CTA anchor when linking from compare tool → optimize hub (distinct intent). */
+export const OPTIMIZE_RESUME_FOR_JD_ANCHOR =
+  "Optimize resume for job description" as const;
+
+/** Primary funnel CTA: compare tool does analysis + AI optimization (optimize SEO pages link here). */
+export const ANALYZE_OPTIMIZE_RESUME_JD_CTA =
+  "Analyze and optimize resume for this job description (free)" as const;
 
 /** Canonical ATS guide: template/format/examples (legacy `/how-to-pass-ats` redirects here). */
 export const ATS_RESUME_TEMPLATE_GUIDE_PATH =
@@ -34,13 +56,19 @@ export const RESUME_WORK_EXPERIENCE_GUIDE_PATH =
 export const RESUME_SKILLS_GUIDE_PATH =
   "/resume-guides/resume-skills-examples" as const;
 
-/** Same tool with in-page form anchor (use for CTAs that should scroll to the checker). */
-export const CHECK_RESUME_AGAINST_JD_FORM_HREF =
-  `${CHECK_RESUME_AGAINST_JD_PATH}#ats-checker-form` as const;
+/** Navbar label for the primary tool page (matches product H1 intent). */
+export const TOOL_PAGE_NAV_LABEL = "Compare resume to job description" as const;
+
+/** Short navbar label on small screens. */
+export const TOOL_PAGE_NAV_LABEL_SHORT = "Resume JD match" as const;
 
 /** Primary JD-tool CTA: keyword-rich anchor for buttons and links to the matcher. */
 export const CHECK_RESUME_AGAINST_JD_PRIMARY_CTA =
   "Check resume against job description (free tool)" as const;
+
+/** Primary ATS checker CTA on `/ats-resume-checker` (parsing/format, JD optional). */
+export const CHECK_ATS_RESUME_PRIMARY_CTA =
+  "Check my resume ATS compatibility (free)" as const;
 
 /** Anchor for links from ATS compliance page → JD matcher (distinct intent). */
 export const COMPARE_RESUME_WITH_JD_ANCHOR = "compare resume with job description" as const;
@@ -48,7 +76,7 @@ export const COMPARE_RESUME_WITH_JD_ANCHOR = "compare resume with job descriptio
 /** Alternate anchor when linking to `/ats-resume-checker-free` (same URL as “ATS resume checker”). */
 export const CHECK_ATS_COMPATIBILITY_ANCHOR = "check ATS compatibility" as const;
 
-/** High-volume variant when linking to `/check-resume-against-job-description`. */
+/** High-volume variant when linking to the homepage workbench. */
 export const RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR =
   "resume vs job description checker" as const;
 
@@ -172,7 +200,6 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     RESUME_WORK_EXPERIENCE_GUIDE_PATH,
     roleResumePillarPath("software-engineer"),
     roleResumePillarPath("data-scientist"),
-    "/check-resume-against-job-description",
   ],
   [RESUME_WORK_EXPERIENCE_GUIDE_PATH]: [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -182,13 +209,11 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     roleResumePillarPath("data-analyst"),
     roleResumePillarPath("product-manager"),
     "/customize-resume-without-lying",
-    "/check-resume-against-job-description",
     "/ats-resume-checker",
   ],
   "/customize-resume-without-lying": [
     CHECK_RESUME_AGAINST_JD_PATH,
     "/ats-resume-checker",
-    "/check-resume-against-job-description",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     roleResumePillarPath("software-engineer"),
     roleResumePillarPath("data-scientist"),
@@ -283,7 +308,6 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   "/resume-score-checker": [
     CHECK_RESUME_AGAINST_JD_PATH,
     "/ats-resume-checker",
-    "/check-resume-against-job-description",
     "/ats-compatibility-check",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     roleResumePillarPath("data-scientist"),
@@ -302,7 +326,6 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     CHECK_RESUME_AGAINST_JD_PATH,
     "/ats-resume-checker",
     "/resume-score-checker",
-    "/check-resume-against-job-description",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     roleResumePillarPath("data-analyst"),
     "/customize-resume-without-lying",
@@ -381,7 +404,6 @@ function getSemanticPathsFor(currentPath: string): string[] {
       "/customize-resume-without-lying",
       ATS_RESUME_TEMPLATE_GUIDE_PATH,
       "/resume-examples",
-      "/check-resume-against-job-description",
     ].filter((p) => PATH_BY_PATH[p] != null);
   }
 

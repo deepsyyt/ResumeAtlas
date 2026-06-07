@@ -16,7 +16,7 @@ const BANNED = [
   "game-changer",
 ];
 
-const TIER_S = "/check-resume-against-job-description";
+const TIER_S = "/";
 
 /** Tier-S path may appear as literal or via CHECK_RESUME_AGAINST_JD_PATH from internalLinks. */
 function htmlLinksToTierS(s: string): boolean {
@@ -32,7 +32,7 @@ function methodologyHasFaqJsonLd(s: string): boolean {
 
 const PAGES: { rel: string; requireTierS: boolean; allowSchema: readonly string[] }[] = [
   {
-    rel: "app/check-resume-against-job-description/page.tsx",
+    rel: "app/page.tsx",
     requireTierS: false,
     allowSchema: ["FAQPage", "WebApplication", "BreadcrumbList"],
   },
@@ -139,7 +139,7 @@ function main() {
   if (shellH1 && !shellH1[1].toLowerCase().includes("posting fit"))
     errors.push("shell H1 must contain posting fit");
 
-  if (read("app/check-resume-against-job-description/page.tsx").includes("omitStructuredData")) {
+  if (read("app/page.tsx").includes("PostingFitSsrShell")) {
     /* ok */
   } else errors.push("check page: expected omitStructuredData on ToolClusterLanding");
 

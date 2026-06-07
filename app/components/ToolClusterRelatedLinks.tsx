@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
 import { ALL_TOOL_CLUSTER_CONFIGS } from "@/app/lib/toolClusterPages";
 
 type Props = {
@@ -7,10 +8,12 @@ type Props = {
 };
 
 /**
- * Cross-links all tool cluster URLs (excluding current) with stable keyword anchors for topical authority.
+ * Cross-links adjacent tool-cluster URLs. Hidden on the primary JD workbench—one product funnel.
  */
 export function ToolClusterRelatedLinks({ currentPath }: Props) {
   const normalized = currentPath.replace(/\/$/, "") || "/";
+  if (normalized === CHECK_RESUME_AGAINST_JD_PATH) return null;
+
   const others = ALL_TOOL_CLUSTER_CONFIGS.filter((c) => c.path !== normalized);
   if (others.length === 0) return null;
 
@@ -26,8 +29,15 @@ export function ToolClusterRelatedLinks({ currentPath }: Props) {
         Related free resume tools
       </h2>
       <p className="mt-2 text-sm text-slate-600">
-        Same engine, pick the entry that matches what you searched for. Interlinking helps you
-        compare resume vs job description from different angles (score, keywords, ATS fit).
+        The primary free tool is{" "}
+        <Link
+          href={CHECK_RESUME_AGAINST_JD_PATH}
+          className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+        >
+          compare resume to job description
+        </Link>
+        : ATS match score, keyword gaps, and AI optimization in one workflow. This page covers a
+        related formatting or ATS-readability intent.
       </p>
       <ul className="mt-4 space-y-2 text-sm text-slate-800 list-disc pl-5">
         {others.map((c) => (

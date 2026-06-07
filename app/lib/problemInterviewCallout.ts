@@ -52,7 +52,7 @@ export function resolveProblemInterviewCallout(
     return {
       prefix: "Worried about keyword gaps on your resume? ",
       linkText: "Scan your resume against a job posting",
-      href: "/check-resume-against-job-description#ats-checker-form",
+      href: "/#ats-checker-form",
     };
   }
 

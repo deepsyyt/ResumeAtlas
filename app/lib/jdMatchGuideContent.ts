@@ -4,30 +4,36 @@ export type JdGuideSection = {
   navLabel: string;
 };
 
+/** One section per distinct intent; legacy fragment ids live inside merged sections. */
 export const JD_GUIDE_SECTIONS: readonly JdGuideSection[] = [
   {
     id: "compare-resume-jd",
-    title: "How to compare resume to a job description",
-    navLabel: "Compare resume to JD",
+    title: "Compare resume to job description or job posting",
+    navLabel: "Compare",
+  },
+  {
+    id: "resume-gap-analysis",
+    title: "Resume gap analysis and keyword gaps",
+    navLabel: "Gaps & keywords",
+  },
+  {
+    id: "job-description-analysis",
+    title: "Job description analysis: what recruiters look for",
+    navLabel: "JD analysis",
   },
   {
     id: "resume-match-score",
-    title: "Resume match score explained",
+    title: "ATS match score explained",
     navLabel: "Match score",
   },
   {
-    id: "jd-keyword-matching",
-    title: "Resume keyword matching vs a job posting",
-    navLabel: "Keyword matching",
-  },
-  {
-    id: "tailor-resume-jd",
-    title: "How to tailor resume to a job description",
-    navLabel: "Tailor resume",
+    id: "ai-resume-optimization",
+    title: "AI resume optimization and tailoring",
+    navLabel: "Optimize",
   },
   {
     id: "jd-match-example",
     title: "Resume job description match example",
-    navLabel: "Match example",
+    navLabel: "Example",
   },
 ] as const;

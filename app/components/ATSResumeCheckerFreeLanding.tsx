@@ -22,7 +22,7 @@ const path = TOOL_CLUSTER_ATS_FREE.path;
 
 /**
  * ATS compliance / parsing / score positioning - distinct from the JD matcher
- * (`/check-resume-against-job-description`).
+ * (homepage `/`).
  */
 export function ATSResumeCheckerFreeLanding() {
   return (

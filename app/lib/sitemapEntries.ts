@@ -17,6 +17,8 @@ import {
   RESUME_EXAMPLE_CLUSTER_SLUGS,
   resumeExampleClusterPath,
 } from "@/app/lib/resumeExampleClusterPages";
+import { OPTIMIZE_HUB_PATH } from "@/app/lib/roleOptimizerContent";
+import { ROLE_OPTIMIZER_ORDER } from "@/app/lib/roleOptimizer/registry";
 
 const LEGAL_PATHS = [
   "/contact",
@@ -28,7 +30,8 @@ const LEGAL_PATHS = [
 
 function priorityForPath(pathname: string): number {
   if (pathname === "/") return 1.0;
-  if (pathname === "/check-resume-against-job-description") return 0.94;
+  if (pathname === OPTIMIZE_HUB_PATH) return 0.89;
+  if (pathname.endsWith("-resume-optimizer")) return 0.84;
   if (pathname === "/methodology") return 0.93;
   if (pathname === "/ats-resume-checker") {
     return 0.91;
@@ -76,12 +79,21 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     changeFrequency: "weekly" as const,
     priority: priorityForPath("/"),
   });
+  const optimizerLastMod = new Date("2026-06-07");
   entries.push({
-    url: `${base}/check-resume-against-job-description`,
-    lastModified: new Date("2026-03-29"),
+    url: `${base}${OPTIMIZE_HUB_PATH}`,
+    lastModified: optimizerLastMod,
     changeFrequency: "weekly" as const,
-    priority: priorityForPath("/check-resume-against-job-description"),
+    priority: priorityForPath(OPTIMIZE_HUB_PATH),
   });
+  for (const role of ROLE_OPTIMIZER_ORDER) {
+    entries.push({
+      url: `${base}${role.path}`,
+      lastModified: optimizerLastMod,
+      changeFrequency: "monthly" as const,
+      priority: priorityForPath(role.path),
+    });
+  }
   entries.push({
     url: `${base}/methodology`,
     lastModified: new Date("2026-05-13"),

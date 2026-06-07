@@ -1,19 +1,31 @@
-import type { Metadata } from "next";
+import { HomeBrowseByRoleSection } from "@/app/components/HomeBrowseByRoleSection";
+import { PostingFitAnalyticsRoot } from "@/app/components/postingFit/PostingFitAnalyticsRoot";
+import { PostingFitSsrShell } from "@/app/components/postingFit/PostingFitSsrShell";
+import { ToolClusterLanding } from "@/app/components/ToolClusterLanding";
+import {
+  TOOL_CLUSTER_PRIMARY,
+  buildToolClusterMetadata,
+} from "@/app/lib/toolClusterPages";
 import HomeClient from "./HomeClient";
-import { CLUSTER_HOME_METADATA } from "@/app/lib/canonicalIntentClusters";
-import { getSiteUrl } from "@/app/lib/siteUrl";
 
-export function generateMetadata(): Metadata {
-  const base = getSiteUrl().replace(/\/$/, "");
-  const m = CLUSTER_HOME_METADATA;
-  return {
-    title: m.title,
-    description: m.description,
-    alternates: { canonical: `${base}/` },
-    openGraph: m.openGraph,
-  };
-}
+export const metadata = buildToolClusterMetadata(TOOL_CLUSTER_PRIMARY);
 
 export default function Page() {
-  return <HomeClient />;
+  return (
+    <>
+      <PostingFitAnalyticsRoot surface="workbench" />
+      <PostingFitSsrShell />
+      <HomeClient variant="home" hideMarketingHero hidePostFormSections />
+      <ToolClusterLanding
+        config={TOOL_CLUSTER_PRIMARY}
+        hidePrimaryHero
+        omitStructuredData
+        omitWorkbench
+        embedded
+        workbenchMode
+        homePageMode
+      />
+      <HomeBrowseByRoleSection />
+    </>
+  );
 }

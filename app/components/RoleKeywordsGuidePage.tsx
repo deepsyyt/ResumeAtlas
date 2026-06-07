@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LastUpdated } from "@/app/components/LastUpdated";
+import { RoleOptimizeClusterNav } from "@/app/components/optimize/RoleOptimizeClusterNav";
 import { RoleClusterNavSection } from "@/app/components/RoleClusterNavSection";
 import { SeoBreadcrumbs } from "@/app/components/SeoBreadcrumbs";
 import { KeywordApplicationModule } from "@/app/components/seo/KeywordApplicationModule";
@@ -26,6 +27,7 @@ import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
+import { getOptimizeClusterNav } from "@/app/lib/roleOptimizer/clusterNav";
 import {
   roleResumeKeywordsH1,
   roleResumePillarPath,
@@ -78,6 +80,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
     .join(", ")}, plus terms ATS and recruiters prioritize for this role.`;
 
   const faqSchema = roleKeywordsFaqSchema(roleSlug);
+  const optimizeCluster = getOptimizeClusterNav(keywordsPublicPath);
 
   const itemListSchema = {
     "@context": "https://schema.org",
@@ -147,7 +150,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             <p className="mt-4 text-sm font-medium text-slate-800 max-w-2xl mx-auto">
               Check if your resume includes these keywords →{" "}
               <Link
-                href="/check-resume-against-job-description#ats-checker-form"
+                href="/#ats-checker-form"
                 className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 scan your resume for missing keywords
@@ -182,6 +185,10 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
       </section>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
+        {optimizeCluster ? (
+          <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={keywordsPublicPath} />
+        ) : null}
+
         {secondaryH2 ? (
           <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
             <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">{secondaryH2}</h2>
@@ -407,6 +414,10 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               </li>
             </ul>
           </section>
+        ) : null}
+
+        {optimizeCluster ? (
+          <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={keywordsPublicPath} />
         ) : null}
 
         <RoleClusterNavSection currentPath={keywordsPublicPath} />

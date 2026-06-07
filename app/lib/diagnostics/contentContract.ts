@@ -32,7 +32,7 @@ export interface MdxFrontmatterBase {
 export interface UtilityPageContract extends MdxFrontmatterBase {
   kind: "utility";
   /** Primary product path for CTA. */
-  primary_cta_path: "/check-resume-against-job-description" | "/ats-resume-checker";
+  primary_cta_path: "/" | "/check-resume-against-job-description" | "/ats-resume-checker";
   /** SSR static prose minimum word count (CI). */
   min_static_word_count: number;
   /** Required proof: fixture demo paths or screenshot asset IDs. */
@@ -45,7 +45,7 @@ export interface RoleHubContract extends MdxFrontmatterBase {
   role_slug: string;
   role_display_name: string;
   min_role_specific_sentences: number;
-  primary_cta_path: "/check-resume-against-job-description";
+  primary_cta_path: "/" | "/check-resume-against-job-description";
   proof_fixture_ids: readonly string[];
   faq_max_items: number;
 }
@@ -59,7 +59,7 @@ export interface MethodologyPageContract extends MdxFrontmatterBase {
 export interface ProblemPageContract extends MdxFrontmatterBase {
   kind: "problem";
   problem_slug: string;
-  primary_cta_path: "/check-resume-against-job-description";
+  primary_cta_path: "/" | "/check-resume-against-job-description";
   secondary_cta_path?: "/ats-resume-checker" | "/ats-resume-template";
   faq_max_items: number;
 }
@@ -114,6 +114,7 @@ export function validateUtilityContract(input: Partial<UtilityPageContract>): Co
   }
   if (
     input.primary_cta_path &&
+    input.primary_cta_path !== "/" &&
     input.primary_cta_path !== "/check-resume-against-job-description" &&
     input.primary_cta_path !== "/ats-resume-checker"
   ) {
@@ -135,7 +136,11 @@ export function validateRoleHubContract(input: Partial<RoleHubContract>): Contra
   if (typeof input.min_role_specific_sentences !== "number" || input.min_role_specific_sentences < 12) {
     errors.push("min_role_specific_sentences must be >= 12");
   }
-  if (input.primary_cta_path && input.primary_cta_path !== "/check-resume-against-job-description") {
+  if (
+    input.primary_cta_path &&
+    input.primary_cta_path !== "/" &&
+    input.primary_cta_path !== "/check-resume-against-job-description"
+  ) {
     errors.push("role hubs must primary CTA to posting fit workbench");
   }
   if (!input.proof_fixture_ids?.length) errors.push("proof_fixture_ids required");
@@ -150,6 +155,7 @@ export function validateProblemContract(input: Partial<ProblemPageContract>): Co
   if (!input.problem_slug?.trim()) errors.push("problem_slug required");
   if (
     input.primary_cta_path &&
+    input.primary_cta_path !== "/" &&
     input.primary_cta_path !== "/check-resume-against-job-description"
   ) {
     errors.push("problem pages must primary CTA to posting fit workbench");

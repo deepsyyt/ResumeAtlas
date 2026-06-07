@@ -28,10 +28,6 @@ import type { JDAnalysisResult } from "@/app/lib/jdAnalysis";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import type { AnalysisQuotaStatus } from "@/app/lib/quota";
 import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
-import { KEYWORD_PAGES, resumeExamplePublicPath, type RoleSlug } from "@/app/lib/seoPages";
-import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIntentSeo";
-import { isResumeBulletRole } from "@/app/lib/resumeBulletPointContent";
-import { getSiteUrl } from "@/app/lib/siteUrl";
 import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
 import { gtagEvent, gtagSetUserId } from "@/app/lib/gtagClient";
 import { ANALYTICS_EVENTS, type CreditModalOptimizationEntryPoint } from "@/app/lib/analyticsEvents";
@@ -39,30 +35,7 @@ import { getActiveFunnelId, setActiveFunnelId, startNewFunnel } from "@/app/lib/
 import { SHOW_AUTOMATIC_OPTIMIZER_PAYWALL_MODALS } from "@/app/lib/optimizerPaywallFlags";
 import { useRef } from "react";
 
-const homeSoftwareApplicationSchema = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: "ResumeAtlas",
-  applicationCategory: "BusinessApplication",
-  operatingSystem: "Web",
-  url: getSiteUrl(),
-  description:
-    "AI-powered ATS resume checker that compares your resume with job descriptions and optimizes it for specific roles.",
-  featureList: [
-    "ATS resume checker",
-    "Resume vs job description comparison",
-    "AI resume optimization",
-    "Keyword gap analysis",
-    "Editable resume output",
-  ],
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
-} as const;
-
-/** Horizontal flow; copy reinforces ATS + JD keywords; paste-only (no file upload). */
+/** Horizontal flow for homepage demo; commercial compare/match SEO lives on the tool page. */
 const HOW_IT_WORKS_STEPS = [
   {
     key: "paste",
@@ -97,9 +70,9 @@ const HOME_CAPABILITY_CARDS = [
       "Stop getting filtered out. See exactly how your resume performs in real ATS systems.",
   },
   {
-    title: "Match your resume to any job instantly",
+    title: "See what's weak before you apply",
     body:
-      "Identify missing keywords and skills recruiters are looking for, in seconds.",
+      "Get ATS-style feedback and clearer bullets so you know what to fix next.",
   },
   {
     title: "Improve your resume without rewriting everything",
@@ -286,11 +259,17 @@ export type HomeClientProps = {
    * `keywordScanner`: keyword gaps + missing skills focus (required JD; simplified results panel).
    */
   analysisMode?: "jdMatch" | "atsCompliance" | "keywordScanner";
+  /** Skip homepage marketing hero (SSR shell owns H1/intro on consolidated workbench). */
+  hideMarketingHero?: boolean;
+  /** Skip post-form footer and browse-by-role (composed separately on homepage). */
+  hidePostFormSections?: boolean;
 };
 
 export default function HomeClient({
   variant = "home",
   analysisMode = "jdMatch",
+  hideMarketingHero = false,
+  hidePostFormSections = false,
 }: HomeClientProps) {
   const isHome = variant === "home";
   const isAtsCompliance = analysisMode === "atsCompliance";
@@ -1197,12 +1176,11 @@ export default function HomeClient({
     },
   };
 
-  const roleClustersSorted = Object.values(KEYWORD_PAGES).slice().sort((a, b) =>
-    a.roleName.localeCompare(b.roleName)
-  );
-
   const Root = isHome ? "main" : "div";
-  const rootClassName = isHome ? "min-h-screen flex flex-col bg-white" : "flex flex-col bg-white";
+  const rootClassName =
+    isHome && !hideMarketingHero
+      ? "min-h-screen flex flex-col bg-white"
+      : "flex flex-col bg-white";
 
   return (
     <Root
@@ -1218,14 +1196,15 @@ export default function HomeClient({
         : {})}
     >
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-2 sm:py-3 flex flex-col gap-3 sm:gap-4">
-        {isHome ? (
+        {isHome && !hideMarketingHero ? (
         <header className="text-center mt-0 sm:mt-0 mb-0">
           <h1 className="text-xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 max-w-4xl mx-auto leading-snug sm:leading-[1.2]">
-            Free ATS Resume Checker, Get Your ATS Score &amp; Match Your Resume to Any Job Description
+            ResumeAtlas: free AI resume editor and ATS checker
           </h1>
 
           <p className="mt-2 sm:mt-2.5 text-[13px] sm:text-base text-slate-600 max-w-3xl mx-auto px-1 sm:px-2 leading-relaxed sm:leading-snug">
-            Analyze your resume vs job description, find missing keywords, fix weak bullets, and optimize instantly with AI while keeping your experience intact.
+            Try the resume checker below: paste your resume, get ATS-style feedback, improve bullets
+            with AI, and export when ready. Free until download.
           </p>
 
           <div className="mt-4 sm:mt-5 mb-4 sm:mb-5 mx-auto w-full max-w-lg px-0 sm:px-0">
@@ -1240,7 +1219,7 @@ export default function HomeClient({
                     ?.scrollIntoView({ behavior: "smooth", block: "start" });
                 }}
               >
-                Check My Resume for This Job (Free)
+                Try the resume checker (free)
               </button>
               <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm leading-snug text-slate-600">
                 <span className="mr-1.5 inline-block" aria-hidden="true">
@@ -1291,8 +1270,8 @@ export default function HomeClient({
                   How it works
                 </h2>
                 <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm leading-snug text-slate-600 max-w-xl">
-                  Instantly transform your resume into a job-specific, ATS-optimized version that
-                  increases your chances of getting shortlisted.
+                  Paste, review feedback, refine with AI, and download. Same workflow on this page
+                  and on the dedicated job-description checker.
                 </p>
               </div>
 
@@ -1457,94 +1436,28 @@ export default function HomeClient({
         </div>
       </div>
 
-      {isHome ? (
-      <>
+      {isHome && !hidePostFormSections ? (
       <section className="border-t border-slate-200 bg-slate-50/60">
         <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
           <p className="text-sm text-slate-600 leading-snug">
-            Need parsing, formatting, and ATS score guidance?{" "}
+            Need ATS format and parsing guidance?{" "}
             <Link
               href="/ats-resume-checker"
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
-              Use the free ATS resume checker
+              ATS resume checker
             </Link>
-            . To match a specific posting, paste your job description in the checker above.
+            . Need role-specific prep first? Browse{" "}
+            <Link
+              href="/resume-examples"
+              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              resume examples by role
+            </Link>
+            .
           </p>
         </div>
       </section>
-
-      <section
-        id="browse-by-role"
-        className="border-t border-slate-200 bg-slate-50/60"
-        aria-labelledby="home-browse-by-role-heading"
-      >
-        <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-          <div className="max-w-2xl">
-            <h2
-              id="home-browse-by-role-heading"
-              className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900"
-            >
-              Resume resources by role
-            </h2>
-            <p className="mt-2 text-sm text-slate-600 leading-snug">
-              Select your target position for role-specific examples, writing guidance, and ATS keyword
-              lists.
-            </p>
-          </div>
-          <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 list-none m-0 p-0">
-            {roleClustersSorted.map((cfg) => {
-              const slug = cfg.slug as RoleSlug;
-              const pillarPath = roleResumePillarPath(slug);
-              return (
-                <li
-                  key={slug}
-                  className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm ring-1 ring-slate-900/[0.04]"
-                >
-                  <h3 className="text-sm font-semibold text-slate-900">{cfg.roleName}</h3>
-                  <ul className="mt-3 space-y-2 text-sm list-none m-0 p-0">
-                    <li>
-                      <Link
-                        href={resumeExamplePublicPath(slug)}
-                        className="text-sky-800 font-medium underline underline-offset-2 hover:text-sky-950"
-                      >
-                        Resume example
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href={pillarPath}
-                        className="text-sky-700 underline underline-offset-2 hover:text-sky-950"
-                      >
-                        Resume guide
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href={roleResumeKeywordsPath(slug)}
-                        className="text-sky-700 underline underline-offset-2 hover:text-sky-950"
-                      >
-                        Resume keywords
-                      </Link>
-                    </li>
-                    {isResumeBulletRole(slug) ? (
-                      <li>
-                        <Link
-                          href={`${pillarPath}#bullet-points`}
-                          className="text-sky-700 underline underline-offset-2 hover:text-sky-950"
-                        >
-                          Resume bullet examples
-                        </Link>
-                      </li>
-                    ) : null}
-                  </ul>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </section>
-      </>
       ) : null}
 
       <LimitModal
@@ -1558,15 +1471,6 @@ export default function HomeClient({
         onSignInClick={limitModalQuotaScope === "anonymous" ? handleStartGoogleAuthForQuota : undefined}
         isSigningIn={isStartingGoogleAuth}
       />
-      {isHome ? (
-        <script
-          type="application/ld+json"
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(homeSoftwareApplicationSchema),
-          }}
-        />
-      ) : null}
     </Root>
   );
 }

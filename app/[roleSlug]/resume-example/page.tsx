@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { RoleOptimizeClusterNav } from "@/app/components/optimize/RoleOptimizeClusterNav";
 import { RoleClusterNavSection } from "@/app/components/RoleClusterNavSection";
 import { SeoBreadcrumbs } from "@/app/components/SeoBreadcrumbs";
 import { DataAnalystResumeExampleMain } from "@/app/data-analyst-resume-example/DataAnalystResumeExampleMain";
@@ -24,6 +25,7 @@ import type { ResumeSeoTopic } from "@/app/lib/resumeTopicTypes";
 import { ResumeTopicSectionForGuide } from "@/app/components/resumeTopicGuide";
 import { PostingFitAnalyticsRoot } from "@/app/components/postingFit/PostingFitAnalyticsRoot";
 import { RolePostingFitMoat } from "@/app/components/postingFit/RolePostingFitMoat";
+import { getOptimizeClusterNav } from "@/app/lib/roleOptimizer/clusterNav";
 
 type PageParams = { roleSlug: RoleSlug };
 
@@ -95,6 +97,8 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
   const showFullSampleAppendix = role === "product-manager";
   const isDataAnalyst = role === "data-analyst";
   const keywordsPagePath = roleResumeKeywordsPath(role);
+  const examplePath = roleResumeExamplePath(role);
+  const optimizeCluster = getOptimizeClusterNav(examplePath);
   const roleLower = config.roleName.toLowerCase();
   const heroHeading = isDataAnalyst
     ? "Data Analyst Resume Example That Gets Interviews (2026)"
@@ -216,6 +220,9 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
 
       {!isDataAnalyst ? (
         <div className="mx-auto max-w-3xl space-y-10 px-4 py-10 sm:px-6 lg:px-8">
+          {optimizeCluster ? (
+            <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={examplePath} />
+          ) : null}
           {MERGED_TOPICS.map((topic) => (
             <ResumeTopicSectionForGuide
               key={topic}
@@ -267,8 +274,11 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
         </section>
       ) : null}
 
-      <div className="mx-auto max-w-3xl px-4 pb-14 sm:px-6 lg:px-8">
-        <RoleClusterNavSection currentPath={roleResumeExamplePath(role)} />
+      <div className="mx-auto max-w-3xl space-y-10 px-4 pb-14 sm:px-6 lg:px-8">
+        {optimizeCluster ? (
+          <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={examplePath} />
+        ) : null}
+        <RoleClusterNavSection currentPath={examplePath} />
       </div>
     </main>
     </>

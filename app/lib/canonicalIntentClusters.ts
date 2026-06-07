@@ -6,8 +6,8 @@
  * |----------------|----------------|
  * | Homepage discovery | `/` exposes **role-only** link clusters (`#browse-by-role`); product/tools stay in-page and nav, not separate “topics” columns. |
  * | Brand + tools hub | / |
- * | Resume ↔ JD   | /check-resume-against-job-description |
- * | Keyword gaps  | (consolidated into posting fit workbench `/check-resume-against-job-description`) |
+ * | Resume ↔ JD   | `/` (posting-fit workbench on homepage) |
+ * | Keyword gaps  | (consolidated into homepage workbench) |
  * | ATS read/score | /ats-resume-checker |
  * | ATS layout guide | /ats-resume-template |
  * | Work history section | /resume-guides/resume-work-experience-examples |
@@ -32,52 +32,51 @@ import {
 const siteBase = () => getSiteUrl().replace(/\/$/, "");
 const abs = (path: string) => `${siteBase()}${path.startsWith("/") ? path : `/${path}`}`;
 
-export const CLUSTER_HOME_METADATA = {
-  title: `Free ATS Resume Checker & JD Match — Get Your ATS Score${RESUME_ATLAS_TITLE_SUFFIX}`,
+/** Resume ↔ this job description (tailor / compare / match). */
+export const CLUSTER_JD_MATCH_TOOL_COPY = {
+  titleAbsolute:
+    `Compare Resume to Job Description (Free): ATS Match Score, Gap Analysis & AI Optimization (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Free ATS resume checker: paste resume and job description, get your ATS score, find missing keywords, and AI-optimize bullets for that posting. Export PDF or DOCX. No signup.",
+    "Free compare resume to job description tool: ATS match score, resume JD match, keyword gap analysis, missing keywords, and AI resume optimization for that posting. Paste resume + JD, instant results.",
+  ogTitle:
+    `Compare Resume to Job Description: ATS Match Score, Keyword Gaps & AI Optimization (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
+  ogDescription:
+    "ATS match score, resume gap analysis, job description keyword scanner, and AI optimization suggestions for the posting you paste. Free and instant.",
+  twitterTitle: "Compare resume to job description: match score + AI optimization",
+  twitterDescription:
+    "ATS match score, JD keyword gap analysis, missing keywords, and AI resume optimization. One free tool.",
+  h1: "Compare resume to job description: ATS match score, keyword gap analysis & AI resume optimization",
+  intro:
+    "Paste your resume and the exact job description. Get an ATS match score, resume JD match readout, keyword gap analysis, missing keywords, and AI optimization suggestions for that posting. Analyze fit, then optimize bullets in one workflow. No signup.",
+  topStripStrong:
+    "Analyze fit, then optimize: match score, keyword gaps, and AI resume rewrites for the posting you paste.",
+  webAppName: "ResumeAtlas compare and optimize for job descriptions",
+  webAppDescription:
+    "Compare resume to job description: match score, missing keywords, gap analysis, and AI optimization suggestions for that posting.",
+  differentiatorHeading: "Analysis and optimization in one free tool",
+  differentiatorBody: [
+    "This page is not analysis-only. After you paste resume + job description, you get match score and gap analysis, then AI optimization suggestions you can edit before download—same workflow from score to tailored bullets.",
+    "An ATS checker emphasizes whether machines can read your layout. That matters, but it does not replace proving fit to this posting or rewriting bullets for it. Use the ATS checker for parsing; use this page when you need alignment analysis and optimization for a real job description.",
+  ],
+  serpVariantsParagraph:
+    "People search compare resume to job description, resume match score, resume gap analysis, optimize resume for job description, and tailor resume to job description. ResumeAtlas on the homepage is the canonical free tool: analyze fit, close keyword gaps, then optimize with AI rewrites.",
+  howItWorksHeading: "How analyze and optimize works",
+  whyMatchHeading: "Why one tailored resume beats mass generic applications",
+  resultsHeading: "What the match-style readout highlights",
+};
+
+/** @deprecated Homepage uses {@link CLUSTER_JD_MATCH_TOOL_COPY} via `buildToolClusterMetadata`. */
+export const CLUSTER_HOME_METADATA = {
+  title: CLUSTER_JD_MATCH_TOOL_COPY.titleAbsolute,
+  description: CLUSTER_JD_MATCH_TOOL_COPY.description,
   canonicalPath: "/" as const,
   openGraph: {
-    title: `Free ATS Resume Checker — ATS Score, JD Match & AI Optimization${RESUME_ATLAS_TITLE_SUFFIX}`,
-    description:
-      "Paste resume + job description for a free ATS score, keyword gaps, and AI resume optimization tailored to that posting. Edit and export when ready.",
+    title: CLUSTER_JD_MATCH_TOOL_COPY.ogTitle,
+    description: CLUSTER_JD_MATCH_TOOL_COPY.ogDescription,
     url: abs("/"),
     siteName: "ResumeAtlas" as const,
     type: "website" as const,
   },
-};
-
-/** Resume ↔ this job description (tailor / compare / match). */
-export const CLUSTER_JD_MATCH_TOOL_COPY = {
-  titleAbsolute:
-    `Match Resume to Job Description (Free) — Resume Match Score & Keyword Scanner (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
-  description:
-    "Free resume vs job description checker: get your match score, missing keywords, and AI optimization for that posting. Compare, tailor, and export. Paste resume + JD, instant results, no signup.",
-  ogTitle:
-    `Match Resume to Job Description — Free Match Score & JD Scanner (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
-  ogDescription:
-    "Paste resume + job description for a free match score, keyword gaps, and AI tailoring suggestions for that posting.",
-  twitterTitle: "Match resume to job description (free match score)",
-  twitterDescription:
-    "Resume match score, missing keywords, and tailor-to-JD suggestions—free and instant.",
-  h1: "Match your resume to a job description — free match score & keyword scanner",
-  intro:
-    "Paste your resume and the exact job posting. Get your resume match score, missing keywords, skill gaps, and AI tailoring suggestions for that job description—no signup.",
-  topStripStrong:
-    "Resume vs job description: match score + keyword gaps for the posting you paste.",
-  webAppName: "Resume keyword scanner and job description matcher",
-  webAppDescription:
-    "Compare resume to job description, find missing ATS keywords, and prioritize tailoring edits before you apply.",
-  differentiatorHeading: "Different from keyword-only scans and ATS-only checks",
-  differentiatorBody: [
-    "Posting vocabulary coverage and required skill debt are surfaced as Gate B signals on this workbench, without splitting into a separate vanity “keyword tool” URL.",
-    "An ATS checker emphasizes whether machines can read your layout and sections. That matters, but it does not replace proving fit to this posting. Use the ATS checker when structure and parsing are the question; use this page when you have a real JD and need alignment and tailoring priorities.",
-  ],
-  serpVariantsParagraph:
-    "People search compare resume to job description, resume match score, resume job description match, resume keyword scanner, and match resume to job description. This URL is the canonical matcher: paste resume + posting, read score and gaps, then tailor.",
-  howItWorksHeading: "How resume-to-job-description matching works",
-  whyMatchHeading: "Why one tailored resume beats mass generic applications",
-  resultsHeading: "What the match-style readout highlights",
 };
 
 /** Missing keywords vs a pasted posting (gap list intent). */

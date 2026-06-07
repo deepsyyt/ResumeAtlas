@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { LastUpdated } from "@/app/components/LastUpdated";
+import { RoleOptimizeClusterNav } from "@/app/components/optimize/RoleOptimizeClusterNav";
 import { RoleClusterNavSection } from "@/app/components/RoleClusterNavSection";
 import { SeoBreadcrumbs } from "@/app/components/SeoBreadcrumbs";
 import { DATA_ENGINEER_RESUME_GUIDE } from "@/app/lib/dataEngineerResumeGuide";
+import { getOptimizeClusterNav } from "@/app/lib/roleOptimizer/clusterNav";
 import { CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
 import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
@@ -10,6 +12,7 @@ import {
 } from "@/app/lib/internalLinks";
 export function DataEngineerResumeGuidePage() {
   const config = DATA_ENGINEER_RESUME_GUIDE;
+  const optimizeCluster = getOptimizeClusterNav(config.path);
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -67,6 +70,10 @@ export function DataEngineerResumeGuidePage() {
       </section>
 
       <div className="mx-auto max-w-3xl space-y-10 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+        {optimizeCluster ? (
+          <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={config.path} />
+        ) : null}
+
         {config.sections.map((section) => (
           <section key={section.id} id={section.id} className="scroll-mt-24">
             <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
@@ -98,6 +105,10 @@ export function DataEngineerResumeGuidePage() {
             View data engineer resume example →
           </Link>
         </section>
+
+        {optimizeCluster ? (
+          <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={config.path} />
+        ) : null}
 
         <RoleClusterNavSection currentPath={config.path} />
 

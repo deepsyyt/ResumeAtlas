@@ -163,7 +163,7 @@ export function ProblemConversionPage({ config }: Props) {
               {v.cta.hero}
             </Link>
             <Link
-              href="/check-resume-against-job-description"
+              href="/"
               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
             >
               Find missing keywords in your resume
