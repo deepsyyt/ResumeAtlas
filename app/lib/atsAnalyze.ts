@@ -1,3 +1,5 @@
+import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
+
 /**
  * Result shape returned by the /api/analyze LLM-based ATS analysis.
  * Dashboard UI binds directly to this JSON.
@@ -34,6 +36,8 @@ export type ATSAnalyzeResult = {
   bullet_preview?: BulletPreview | null;
   /** When bullet_preview is null: "already_strong" | "no_bullets" so UI can show the right message. */
   bullet_preview_skip?: "already_strong" | "no_bullets";
+  /** Deterministic proof-based scores (JD skill evidence, impact, architecture, deployment). */
+  evidence_dashboard?: EvidenceDashboard;
 };
 
 export function atsBandFromScore(score: number): "low" | "moderate" | "strong" | "very_strong" {

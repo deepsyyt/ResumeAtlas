@@ -46,7 +46,7 @@ export function HomeBrowseByRoleSection() {
             Resume resources by role
           </h2>
           <p className="mt-2 text-sm leading-snug text-slate-600">
-            Examples, guides, keywords, and JD optimize prep by role. Ready to run your match check?{" "}
+            Examples, guides, keywords, and JD optimize prep by role. Ready to run your evidence match check?{" "}
             <a
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"

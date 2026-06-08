@@ -110,7 +110,7 @@ export default function HowItWorksPage() {
               to tailor quickly for future roles.
             </p>
             <p className="text-xs text-slate-500">
-              You can run 1 free analysis before login in each rolling 24-hour window.
+              You can run 1 free analysis before login each month (resets 30 days after use).
             </p>
           </div>
         </section>

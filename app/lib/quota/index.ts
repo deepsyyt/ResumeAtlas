@@ -20,14 +20,14 @@ export type QuotaExceededPayload = {
 };
 
 const ANON_MESSAGE =
-  "You've used your free ATS scans for now. Sign in to continue with more free scans.";
+  "You've used your free ATS scan for this month. Sign in to continue with more free scans.";
 const USER_MESSAGE =
   "You've used your free ATS scans for the last 24 hours. Please try again later.";
 
 /**
  * Resolves the actor for quota: signed-in user takes precedence; otherwise anonymous.
- * Anonymous quota is tied to the `ra_anon_id` httpOnly cookie (see identity.ts), not to IP alone.
- * `ip_hash` on usage rows is stored for abuse signals but is not used to count the free scans.
+ * Anonymous quota is 1 scan per rolling month per `ra_anon_id` cookie. IP is recorded for
+ * abuse signals only; when the cookie is missing we fall back to `ip_hash`.
  */
 export async function resolveAnalysisActor(request: Request): Promise<AnalysisActor> {
   const { user } = await getBearerUser(request);

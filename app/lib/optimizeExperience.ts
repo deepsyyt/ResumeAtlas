@@ -1,4 +1,5 @@
 import type { ResumeExperience, ResumeProject } from "@/app/lib/resumeDocument";
+import { acceptBulletRewrite } from "@/app/lib/resumeTypography";
 
 export type RecomposedProject = {
   title?: string;
@@ -37,20 +38,70 @@ export function projectTitleMatches(a: string, b: string): boolean {
   return na === nb || na.includes(nb) || nb.includes(na);
 }
 
-/** Preserve strongest originals; cap total bullets per list. */
+function bulletTokenSet(text: string): Set<string> {
+  return new Set(
+    String(text ?? "")
+      .toLowerCase()
+      .split(/[^a-z0-9+/#.-]+/g)
+      .map((t) => t.trim())
+      .filter((t) => t.length >= 3)
+  );
+}
+
+function bulletJaccard(a: string, b: string): number {
+  const setA = bulletTokenSet(a);
+  const setB = bulletTokenSet(b);
+  if (setA.size === 0 || setB.size === 0) return 0;
+  let inter = 0;
+  setA.forEach((t) => {
+    if (setB.has(t)) inter++;
+  });
+  const union = new Set([...Array.from(setA), ...Array.from(setB)]).size;
+  return union > 0 ? inter / union : 0;
+}
+
+/** Drop near-duplicate bullets in the same list (keeps the richer line). */
+export function dedupeNearDuplicateBullets(bullets: string[]): string[] {
+  const out: string[] = [];
+  for (const raw of bullets) {
+    const t = String(raw ?? "").trim();
+    if (!t) continue;
+    const dupIndex = out.findIndex((existing) => bulletJaccard(existing, t) >= 0.65);
+    if (dupIndex === -1) {
+      out.push(t);
+      continue;
+    }
+    if (t.length > out[dupIndex]!.length) {
+      out[dupIndex] = t;
+    }
+  }
+  return out;
+}
+
+/**
+ * Merge LLM rewrites into existing bullets by index (replace, do not append).
+ * Prevents duplicate original + rewritten pairs in the same project.
+ */
 export function mergeBulletLists(
   originalBullets: string[],
   newBullets: string[],
   maxTotal = 6
 ): string[] {
-  if (newBullets.length === 0) return originalBullets;
-  if (originalBullets.length === 0) return newBullets.slice(0, maxTotal);
+  if (newBullets.length === 0) {
+    return dedupeNearDuplicateBullets(originalBullets).slice(0, maxTotal);
+  }
+  if (originalBullets.length === 0) {
+    return dedupeNearDuplicateBullets(newBullets).slice(0, maxTotal);
+  }
 
-  const keepCount = Math.min(2, Math.max(1, Math.round(originalBullets.length * 0.3)));
-  const preserved = originalBullets.slice(0, keepCount);
-  const rewriteSlots = Math.max(0, maxTotal - keepCount);
-  const rewritten = newBullets.slice(0, rewriteSlots);
-  return [...preserved, ...rewritten];
+  const len = Math.min(originalBullets.length, maxTotal);
+  const merged: string[] = [];
+  for (let i = 0; i < len; i++) {
+    const incoming = newBullets[i]?.trim();
+    const orig = originalBullets[i]?.trim() ?? "";
+    merged.push(incoming ? acceptBulletRewrite(orig, incoming) : orig);
+  }
+  return dedupeNearDuplicateBullets(merged.filter(Boolean)).slice(0, maxTotal);
 }
 
 function findRecomposedCompany(
@@ -77,7 +128,7 @@ function mergeProjectBullets(
     .map((b) => b.trim());
   const originalBullets = original.bullets ?? [];
   if (originalBullets.length === 0) {
-    return { ...original, bullets: incoming };
+    return { ...original, bullets: dedupeNearDuplicateBullets(incoming) };
   }
   return {
     ...original,
@@ -102,7 +153,6 @@ export function mergeExperienceWithRecomposed(
         projects: projects.map((proj) => mergeProjectBullets(proj, recomposedProjects)),
       };
     }
-    // Do not pour company-level bullets into project roles (wrong project attribution).
     return exp;
   }
 
@@ -171,4 +221,14 @@ export function appendBulletToExperience(
   exp.bullets = exp.bullets ?? [];
   exp.bullets.push(bullet);
   return `${expIndex}:${exp.bullets.length - 1}`;
+}
+
+export function makeExperienceBulletKey(
+  expIndex: number,
+  bulletIndex: number,
+  projectIndex?: number
+): string {
+  return projectIndex === undefined
+    ? `${expIndex}:${bulletIndex}`
+    : `${expIndex}:p${projectIndex}:${bulletIndex}`;
 }

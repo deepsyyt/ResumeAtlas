@@ -10,10 +10,10 @@ export type OptimizeDashboardNudgeModalProps = {
 };
 
 const BENEFITS = [
-  "Add missing keywords from this job description",
-  "Rewrite weak bullet points with stronger impact",
-  "Improve clarity and ATS-friendly structure",
-  "Tailor your summary for this exact role",
+  "Rewrite your summary for this role: impact and scope first, not a tool list",
+  "Move supported JD skills into the project bullets where you actually used them",
+  "Strengthen architecture, deployment, and outcome proof from work you already did",
+  "Keep unsupported requirements as honest gaps on your skill proof map. Nothing invented.",
 ] as const;
 
 function SparkGlyph() {
@@ -59,8 +59,8 @@ export function OptimizeDashboardNudgeModal({
     : isBusy
       ? "Starting…"
       : !isLoggedIn
-        ? "Sign in to optimize this resume"
-        : "Optimize for this job";
+        ? "Sign in to strengthen evidence"
+        : "Strengthen evidence for this job";
 
   return (
     <div className="fixed inset-0 z-[62] flex items-center justify-center p-4 sm:p-6">
@@ -93,17 +93,18 @@ export function OptimizeDashboardNudgeModal({
               id="optimize-nudge-title"
               className="mt-2 max-w-xl text-pretty text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl sm:leading-snug md:text-[2rem]"
             >
-              Optimise now for a job-ready, ATS-optimised resume
+              Strengthen evidence for this job
             </h2>
             <p id="optimize-nudge-desc" className="mt-4 max-w-xl text-pretty text-base leading-relaxed text-slate-600 sm:text-lg">
-              One click aligns your resume with this posting. Stronger bullets, missing keywords, and a clear story
-              for recruiters and ATS.
+              Your analysis shows where proof is thin. One click turns skills-list language into project
+              evidence (architecture, deployment, and impact) while leaving unsupported JD requirements
+              honest on the skill proof map.
             </p>
           </div>
 
           <div className="mt-8 rounded-2xl border border-slate-200/90 bg-slate-50/80 px-5 py-5 sm:px-6 sm:py-6">
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">
-              What optimization does
+              Evidence-first optimization
             </p>
             <ul className="mt-3 space-y-2.5 text-base text-slate-800">
               {BENEFITS.map((line) => (
@@ -148,7 +149,7 @@ export function OptimizeDashboardNudgeModal({
 
           {!isLoggedIn && !busy ? (
             <p className="mt-4 text-center text-sm text-slate-500 sm:text-left">
-              We&apos;ll send you through Google sign-in, then continue straight into the optimizer.
+              We&apos;ll send you through Google sign-in, then continue straight into evidence optimization.
             </p>
           ) : null}
         </div>

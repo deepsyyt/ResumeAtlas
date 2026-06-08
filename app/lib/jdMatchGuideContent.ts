@@ -13,8 +13,8 @@ export const JD_GUIDE_SECTIONS: readonly JdGuideSection[] = [
   },
   {
     id: "resume-gap-analysis",
-    title: "Resume gap analysis and keyword gaps",
-    navLabel: "Gaps & keywords",
+    title: "Skill proof map and JD gaps",
+    navLabel: "Skill proof",
   },
   {
     id: "job-description-analysis",
@@ -23,12 +23,12 @@ export const JD_GUIDE_SECTIONS: readonly JdGuideSection[] = [
   },
   {
     id: "resume-match-score",
-    title: "ATS match score explained",
-    navLabel: "Match score",
+    title: "Evidence match and dashboard metrics",
+    navLabel: "Evidence metrics",
   },
   {
     id: "ai-resume-optimization",
-    title: "AI resume optimization and tailoring",
+    title: "Evidence-first optimization",
     navLabel: "Optimize",
   },
   {

@@ -1,4 +1,5 @@
 import type { Resume } from "@/app/types/resume";
+import { NO_EM_DASH_RULE } from "@/app/lib/resumeTypography";
 
 const resumeSchema = `
 {
@@ -41,6 +42,7 @@ Rules:
 - Use strong action verbs.
 - Maintain professional tone.
 - Do not use first-person pronouns.
+- ${NO_EM_DASH_RULE}
 - Inject relevant JD keywords naturally.
 - Role level: ${roleLevel}.${roleGuidance}
 - Follow country rules:

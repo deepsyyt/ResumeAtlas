@@ -32,8 +32,8 @@ export function JdMatchGuide({ homePageMode = false }: JdMatchGuideProps) {
         <p className="mt-2 text-sm leading-relaxed text-slate-600">
           {homePageMode ? (
             <>
-              Paste resume + job description, read ATS match score and keyword gaps, then apply AI
-              optimization. Role-specific prep links are at the{" "}
+              Paste resume + job description, read your evidence match score and skill-by-skill proof
+              map, then run evidence-first optimization. Role-specific prep links are at the{" "}
               <a
                 href="#browse-by-role"
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
@@ -82,42 +82,42 @@ export function JdMatchGuide({ homePageMode = false }: JdMatchGuideProps) {
           responsibilities and requirements block. That is what ATS and recruiters weight.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
-          ResumeAtlas runs job description analysis on the text you paste, then returns ATS match
-          score, keyword gap analysis, and optimization priorities. Every opening in the same job
-          family can emphasize different tools and outcomes, so comparison is always
-          posting-specific.
+          ResumeAtlas runs job description analysis on the text you paste, then returns an evidence
+          match score, what-we-measured signals, a skill-by-skill proof map, and honest gap
+          callouts. ATS keyword score is reference only. Every opening in the same job family can
+          emphasize different tools and outcomes, so comparison is always posting-specific.
         </p>
         <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
           <li>Paste resume + full posting requirements (not a shortened summary).</li>
-          <li>Read ATS match score and missing keywords for that listing.</li>
-          <li>Prioritize must-have gaps before nice-to-have terms.</li>
-          <li>Optimize top bullets with tools and outcomes the posting names.</li>
+          <li>Read evidence match and which JD skills are proven in project bullets vs listed only.</li>
+          <li>Use the skill proof map to prioritize must-have gaps you can support with real work.</li>
+          <li>Run evidence-first optimization to strengthen architecture, deployment, and impact proof.</li>
         </ol>
       </section>
 
       <section id="resume-gap-analysis" className={sectionClass}>
         <LegacyAnchor id="jd-keyword-matching" />
         <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-          Resume gap analysis and keyword gaps
+          Skill proof map and JD gaps
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
-          Gap analysis answers what job requirements your resume never evidences and which posting
-          terms are missing entirely. It is always tied to one job description, unlike a generic
-          resume review.
+          The skill-by-skill proof map shows, for each JD skill, whether you proved it in a project
+          bullet, mentioned it in experience text, listed it only, or left it missing honestly. Gap
+          analysis is always tied to one job description, unlike a generic resume review.
         </p>
-        <h3 className="mt-5 text-base font-semibold text-slate-900">Skill gaps</h3>
+        <h3 className="mt-5 text-base font-semibold text-slate-900">Proven vs listed only</h3>
         <p className="mt-2 text-sm leading-relaxed text-slate-700 sm:text-base">
-          Required and preferred skills from the posting are compared to your skills section and
-          bullets. A gap exists when a must-have appears in the JD but your resume does not show
-          where you used it with scope or outcome proof.
+          A skill can appear in your Skills section but still score as weak if no project bullet shows
+          where you used it with scope or outcome. Optimization targets bullets where your experience
+          already supports the term, not invented coverage.
         </p>
         <h3 className="mt-5 text-base font-semibold text-slate-900">
-          Keyword gaps (resume keyword scanner)
+          Keyword coverage (reference metric)
         </h3>
         <p className="mt-2 text-sm leading-relaxed text-slate-700 sm:text-base">
-          The keyword layer flags missing resume keywords: tools, frameworks, certifications, and
-          domain phrases from the posting. This is posting vocabulary coverage, not a vanity keyword
-          count. For parsing risk without a posting, use the{" "}
+          Keyword coverage estimates posting vocabulary overlap. It helps, but it is not the same as
+          proof. Pair it with the skill proof map and impact signals. For parsing risk without a
+          posting, use the{" "}
           <Link
             href="/ats-resume-checker"
             className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
@@ -128,9 +128,9 @@ export function JdMatchGuide({ homePageMode = false }: JdMatchGuideProps) {
         </p>
         <h3 className="mt-5 text-base font-semibold text-slate-900">Fix order</h3>
         <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
-          <li>Close must-have skill gaps where you have real experience.</li>
-          <li>Add missing keywords into bullets with truthful examples.</li>
-          <li>Rewrite weak bullets for evidence density (tool + scope + metric).</li>
+          <li>Move supported JD skills from lists into the project bullets where you used them.</li>
+          <li>Strengthen architecture, deployment, and measurable impact on weak bullets.</li>
+          <li>Leave unsupported requirements visible as gaps instead of stuffing keywords.</li>
         </ol>
       </section>
 
@@ -159,54 +159,61 @@ export function JdMatchGuide({ homePageMode = false }: JdMatchGuideProps) {
             proves context fit.
           </li>
           <li>
-            <strong className="text-slate-900">Experience evidence:</strong> outcomes in bullets, not
-            responsibility lists alone.
+            <strong className="text-slate-900">Experience evidence:</strong> outcomes in project
+            bullets, not responsibility lists or skills dumps alone.
           </li>
         </ul>
       </section>
 
       <section id="resume-match-score" className={sectionClass}>
         <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-          ATS match score explained
+          Evidence match and dashboard metrics
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
-          Your ATS match score summarizes alignment with the pasted posting: keyword overlap, skills
-          evidence, experience relevance, and readable structure.
+          <strong className="text-slate-900">Evidence match</strong> is the headline score: how much of
+          this job you prove in experience and project bullets. Reference metrics include ATS keyword
+          score, keyword coverage, semantic similarity, impact score, and resume quality.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
+          <strong className="text-slate-900">What we measured</strong> breaks proof into signals
+          recruiters skim for: results in bullets, system and design scope, shipped or live work,
+          collaboration, JD skills in bullets, and experience vs the posting.
         </p>
         <ul className="mt-4 list-disc space-y-1.5 pl-5 text-sm text-slate-700 sm:text-base">
           <li>
-            <strong className="text-slate-900">75%+:</strong> strong alignment; polish and optimize
-            top bullets
+            <strong className="text-slate-900">Strong evidence match:</strong> most must-have skills
+            show up in project bullets with outcomes
           </li>
           <li>
-            <strong className="text-slate-900">60–74%:</strong> workable; close keyword and skill gaps
-            first
+            <strong className="text-slate-900">Mixed proof:</strong> skills listed but not evidenced;
+            prioritize bullet rewrites before new keywords
           </li>
           <li>
-            <strong className="text-slate-900">Below 60%:</strong> core posting vocabulary or evidence
-            likely missing
+            <strong className="text-slate-900">Thin proof:</strong> large skill proof gaps; optimize
+            where supported and leave honest gaps visible
           </li>
         </ul>
         <p className="mt-3 text-sm text-slate-600">
-          Use the score to sequence gap fixes and AI optimization, not as a hiring guarantee.
+          Use the dashboard to sequence evidence fixes and optimization, not as a hiring guarantee.
         </p>
       </section>
 
       <section id="ai-resume-optimization" className={sectionClass}>
         <LegacyAnchor id="tailor-resume-jd" />
         <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-          AI resume optimization and tailoring
+          Evidence-first optimization
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
-          After match score and gap analysis, optimize bullets for the same posting: JD-aligned
-          rewrites, skills ordering, and phrasing that mirrors posting vocabulary where you have
-          evidence. You review every edit before export.
+          After the intelligence dashboard, optimization strengthens proof for the same posting:
+          interview-safe summary rewrites, JD skills placed in the right project bullets, and stronger
+          architecture, deployment, and impact language from work you already did. Unsupported
+          requirements stay on the skill proof map. You review every edit before export.
         </p>
         <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
-          <li>Mirror must-have vocabulary where experience is real.</li>
-          <li>Rewrite 2–3 priority bullets with tool, scope, and metric.</li>
-          <li>Apply AI suggestions, then edit manually.</li>
-          <li>Export a posting-specific version.</li>
+          <li>Rewrite your summary for impact and scope, not a tool dump.</li>
+          <li>Move supported JD skills into project bullets where you actually used them.</li>
+          <li>Apply evidence-first suggestions, then edit manually.</li>
+          <li>Export a posting-specific version with honest gaps preserved.</li>
         </ol>
         {!homePageMode ? (
           <>
@@ -254,15 +261,16 @@ export function JdMatchGuide({ homePageMode = false }: JdMatchGuideProps) {
         </p>
         <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-700 sm:text-base">
           <li>
-            <strong className="text-slate-900">Keyword gaps:</strong> SQL depth, experimentation,
-            stakeholder outcomes
+            <strong className="text-slate-900">Skill proof gaps:</strong> SQL and experimentation
+            listed only, not shown in project bullets
           </li>
           <li>
-            <strong className="text-slate-900">ATS match score:</strong> ~66% before edits
+            <strong className="text-slate-900">Evidence match:</strong> ~58% before optimization
+            (ATS keyword score ~66% for reference)
           </li>
           <li>
-            <strong className="text-slate-900">After optimization:</strong> ~78% with evidenced SQL
-            and experiment bullets
+            <strong className="text-slate-900">After evidence-first optimization:</strong> ~72% with
+            SQL and experiment proof moved into project bullets
           </li>
         </ul>
       </section>

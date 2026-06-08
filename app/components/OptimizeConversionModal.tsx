@@ -61,7 +61,8 @@ export function OptimizeConversionModal({
   const priceLabel = starter
     ? formatCreditPackPrice(starter.razorpayAmount, starter.currency)
     : "N/A";
-  const benefitsSummary = "Get ready to apply with a role-aligned resume in seconds.";
+  const benefitsSummary =
+    "Get a job-specific version of your resume you can defend in an interview.";
 
   const busy = isBusy || isStartingGoogleAuth;
 
@@ -155,35 +156,36 @@ export function OptimizeConversionModal({
           id="optimize-conversion-title"
           className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900"
         >
-          Fix your resume for this job in one click
+          Tailor your resume for this job posting
         </h2>
         <p className="mt-2 text-sm text-slate-600 leading-snug">
-          Better keywords, stronger bullets, and ATS-ready formatting.
+          Reframe your real experience for this role: interview-safe summary, clearer project bullets, and
+          honest gaps where the JD goes beyond what you did.
         </p>
 
         <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3">
           <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">
-            Your likely result after optimization
+            What you get
           </p>
           <p className="mt-2 text-sm font-semibold text-slate-900">
-            Interview-ready resume + higher ATS score
+            JD-aligned resume you can defend in an interview
           </p>
           <ul className="mt-2.5 space-y-1 text-sm text-slate-700">
             <li className="flex gap-2">
               <span aria-hidden>+</span>
-              <span>Add missing keywords</span>
+              <span>Summary tailored for this role (120-150 tokens)</span>
             </li>
             <li className="flex gap-2">
               <span aria-hidden>+</span>
-              <span>Rewrite weak bullet points</span>
+              <span>Project bullets refined with supported JD language</span>
             </li>
             <li className="flex gap-2">
               <span aria-hidden>+</span>
-              <span>Improve impact &amp; clarity</span>
+              <span>Keywords surfaced in experience, not invented skills</span>
             </li>
             <li className="flex gap-2">
               <span aria-hidden>+</span>
-              <span>Rewrite summary for this exact role</span>
+              <span>Missing JD requirements left visible, not fabricated</span>
             </li>
           </ul>
         </div>

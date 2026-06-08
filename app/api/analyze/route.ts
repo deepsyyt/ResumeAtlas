@@ -7,6 +7,8 @@ import {
   JOB_DESCRIPTION_MAX_WORDS,
   RESUME_TEXT_MAX_WORDS,
 } from "@/app/lib/inputWordLimits";
+import { SKILL_GAP_LLM_RULES, filterSkillGapPhrases } from "@/app/lib/skillGapRules";
+import { buildEvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
 import {
   assertAnalysisQuotaOrThrow,
   recordSuccessfulAnalysis,
@@ -14,6 +16,7 @@ import {
   type QuotaExceededPayload,
 } from "@/app/lib/quota";
 import { getAnalysisQuotaStatus } from "@/app/lib/quota/store";
+import { quotaAfterSuccessfulUse } from "@/app/lib/quota/validate";
 import {
   buildAnalysisCacheKey,
   getCachedAnalysisResult,
@@ -33,7 +36,8 @@ Return ONLY valid JSON. Do not include explanations, markdown, or any text outsi
 Skill extraction rules:
 - Only extract skills that explicitly appear in the job description text.
 - Extract concise, meaningful skill phrases (typically 1-3 words) that represent concrete capabilities, technologies, methods, or product domains (e.g. "recommendation systems", "search relevance", "A/B testing", "causal inference").
-- Do NOT treat extremely generic standalone words as separate skills (e.g. "search", "ranking", "relevance", "performance", "quality") unless the job description clearly labels them as named skills or disciplines (for example in a "Skills" or "Requirements" list).
+- ${SKILL_GAP_LLM_RULES}
+- Do NOT treat extremely generic standalone words as separate skills (e.g. "search", "ranking", "relevance", "performance", "quality", "fairness") unless the job description clearly labels them as named skills or disciplines (for example in a "Skills" or "Requirements" list).
 - When a generic word appears as part of a more specific phrase, you MUST extract only the specific phrase, not the generic word by itself (e.g. "search relevance" or "search ranking models", not separate "search" and "relevance").
 - Do NOT infer tools, frameworks, or platforms that are not written in the JD.
 - Do NOT expand the skill list using general knowledge.
@@ -283,12 +287,7 @@ export async function POST(request: Request) {
 
       const quotaAfter =
         quotaStatusBefore && usageRecorded
-          ? {
-              remaining: Math.max(0, quotaStatusBefore.remaining - 1),
-              used: quotaStatusBefore.used + 1,
-              limit: quotaStatusBefore.limit,
-              scope: quotaStatusBefore.scope,
-            }
+          ? quotaAfterSuccessfulUse(quotaStatusBefore)
           : quotaStatusBefore
             ? {
                 remaining: quotaStatusBefore.remaining,
@@ -457,13 +456,17 @@ ${jobDescription}`;
       missingPreferred,
       typeof result.keyword_coverage === "number" ? result.keyword_coverage : undefined
     );
-    const missingSkillsAfter = repaired.missing_skills;
-    const missingRequiredAfter = repaired.missing_skills_required ?? [];
-    const missingPreferredAfter = repaired.missing_skills_preferred ?? [];
+    const missingSkillsAfter = filterSkillGapPhrases(repaired.missing_skills);
+    const missingRequiredAfter = filterSkillGapPhrases(repaired.missing_skills_required ?? []);
+    const missingPreferredAfter = filterSkillGapPhrases(repaired.missing_skills_preferred ?? []);
+    const matchedSkillsAfter = filterSkillGapPhrases(repaired.matched_skills);
+    const skillTotal = matchedSkillsAfter.length + missingSkillsAfter.length;
+    const keywordCoverageAfter =
+      skillTotal > 0 ? Math.round((matchedSkillsAfter.length / skillTotal) * 100) : 100;
 
     const normalized: ATSAnalyzeResult = {
       ats_score: Math.max(0, Math.min(100, Math.round(result.ats_score))),
-      keyword_coverage: repaired.keyword_coverage,
+      keyword_coverage: keywordCoverageAfter,
       semantic_similarity: Math.max(0, Math.min(100, Math.round(result.semantic_similarity))),
       experience_alignment: computeExperienceAlignmentScore({
         requiredMin: requiredYears,
@@ -476,7 +479,7 @@ ${jobDescription}`;
       resume_years_experience: resumeYears,
       impact_score: Math.max(0, Math.min(100, Math.round(result.impact_score))),
       resume_quality: Math.max(0, Math.min(100, Math.round(result.resume_quality))),
-      matched_skills: repaired.matched_skills,
+      matched_skills: matchedSkillsAfter,
       missing_skills: missingSkillsAfter,
       missing_skills_required:
         missingRequiredAfter.length > 0 || missingPreferredAfter.length > 0
@@ -492,6 +495,17 @@ ${jobDescription}`;
       normalized.missing_skills = [];
       normalized.missing_skills_required = undefined;
       normalized.missing_skills_preferred = undefined;
+    } else {
+      normalized.evidence_dashboard = buildEvidenceDashboard({
+        resumeText,
+        jobDescription,
+        matchedSkills: matchedSkillsAfter,
+        missingSkills: missingSkillsAfter,
+        missingRequired: missingRequiredAfter,
+        missingPreferred: missingPreferredAfter,
+        requiredYearsExperience: requiredYears,
+        resumeYearsExperience: resumeYears,
+      });
     }
 
     await setCachedAnalysisResult(cacheKey, normalized);
@@ -512,12 +526,7 @@ ${jobDescription}`;
 
     const quotaAfter =
       quotaStatusBefore && usageRecorded
-        ? {
-            remaining: Math.max(0, quotaStatusBefore.remaining - 1),
-            used: quotaStatusBefore.used + 1,
-            limit: quotaStatusBefore.limit,
-            scope: quotaStatusBefore.scope,
-          }
+        ? quotaAfterSuccessfulUse(quotaStatusBefore)
         : quotaStatusBefore
           ? {
               remaining: quotaStatusBefore.remaining,

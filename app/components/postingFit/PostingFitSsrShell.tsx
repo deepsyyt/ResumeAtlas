@@ -23,14 +23,14 @@ export function PostingFitSsrShell() {
           key={i}
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger -- JSON-LD
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }}
         />
       ))}
 
       <section className="border-b border-slate-200 bg-white" id="posting-fit-diagnosis">
         <div className="mx-auto max-w-4xl px-4 py-10 text-center sm:px-6 sm:py-12 sm:text-left lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-widest text-sky-800">
-            Free analyze + optimize · compare resume to job description
+            Free evidence match + optimize · compare resume to job description
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
             {TOOL_CLUSTER_PRIMARY.h1}

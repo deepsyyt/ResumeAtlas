@@ -1,8 +1,7 @@
 import { getSupabaseAdmin } from "@/app/lib/supabase/server";
-import { ANALYSIS_QUOTA_LIMITS } from "./constants";
+import { ANALYSIS_QUOTA_LIMITS, ANALYSIS_QUOTA_WINDOW_MS } from "./constants";
 import type { AnalysisActor, AnalysisQuotaStatus } from "./types";
-
-const WINDOW_MS = 24 * 60 * 60 * 1000;
+import { normalizeQuotaStatus } from "./validate";
 
 export type RecordUsageParams = {
   actor: AnalysisActor;
@@ -38,7 +37,8 @@ export async function recordAnalysisUsage(params: RecordUsageParams): Promise<vo
 
 export async function getAnalysisQuotaStatus(actor: AnalysisActor): Promise<AnalysisQuotaStatus> {
   const supabase = getSupabaseAdmin();
-  const since = new Date(Date.now() - WINDOW_MS).toISOString();
+  const windowMs = ANALYSIS_QUOTA_WINDOW_MS[actor.scope];
+  const since = new Date(Date.now() - windowMs).toISOString();
   const limit = actor.scope === "user" ? ANALYSIS_QUOTA_LIMITS.user : ANALYSIS_QUOTA_LIMITS.anonymous;
 
   let query = supabase
@@ -49,8 +49,22 @@ export async function getAnalysisQuotaStatus(actor: AnalysisActor): Promise<Anal
 
   if (actor.userId) {
     query = query.eq("user_id", actor.userId);
-  } else if (actor.anonymousId) {
-    query = query.eq("anonymous_id", actor.anonymousId);
+  } else if (actor.scope === "anonymous") {
+    // Anonymous free scan: 1 per rolling month per ra_anon_id cookie.
+    query = query.is("user_id", null);
+    if (actor.anonymousId) {
+      query = query.eq("anonymous_id", actor.anonymousId);
+    } else if (actor.ipHash) {
+      query = query.eq("ip_hash", actor.ipHash);
+    } else {
+      return {
+        allowed: false,
+        remaining: 0,
+        used: 0,
+        limit,
+        scope: actor.scope,
+      };
+    }
   } else {
     return {
       allowed: false,
@@ -67,25 +81,26 @@ export async function getAnalysisQuotaStatus(actor: AnalysisActor): Promise<Anal
     throw new Error("Failed to check quota");
   }
 
-  const used = count ?? 0;
-  const remaining = Math.max(0, limit - used);
-  const allowed = used < limit;
+  const rawUsed = count ?? 0;
+  const used = Math.min(rawUsed, limit);
+  const remaining = Math.max(0, limit - rawUsed);
+  const allowed = rawUsed < limit;
 
   let resetAt: string | undefined;
   if (used >= limit && data && data.length > 0) {
     const oldest = (data[0] as { created_at?: string }).created_at;
     if (oldest) {
-      const reset = new Date(new Date(oldest).getTime() + WINDOW_MS);
+      const reset = new Date(new Date(oldest).getTime() + windowMs);
       resetAt = reset.toISOString();
     }
   }
 
-  return {
+  return normalizeQuotaStatus({
     allowed,
     remaining,
     used,
     limit,
     resetAt,
     scope: actor.scope,
-  };
+  });
 }

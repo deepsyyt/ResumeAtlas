@@ -167,9 +167,10 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   exampleJobRequires: "Python, SQL, stakeholder communication, and experimentation.",
   exampleResumeContains: "Python, dashboards, and ad-hoc analysis.",
   exampleMissing: "SQL depth, experimentation, and stakeholder-facing outcomes.",
-  exampleScoreLine: "ATS match score: ~66% before keyword gap fixes and AI optimization.",
+  exampleScoreLine:
+    "Evidence match: ~58% before optimization (ATS keyword score ~66% for reference).",
   exampleFixLine:
-    "After optimization: add one SQL project bullet and one experiment-impact bullet where truthful; estimated match ~78%.",
+    "After evidence-first optimization: SQL and experiment proof moved into project bullets; estimated evidence match ~72%.",
   keywords: [
     "compare resume to job description",
     "compare resume to job posting",

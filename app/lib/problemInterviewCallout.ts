@@ -41,6 +41,9 @@ export function resolveProblemInterviewCallout(
   if (p === "/problems/ats-rejecting-my-resume") {
     return null;
   }
+  if (p === "/optimize") {
+    return null;
+  }
 
   const isRoleKeywordsPath =
     /^\/[^/]+-resume-keywords$/.test(p) ||

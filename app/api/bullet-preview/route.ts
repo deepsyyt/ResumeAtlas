@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { extractBullets, getWeakestBullet, isStrongBullet } from "@/app/lib/bulletPreview";
+import { NO_EM_DASH_RULE, sanitizeResumeProse } from "@/app/lib/resumeTypography";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 
@@ -11,6 +12,7 @@ Rules:
 - Weave in 1-2 relevant keywords from the job context if they fit naturally.
 - Keep a realistic, professional tone.
 - Maximum 25 words.
+- ${NO_EM_DASH_RULE}
 - Output ONLY the rewritten bullet. No quotes, no preamble, no explanation.`;
 
 export type BulletPreviewRequestBody = {
@@ -108,7 +110,8 @@ Output only the rewritten bullet, nothing else.`;
 
     const data = (await response.json()) as { content?: { type: string; text?: string }[] };
     const rawAfter = data.content?.find((c) => c.type === "text")?.text?.trim() ?? "";
-    const after = rawAfter.replace(/^["']|["']$/g, "").trim() || before;
+    const after =
+      sanitizeResumeProse(rawAfter.replace(/^["']|["']$/g, "").trim()) || before;
 
     const result: BulletPreviewResponse = { before, after };
     return NextResponse.json(result);

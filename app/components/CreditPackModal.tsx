@@ -340,10 +340,10 @@ export function CreditPackModal({
               </div>
 
               <ul className="space-y-2 text-sm mb-6">
-                <li>✔ Add missing ATS keywords</li>
-                <li>✔ Rewrite weak bullet points</li>
-                <li>✔ Rewrite summary for this role</li>
-                <li>✔ Improve score for this job</li>
+                <li>✔ Summary tailored for this role (120-150 tokens)</li>
+                <li>✔ Project bullets refined with supported JD language</li>
+                <li>✔ Keywords surfaced in experience, not invented</li>
+                <li>✔ Honest JD gaps flagged, not fabricated</li>
                 <li>✔ Download PDF + editable file</li>
               </ul>
 
@@ -476,20 +476,21 @@ export function CreditPackModal({
                       newBullets={previewNewBullets}
                       highlightOptimizedSummary
                       showJdAlignedSummaryBadge
+                      scrollable
                       editable
                     />
                   </div>
                 </div>
                 <ResumeOptimizationPanel
-                  addedKeywords={previewKeywords}
-                  bulletImprovements={6}
-                  bulletsAdded={2}
-                  quantifiedAchievements={2}
-                  summaryOptimized
-                  scoreBefore={90}
-                  scoreAfter={95}
-                  roleAlignmentScore={74}
-                  matchedStrengthScore={71}
+                  surfacedKeywords={previewKeywords}
+                  bulletsRefined={6}
+                  summaryTailored
+                  jdGapsRemaining={3}
+                  targetSkillCoverage={{ coveredAfter: 14, total: 18 }}
+                  scoreBefore={78}
+                  scoreAfter={86}
+                  evidenceMatchDelta={8}
+                  atsScoreReference={90}
                   onDownloadPdf={() => {
                     /* preview only */
                   }}

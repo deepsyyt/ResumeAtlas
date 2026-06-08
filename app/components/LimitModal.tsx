@@ -36,6 +36,11 @@ export function LimitModal({
             Sign in with Google if needed, then buy a resume optimization pack from the dashboard to continue.
           </p>
         )}
+        {isQuotaAnonymous && (
+          <p className="mt-2 text-sm text-slate-500">
+            Your free scan resets 30 days after use.
+          </p>
+        )}
         {isQuotaUser && (
           <p className="mt-2 text-sm text-slate-500">Your free scans reset in a rolling 24‑hour window.</p>
         )}

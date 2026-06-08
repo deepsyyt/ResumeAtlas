@@ -21,6 +21,12 @@ import { setActiveFunnelId } from "@/app/lib/funnelTracking";
 import { gtagEvent } from "@/app/lib/gtagClient";
 import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
 import { DownloadPaymentSuccessModal } from "@/app/components/DownloadPaymentSuccessModal";
+import { buildRefinementEvidence } from "@/app/lib/resumeFactualAudit";
+import {
+  buildBulletJdTopicTags,
+  summaryJdTopicTags,
+} from "@/app/lib/jdTopicHighlights";
+import { makeExperienceBulletKey } from "@/app/lib/optimizeExperience";
 
 const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
 const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
@@ -45,7 +51,10 @@ type OptimizeInput = {
 
 type OptimizeResult = {
   optimizedResume: string;
+  scoreBefore?: number;
   scoreAfter: number;
+  evidenceMatchDelta?: number;
+  atsScoreReference?: number;
   roleAlignmentScore?: number;
   matchedStrengthScore?: number;
   addedKeywords: string[];
@@ -61,6 +70,49 @@ type OptimizeResult = {
     addedKeywords: string[];
     quantified: boolean;
   }[];
+  insights?: {
+    strongMatches?: string[];
+    missingCritical?: string[];
+    jdGapDetails?: Array<{
+      phrase: string;
+      jdSource: "required" | "preferred" | "target";
+      inOriginalResume: boolean;
+      inOptimizedResume: boolean;
+    }>;
+    dominantIntents?: string[];
+  };
+  alignmentInsights?: {
+    coverageBreakdown?: {
+      covered?: string[];
+      missing?: string[];
+    };
+  };
+  targetSkillCoverage?: {
+    total: number;
+    coveredBefore: number;
+    coveredAfter: number;
+  };
+  refinementEvidence?: {
+    refinedBullets: string[];
+    newBullets: string[];
+    refinedBulletKeys: string[];
+    newBulletKeys: string[];
+    bulletDiffs: Array<{ original: string; improved: string; key: string }>;
+    originalSummary?: string;
+    summaryOptimized: boolean;
+    jdGaps: string[];
+    jdGapDetails?: Array<{
+      phrase: string;
+      jdSource: "required" | "preferred" | "target";
+      inOriginalResume: boolean;
+      inOptimizedResume: boolean;
+    }>;
+  };
+  evidenceDashboard?: {
+    before: import("@/app/lib/resumeEvidenceScore").EvidenceDashboard;
+    after: import("@/app/lib/resumeEvidenceScore").EvidenceDashboard;
+  };
+  improvedSkillProof?: import("@/app/lib/resumeEvidenceScore").OptimizedSkillProofRow[];
 };
 
 export default function OptimizePage() {
@@ -573,7 +625,7 @@ export default function OptimizePage() {
 
   if (!result && !error && (hydrating || optimizeInFlight)) {
     return (
-      <div className="min-h-screen bg-slate-50 px-4 py-12">
+      <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 px-4 py-12">
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-slate-600">Optimizing your resume for this job…</p>
           <div className="mt-4 mx-auto h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700" />
@@ -584,7 +636,7 @@ export default function OptimizePage() {
 
   if (error || !input) {
     return (
-      <div className="min-h-screen bg-slate-50 px-4 py-12">
+      <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 px-4 py-12">
         <div className="mx-auto max-w-md rounded-xl border border-slate-200 bg-white p-6 text-center shadow-sm">
           <p className="text-slate-700">
             {error || "No resume data found. Run an ATS analysis and click Optimize Resume to open this page."}
@@ -602,7 +654,7 @@ export default function OptimizePage() {
 
   if (!result) {
     return (
-      <div className="min-h-screen bg-slate-50 px-4 py-12">
+      <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 px-4 py-12">
         <div className="mx-auto max-w-md rounded-xl border border-slate-200 bg-white p-6 text-center shadow-sm">
           <p className="text-slate-700">Unable to generate optimized resume. Please try again from the analyzer.</p>
           <Link href="/" className="mt-4 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
@@ -616,26 +668,48 @@ export default function OptimizePage() {
   const afterContent = editableResume
     ? toPlainText(editableResume)
     : result.optimizedResume;
+  const parsedAfter =
+    editableResume ?? resumeDocumentFromHeuristicParsed(parseResumeToJSON(afterContent));
+  const jdGapsFallback =
+    result.insights?.missingCritical ??
+    result.alignmentInsights?.coverageBreakdown?.missing ??
+    [];
+  const evidence =
+    result.refinementEvidence ??
+    (input.parsedResume && parsedAfter
+      ? buildRefinementEvidence(input.parsedResume, parsedAfter, jdGapsFallback)
+      : undefined);
   const showKeywords = result.addedKeywords.filter((kw) =>
     afterContent.toLowerCase().includes(kw.toLowerCase())
   );
   const quantifiedBullets = result.quantifiedBullets ?? [];
   const bulletChanges = result.bulletChanges ?? [];
-  const highlightedBullets = bulletChanges
-    .filter((c) => c.original.trim().length > 0 && c.improved !== c.original)
-    .map((c) => c.improved);
-  const newBullets = bulletChanges
-    .filter((c) => c.original.trim().length === 0 && c.improved.trim().length > 0)
-    .map((c) => c.improved);
-  const bulletsAddedCount =
-    typeof result.bulletsAdded === "number"
-      ? result.bulletsAdded
-      : newBullets.length;
+  const highlightedBullets =
+    evidence?.refinedBullets ??
+    bulletChanges
+      .filter((c) => c.original.trim().length > 0 && c.improved !== c.original)
+      .map((c) => c.improved);
+  const newBullets =
+    evidence?.newBullets ??
+    bulletChanges
+      .filter((c) => c.original.trim().length === 0 && c.improved.trim().length > 0)
+      .map((c) => c.improved);
+  const originalSummary =
+    evidence?.originalSummary ??
+    (input.parsedResume?.summary?.trim() || undefined);
+  const jdGaps = evidence?.jdGaps ?? jdGapsFallback;
+  const jdGapDetails =
+    evidence?.jdGapDetails ??
+    result.insights?.jdGapDetails ??
+    jdGaps.map((phrase) => ({
+      phrase,
+      jdSource: "required" as const,
+      inOriginalResume: false,
+      inOptimizedResume: false,
+    }));
   const keywordBulletsFromChanges = bulletChanges
     .filter((c) => c.addedKeywords.length > 0)
     .map((c) => c.improved);
-  const parsedAfter =
-    editableResume ?? resumeDocumentFromHeuristicParsed(parseResumeToJSON(afterContent));
   const keywordBulletsFromFinalResume = parsedAfter.experience.flatMap((exp) => {
     const top = (exp.bullets ?? []).filter((b) => {
       const lower = String(b ?? "").toLowerCase();
@@ -652,9 +726,56 @@ export default function OptimizePage() {
   const keywordBullets = Array.from(
     new Set([...keywordBulletsFromChanges, ...keywordBulletsFromFinalResume])
   );
+  const rawBulletDiffs =
+    evidence?.bulletDiffs ??
+    bulletChanges
+      .filter((c) => c.original.trim() && c.improved !== c.original)
+      .map((c) => ({ original: c.original, improved: c.improved }));
+  const bulletDiffsWithKeys: Array<{ original: string; improved: string; key?: string }> =
+    rawBulletDiffs.map((diff) => {
+    const existingKey =
+      "key" in diff && typeof diff.key === "string" ? diff.key : undefined;
+    if (existingKey) return { original: diff.original, improved: diff.improved, key: existingKey };
+    const target = diff.improved.trim().toLowerCase();
+    for (let idx = 0; idx < parsedAfter.experience.length; idx++) {
+      const exp = parsedAfter.experience[idx];
+      for (let j = 0; j < (exp.bullets ?? []).length; j++) {
+        const text = String(exp.bullets?.[j] ?? "").trim().toLowerCase();
+        if (text && text === target) {
+          return {
+            original: diff.original,
+            improved: diff.improved,
+            key: makeExperienceBulletKey(idx, j),
+          };
+        }
+      }
+      for (let pIdx = 0; pIdx < (exp.projects ?? []).length; pIdx++) {
+        for (let j = 0; j < (exp.projects?.[pIdx]?.bullets ?? []).length; j++) {
+          const text = String(exp.projects?.[pIdx]?.bullets?.[j] ?? "").trim().toLowerCase();
+          if (text && text === target) {
+            return {
+              original: diff.original,
+              improved: diff.improved,
+              key: makeExperienceBulletKey(idx, j, pIdx),
+            };
+          }
+        }
+      }
+    }
+    return { original: diff.original, improved: diff.improved };
+  });
+  const jdCategories = result.evidenceDashboard?.after.categories ?? [];
+  const bulletTopicTags = buildBulletJdTopicTags({
+    categories: jdCategories,
+    bulletDiffs: bulletDiffsWithKeys,
+  });
+  const summaryTopics =
+    result.summaryOptimized === true
+      ? summaryJdTopicTags(parsedAfter.summary, jdCategories)
+      : [];
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 print:min-h-0 print:bg-white print:px-0 print:py-0">
+    <div className="flex-1 bg-slate-50 px-4 py-8 pb-20 print:min-h-0 print:bg-white print:px-0 print:py-0">
       <div className="mx-auto max-w-6xl space-y-6 print:max-w-none print:space-y-0">
         {/* Header */}
         <div className="flex flex-col gap-3 print:hidden">
@@ -684,24 +805,31 @@ export default function OptimizePage() {
         </div>
 
         {/* Optimized resume + AI suggestions */}
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-[3fr_2fr] print:block">
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-[3fr_2fr] xl:items-start print:block">
           {/* Optimized resume */}
           <div className="space-y-2 print:space-y-0">
             <div className="print:hidden space-y-1">
               <h2 className="text-sm font-semibold text-slate-700">Optimized resume preview</h2>
               <p className="max-w-2xl text-xs leading-relaxed text-slate-500">
-                Review and refine this draft by section before you download. Your edits will be
-                reflected in the exported resume.
+                Refined bullets are tagged with the JD topics they now evidence (GenAI, Leadership,
+                etc.).
               </p>
             </div>
             <StructuredResume
               resume={parsedAfter}
               highlightKeywords={showKeywords}
+              bulletTopicTags={bulletTopicTags}
+              summaryTopicTags={summaryTopics}
               quantifiedBullets={quantifiedBullets}
               highlightedBullets={highlightedBullets}
+              refinedBulletKeys={evidence?.refinedBulletKeys}
+              newBulletKeys={evidence?.newBulletKeys}
               keywordBullets={keywordBullets}
               newBullets={newBullets}
               highlightOptimizedSummary
+              showJdAlignedSummaryBadge={result.summaryOptimized === true}
+              originalSummary={originalSummary}
+              showOptimizationLegend
               editable
               onUpdateResumeMeta={(patch) =>
                 setEditableResume((prev) => (prev ? { ...prev, ...patch } : prev))
@@ -814,15 +942,35 @@ export default function OptimizePage() {
           {/* Optimization summary */}
           <div className="space-y-2 print:hidden">
             <ResumeOptimizationPanel
-              addedKeywords={showKeywords}
-              bulletImprovements={result.bulletImprovements}
-              bulletsAdded={bulletsAddedCount}
-              quantifiedAchievements={result.quantifiedAchievements}
-              summaryOptimized={result.summaryOptimized === true}
-              scoreBefore={input.analyzeResult.ats_score}
-              scoreAfter={result.scoreAfter}
-              roleAlignmentScore={result.roleAlignmentScore}
-              matchedStrengthScore={result.matchedStrengthScore}
+              surfacedKeywords={showKeywords}
+              bulletsRefined={result.bulletImprovements}
+              summaryTailored={result.summaryOptimized === true}
+              jdGapsRemaining={jdGaps.length}
+              jdGapDetails={jdGapDetails}
+              bulletDiffs={
+                evidence?.bulletDiffs ??
+                bulletChanges
+                  .filter((c) => c.original.trim() && c.improved !== c.original)
+                  .map((c) => ({ original: c.original, improved: c.improved }))
+              }
+              evidenceDashboard={result.evidenceDashboard}
+              improvedSkillProof={result.improvedSkillProof}
+              targetSkillCoverage={result.targetSkillCoverage}
+              scoreBefore={
+                result.scoreBefore ??
+                result.evidenceDashboard?.before.evidenceMatch ??
+                input.analyzeResult.evidence_dashboard?.evidenceMatch ??
+                0
+              }
+              scoreAfter={
+                result.scoreAfter ??
+                result.evidenceDashboard?.after.evidenceMatch ??
+                0
+              }
+              evidenceMatchDelta={result.evidenceMatchDelta}
+              atsScoreReference={
+                result.atsScoreReference ?? input.analyzeResult.ats_score
+              }
               onDownloadPdf={() => {
                 void handleDownloadPdf("optimize_panel");
               }}

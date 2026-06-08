@@ -31,7 +31,7 @@ type ResumeFormProps = {
    * `keywordScanner`: gap-focused scan; resume + job description required (same API as jdMatch).
    */
   analysisMode?: "jdMatch" | "atsCompliance" | "keywordScanner";
-  /** Optional quota for showing usage (rolling window; copy may say “today” for simplicity). */
+  /** Optional quota for showing usage (rolling window; copy reflects scope). */
   analysisQuota?: {
     remaining: number;
     used: number;
@@ -213,12 +213,20 @@ export function ResumeForm({
               </p>
               <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-0.5 sm:justify-end">
                 <span className="text-2xl font-bold tabular-nums leading-none tracking-tight sm:text-[1.65rem]">
-                  {quota.used}
+                  {Math.min(quota.used, quota.limit)}
                   <span className="mx-1 text-base font-semibold opacity-45 sm:text-lg">/</span>
                   {quota.limit}
                 </span>
                 <span className="text-xs font-semibold leading-snug opacity-90 sm:text-[13px]">
-                  free scans <span className="font-medium opacity-75">today</span>
+                  {isLoggedIn ? (
+                    <>
+                      free scans <span className="font-medium opacity-75">today</span>
+                    </>
+                  ) : (
+                    <>
+                      free scan <span className="font-medium opacity-75">this month</span>
+                    </>
+                  )}
                 </span>
               </div>
             </div>

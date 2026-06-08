@@ -86,9 +86,9 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className="antialiased min-h-screen bg-white text-slate-900">
+      <body className="flex min-h-screen flex-col antialiased bg-white text-slate-900">
         <Navbar />
-        <main className="pb-16">{children}</main>
+        <main className="flex flex-1 flex-col pb-16">{children}</main>
         <ProblemInterviewCallout />
         <Footer />
       </body>

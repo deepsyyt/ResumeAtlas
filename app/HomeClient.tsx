@@ -138,7 +138,9 @@ const AUTH_FLOW_STARTED_AT_KEY = "resumeatlas_auth_flow_started_at_v1";
 const AUTH_FLOW_SUCCESS_TRACKED_PREFIX = "resumeatlas_auth_flow_success_tracked_v1_";
 const AUTH_FLOW_MAX_AGE_MS = 15 * 60 * 1000;
 /** After JD-backed dashboard renders, pause before showing optimize nudge (lets users scan scores first). */
-const OPTIMIZE_NUDGE_DELAY_MS = 10_000;
+const OPTIMIZE_NUDGE_DELAY_MS = 60_000;
+/** Max nudge impressions per analysis run (first at delay, then every 60s after dismiss). */
+const OPTIMIZE_NUDGE_MAX_SHOWS = 3;
 
 function countMissingKeywordsForConversion(r: ATSAnalyzeResult): number {
   const req = r.missing_skills_required?.length ?? 0;
@@ -320,6 +322,9 @@ export default function HomeClient({
   const dismissedOptimizeNudgeTriggersRef = useRef<Set<number>>(new Set());
   /** Which analysis generation the open nudge belongs to (for per-run dismiss tracking). */
   const optimizeNudgeModalForTriggerRef = useRef<number | null>(null);
+  /** How many times the nudge was shown for each analysis trigger (max OPTIMIZE_NUDGE_MAX_SHOWS). */
+  const optimizeNudgeShowsByTriggerRef = useRef<Map<number, number>>(new Map());
+  const optimizeNudgeReshowTimeoutRef = useRef<number | null>(null);
   const modalStackRef = useRef({
     credit: false,
     conversion: false,
@@ -351,6 +356,25 @@ export default function HomeClient({
     };
   }, [creditModalOpen, optimizeConversionModalOpen, optimizeOauthResumeModalOpen, limitModalOpen]);
 
+  const tryOpenOptimizeDashboardNudge = useCallback((trigger: number) => {
+    if (trigger !== optimizeNudgeTriggerRef.current) return;
+    if (dismissedOptimizeNudgeTriggersRef.current.has(trigger)) return;
+    const shows = optimizeNudgeShowsByTriggerRef.current.get(trigger) ?? 0;
+    if (shows >= OPTIMIZE_NUDGE_MAX_SHOWS) return;
+    const m = modalStackRef.current;
+    if (m.credit || m.conversion || m.oauthResume || m.limit) return;
+    optimizeNudgeShowsByTriggerRef.current.set(trigger, shows + 1);
+    optimizeNudgeModalForTriggerRef.current = trigger;
+    setOptimizeDashboardNudgeOpen(true);
+  }, []);
+
+  const clearOptimizeNudgeReshowTimeout = useCallback(() => {
+    if (optimizeNudgeReshowTimeoutRef.current) {
+      window.clearTimeout(optimizeNudgeReshowTimeoutRef.current);
+      optimizeNudgeReshowTimeoutRef.current = null;
+    }
+  }, []);
+
   useEffect(() => {
     if (optimizeNudgeTrigger === 0) return;
     if (!analyzeResult || !lastInputs || !lastAnalysisUsedJd || isGenerating) return;
@@ -362,12 +386,7 @@ export default function HomeClient({
       typeof window !== "undefined"
         ? window.setTimeout(() => {
             if (cancelled) return;
-            if (scheduledFor !== optimizeNudgeTriggerRef.current) return;
-            if (dismissedOptimizeNudgeTriggersRef.current.has(scheduledFor)) return;
-            const m = modalStackRef.current;
-            if (m.credit || m.conversion || m.oauthResume || m.limit) return;
-            optimizeNudgeModalForTriggerRef.current = scheduledFor;
-            setOptimizeDashboardNudgeOpen(true);
+            tryOpenOptimizeDashboardNudge(scheduledFor);
           }, OPTIMIZE_NUDGE_DELAY_MS)
         : 0;
 
@@ -375,7 +394,14 @@ export default function HomeClient({
       cancelled = true;
       if (t) window.clearTimeout(t);
     };
-  }, [optimizeNudgeTrigger, analyzeResult, lastInputs, lastAnalysisUsedJd, isGenerating]);
+  }, [
+    optimizeNudgeTrigger,
+    analyzeResult,
+    lastInputs,
+    lastAnalysisUsedJd,
+    isGenerating,
+    tryOpenOptimizeDashboardNudge,
+  ]);
 
   /** Supabase can send PKCE `code` to Site URL root (`/?code=`) instead of `/auth/callback`. */
   useEffect(() => {
@@ -684,6 +710,7 @@ export default function HomeClient({
       setOptimizeConversionPaymentReceipt(null);
       setConversionModalError(null);
       setOptimizeDashboardNudgeOpen(false);
+      clearOptimizeNudgeReshowTimeout();
       if (optimizeNudgeModalForTriggerRef.current != null) {
         dismissedOptimizeNudgeTriggersRef.current.add(optimizeNudgeModalForTriggerRef.current);
       }
@@ -760,11 +787,14 @@ export default function HomeClient({
         const result = data as ATSAnalyzeResult & { quota?: Partial<AnalysisQuotaStatus> };
         setAnalyzeResult(result);
         if (result.quota && typeof result.quota.remaining === "number") {
+          const limit = result.quota.limit ?? 0;
+          const used = Math.min(result.quota.used ?? 0, limit);
+          const remaining = Math.min(result.quota.remaining, Math.max(0, limit - used));
           setAnalysisQuota({
-            allowed: result.quota.remaining > 0,
-            remaining: result.quota.remaining,
-            used: result.quota.used ?? 0,
-            limit: result.quota.limit ?? 0,
+            allowed: remaining > 0,
+            remaining,
+            used,
+            limit,
             scope: (result.quota.scope as AnalysisQuotaStatus["scope"]) ?? "anonymous",
           });
         }
@@ -807,7 +837,7 @@ export default function HomeClient({
         setIsGenerating(false);
       }
     },
-    [logAnalysisEvent, getAuthHeaders]
+    [clearOptimizeNudgeReshowTimeout, logAnalysisEvent, getAuthHeaders]
   );
 
   const handleStartGoogleAuthForQuota = useCallback(async () => {
@@ -942,19 +972,32 @@ export default function HomeClient({
 
   const dismissOptimizeDashboardNudge = useCallback(() => {
     const t = optimizeNudgeModalForTriggerRef.current;
-    if (t != null) dismissedOptimizeNudgeTriggersRef.current.add(t);
     optimizeNudgeModalForTriggerRef.current = null;
     setOptimizeDashboardNudgeOpen(false);
-  }, []);
+    if (t == null) return;
+
+    const shows = optimizeNudgeShowsByTriggerRef.current.get(t) ?? 0;
+    if (shows >= OPTIMIZE_NUDGE_MAX_SHOWS) {
+      dismissedOptimizeNudgeTriggersRef.current.add(t);
+      return;
+    }
+
+    clearOptimizeNudgeReshowTimeout();
+    optimizeNudgeReshowTimeoutRef.current = window.setTimeout(() => {
+      optimizeNudgeReshowTimeoutRef.current = null;
+      tryOpenOptimizeDashboardNudge(t);
+    }, OPTIMIZE_NUDGE_DELAY_MS);
+  }, [clearOptimizeNudgeReshowTimeout, tryOpenOptimizeDashboardNudge]);
 
   const onOptimizeFromDashboardNudge = useCallback(() => {
     const t = optimizeNudgeModalForTriggerRef.current;
+    clearOptimizeNudgeReshowTimeout();
     if (t != null) dismissedOptimizeNudgeTriggersRef.current.add(t);
     optimizeNudgeModalForTriggerRef.current = null;
     setOptimizeDashboardNudgeOpen(false);
     trackOptimizeDashboardNudgeClick();
     void launchOptimizerFlow();
-  }, [launchOptimizerFlow, trackOptimizeDashboardNudgeClick]);
+  }, [clearOptimizeNudgeReshowTimeout, launchOptimizerFlow, trackOptimizeDashboardNudgeClick]);
 
   const onCreditModalStartOptimize = useCallback(
     (entryPoint: CreditModalOptimizationEntryPoint) => {
@@ -1348,6 +1391,7 @@ export default function HomeClient({
               onOpenOptimizer={
                 analyzeResult && lastInputs && lastAnalysisUsedJd
                   ? () => {
+                      clearOptimizeNudgeReshowTimeout();
                       dismissedOptimizeNudgeTriggersRef.current.add(optimizeNudgeTriggerRef.current);
                       optimizeNudgeModalForTriggerRef.current = null;
                       setOptimizeDashboardNudgeOpen(false);

@@ -23,17 +23,13 @@ import {
   getImpactStyle,
   getResumeQualityStyle,
 } from "@/app/lib/scoreColors";
+import {
+  DEMO_EVIDENCE_BULLET_PREVIEW,
+  DEMO_EVIDENCE_DASHBOARD,
+} from "@/app/lib/demoEvidenceDashboard";
+import { EvidenceIntelligenceSection, ScoreBar } from "@/app/components/EvidenceIntelligenceSection";
 
-/**
- * Illustrative before/after only (not from the user’s resume). Shown next to the optimize CTA.
- * Highlights in “After” use this JD’s missing skills when they appear in the sample line.
- */
-const OPTIMIZER_STATIC_BULLET_PREVIEW = {
-  before:
-    "developing innovative machine learning solutions, managing complex data pipelines, and leading cross-functional initiatives.",
-  after:
-    "Developed innovative machine learning solutions to enhance customer analytics, driving data-driven decision-making and improving customer experience at scale.",
-} as const;
+const OPTIMIZER_STATIC_BULLET_PREVIEW = DEMO_EVIDENCE_BULLET_PREVIEW;
 
 /** Bold missing skills (from JD) and numbers/metrics (18%, 2x, 3+) in "After" text. */
 function highlightImprovementsInText(text: string, keywords: string[]): React.ReactNode {
@@ -128,49 +124,25 @@ export function IntelligencePanel({
     );
   }
 
-  // Empty state - static demo using same color codes and layout as live dashboard
+  // Empty state - evidence-first demo for JD; ATS parsing demo for resume-only landings
   if (!hasAny) {
     const demoAts = 78;
-    const demoKeyword = 82;
-    const demoSemantic = 75;
     const demoExp = 90;
-    const demoImpact = 50;
-    const demoQuality = 72;
     const demoRequiredYears = 10;
     const demoRequiredYearsMax = 15;
     const demoResumeYears = 12;
-    const demoMatched = ["Python", "machine learning", "LLMs", "RAG", "AWS", "Docker"];
-    const demoMissing = ["transformers", "orchestration frameworks", "experimentation platforms"];
-
     const demoAtsStyle = getScoreStyle(demoAts);
     const demoAtsRingHex = getATSRingHex(demoAts);
-    const demoKeywordStyle = getKeywordCoverageStyle(demoKeyword);
-    const demoSemanticStyle = getSemanticStyle(demoSemantic);
     const demoExpStyle = getExperienceAlignmentStyle(
       demoRequiredYears,
       demoRequiredYearsMax,
       demoResumeYears,
       demoExp
     );
-    const demoImpactStyle = getImpactStyle(demoImpact);
-    const demoQualityStyle = getResumeQualityStyle(demoQuality);
     const demoVerdict = getATSVerdictLines(demoAts);
-
-    const DemoScoreBar = ({ score, hex }: { score: number; hex: string }) => {
-      const pct = Math.max(0, Math.min(100, Math.round(score)));
-      return (
-        <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
-          <div
-            className="h-full rounded-full"
-            style={{ width: `${pct}%`, backgroundColor: hex }}
-          />
-        </div>
-      );
-    };
 
     return (
       <section className="rounded-xl bg-white p-3 sm:p-4 shadow-sm ring-1 ring-slate-900/[0.06]">
-        {/* Compact header: label + description + demo badge */}
         <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
           <div className="flex items-baseline gap-1.5 min-w-0">
             <h2 className="text-[10px] font-semibold tracking-[0.2em] text-slate-500 uppercase shrink-0">
@@ -179,7 +151,7 @@ export function IntelligencePanel({
             <p className="text-[11px] text-slate-600 truncate sm:truncate-none sm:text-xs">
               {emptyAts
                 ? "ATS parsing, structure, and readability - not job posting keyword match."
-                : "ATS-style signals for your resume vs job description."}
+                : "Evidence-based fit for your resume vs job description."}
             </p>
           </div>
           <span className="inline-flex shrink-0 items-center rounded-full bg-slate-800 text-white px-2.5 py-0.5 text-[11px] font-medium">
@@ -187,219 +159,77 @@ export function IntelligencePanel({
           </span>
         </div>
 
-        {/* ATS Pass Likelihood - dominant hero block */}
-        <div className="mt-3 flex items-center gap-3 sm:gap-4 py-1">
-          <div
-            className="relative flex items-center justify-center h-20 w-20 sm:h-24 sm:w-24 rounded-full flex-shrink-0"
-            style={{ backgroundColor: demoAtsStyle.bgHex }}
-          >
-            <div
-              className="absolute inset-0 rounded-full border-4"
-              style={{ borderColor: demoAtsRingHex }}
-            />
-            <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-white flex items-center justify-center border-2 border-white shadow-sm">
-              <span className="text-2xl sm:text-3xl font-bold text-slate-900">{demoAts}%</span>
-            </div>
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-slate-900">ATS Pass Likelihood</p>
-            <p
-              className="mt-1 inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold"
-              style={{
-                color: demoAtsStyle.hex,
-                backgroundColor: demoAtsStyle.bgHex,
-                borderColor: demoAtsStyle.hex,
-              }}
-            >
-              {getATSBadgeLabel(demoAts)}
-            </p>
-            <p className="mt-0.5 text-xs text-slate-500">Sample result</p>
-          </div>
-        </div>
-
-        {/* Verdict: confidence + upside (conversion) */}
-        <div
-          className="mt-3 flex items-start gap-2.5 rounded-lg border px-3 py-2.5"
-          style={{ backgroundColor: demoAtsStyle.bgHex, borderColor: demoAtsStyle.hex }}
-        >
-          <span
-            className="mt-0.5 h-2.5 w-2.5 shrink-0 rounded-full"
-            style={{ backgroundColor: demoAtsStyle.hex }}
-            aria-hidden
-          />
-          <div className="min-w-0">
-            <p className="text-[10px] font-semibold text-slate-600">Quick takeaway</p>
-            <p className="mt-1 text-xs font-semibold text-slate-900 leading-snug">{demoVerdict.headline}</p>
-            <p className="mt-0.5 text-xs text-slate-700 leading-snug">{demoVerdict.subline}</p>
-          </div>
-        </div>
-
-        <p className="mt-2 text-[11px] text-slate-500 leading-snug">
-          {emptyAts
-            ? "Paste your resume to run an ATS-focused scan. Add a job description only if you also want keyword overlap vs that posting."
-            : "Paste your resume and job description, then see your score and fix your resume."}
-        </p>
-
-        {/* Supporting metrics - compact cards */}
-        <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-1.5">
-          <div
-            className="rounded-xl px-2.5 py-2"
-            style={{ backgroundColor: demoKeywordStyle.bgHex }}
-          >
-            <div className="flex items-center justify-between gap-1.5">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-                Keyword coverage
-              </p>
-              <span
-                className="h-2 w-2 shrink-0 rounded-full"
-                style={{ backgroundColor: demoKeywordStyle.hex }}
-                aria-hidden
-              />
-            </div>
-            <p className="mt-0.5 text-base font-semibold" style={{ color: demoKeywordStyle.hex }}>
-              {demoKeyword}%
-            </p>
-            <DemoScoreBar score={demoKeyword} hex={demoKeywordStyle.hex} />
-            <p className="mt-1 text-[11px] text-slate-600">
-              {demoMatched.length} / {demoMatched.length + demoMissing.length} matched. {getKeywordCoverageLabel(demoKeyword)}.
-            </p>
-          </div>
-          <div
-            className="rounded-xl px-2.5 py-2"
-            style={{ backgroundColor: demoSemanticStyle.bgHex }}
-          >
-            <div className="flex items-center justify-between gap-1.5">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-                Semantic similarity
-              </p>
-              <span
-                className="h-2 w-2 shrink-0 rounded-full"
-                style={{ backgroundColor: demoSemanticStyle.hex }}
-                aria-hidden
-              />
-            </div>
-            <p className="mt-0.5 text-base font-semibold" style={{ color: demoSemanticStyle.hex }}>
-              {demoSemantic}%
-            </p>
-            <DemoScoreBar score={demoSemantic} hex={demoSemanticStyle.hex} />
-            <p className="mt-1 text-[11px] text-slate-600">{demoSemanticStyle.label}</p>
-          </div>
-          <div
-            className="rounded-xl px-2.5 py-2"
-            style={{ backgroundColor: demoExpStyle.style.bgHex }}
-          >
-            <div className="flex items-center justify-between gap-1.5">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-                Experience alignment
-              </p>
-              <span
-                className="h-2 w-2 shrink-0 rounded-full"
-                style={{ backgroundColor: demoExpStyle.style.hex }}
-                aria-hidden
-              />
-            </div>
-            <p className="mt-0.5 text-base font-semibold" style={{ color: demoExpStyle.style.hex }}>
-              {demoExp}%
-            </p>
-            <DemoScoreBar score={demoExp} hex={demoExpStyle.style.hex} />
-            <p className="mt-1 text-[11px] text-slate-600">
-              {buildExperienceAlignmentSubtitle({
+        {!emptyAts ? (
+          <EvidenceIntelligenceSection
+            dashboard={DEMO_EVIDENCE_DASHBOARD}
+            atsScoreReference={demoAts}
+            experienceAlignment={{
+              score: demoExp,
+              subtitle: buildExperienceAlignmentSubtitle({
                 requiredMin: demoRequiredYears,
                 requiredMax: demoRequiredYearsMax,
                 resumeYears: demoResumeYears,
                 verdictLabel: demoExpStyle.style.label,
-              })}
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-1.5 grid grid-cols-1 md:grid-cols-2 gap-1.5">
-          <div
-            className="rounded-xl px-2.5 py-2"
-            style={{ backgroundColor: demoImpactStyle.bgHex }}
-          >
-            <div className="flex items-center justify-between gap-1.5">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-                Impact score
-              </p>
+              }),
+            }}
+            isDemo
+          />
+        ) : (
+          <>
+            <div className="mt-3 flex items-center gap-3 sm:gap-4 py-1">
+              <div
+                className="relative flex h-20 w-20 sm:h-24 sm:w-24 shrink-0 items-center justify-center rounded-full"
+                style={{ backgroundColor: demoAtsStyle.bgHex }}
+              >
+                <div
+                  className="absolute inset-0 rounded-full border-4"
+                  style={{ borderColor: demoAtsRingHex }}
+                />
+                <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full border-2 border-white bg-white shadow-sm">
+                  <span className="text-2xl sm:text-3xl font-bold text-slate-900">{demoAts}%</span>
+                </div>
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-slate-900">ATS readability</p>
+                <p
+                  className="mt-1 inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold"
+                  style={{
+                    color: demoAtsStyle.hex,
+                    backgroundColor: demoAtsStyle.bgHex,
+                    borderColor: demoAtsStyle.hex,
+                  }}
+                >
+                  {getATSBadgeLabel(demoAts)}
+                </p>
+                <p className="mt-0.5 text-xs text-slate-500">Sample result</p>
+              </div>
+            </div>
+            <div
+              className="mt-3 flex items-start gap-2.5 rounded-lg border px-3 py-2.5"
+              style={{ backgroundColor: demoAtsStyle.bgHex, borderColor: demoAtsStyle.hex }}
+            >
               <span
-                className="h-2 w-2 shrink-0 rounded-full"
-                style={{ backgroundColor: demoImpactStyle.hex }}
+                className="mt-0.5 h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{ backgroundColor: demoAtsStyle.hex }}
                 aria-hidden
               />
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold text-slate-600">Quick takeaway</p>
+                <p className="mt-1 text-xs font-semibold text-slate-900 leading-snug">
+                  {demoVerdict.headline}
+                </p>
+                <p className="mt-0.5 text-xs text-slate-700 leading-snug">{demoVerdict.subline}</p>
+              </div>
             </div>
-            <p className="mt-0.5 text-base font-semibold" style={{ color: demoImpactStyle.hex }}>
-              {demoImpact}%
-            </p>
-            <DemoScoreBar score={demoImpact} hex={demoImpactStyle.hex} />
-            <p className="mt-1 text-[11px] text-slate-600">Quantified achievements (%, $, growth).</p>
-          </div>
-          <div
-            className="rounded-xl px-2.5 py-2"
-            style={{ backgroundColor: demoQualityStyle.bgHex }}
-          >
-            <div className="flex items-center justify-between gap-1.5">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-                Resume quality
-              </p>
-              <span
-                className="h-2 w-2 shrink-0 rounded-full"
-                style={{ backgroundColor: demoQualityStyle.hex }}
-                aria-hidden
-              />
-            </div>
-            <p className="mt-0.5 text-base font-semibold" style={{ color: demoQualityStyle.hex }}>
-              {demoQuality}%
-            </p>
-            <DemoScoreBar score={demoQuality} hex={demoQualityStyle.hex} />
-            <p className="mt-1 text-[11px] text-slate-600">Structure, bullets, clarity.</p>
-          </div>
-        </div>
+          </>
+        )}
 
-        {/* Matched skills - green chips */}
-        <div className="mt-3 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
-            Matched skills
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {demoMatched.map((skill) => (
-              <span
-                key={skill}
-                className="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium"
-                style={{ backgroundColor: "#ECFDF5", color: "#16A34A" }}
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Missing skills - red chips */}
-        <div className="mt-2.5 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
-            {emptyAts
-              ? "Missing skills vs job description (example)"
-              : "Missing skills (from JD)"}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {demoMissing.map((skill) => (
-              <span
-                key={skill}
-                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
-                style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-[#EF4444]" aria-hidden />
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <p className="mt-2 text-xs text-slate-500 leading-snug">
+        <p className="mt-2 text-[11px] text-slate-500 leading-snug">
           {emptyAts
-            ? "Illustrative JD match panel. A resume-only scan emphasizes parsing and structure; use the job description checker to align with a specific posting."
-            : "Your score and fix suggestions use your resume and the job description you pasted."}
+            ? "Paste your resume to run an ATS-focused scan. Add a job description to see evidence match vs that posting."
+            : "Paste your resume and job description to see evidence match, skill proof, and honest gaps."}
         </p>
+
       </section>
     );
   }
@@ -418,6 +248,7 @@ export function IntelligencePanel({
   const resumeYearsExperience = analyzeResult?.resume_years_experience ?? 0;
   const impactScore = analyzeResult?.impact_score ?? 0;
   const qualityScore = analyzeResult?.resume_quality ?? 0;
+  const evidenceDashboard = analyzeResult?.evidence_dashboard;
   const matchedSkills = analyzeResult?.matched_skills ?? [];
   const missingSkills = analyzeResult?.missing_skills ?? [];
   const missingRequired = analyzeResult?.missing_skills_required ?? [];
@@ -446,19 +277,24 @@ export function IntelligencePanel({
     if (missingSkills.length > 0) {
       improvementTips.push(
         hasRequiredPreferred && missingRequired.length > 0
-          ? `Add ${missingRequired.length} Required skills (from JD) automatically with AI optimization`
-          : `Add ${missingSkills.length} missing keywords automatically with AI optimization`
+          ? `Strengthen evidence for ${missingRequired.length} required JD skill${missingRequired.length === 1 ? "" : "s"} in project bullets (only where your experience supports it)`
+          : `Map ${missingSkills.length} JD skill${missingSkills.length === 1 ? "" : "s"} to project proof in your experience section`
       );
     }
     if (impactScore < 70) {
-      improvementTips.push("Add measurable impact metrics (%, $, growth) to your bullets");
+      improvementTips.push(
+        "Upgrade weak bullets with measurable outcomes already in your work (do not invent metrics)"
+      );
     }
     if (
       typeof keywordCoverageRaw === "number" &&
       keywordScore < 70 &&
-      missingSkills.length > 0
+      missingSkills.length > 0 &&
+      !evidenceDashboard
     ) {
-      improvementTips.push("Mention specific tools and skills from the job description");
+      improvementTips.push(
+        "Move JD skills from lists into project bullets where you have real evidence"
+      );
     }
     if (qualityScore < 70) {
       improvementTips.push(
@@ -484,6 +320,92 @@ export function IntelligencePanel({
     );
   }
 
+  const showEvidenceOptimizeInsideDashboard =
+    Boolean(evidenceDashboard && analysisUsedJobDescription && !isKeywordScanner);
+
+  const evidenceOptimizeCard =
+    onOpenOptimizer != null ? (
+      (() => {
+        const evidenceNow = evidenceDashboard?.evidenceMatch ?? 0;
+        const potentialNum = evidenceNow < 88 ? Math.min(88, evidenceNow + 12) : 92;
+        const delta = Math.max(0, potentialNum - evidenceNow);
+        return (
+          <div className="mt-2 rounded-lg bg-slate-50 px-2 py-1.5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">
+                  Strengthen evidence for this job
+                </h3>
+                {missingSkills.length > 0 && (
+                  <p className="text-xs text-slate-600 mt-0.5">
+                    Surface proof for JD skills in project bullets where your experience supports it
+                    {hasRequiredPreferred && missingRequired.length > 0
+                      ? ` (${missingRequired.length} required gap${missingRequired.length === 1 ? "" : "s"} left honest if unsupported)`
+                      : ""}
+                  </p>
+                )}
+                <div className="mt-0.5 flex items-baseline gap-1.5">
+                  <span className="text-base font-bold text-slate-700 tabular-nums">
+                    {evidenceDashboard ? `${evidenceNow}%` : `${atsScore}%`}
+                  </span>
+                  <span className="text-slate-300" aria-hidden>
+                    →
+                  </span>
+                  <span className="text-base font-bold text-emerald-600 tabular-nums">
+                    {evidenceDashboard ? `${potentialNum}%` : "90+"}
+                  </span>
+                  {delta > 0 && (
+                    <span className="text-xs font-semibold text-emerald-600 ml-0.5">
+                      +{delta} evidence match possible
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col items-center sm:items-end gap-1">
+                <button
+                  type="button"
+                  onClick={onOpenOptimizer}
+                  className="w-full sm:w-auto sm:shrink-0 inline-flex items-center justify-center rounded-lg bg-slate-900 py-2 px-3.5 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[180px] sm:min-w-[200px]"
+                >
+                  Optimize this resume
+                </button>
+                <p className="text-[10px] text-slate-500 text-center sm:text-right">
+                  Upgrades bullets with architecture, deployment, and impact proof from your work.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-2 space-y-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                <div className="rounded-lg bg-slate-100 px-2 py-1.5">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1">
+                    Before
+                  </p>
+                  <div className="text-[11px] text-slate-600 leading-snug line-clamp-3 max-h-[3rem] overflow-hidden">
+                    {OPTIMIZER_STATIC_BULLET_PREVIEW.before}
+                  </div>
+                </div>
+                <div className="rounded-lg bg-emerald-50 px-2 py-1.5">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 mb-1">
+                    After
+                  </p>
+                  <div className="text-[11px] text-slate-800 leading-snug line-clamp-3 max-h-[3rem] overflow-hidden">
+                    {highlightImprovementsInText(
+                      OPTIMIZER_STATIC_BULLET_PREVIEW.after,
+                      missingSkills
+                    )}
+                  </div>
+                </div>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-snug">
+                Example only. Your optimized resume uses your real projects; nothing is invented.
+              </p>
+            </div>
+          </div>
+        );
+      })()
+    ) : null;
+
   if (isKeywordScanner && analysisUsedJobDescription) {
     improvementTips.length = 0;
     if (missingSkills.length > 0) {
@@ -498,18 +420,6 @@ export function IntelligencePanel({
     }
     improvementTips.push(
       "For overall match scoring and deeper JD comparison, use the resume vs job description checker."
-    );
-  }
-
-  function ScoreBar({ score, hex }: { score: number; hex: string }) {
-    const pct = Math.max(0, Math.min(100, Math.round(score)));
-    return (
-      <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${pct}%`, backgroundColor: hex }}
-        />
-      </div>
     );
   }
 
@@ -528,33 +438,33 @@ export function IntelligencePanel({
   }) {
     return (
       <div
-        className="rounded-xl px-2.5 py-2"
+        className="rounded-lg px-2 py-1.5"
         style={{ backgroundColor: style.bgHex }}
       >
         <div className="flex items-center justify-between gap-1.5">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600 leading-tight">
             {title}
           </p>
           <span
-            className="h-2 w-2 shrink-0 rounded-full"
+            className="h-1.5 w-1.5 shrink-0 rounded-full"
             style={{ backgroundColor: style.hex }}
             title={iconLabel}
             aria-hidden
           />
         </div>
-        <p className="mt-0.5 text-base font-semibold" style={{ color: style.hex }}>
+        <p className="mt-0.5 text-sm font-semibold leading-none" style={{ color: style.hex }}>
           {score}%
         </p>
         <ScoreBar score={score} hex={style.hex} />
-        <p className="mt-1 text-[11px] text-slate-600">{subtitle}</p>
+        <p className="mt-0.5 text-[10px] leading-snug text-slate-600">{subtitle}</p>
       </div>
     );
   }
 
   return (
-    <section className="rounded-xl bg-white p-3 sm:p-4 shadow-sm ring-1 ring-slate-900/[0.06]">
+    <section className="rounded-xl bg-white p-2.5 sm:p-3 shadow-sm ring-1 ring-slate-900/[0.06]">
       {/* Compact header: title + description, live result badge */}
-      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5">
         <div className="flex items-baseline gap-2 min-w-0">
           <h2 className="text-[10px] font-semibold tracking-[0.2em] text-slate-500 uppercase shrink-0">
             {isKeywordScanner ? "Keyword scan" : "Intelligence"}
@@ -563,11 +473,11 @@ export function IntelligencePanel({
             {isKeywordScanner
               ? "Missing skills and keyword gaps vs your job description (not a full ATS parse report)."
               : analysisUsedJobDescription
-                ? "Your score and fix suggestions for this resume and job."
+                ? "How much of this job your resume proves in real work, plus honest gaps."
                 : "ATS-focused scores from your resume text (no job description used)."}
           </p>
         </div>
-        <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-500/50 bg-emerald-50 text-emerald-700 px-3 py-1 text-xs font-medium">
+        <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-500/50 bg-emerald-50 text-emerald-700 px-2 py-0.5 text-[11px] font-medium">
           Your result. Fix below.
         </span>
       </div>
@@ -592,8 +502,30 @@ export function IntelligencePanel({
         </div>
       ) : null}
 
-      {/* ATS Pass Likelihood - dominant hero block */}
-      {!isKeywordScanner ? (
+      {showEvidenceOptimizeInsideDashboard && evidenceDashboard ? (
+        <EvidenceIntelligenceSection
+          dashboard={evidenceDashboard}
+          atsScoreReference={atsScore}
+          experienceAlignment={{
+            score: experienceScore,
+            subtitle: buildExperienceAlignmentSubtitle({
+              requiredMin: requiredYearsExperience,
+              requiredMax: requiredYearsExperienceMax,
+              resumeYears: resumeYearsExperience,
+              verdictLabel: expAlignment.style.label,
+            }),
+          }}
+          takeawayHeadline={analyzeResult?.summary}
+          takeawaySubline={
+            evidenceDashboard.riskAreas[0] ??
+            "Optimize to strengthen architecture, deployment, and impact evidence in project bullets."
+          }
+          aboveSkillProof={evidenceOptimizeCard}
+        />
+      ) : null}
+
+      {/* ATS hero when no JD evidence dashboard (resume-only scan) */}
+      {!isKeywordScanner && !(evidenceDashboard && analysisUsedJobDescription) ? (
         <>
       <div className="mt-3 flex items-center gap-3 sm:gap-4 py-1">
         <div
@@ -609,7 +541,7 @@ export function IntelligencePanel({
           </div>
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-slate-900">ATS Pass Likelihood</p>
+          <p className="text-sm font-semibold text-slate-900">ATS readability</p>
           <p
             className="mt-1 inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold"
             style={{
@@ -620,15 +552,10 @@ export function IntelligencePanel({
           >
             {getATSBadgeLabel(atsScore)}
           </p>
-          <p className="mt-0.5 text-xs text-slate-500">
-            {analysisUsedJobDescription
-              ? "Resume vs this job description"
-              : "Resume scan only - no job description"}
-          </p>
+          <p className="mt-0.5 text-xs text-slate-500">Resume scan only - no job description</p>
         </div>
       </div>
 
-      {/* Verdict: confidence + upside (analysis only) */}
       <div
         className="mt-3 flex items-start gap-2.5 rounded-lg border px-3 py-2.5"
         style={{ backgroundColor: atsStyle.bgHex, borderColor: atsStyle.hex }}
@@ -663,88 +590,25 @@ export function IntelligencePanel({
         </>
       ) : null}
 
-      {/* Single optimization card - header (problem + opportunity), two-column preview, centered CTA */}
-      {onOpenOptimizer && (() => {
-        const potentialNum = atsScore < 90 ? 90 : 95;
-        const potentialLabel = atsScore < 90 ? "90+" : "95+";
-        const delta = Math.max(0, potentialNum - atsScore);
-        return (
-          <div className="mt-3 rounded-xl bg-slate-50 px-2.5 py-2">
-            {/* Top row: headline + keywords + score (left) | CTA button (right) */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div>
-                <h3 className="text-sm font-semibold text-slate-900">
-                  ⚡ Improve this resume for this job
-                </h3>
-                {missingSkills.length > 0 && (
-                  <p className="text-xs text-slate-600 mt-0.5">
-                    {hasRequiredPreferred && missingRequired.length > 0
-                      ? `Add ${missingRequired.length} Required skill${missingRequired.length === 1 ? "" : "s"} (from JD) to improve your resume`
-                      : `Add ${missingSkills.length} mandatory skill${missingSkills.length === 1 ? "" : "s"} to improve your resume`}
-                  </p>
-                )}
-                <div className="mt-1 flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-slate-700">{atsScore}%</span>
-                  <span className="text-slate-300" aria-hidden>→</span>
-                  <span className="text-lg font-bold text-emerald-600">{potentialLabel}</span>
-                  {delta > 0 && (
-                    <span className="text-xs font-semibold text-emerald-600 ml-0.5">
-                      +{delta} ATS score improvement possible
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col items-center sm:items-end gap-1">
-                <button
-                  type="button"
-                  onClick={onOpenOptimizer}
-                  className="w-full sm:w-auto sm:shrink-0 inline-flex items-center justify-center rounded-lg bg-slate-900 py-2 px-3.5 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[180px] sm:min-w-[200px]"
-                >
-                  Optimize this resume
-                </button>
-                <p className="text-[10px] text-slate-500 text-center sm:text-right">
-                  Adds missing keywords and strengthens bullets for this job.
-                </p>
-              </div>
-            </div>
+      {onOpenOptimizer && !showEvidenceOptimizeInsideDashboard ? evidenceOptimizeCard : null}
 
-            {/* Before | After - static example (same for all users; not from their resume) */}
-            <div className="mt-2.5 space-y-1.5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <div className="rounded-lg bg-slate-100 px-2.5 py-2">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
-                    Before
-                  </p>
-                  <div className="text-xs text-slate-600 leading-relaxed line-clamp-3 max-h-[3.5rem] overflow-hidden">
-                    {OPTIMIZER_STATIC_BULLET_PREVIEW.before}
-                  </div>
-                </div>
-                <div className="rounded-lg bg-emerald-50 px-2.5 py-2">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 mb-1.5">
-                    After
-                  </p>
-                  <div className="text-xs text-slate-800 leading-relaxed line-clamp-3 max-h-[3.5rem] overflow-hidden">
-                    {highlightImprovementsInText(
-                      OPTIMIZER_STATIC_BULLET_PREVIEW.after,
-                      missingSkills
-                    )}
-                  </div>
-                </div>
-              </div>
-              <p className="text-[10px] text-slate-400 leading-snug">
-                Example only. Your optimized resume uses your real bullets and this job&apos;s keywords.
-              </p>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* Supporting metrics - compact cards (hidden on keyword scanner - hero above) */}
+      {/* Secondary ATS metrics (reference when evidence dashboard is primary) */}
       {!isKeywordScanner ? (
         <>
-      <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-1.5">
+      {evidenceDashboard && analysisUsedJobDescription ? (
+        <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+          Reference metrics
+        </p>
+      ) : null}
+      <div
+        className={`${
+          evidenceDashboard && analysisUsedJobDescription ? "mt-1.5" : "mt-2"
+        } grid grid-cols-2 gap-1.5 ${
+          evidenceDashboard && analysisUsedJobDescription ? "lg:grid-cols-4" : "md:grid-cols-3"
+        }`}
+      >
         {keywordNotApplicable ? (
-          <div className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-2">
+          <div className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5">
             <div className="flex items-center justify-between gap-1.5">
               <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
                 Keyword coverage
@@ -782,36 +646,35 @@ export function IntelligencePanel({
           subtitle={semanticStyle.label}
           iconLabel={semanticStyle.label}
         />
-        <div
-          className="rounded-xl px-2.5 py-2"
-          style={{ backgroundColor: expAlignment.style.bgHex }}
-        >
-          <div className="flex items-center justify-between gap-1.5">
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-              Experience alignment
+        {!(evidenceDashboard && analysisUsedJobDescription) ? (
+          <div
+            className="rounded-lg px-2 py-1.5"
+            style={{ backgroundColor: expAlignment.style.bgHex }}
+          >
+            <div className="flex items-center justify-between gap-1.5">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600 leading-tight">
+                Experience alignment
+              </p>
+              <span
+                className="h-1.5 w-1.5 shrink-0 rounded-full"
+                style={{ backgroundColor: expAlignment.style.hex }}
+                aria-hidden
+              />
+            </div>
+            <p className="mt-0.5 text-sm font-semibold leading-none" style={{ color: expAlignment.style.hex }}>
+              {experienceScore}%
             </p>
-            <span
-              className="h-2 w-2 shrink-0 rounded-full"
-              style={{ backgroundColor: expAlignment.style.hex }}
-              aria-hidden
-            />
+            <ScoreBar score={experienceScore} hex={expAlignment.style.hex} />
+            <p className="mt-0.5 text-[10px] leading-snug text-slate-600">
+              {buildExperienceAlignmentSubtitle({
+                requiredMin: requiredYearsExperience,
+                requiredMax: requiredYearsExperienceMax,
+                resumeYears: resumeYearsExperience,
+                verdictLabel: expAlignment.style.label,
+              })}
+            </p>
           </div>
-          <p className="mt-0.5 text-base font-semibold" style={{ color: expAlignment.style.hex }}>
-            {experienceScore}%
-          </p>
-          <ScoreBar score={experienceScore} hex={expAlignment.style.hex} />
-          <p className="mt-1 text-[11px] text-slate-600">
-            {buildExperienceAlignmentSubtitle({
-              requiredMin: requiredYearsExperience,
-              requiredMax: requiredYearsExperienceMax,
-              resumeYears: resumeYearsExperience,
-              verdictLabel: expAlignment.style.label,
-            })}
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-1.5 grid grid-cols-1 md:grid-cols-2 gap-1.5">
+        ) : null}
         <MetricCard
           title="Impact score"
           score={impactScore}
@@ -832,7 +695,7 @@ export function IntelligencePanel({
 
       {analysisUsedJobDescription || matchedSkills.length > 0 || missingSkills.length > 0 ? (
         <>
-          {/* Matched skills - green chips */}
+          {!evidenceDashboard ? (
           <div className="mt-3 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
               Matched skills
@@ -853,8 +716,9 @@ export function IntelligencePanel({
               <p className="text-xs text-slate-500">No explicit skill matches detected yet.</p>
             )}
           </div>
+          ) : null}
 
-          {/* Missing skills - Required vs Preferred when classified, else single list */}
+          {!evidenceDashboard ? (
           <div className="mt-2.5 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
               Missing skills (from JD)
@@ -919,18 +783,19 @@ export function IntelligencePanel({
               </div>
             )}
           </div>
+          ) : null}
         </>
       ) : null}
 
       {/* Improvement tips */}
       {improvementTips.length > 0 && (
-        <div className="mt-3 rounded-xl bg-amber-50/80 px-3 py-2.5">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+        <div className="mt-2 rounded-lg bg-amber-50/80 px-2.5 py-2">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1.5">
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-800 mb-1.5">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-800 mb-1">
                 Fix your resume
               </p>
-              <ul className="list-disc list-inside space-y-0.5 text-xs sm:text-sm text-amber-900">
+              <ul className="list-disc list-inside space-y-0 text-[11px] sm:text-xs leading-snug text-amber-900">
                 {improvementTips.map((tip, i) => (
                   <li key={i}>{tip}</li>
                 ))}

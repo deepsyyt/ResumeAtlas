@@ -21,10 +21,31 @@ export function isValidQuotaStatus(obj: unknown): obj is AnalysisQuotaStatus {
   );
 }
 
+/** Caps display/enforcement fields so used never exceeds limit. */
+export function normalizeQuotaStatus(status: AnalysisQuotaStatus): AnalysisQuotaStatus {
+  const used = Math.min(Math.max(0, status.used), status.limit);
+  const remaining = Math.max(0, status.limit - used);
+  return {
+    ...status,
+    used,
+    remaining,
+    allowed: used < status.limit,
+  };
+}
+
+export function quotaAfterSuccessfulUse(
+  before: AnalysisQuotaStatus
+): Pick<AnalysisQuotaStatus, "remaining" | "used" | "limit" | "scope"> {
+  const used = Math.min(before.limit, before.used + 1);
+  const remaining = Math.max(0, before.limit - used);
+  return { used, remaining, limit: before.limit, scope: before.scope };
+}
+
 export function quotaStatusConsistent(status: AnalysisQuotaStatus): boolean {
   const limit = status.scope === "user" ? ANALYSIS_QUOTA_LIMITS.user : ANALYSIS_QUOTA_LIMITS.anonymous;
   if (status.limit !== limit) return false;
-  if (status.used + status.remaining !== limit && status.remaining > 0) return false;
+  if (status.used > limit) return false;
+  if (status.used + status.remaining !== limit) return false;
   if (status.used >= limit && status.allowed) return false;
   if (status.used < limit && !status.allowed) return false;
   return true;
