@@ -15,6 +15,7 @@ export type OptimizeConversionPaymentReceipt = {
 
 export type OptimizeConversionModalProps = {
   open: boolean;
+  onDismiss?: () => void;
   onClose: () => void;
   /** Secondary: trust / manual path */
   onContinueManual: () => void;
@@ -42,6 +43,7 @@ const STARTER_PACK_ID = "starter" satisfies CreditPackageId;
 
 export function OptimizeConversionModal({
   open,
+  onDismiss,
   onClose,
   onContinueManual,
   onPrimaryAction,
@@ -142,9 +144,14 @@ export function OptimizeConversionModal({
     );
   }
 
+  const dismissPrompt = () => {
+    onDismiss?.();
+    onClose();
+  };
+
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/50" onClick={onClose} aria-hidden />
+      <div className="absolute inset-0 bg-slate-900/50" onClick={dismissPrompt} aria-hidden />
       <div
         className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-2xl bg-white p-5 sm:p-6 shadow-xl border border-slate-200"
         role="dialog"
@@ -228,7 +235,7 @@ export function OptimizeConversionModal({
         <div className="mt-4 flex justify-end">
           <button
             type="button"
-            onClick={onClose}
+            onClick={dismissPrompt}
             className="text-xs font-medium text-slate-500 hover:text-slate-800"
           >
             Close

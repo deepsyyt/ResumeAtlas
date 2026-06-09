@@ -7,6 +7,10 @@ import {
   alignSupabaseOAuthAuthorizeUrl,
   buildAuthCallbackRedirectTo,
 } from "@/app/lib/auth/redirect";
+import {
+  beginPendingAuthFlow,
+  clearPendingAuthFlow,
+} from "@/app/lib/auth/pendingAuthFlow";
 import { createClient } from "@/app/lib/supabase/client";
 import { ShareFriendsCta } from "@/app/components/ShareFriendsCta";
 import {
@@ -108,6 +112,7 @@ export function Navbar() {
   const handleSignInWithGoogle = async () => {
     const supabase = createClient();
     setGoogleAuthStarting(true);
+    beginPendingAuthFlow("navbar");
     try {
       const redirectTo = buildAuthCallbackRedirectTo(pathname || HOME_MARKETING_PATH);
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -119,6 +124,7 @@ export function Navbar() {
         window.location.assign(alignSupabaseOAuthAuthorizeUrl(data.url, redirectTo));
       }
     } catch (e) {
+      clearPendingAuthFlow();
       console.error("Google sign-in failed", e);
       setGoogleAuthStarting(false);
     }

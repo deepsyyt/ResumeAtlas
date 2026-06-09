@@ -25,6 +25,7 @@ import {
 } from "@/app/lib/scoreColors";
 import { DEMO_EVIDENCE_BULLET_PREVIEW } from "@/app/lib/demoEvidenceDashboard";
 import { EvidenceIntelligenceSection, ScoreBar } from "@/app/components/EvidenceIntelligenceSection";
+import type { OptimizationClickSurface } from "@/app/lib/analyticsEvents";
 import { AnimatedIntelligenceDashboardPreview } from "@/app/components/postingFit/AnimatedIntelligenceDashboardPreview";
 import { OptimizePreviewBanner } from "@/app/components/postingFit/OptimizePreviewBanner";
 
@@ -65,7 +66,7 @@ type IntelligencePanelProps = {
   showFullIntelligence?: boolean;
   showLocked?: boolean;
   /** When provided, shows optimizer CTA and static before/after sample. */
-  onOpenOptimizer?: () => void;
+  onOpenOptimizer?: (surface: OptimizationClickSurface) => void;
   resumeText?: string;
   jobDescription?: string;
   /** False when /api/analyze ran with an empty job description (resume-only ATS scan). */
@@ -350,7 +351,7 @@ export function IntelligencePanel({
               <div className="flex flex-col items-center sm:items-end gap-1">
                 <button
                   type="button"
-                  onClick={onOpenOptimizer}
+                  onClick={() => onOpenOptimizer("intelligence_panel")}
                   className="w-full sm:w-auto sm:shrink-0 inline-flex items-center justify-center rounded-lg bg-slate-900 py-2 px-3.5 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[180px] sm:min-w-[200px]"
                 >
                   Optimize for evidence gaps
@@ -458,7 +459,7 @@ export function IntelligencePanel({
             <div className="mb-3 shrink-0 px-1 sm:px-2">
               <OptimizePreviewBanner
                 darkSurface
-                onOptimize={onOpenOptimizer}
+                onOptimize={() => onOpenOptimizer?.("preview_banner")}
                 resetKey={resultResetKey}
               />
             </div>
@@ -601,7 +602,7 @@ export function IntelligencePanel({
                           {onOpenOptimizer ? (
                             <button
                               type="button"
-                              onClick={onOpenOptimizer}
+                              onClick={() => onOpenOptimizer("intelligence_panel")}
                               className="inline-flex w-full shrink-0 items-center justify-center rounded-lg bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-slate-800 sm:w-auto sm:min-w-[180px]"
                             >
                               Optimize this resume
@@ -1021,7 +1022,7 @@ export function IntelligencePanel({
             {onOpenOptimizer && (
               <button
                 type="button"
-                onClick={onOpenOptimizer}
+                onClick={() => onOpenOptimizer("intelligence_panel")}
                 className="sm:shrink-0 w-full sm:w-auto inline-flex items-center justify-center rounded-lg bg-slate-900 py-2 px-3.5 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[180px]"
               >
                 Optimize this resume

@@ -12,8 +12,6 @@ import {
 } from "@/app/lib/diagnostics/primitiveRegistry";
 import { postingFitFaqJsonLd } from "@/app/lib/postingFitJsonLd";
 import { RESUME_ATLAS_TITLE_SUFFIX } from "@/app/lib/searchIntentSeo";
-import { PostingFitAnalyticsRoot } from "@/app/components/postingFit/PostingFitAnalyticsRoot";
-
 const site = getSiteUrl().replace(/\/$/, "");
 const canonical = `${site}/methodology`;
 
@@ -61,7 +59,6 @@ export default function MethodologyPage() {
         // eslint-disable-next-line react/no-danger -- JSON-LD
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
-      <PostingFitAnalyticsRoot surface="methodology" />
       <main className="min-h-screen bg-white text-slate-900">
         <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-widest text-sky-800">
@@ -129,8 +126,6 @@ export default function MethodologyPage() {
             <Link
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="mt-4 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
-              data-analytics-event="posting_fit_tier_s_cta_clicked"
-              data-analytics-location="methodology_footer"
             >
               Open posting fit workbench
             </Link>

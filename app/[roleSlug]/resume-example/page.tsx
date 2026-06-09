@@ -23,7 +23,6 @@ import { resumeExamplePublicPath } from "@/app/lib/seoPages";
 import { isResumeExampleClusterSlug } from "@/app/lib/resumeExampleClusterPages";
 import type { ResumeSeoTopic } from "@/app/lib/resumeTopicTypes";
 import { ResumeTopicSectionForGuide } from "@/app/components/resumeTopicGuide";
-import { PostingFitAnalyticsRoot } from "@/app/components/postingFit/PostingFitAnalyticsRoot";
 import { RolePostingFitMoat } from "@/app/components/postingFit/RolePostingFitMoat";
 import { getOptimizeClusterNav } from "@/app/lib/roleOptimizer/clusterNav";
 
@@ -109,9 +108,6 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
 
   return (
     <>
-      {role === "software-engineer" || role === "data-analyst" || role === "product-manager" ? (
-        <PostingFitAnalyticsRoot surface="role_hub" />
-      ) : null}
       <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/60">
         <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-16 lg:px-8">

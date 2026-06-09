@@ -19,8 +19,10 @@ import { createClient } from "@/app/lib/supabase/client";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import { sameResumeAndJob } from "@/app/lib/resumeJobFingerprint";
 import { setActiveFunnelId } from "@/app/lib/funnelTracking";
-import { gtagEvent } from "@/app/lib/gtagClient";
-import { ANALYTICS_EVENTS } from "@/app/lib/analyticsEvents";
+import {
+  trackOptimizationCompleted,
+  trackOptimizationPdfDownloaded,
+} from "@/app/lib/analyticsFunnel";
 import { DownloadPaymentSuccessModal } from "@/app/components/DownloadPaymentSuccessModal";
 import { buildRefinementEvidence } from "@/app/lib/resumeFactualAudit";
 import {
@@ -193,10 +195,13 @@ export default function OptimizePage() {
           setEditableResume(cache.editableResume ?? resumeFromOptimizeResult(cache.result));
           window.sessionStorage.setItem("resumeatlas_optimize_done", "1");
           setHydrating(false);
-          gtagEvent(ANALYTICS_EVENTS.optimizationCompleted, {
-            score_before: parsed.analyzeResult.ats_score,
-            score_after: cache.result.scoreAfter,
-            restored_from_cache: "yes",
+          trackOptimizationCompleted({
+            jobId:
+              parsed.funnelId ??
+              `cache:${parsed.resumeText.length}:${parsed.jobDescription.length}`,
+            scoreBefore: parsed.analyzeResult.ats_score,
+            scoreAfter: cache.result.scoreAfter,
+            restoredFromCache: true,
           });
           return true;
         };
@@ -294,10 +299,13 @@ export default function OptimizePage() {
           const nextEditable = resumeFromOptimizeResult(data);
           setResult(data);
           setEditableResume(nextEditable);
-          gtagEvent(ANALYTICS_EVENTS.optimizationCompleted, {
-            score_before: parsed.analyzeResult.ats_score,
-            score_after: data.scoreAfter,
-            restored_from_cache: "no",
+          trackOptimizationCompleted({
+            jobId:
+              parsed.funnelId ??
+              `run:${parsed.resumeText.length}:${parsed.jobDescription.length}`,
+            scoreBefore: parsed.analyzeResult.ats_score,
+            scoreAfter: data.scoreAfter,
+            restoredFromCache: false,
           });
           window.sessionStorage.setItem("resumeatlas_optimize_done", "1");
           const cachePayload: OptimizeCacheV1 = {
@@ -433,11 +441,6 @@ export default function OptimizePage() {
     return { ok: true, justPaidForDownload: true };
   }, [refreshDownloadWallet]);
 
-  useEffect(() => {
-    if (!downloadPaidSuccessOpen) return;
-    gtagEvent(ANALYTICS_EVENTS.paymentSuccessDownloadModalViewed, {});
-  }, [downloadPaidSuccessOpen]);
-
   type DownloadSurface = "optimize_panel" | "payment_success_modal";
 
   const handleDownloadPdf = useCallback(
@@ -448,10 +451,6 @@ export default function OptimizePage() {
         return;
       }
       setIsUnlockingDownload(true);
-      gtagEvent(ANALYTICS_EVENTS.postingFitExportIntentClicked, {
-        format: "pdf",
-        surface,
-      });
       const gate: DownloadGateResult = downloadPassToken
         ? { ok: true, justPaidForDownload: false }
         : await resolveDownloadGate();
@@ -508,12 +507,7 @@ export default function OptimizePage() {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      gtagEvent(
-        surface === "payment_success_modal"
-          ? ANALYTICS_EVENTS.optimizationPdfDownloadedPaymentSuccessModal
-          : ANALYTICS_EVENTS.optimizationPdfDownloadedOptimizePanel,
-        {}
-      );
+      trackOptimizationPdfDownloaded(surface);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to download resume PDF.");
     } finally {
@@ -527,10 +521,6 @@ export default function OptimizePage() {
     async (surface: DownloadSurface = "optimize_panel") => {
     try {
       setIsUnlockingDownload(true);
-      gtagEvent(ANALYTICS_EVENTS.postingFitExportIntentClicked, {
-        format: "editable",
-        surface,
-      });
       const gate: DownloadGateResult = downloadPassToken
         ? { ok: true, justPaidForDownload: false }
         : await resolveDownloadGate();
@@ -577,12 +567,6 @@ export default function OptimizePage() {
       a.download = "resume-optimized.txt";
       a.click();
       URL.revokeObjectURL(url);
-      gtagEvent(
-        surface === "payment_success_modal"
-          ? ANALYTICS_EVENTS.optimizationEditableDownloadedPaymentSuccessModal
-          : ANALYTICS_EVENTS.optimizationEditableDownloadedOptimizePanel,
-        {}
-      );
     } catch {
       // no-op
     } finally {

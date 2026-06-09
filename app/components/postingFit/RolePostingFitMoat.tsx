@@ -59,8 +59,6 @@ export function RolePostingFitMoat({ role }: { role: MoatRole }) {
         <Link
           href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
           className="inline-flex rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-100 transition"
-          data-analytics-event="posting_fit_tier_s_cta_clicked"
-          data-analytics-location={`role_moat_${role}`}
         >
           Run posting fit diagnosis
         </Link>

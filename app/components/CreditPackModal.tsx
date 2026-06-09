@@ -20,6 +20,7 @@ import type { CreditModalOptimizationEntryPoint } from "@/app/lib/analyticsEvent
 
 export type CreditPackModalProps = {
   open: boolean;
+  onDismiss?: () => void;
   onClose: () => void;
   isLoggedIn: boolean;
   creditsRemaining: number;
@@ -35,6 +36,7 @@ export type CreditPackModalProps = {
 
 export function CreditPackModal({
   open,
+  onDismiss,
   onClose,
   isLoggedIn,
   creditsRemaining,
@@ -186,7 +188,10 @@ export function CreditPackModal({
       <div
         className="absolute inset-0 bg-slate-900/50"
         onClick={() => {
-          if (!checkoutSuccess) onClose();
+          if (!checkoutSuccess) {
+            onDismiss?.();
+            onClose();
+          }
         }}
         aria-hidden
       />

@@ -1,4 +1,3 @@
-import { PostingFitAnalyticsRoot } from "@/app/components/postingFit/PostingFitAnalyticsRoot";
 import { JdWorkbenchPageChrome } from "@/app/components/tools/JdWorkbenchPageChrome";
 import { ToolClusterLanding } from "@/app/components/ToolClusterLanding";
 import {
@@ -12,7 +11,6 @@ export const metadata = buildToolClusterMetadata(TOOL_CLUSTER_PRIMARY);
 export default function CheckResumeAgainstJobDescriptionPage() {
   return (
     <>
-      <PostingFitAnalyticsRoot surface="workbench" />
       <JdWorkbenchPageChrome />
       <HomeClient variant="toolOnly" analysisMode="jdMatch" />
       <ToolClusterLanding
