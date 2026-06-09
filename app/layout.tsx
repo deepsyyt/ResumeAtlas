@@ -29,16 +29,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: "ResumeAtlas",
   manifest: "/manifest.webmanifest",
-  title:
-    "ResumeAtlas | AI-Powered ATS Resume Checker & Job Description Match",
+  title: "Free AI Resume Optimizer & ATS Checker | ResumeAtlas",
   description:
-    "ResumeAtlas is an AI-powered ATS resume checker: compare your resume with job descriptions, get your ATS score, and optimize for specific roles. Paste, edit, export PDF or DOCX.",
+    "100% free AI resume optimizer and ATS resume checker. Compare your resume to any job description, find missing keywords, and optimize bullets instantly. No signup.",
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: "ResumeAtlas | AI-Powered ATS Resume Checker & Job Description Match",
+    title: "Free AI Resume Optimizer & ATS Checker | ResumeAtlas",
     description:
-      "ResumeAtlas is an AI-powered ATS resume checker: compare your resume with job descriptions, get your ATS score, and optimize for specific roles.",
+      "100% free: compare resume to job description, ATS match score, missing keywords, and AI resume optimization. Paste only, instant results.",
     siteName: "ResumeAtlas",
   },
   icons: {

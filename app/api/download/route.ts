@@ -147,7 +147,16 @@ function renderSkillGroupsPdf(doc: PdfDoc, groups: { label: string; items: strin
 }
 
 function renderStructuredResumeLikeUi(doc: PdfDoc, resume: Resume): void {
-  const { basics, experience, skills, skillGroups, education } = resume;
+  const {
+    basics,
+    experience,
+    skills,
+    skillGroups,
+    education,
+    certifications,
+    awards,
+    additionalSections,
+  } = resume;
 
   ensureSpace(doc, 72);
   doc
@@ -245,8 +254,23 @@ function renderStructuredResumeLikeUi(doc: PdfDoc, resume: Resume): void {
     });
   }
 
+  const certLines = (certifications ?? []).map((c) => String(c ?? "").trim()).filter(Boolean);
+  if (certLines.length > 0) {
+    pdfSectionLabel(doc, "Certifications", firstPdfSection);
+    firstPdfSection = false;
+    certLines.forEach((line) => writePdfBullet(doc, line, 0));
+  }
+
+  const awardLines = (awards ?? []).map((a) => String(a ?? "").trim()).filter(Boolean);
+  if (awardLines.length > 0) {
+    pdfSectionLabel(doc, "Awards", firstPdfSection);
+    firstPdfSection = false;
+    awardLines.forEach((line) => writePdfBullet(doc, line, 0));
+  }
+
   if (education && education.length > 0) {
     pdfSectionLabel(doc, "Education", firstPdfSection);
+    firstPdfSection = false;
     education.forEach((edu) => {
       const line = [edu.degree, edu.institution, edu.year].filter(Boolean).join(" · ").trim();
       if (!line) return;
@@ -254,6 +278,17 @@ function renderStructuredResumeLikeUi(doc: PdfDoc, resume: Resume): void {
       doc.font("Helvetica").fontSize(PDF_BODY_PT).fillColor("#0f172a").text(line, { align: "left" });
       doc.moveDown(0.2);
     });
+  }
+
+  for (const section of additionalSections ?? []) {
+    const title = String(section.title ?? "").trim();
+    const sectionLines = (section.lines ?? [])
+      .map((l) => String(l ?? "").trim())
+      .filter(Boolean);
+    if (!title || sectionLines.length === 0) continue;
+    pdfSectionLabel(doc, title, firstPdfSection);
+    firstPdfSection = false;
+    sectionLines.forEach((line) => writePdfBullet(doc, line.replace(/^•\s*/, ""), 0));
   }
 }
 
@@ -342,7 +377,11 @@ export async function POST(request: Request) {
     } else if (rawText) {
       // Fallback: plain text only (no structured resume) - ATS-style typography.
       const lines = rawText.replace(/\r\n?/g, "\n").split("\n");
-      const sectionHeaderRe = /^(professional summary|experience|skills|education)$/i;
+      const knownSectionHeaderRe =
+        /^(professional summary|experience|skills|certifications?|awards?|education)$/i;
+      const isSectionHeader = (t: string) =>
+        knownSectionHeaderRe.test(t) ||
+        (/^[A-Z][A-Za-z0-9\s/&-]{2,54}$/.test(t) && t.split(/\s+/).length <= 7);
       let i = 0;
 
       // Header block (name + contact lines)
@@ -427,7 +466,7 @@ export async function POST(request: Request) {
           continue;
         }
 
-        if (sectionHeaderRe.test(t)) {
+        if (isSectionHeader(t)) {
           ensureSpace(doc, 52);
           if (!firstRawSectionHeading) {
             doc.moveDown(1.2);

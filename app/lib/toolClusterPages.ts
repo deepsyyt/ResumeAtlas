@@ -31,6 +31,10 @@ export type ToolClusterPageConfig = {
   h1: string;
   /** Intro under hero bullets */
   intro: string;
+  /** Optional display hero (homepage); falls back to `h1` / `intro`. */
+  heroEyebrow?: string;
+  heroH1?: string;
+  heroIntro?: string;
   /** Trust-strip line right above top CTA (intent-specific). */
   topStripStrong: string;
   webAppName: string;

@@ -128,5 +128,9 @@ export function sanitizeResumeDocumentProse(doc: ResumeDocument): ResumeDocument
     education: doc.education?.map(sanitizeResumeProse),
     certifications: doc.certifications?.map(sanitizeResumeProse),
     awards: doc.awards?.map(sanitizeResumeProse),
+    additionalSections: doc.additionalSections?.map((section) => ({
+      title: sanitizeResumeProse(section.title),
+      lines: section.lines?.map(sanitizeResumeProse),
+    })),
   };
 }

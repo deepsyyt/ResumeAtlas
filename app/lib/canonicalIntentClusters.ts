@@ -34,25 +34,29 @@ const abs = (path: string) => `${siteBase()}${path.startsWith("/") ? path : `/${
 
 /** Resume ↔ this job description (tailor / compare / match). */
 export const CLUSTER_JD_MATCH_TOOL_COPY = {
-  titleAbsolute:
-    `Compare Resume to Job Description (Free): Evidence Match, Skill Proof & AI Optimization (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
+  titleAbsolute: `Free AI Resume Optimizer & ATS Checker${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Free compare resume to job description tool: evidence match score, skill-by-skill proof map, JD gap analysis, and evidence-first AI optimization. Paste resume + JD for architecture, deployment, and impact proof in project bullets. Instant results.",
+    "100% free AI resume optimizer and ATS resume checker. Compare your resume to any job description, find missing keywords, and optimize bullets instantly. Paste only, no signup.",
   ogTitle:
-    `Compare Resume to Job Description: Evidence Match, Skill Proof & Optimization (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
+    `Free AI Resume Optimizer & ATS Checker (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
   ogDescription:
-    "Evidence match dashboard, skill proof map, keyword gaps, and evidence-first optimization for the posting you paste. Free and instant.",
-  twitterTitle: "Compare resume to job description: evidence match + optimization",
+    "100% free: compare resume to job description, ATS match score, missing keywords, and AI resume optimization. Instant results, paste only, no signup.",
+  twitterTitle: "Free AI resume optimizer & ATS checker",
   twitterDescription:
-    "Evidence match score, skill-by-skill proof, honest JD gaps, and evidence-first AI optimization. One free tool.",
+    "Compare resume to job description, find missing keywords, AI-optimize bullets. 100% free, no signup.",
   h1: "Compare resume to job description: evidence match, skill proof map & evidence-first optimization",
   intro:
     "Paste your resume and the exact job description. See how much of the job you prove in real project bullets (not just skills lists), a skill-by-skill proof map, honest gap callouts, and reference ATS metrics. Then run evidence-first optimization: move supported JD skills into the right bullets with architecture, deployment, and impact proof. No signup.",
+  /** Human-facing homepage hero (metadata keeps SEO `h1` / `intro`). */
+  heroEyebrow: "Free resume vs job description checker",
+  heroH1: "Compare your resume to any job description",
+  heroIntro:
+    "Paste your resume and job description to see how much you actually prove in project bullets, not just skills lists. Get a proof map, honest gap callouts, and AI optimization that strengthens thin evidence without inventing experience.",
   topStripStrong:
     "Analyze proof, then optimize: evidence match, skill gaps, and interview-safe bullet rewrites for the posting you paste.",
-  webAppName: "ResumeAtlas evidence match and optimize for job descriptions",
+  webAppName: "ResumeAtlas free AI resume optimizer and ATS checker",
   webAppDescription:
-    "Compare resume to job description: evidence match score, skill proof map, gap analysis, and evidence-first optimization for that posting.",
+    "100% free AI resume optimizer and ATS checker: compare resume to job description, find missing keywords, and optimize bullets for that posting.",
   differentiatorHeading: "Evidence match analysis and optimization in one free tool",
   differentiatorBody: [
     "This page is not keyword stuffing. After you paste resume + job description, you get an evidence match score, what-we-measured signals (impact, architecture, deployment, JD skills in bullets), and a skill-by-skill proof map. Optimization moves real work into project bullets and leaves unsupported requirements honest.",

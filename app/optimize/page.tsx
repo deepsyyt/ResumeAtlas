@@ -2,19 +2,20 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
+import { OptimizationProcessingScreen } from "@/app/components/OptimizationProcessingScreen";
 import { ResumeOptimizationPanel } from "@/app/components/ResumeOptimizationPanel";
 import { StructuredResume } from "@/app/components/StructuredResume";
 import { parseResumeToJSON } from "@/app/lib/resumeParser";
 import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import {
   resumeDocumentFromHeuristicParsed,
+  resumeDocumentToDownloadResume,
   resumeDocumentToPlainText,
   syncResumeSkills,
   type ResumeDocument,
   type ResumeSkillGroup,
 } from "@/app/lib/resumeDocument";
 import { createClient } from "@/app/lib/supabase/client";
-import type { Resume } from "@/app/types/resume";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import { sameResumeAndJob } from "@/app/lib/resumeJobFingerprint";
 import { setActiveFunnelId } from "@/app/lib/funnelTracking";
@@ -463,33 +464,7 @@ export default function OptimizePage() {
       if (now - lastPdfDownloadAtRef.current < 1200) return;
       lastPdfDownloadAtRef.current = now;
 
-      const resumePayload: Resume = {
-        basics: {
-          name: editableResume.name ?? "Name",
-          title: editableResume.title ?? "",
-          summary: editableResume.summary ?? "",
-          contact: editableResume.contact ?? "",
-        },
-        experience: (editableResume.experience ?? []).map((exp) => ({
-          company: exp.company ?? "",
-          role: exp.role ?? "",
-          duration: exp.dates ?? "",
-          bullets: exp.bullets ?? [],
-          projects: exp.projects?.length
-            ? exp.projects.map((p) => ({
-                title: p.title,
-                bullets: p.bullets ?? [],
-              }))
-            : undefined,
-        })),
-        skills: editableResume.skills ?? [],
-        skillGroups: editableResume.skillGroups,
-        education: (editableResume.education ?? []).map((line) => ({
-          institution: "",
-          degree: line,
-          year: "",
-        })),
-      };
+      const resumePayload = resumeDocumentToDownloadResume(editableResume);
       const rawOptimizedText = toPlainText(editableResume);
 
       const supabase = createClient();
@@ -624,14 +599,7 @@ export default function OptimizePage() {
   );
 
   if (!result && !error && (hydrating || optimizeInFlight)) {
-    return (
-      <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 px-4 py-12">
-        <div className="mx-auto max-w-4xl text-center">
-          <p className="text-slate-600">Optimizing your resume for this job…</p>
-          <div className="mt-4 mx-auto h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700" />
-        </div>
-      </div>
-    );
+    return <OptimizationProcessingScreen />;
   }
 
   if (error || !input) {
@@ -934,6 +902,22 @@ export default function OptimizePage() {
                   const education = [...(prev.education ?? [])];
                   education[eduIndex] = line;
                   return { ...prev, education };
+                })
+              }
+              onUpdateCertificationLine={(index, line) =>
+                setEditableResume((prev) => {
+                  if (!prev) return prev;
+                  const certifications = [...(prev.certifications ?? [])];
+                  certifications[index] = line;
+                  return { ...prev, certifications };
+                })
+              }
+              onUpdateAwardLine={(index, line) =>
+                setEditableResume((prev) => {
+                  if (!prev) return prev;
+                  const awards = [...(prev.awards ?? [])];
+                  awards[index] = line;
+                  return { ...prev, awards };
                 })
               }
             />

@@ -22,4 +22,7 @@ export type Resume = {
     degree: string;
     year: string;
   }[];
+  certifications?: string[];
+  awards?: string[];
+  additionalSections?: { title: string; lines: string[] }[];
 };

@@ -219,6 +219,9 @@ export function Navbar() {
             <Link href="/" className={navLinkClass}>
               Home
             </Link>
+            <Link href="/faq" className={navLinkClass}>
+              FAQ
+            </Link>
           </nav>
           {authUi}
         </div>

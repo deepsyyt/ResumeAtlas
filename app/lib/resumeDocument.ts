@@ -1,3 +1,4 @@
+import type { Resume } from "@/app/types/resume";
 import type { ParsedResume } from "@/app/lib/resumeParser";
 import {
   finalizeResumeSkillSections,
@@ -35,6 +36,12 @@ export type ResumeExperience = {
   projects?: ResumeProject[];
 };
 
+/** Free-form sections (publications, languages, etc.) preserved from the source resume. */
+export type ResumeExtraSection = {
+  title: string;
+  lines: string[];
+};
+
 /**
  * Canonical resume model: shared by /api/parse-resume, /api/optimize, and the optimize UI.
  * Plain text for ATS/export is always derived via {@link resumeDocumentToPlainText}.
@@ -53,7 +60,55 @@ export type ResumeDocument = {
   tools?: string[];
   certifications?: string[];
   awards?: string[];
+  additionalSections?: ResumeExtraSection[];
 };
+
+/** Maps optimize preview {@link ResumeDocument} to the PDF/download API {@link Resume} shape (all sections). */
+export function resumeDocumentToDownloadResume(doc: ResumeDocument): Resume {
+  const certifications = (doc.certifications ?? [])
+    .map((c) => String(c ?? "").trim())
+    .filter(Boolean);
+  const awards = (doc.awards ?? [])
+    .map((a) => String(a ?? "").trim())
+    .filter(Boolean);
+  const additionalSections = (doc.additionalSections ?? [])
+    .map((section) => ({
+      title: String(section.title ?? "").trim(),
+      lines: (section.lines ?? []).map((l) => String(l ?? "").trim()).filter(Boolean),
+    }))
+    .filter((section) => section.title && section.lines.length > 0);
+
+  return {
+    basics: {
+      name: doc.name?.trim() || "Resume",
+      title: doc.title?.trim() ?? "",
+      summary: doc.summary?.trim() ?? "",
+      contact: doc.contact?.trim() ?? "",
+    },
+    experience: (doc.experience ?? []).map((exp) => ({
+      company: exp.company ?? "",
+      role: exp.role ?? "",
+      duration: exp.dates ?? "",
+      bullets: exp.bullets ?? [],
+      projects: exp.projects?.length
+        ? exp.projects.map((p) => ({
+            title: p.title,
+            bullets: p.bullets ?? [],
+          }))
+        : undefined,
+    })),
+    skills: doc.skills ?? [],
+    skillGroups: doc.skillGroups,
+    education: (doc.education ?? []).map((line) => ({
+      institution: "",
+      degree: line,
+      year: "",
+    })),
+    ...(certifications.length > 0 ? { certifications } : {}),
+    ...(awards.length > 0 ? { awards } : {}),
+    ...(additionalSections.length > 0 ? { additionalSections } : {}),
+  };
+}
 
 /** Single serializer for ATS-style plain text (used on server and client). */
 export function resumeDocumentToPlainText(doc: ResumeDocument): string {
@@ -137,6 +192,18 @@ export function resumeDocumentToPlainText(doc: ResumeDocument): string {
     lines.push("");
   }
 
+  for (const section of doc.additionalSections ?? []) {
+    const title = section.title?.trim();
+    if (!title) continue;
+    const sectionLines = (section.lines ?? []).map((l) => l?.trim()).filter(Boolean);
+    if (sectionLines.length === 0) continue;
+    lines.push(title);
+    for (const line of sectionLines) {
+      lines.push(line.startsWith("•") ? line : `• ${line}`);
+    }
+    lines.push("");
+  }
+
   return lines.length > 0 ? lines.join("\n").trim() : "";
 }
 
@@ -183,6 +250,7 @@ export function resumeDocumentFromHeuristicParsed(parsed: ParsedResume): ResumeD
     education: educationLines.length > 0 ? educationLines : undefined,
     certifications: parsed.certifications,
     awards: parsed.awards,
+    additionalSections: parsed.additionalSections,
   };
   return sanitizeResumeDocument(syncResumeSkills(finalizeResumeSkillSections(doc)));
 }

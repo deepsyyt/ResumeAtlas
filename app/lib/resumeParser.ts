@@ -1,4 +1,4 @@
-import type { ResumeSkillGroup } from "@/app/lib/resumeDocument";
+import type { ResumeExtraSection, ResumeSkillGroup } from "@/app/lib/resumeDocument";
 import {
   isSoftSkillItem,
   normalizeSkillGroupLabel,
@@ -32,6 +32,7 @@ export type ParsedResume = {
   education: ParsedEducation[];
   certifications?: string[];
   awards?: string[];
+  additionalSections?: ResumeExtraSection[];
 };
 
 type Section =
@@ -41,7 +42,8 @@ type Section =
   | "education"
   | "certifications"
   | "awards"
-  | "skills";
+  | "skills"
+  | "additional";
 
 type SkillBucket = { label: string; lines: string[] };
 
@@ -85,6 +87,18 @@ function detectSectionHeader(trimmed: string): Section | SkillBucket | null {
   if (/^awards?$/.test(lower)) return "awards";
   if (/^skills$/.test(lower)) return "skills";
   return null;
+}
+
+function isLikelyMiscSectionHeader(line: string): boolean {
+  const t = line.trim();
+  if (!t || t.length > 55 || /^[•\-*]/.test(t)) return false;
+  if (DATE_LINE_RE.test(t)) return false;
+  if (/@|linkedin|github/i.test(t)) return false;
+  if (ROLE_LINE_RE.test(t) && t.includes(",")) return false;
+  if (PROJECT_HEADING_RE.test(t)) return false;
+  const words = t.split(/\s+/);
+  if (words.length > 7) return false;
+  return /^[A-Z][A-Za-z0-9\s/&-]+$/.test(t) || /^[A-Z][A-Z\s/&-]+$/.test(t);
 }
 
 function isContactLine(line: string): boolean {
@@ -347,6 +361,9 @@ export function parseResumeToJSON(raw: string): ParsedResume {
   const educationBlocks: string[][] = [];
   const certificationLines: string[] = [];
   const awardLines: string[] = [];
+  const additionalSections: ResumeExtraSection[] = [];
+  const additionalLines: string[] = [];
+  let additionalTitle: string | null = null;
 
   const preambleContact: string[] = [];
   const preambleSkills: string[] = [];
@@ -367,6 +384,17 @@ export function parseResumeToJSON(raw: string): ParsedResume {
       skillBuckets.push(activeSkillBucket);
     }
     activeSkillBucket = null;
+  };
+
+  const flushAdditionalSection = () => {
+    if (additionalTitle && additionalLines.length > 0) {
+      additionalSections.push({
+        title: additionalTitle,
+        lines: [...additionalLines],
+      });
+    }
+    additionalTitle = null;
+    additionalLines.length = 0;
   };
 
   const routeMisplacedFromEducation = (trimmed: string): boolean => {
@@ -402,6 +430,7 @@ export function parseResumeToJSON(raw: string): ParsedResume {
     if (header !== null) {
       flushBlock();
       flushSkillBucket();
+      flushAdditionalSection();
 
       if (typeof header === "object" && "label" in header) {
         section = "preamble";
@@ -413,6 +442,15 @@ export function parseResumeToJSON(raw: string): ParsedResume {
       if (section === "experience" || section === "education") {
         currentBlock = [];
       }
+      continue;
+    }
+
+    if (isLikelyMiscSectionHeader(trimmed)) {
+      flushBlock();
+      flushSkillBucket();
+      flushAdditionalSection();
+      section = "additional";
+      additionalTitle = trimmed;
       continue;
     }
 
@@ -482,11 +520,15 @@ export function parseResumeToJSON(raw: string): ParsedResume {
       case "awards":
         awardLines.push(trimmed);
         break;
+      case "additional":
+        additionalLines.push(trimmed);
+        break;
     }
   }
 
   flushBlock();
   flushSkillBucket();
+  flushAdditionalSection();
 
   const skillsSectionLines: string[] = [];
   for (const bucket of skillBuckets) {
@@ -553,5 +595,6 @@ export function parseResumeToJSON(raw: string): ParsedResume {
     education,
     certifications: certificationLines.length > 0 ? certificationLines : undefined,
     awards: awardLines.length > 0 ? awardLines : undefined,
+    additionalSections: additionalSections.length > 0 ? additionalSections : undefined,
   };
 }

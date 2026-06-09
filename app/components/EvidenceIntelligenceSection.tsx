@@ -38,6 +38,8 @@ export type EvidenceIntelligenceSectionProps = {
   takeawaySubline?: string;
   /** Rendered directly above skill-by-skill proof (e.g. optimize CTA). */
   aboveSkillProof?: ReactNode;
+  /** Homepage hero: shorter slice of the dashboard (readable, not full scroll). */
+  heroPreview?: boolean;
 };
 
 export function EvidenceIntelligenceSection({
@@ -48,6 +50,7 @@ export function EvidenceIntelligenceSection({
   takeawayHeadline,
   takeawaySubline,
   aboveSkillProof,
+  heroPreview = false,
 }: EvidenceIntelligenceSectionProps) {
   const signalMetrics = buildSignalMetrics(dashboard, experienceAlignment);
   const [expandedMetric, setExpandedMetric] = useState<string | null>(null);
@@ -158,7 +161,7 @@ export function EvidenceIntelligenceSection({
             />
           ))}
         </div>
-        {dashboard.categories.length > 0 ? (
+        {!heroPreview && dashboard.categories.length > 0 ? (
           <div className="mt-2 border-t border-indigo-200/80 pt-2">
             <p className="text-[10px] font-bold uppercase tracking-wide text-indigo-950">
               Topics this job cares about
@@ -183,9 +186,13 @@ export function EvidenceIntelligenceSection({
 
       {aboveSkillProof}
 
-      <SkillProofMapSection rows={dashboard.skillProof} className="mt-2" />
+      <SkillProofMapSection
+        rows={dashboard.skillProof}
+        className="mt-2"
+        maxRows={heroPreview ? 3 : undefined}
+      />
 
-      {dashboard.riskAreas.length > 0 ? (
+      {!heroPreview && dashboard.riskAreas.length > 0 ? (
         <div className="mt-2 rounded-lg border border-amber-200 bg-gradient-to-r from-amber-50/90 to-orange-50/50 px-2 py-2 shadow-sm">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-900">
             {RISK_AREAS_TITLE}

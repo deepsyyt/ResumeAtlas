@@ -1388,6 +1388,7 @@ export default function HomeClient({
               analyzeResult={analyzeResult}
               showFullIntelligence={usage?.showFullIntelligence ?? false}
               showLocked={false}
+              compactHomeEmpty={isHome && hideMarketingHero}
               onOpenOptimizer={
                 analyzeResult && lastInputs && lastAnalysisUsedJd
                   ? () => {

@@ -56,6 +56,8 @@ type StructuredResumeProps = {
     value: string
   ) => void;
   onUpdateEducationLine?: (eduIndex: number, line: string) => void;
+  onUpdateCertificationLine?: (index: number, line: string) => void;
+  onUpdateAwardLine?: (index: number, line: string) => void;
   onUpdateResumeMeta?: (
     patch: Partial<Pick<ResumeDocument, "name" | "title" | "contact">>
   ) => void;
@@ -93,6 +95,58 @@ function JdTopicTag({ topic }: { topic: string }) {
     <span className="inline-flex rounded-full bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-900 ring-1 ring-green-200">
       {topic}
     </span>
+  );
+}
+
+const SECTION_HEADING_CLASS =
+  "text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2";
+
+function ResumeListSection({
+  title,
+  lines,
+  editable,
+  editing,
+  onToggleEdit,
+  onUpdateLine,
+}: {
+  title: string;
+  lines: string[];
+  editable: boolean;
+  editing: boolean;
+  onToggleEdit: () => void;
+  onUpdateLine?: (index: number, value: string) => void;
+}) {
+  if (lines.length === 0) return null;
+  return (
+    <section className="border-t border-slate-100 pt-4 mt-4">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <h2 className={SECTION_HEADING_CLASS}>{title}</h2>
+        {editable ? (
+          <button
+            type="button"
+            onClick={onToggleEdit}
+            className="rounded border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700 hover:bg-slate-50 print:hidden"
+          >
+            {editing ? "Done" : "Edit"}
+          </button>
+        ) : null}
+      </div>
+      <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
+        {lines.map((line, idx) => (
+          <li key={`${title}-${idx}`}>
+            {editable && editing ? (
+              <input
+                value={line}
+                onChange={(e) => onUpdateLine?.(idx, e.target.value)}
+                className="w-full rounded-md border border-slate-300 bg-white px-2 py-1 text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-400"
+              />
+            ) : (
+              line
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -285,6 +339,8 @@ export function StructuredResume({
   onUpdateExperienceField,
   onUpdateProjectTitle,
   onUpdateEducationLine,
+  onUpdateCertificationLine,
+  onUpdateAwardLine,
   onUpdateResumeMeta,
 }: StructuredResumeProps) {
   const name = resume.name?.trim() ?? "";
@@ -316,12 +372,17 @@ export function StructuredResume({
     () => new Set((newBullets ?? []).map((b) => normalizeBulletKey(String(b ?? "")))),
     [newBullets]
   );
+  const certifications = resume.certifications ?? [];
+  const awards = resume.awards ?? [];
+  const additionalSections = resume.additionalSections ?? [];
   const [editing, setEditing] = React.useState({
     header: false,
     summary: false,
     experienceIndex: null as number | null,
     education: false,
     skills: false,
+    certifications: false,
+    awards: false,
   });
 
   return (
@@ -730,39 +791,31 @@ export function StructuredResume({
         </section>
       )}
 
-      {(resume.certifications?.length ?? 0) > 0 && (
-        <section className="border-t border-slate-100 pt-4 mt-4">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">
-            Certifications
-          </h2>
-          <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
-            {resume.certifications!.map((line, idx) => (
-              <li key={idx}>{line}</li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <ResumeListSection
+        title="Certifications"
+        lines={certifications}
+        editable={editable}
+        editing={editing.certifications}
+        onToggleEdit={() =>
+          setEditing((prev) => ({ ...prev, certifications: !prev.certifications }))
+        }
+        onUpdateLine={onUpdateCertificationLine}
+      />
 
-      {(resume.awards?.length ?? 0) > 0 && (
-        <section className="border-t border-slate-100 pt-4 mt-4">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">
-            Awards
-          </h2>
-          <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
-            {resume.awards!.map((line, idx) => (
-              <li key={idx}>{line}</li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <ResumeListSection
+        title="Awards"
+        lines={awards}
+        editable={editable}
+        editing={editing.awards}
+        onToggleEdit={() => setEditing((prev) => ({ ...prev, awards: !prev.awards }))}
+        onUpdateLine={onUpdateAwardLine}
+      />
 
       {/* Education */}
       {education.length > 0 && (
         <section className="border-t border-slate-100 pt-4 mt-4">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500">
-              Education
-            </h2>
+            <h2 className={SECTION_HEADING_CLASS}>Education</h2>
             {editable && (
               <button
                 type="button"
@@ -798,6 +851,21 @@ export function StructuredResume({
           </div>
         </section>
       )}
+
+      {additionalSections.map((section, sectionIndex) => {
+        const lines = (section.lines ?? []).map((l) => l?.trim()).filter(Boolean);
+        if (!section.title?.trim() || lines.length === 0) return null;
+        return (
+          <section key={`${section.title}-${sectionIndex}`} className="border-t border-slate-100 pt-4 mt-4">
+            <h2 className={SECTION_HEADING_CLASS}>{section.title}</h2>
+            <ul className="list-disc pl-5 text-sm text-slate-700 space-y-1">
+              {lines.map((line, idx) => (
+                <li key={idx}>{line.replace(/^•\s*/, "")}</li>
+              ))}
+            </ul>
+          </section>
+        );
+      })}
     </div>
   );
 }

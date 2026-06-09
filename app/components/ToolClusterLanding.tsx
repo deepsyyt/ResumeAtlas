@@ -210,19 +210,37 @@ export function ToolClusterLanding({
 
             {!homePageMode ? <ToolClusterNextSteps /> : null}
 
-            <section id="faq">
-              <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-                Frequently asked questions
-              </h2>
-              <div className="mt-5 space-y-5 text-sm sm:text-base text-slate-700">
-                {config.faq.map((item) => (
-                  <div key={item.question}>
-                    <h3 className="font-semibold text-slate-900">{item.question}</h3>
-                    <p className="mt-1">{item.answer}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
+            {homePageMode ? (
+              <section className="rounded-xl border border-slate-200 bg-slate-50/80 px-5 py-6 text-center sm:px-6">
+                <h2 className="text-lg font-semibold tracking-tight text-slate-900">
+                  Questions about evidence match or optimization?
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  Read answers about skill proof maps, gap analysis, privacy, and how the free
+                  checker works.
+                </p>
+                <Link
+                  href="/faq"
+                  className="mt-4 inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
+                >
+                  View FAQ
+                </Link>
+              </section>
+            ) : (
+              <section id="faq">
+                <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+                  Frequently asked questions
+                </h2>
+                <div className="mt-5 space-y-5 text-sm sm:text-base text-slate-700">
+                  {config.faq.map((item) => (
+                    <div key={item.question}>
+                      <h3 className="font-semibold text-slate-900">{item.question}</h3>
+                      <p className="mt-1">{item.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {!homePageMode ? (
               <section className="rounded-2xl border border-slate-900/10 bg-slate-900 text-white p-6 sm:p-8 text-center">

@@ -10,10 +10,10 @@ export type OptimizeDashboardNudgeModalProps = {
 };
 
 const BENEFITS = [
-  "Rewrite your summary for this role: impact and scope first, not a tool list",
-  "Move supported JD skills into the project bullets where you actually used them",
-  "Strengthen architecture, deployment, and outcome proof from work you already did",
-  "Keep unsupported requirements as honest gaps on your skill proof map. Nothing invented.",
+  "Rewrite bullets where proof is thin — stronger architecture, deployment, and impact from work you already did",
+  "Move skills you already have into the project bullets this job cares about",
+  "Tailor your summary so it leads with role-relevant proof, not a tool list",
+  "Leave real evidence gaps honest — we never invent skills or experience",
 ] as const;
 
 function SparkGlyph() {
@@ -59,8 +59,8 @@ export function OptimizeDashboardNudgeModal({
     : isBusy
       ? "Starting…"
       : !isLoggedIn
-        ? "Sign in to strengthen evidence"
-        : "Strengthen evidence for this job";
+        ? "Sign in & optimize for gaps"
+        : "Optimize resume for evidence gaps";
 
   return (
     <div className="fixed inset-0 z-[62] flex items-center justify-center p-4 sm:p-6">
@@ -93,18 +93,18 @@ export function OptimizeDashboardNudgeModal({
               id="optimize-nudge-title"
               className="mt-2 max-w-xl text-pretty text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl sm:leading-snug md:text-[2rem]"
             >
-              Strengthen evidence for this job
+              Close your evidence gaps for this job
             </h2>
             <p id="optimize-nudge-desc" className="mt-4 max-w-xl text-pretty text-base leading-relaxed text-slate-600 sm:text-lg">
-              Your analysis shows where proof is thin. One click turns skills-list language into project
-              evidence (architecture, deployment, and impact) while leaving unsupported JD requirements
-              honest on the skill proof map.
+              Your analysis flagged where your resume is thin vs this job description. One click optimizes
+              your resume to strengthen those gaps — turning skills-list language into project proof — while
+              leaving requirements you don&apos;t have honest.
             </p>
           </div>
 
           <div className="mt-8 rounded-2xl border border-slate-200/90 bg-slate-50/80 px-5 py-5 sm:px-6 sm:py-6">
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">
-              Evidence-first optimization
+              What the optimizer will do
             </p>
             <ul className="mt-3 space-y-2.5 text-base text-slate-800">
               {BENEFITS.map((line) => (
@@ -149,7 +149,8 @@ export function OptimizeDashboardNudgeModal({
 
           {!isLoggedIn && !busy ? (
             <p className="mt-4 text-center text-sm text-slate-500 sm:text-left">
-              We&apos;ll send you through Google sign-in, then continue straight into evidence optimization.
+              We&apos;ll send you through Google sign-in, then optimize your resume for the evidence gaps
+              we found.
             </p>
           ) : null}
         </div>

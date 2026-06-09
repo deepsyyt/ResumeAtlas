@@ -23,10 +23,7 @@ import {
   getImpactStyle,
   getResumeQualityStyle,
 } from "@/app/lib/scoreColors";
-import {
-  DEMO_EVIDENCE_BULLET_PREVIEW,
-  DEMO_EVIDENCE_DASHBOARD,
-} from "@/app/lib/demoEvidenceDashboard";
+import { DEMO_EVIDENCE_BULLET_PREVIEW } from "@/app/lib/demoEvidenceDashboard";
 import { EvidenceIntelligenceSection, ScoreBar } from "@/app/components/EvidenceIntelligenceSection";
 
 const OPTIMIZER_STATIC_BULLET_PREVIEW = DEMO_EVIDENCE_BULLET_PREVIEW;
@@ -77,6 +74,8 @@ type IntelligencePanelProps = {
    * `keywordScanner`: emphasize keyword coverage + skill gaps only (hides full ATS/score grid).
    */
   panelVariant?: "default" | "keywordScanner";
+  /** Homepage workbench: hero already shows sample dashboard — keep this panel minimal. */
+  compactHomeEmpty?: boolean;
 };
 
 export function IntelligencePanel({
@@ -89,6 +88,7 @@ export function IntelligencePanel({
   analysisUsedJobDescription = true,
   emptyStateVariant = "jd",
   panelVariant = "default",
+  compactHomeEmpty = false,
 }: IntelligencePanelProps) {
   const hasAny = !!analyzeResult;
   const emptyAts = emptyStateVariant === "ats";
@@ -124,112 +124,67 @@ export function IntelligencePanel({
     );
   }
 
-  // Empty state - evidence-first demo for JD; ATS parsing demo for resume-only landings
+  // Empty state — keep light until the user runs a check (hero shows illustrative preview).
   if (!hasAny) {
-    const demoAts = 78;
-    const demoExp = 90;
-    const demoRequiredYears = 10;
-    const demoRequiredYearsMax = 15;
-    const demoResumeYears = 12;
-    const demoAtsStyle = getScoreStyle(demoAts);
-    const demoAtsRingHex = getATSRingHex(demoAts);
-    const demoExpStyle = getExperienceAlignmentStyle(
-      demoRequiredYears,
-      demoRequiredYearsMax,
-      demoResumeYears,
-      demoExp
-    );
-    const demoVerdict = getATSVerdictLines(demoAts);
-
-    return (
-      <section className="rounded-xl bg-white p-3 sm:p-4 shadow-sm ring-1 ring-slate-900/[0.06]">
-        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-          <div className="flex items-baseline gap-1.5 min-w-0">
-            <h2 className="text-[10px] font-semibold tracking-[0.2em] text-slate-500 uppercase shrink-0">
-              Intelligence
-            </h2>
-            <p className="text-[11px] text-slate-600 truncate sm:truncate-none sm:text-xs">
-              {emptyAts
-                ? "ATS parsing, structure, and readability - not job posting keyword match."
-                : "Evidence-based fit for your resume vs job description."}
+    if (compactHomeEmpty) {
+      return (
+        <section className="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 p-5 shadow-sm ring-1 ring-slate-900/[0.04] sm:p-6">
+          <div className="flex min-h-[12rem] flex-col items-center justify-center text-center">
+            <p className="text-sm font-medium text-slate-800">Your live analysis appears here</p>
+            <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-600">
+              Paste on the left and run a check. Your scores replace the sample dashboard above.
             </p>
           </div>
-          <span className="inline-flex shrink-0 items-center rounded-full bg-slate-800 text-white px-2.5 py-0.5 text-[11px] font-medium">
-            Demo dashboard
-          </span>
+        </section>
+      );
+    }
+
+    const emptyBullets = emptyAts
+      ? [
+          "ATS readability and parsing risk",
+          "Structure, headings, and bullet clarity",
+          "Optional: add a job description for evidence match",
+        ]
+      : [
+          "Evidence match score for this job description",
+          "Skill-by-skill proof map and topic coverage",
+          "Honest gap callouts plus optimize option",
+        ];
+
+    return (
+      <section className="rounded-xl bg-white p-5 sm:p-6 shadow-sm ring-1 ring-slate-900/[0.06]">
+        <div className="flex flex-col items-center px-2 py-6 text-center sm:py-8">
+          <div
+            className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-100 to-indigo-100 text-2xl shadow-inner"
+            aria-hidden
+          >
+            📊
+          </div>
+          <h2 className="mt-4 text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
+            Your analysis appears here
+          </h2>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-600">
+            {emptyAts
+              ? "Paste your resume on the left and run a free ATS check. Add a job description anytime for evidence match."
+              : "Paste your resume and job description on the left, then run a free check."}
+          </p>
+          <ul className="mt-6 w-full max-w-md space-y-2.5 text-left text-sm text-slate-700">
+            {emptyBullets.map((line) => (
+              <li key={line} className="flex gap-2.5 rounded-lg border border-slate-100 bg-slate-50/80 px-3 py-2">
+                <span className="mt-0.5 font-semibold text-emerald-600" aria-hidden>
+                  ✓
+                </span>
+                <span className="leading-snug">{line}</span>
+              </li>
+            ))}
+          </ul>
+          <a
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+            className="mt-6 text-sm font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+          >
+            Jump to paste fields
+          </a>
         </div>
-
-        {!emptyAts ? (
-          <EvidenceIntelligenceSection
-            dashboard={DEMO_EVIDENCE_DASHBOARD}
-            atsScoreReference={demoAts}
-            experienceAlignment={{
-              score: demoExp,
-              subtitle: buildExperienceAlignmentSubtitle({
-                requiredMin: demoRequiredYears,
-                requiredMax: demoRequiredYearsMax,
-                resumeYears: demoResumeYears,
-                verdictLabel: demoExpStyle.style.label,
-              }),
-            }}
-            isDemo
-          />
-        ) : (
-          <>
-            <div className="mt-3 flex items-center gap-3 sm:gap-4 py-1">
-              <div
-                className="relative flex h-20 w-20 sm:h-24 sm:w-24 shrink-0 items-center justify-center rounded-full"
-                style={{ backgroundColor: demoAtsStyle.bgHex }}
-              >
-                <div
-                  className="absolute inset-0 rounded-full border-4"
-                  style={{ borderColor: demoAtsRingHex }}
-                />
-                <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full border-2 border-white bg-white shadow-sm">
-                  <span className="text-2xl sm:text-3xl font-bold text-slate-900">{demoAts}%</span>
-                </div>
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-slate-900">ATS readability</p>
-                <p
-                  className="mt-1 inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold"
-                  style={{
-                    color: demoAtsStyle.hex,
-                    backgroundColor: demoAtsStyle.bgHex,
-                    borderColor: demoAtsStyle.hex,
-                  }}
-                >
-                  {getATSBadgeLabel(demoAts)}
-                </p>
-                <p className="mt-0.5 text-xs text-slate-500">Sample result</p>
-              </div>
-            </div>
-            <div
-              className="mt-3 flex items-start gap-2.5 rounded-lg border px-3 py-2.5"
-              style={{ backgroundColor: demoAtsStyle.bgHex, borderColor: demoAtsStyle.hex }}
-            >
-              <span
-                className="mt-0.5 h-2.5 w-2.5 shrink-0 rounded-full"
-                style={{ backgroundColor: demoAtsStyle.hex }}
-                aria-hidden
-              />
-              <div className="min-w-0">
-                <p className="text-[10px] font-semibold text-slate-600">Quick takeaway</p>
-                <p className="mt-1 text-xs font-semibold text-slate-900 leading-snug">
-                  {demoVerdict.headline}
-                </p>
-                <p className="mt-0.5 text-xs text-slate-700 leading-snug">{demoVerdict.subline}</p>
-              </div>
-            </div>
-          </>
-        )}
-
-        <p className="mt-2 text-[11px] text-slate-500 leading-snug">
-          {emptyAts
-            ? "Paste your resume to run an ATS-focused scan. Add a job description to see evidence match vs that posting."
-            : "Paste your resume and job description to see evidence match, skill proof, and honest gaps."}
-        </p>
-
       </section>
     );
   }
@@ -334,7 +289,7 @@ export function IntelligencePanel({
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
               <div>
                 <h3 className="text-sm font-semibold text-slate-900">
-                  Strengthen evidence for this job
+                  Close evidence gaps for this job
                 </h3>
                 {missingSkills.length > 0 && (
                   <p className="text-xs text-slate-600 mt-0.5">
@@ -367,10 +322,10 @@ export function IntelligencePanel({
                   onClick={onOpenOptimizer}
                   className="w-full sm:w-auto sm:shrink-0 inline-flex items-center justify-center rounded-lg bg-slate-900 py-2 px-3.5 text-xs font-semibold text-white shadow-md hover:shadow-lg hover:bg-slate-800 transition min-w-[180px] sm:min-w-[200px]"
                 >
-                  Optimize this resume
+                  Optimize for evidence gaps
                 </button>
                 <p className="text-[10px] text-slate-500 text-center sm:text-right">
-                  Upgrades bullets with architecture, deployment, and impact proof from your work.
+                  Strengthens thin proof in bullets you already have — nothing invented.
                 </p>
               </div>
             </div>
