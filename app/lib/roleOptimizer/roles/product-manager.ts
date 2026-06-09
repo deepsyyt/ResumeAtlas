@@ -1,14 +1,19 @@
-import { buildRoleOptimizerPath, type RoleOptimizerContent } from "@/app/lib/roleOptimizerContent";
+import {
+  buildRoleOptimizerMetaDescription,
+  buildRoleOptimizerMetaTitle,
+  buildRoleOptimizerPath,
+  type RoleOptimizerContent,
+} from "@/app/lib/roleOptimizerContent";
 
 const slug = "product-manager";
+const roleName = "Product Manager";
 
 export const productManagerOptimizer: RoleOptimizerContent = {
   slug,
   path: buildRoleOptimizerPath(slug),
-  roleName: "Product Manager",
-  title: "Product Manager Resume Optimizer for Job Description | ResumeAtlas",
-  description:
-    "Tailor and optimize your product manager resume with ATS-ready structure, role-specific keyword alignment, and stronger impact bullets for each posting.",
+  roleName,
+  title: buildRoleOptimizerMetaTitle(roleName),
+  description: buildRoleOptimizerMetaDescription(roleName),
   h1: "Optimize Your Product Manager Resume for a Job Description",
   targetKeywords: [
     "product manager resume optimizer",

@@ -1,14 +1,19 @@
-import { buildRoleOptimizerPath, type RoleOptimizerContent } from "@/app/lib/roleOptimizerContent";
+import {
+  buildRoleOptimizerMetaDescription,
+  buildRoleOptimizerMetaTitle,
+  buildRoleOptimizerPath,
+  type RoleOptimizerContent,
+} from "@/app/lib/roleOptimizerContent";
 
 const slug = "ai-engineer";
+const roleName = "AI Engineer";
 
 export const aiEngineerOptimizer: RoleOptimizerContent = {
   slug,
   path: buildRoleOptimizerPath(slug),
-  roleName: "AI Engineer",
-  title: "AI Engineer Resume Optimizer for Job Description | ResumeAtlas",
-  description:
-    "Tailor your AI engineer resume to a specific job description using keyword-fit analysis, ATS-safe formatting, and evidence-backed bullet rewrites with ResumeAtlas.",
+  roleName,
+  title: buildRoleOptimizerMetaTitle(roleName),
+  description: buildRoleOptimizerMetaDescription(roleName),
   h1: "Optimize Your AI Engineer Resume for a Job Description",
   targetKeywords: [
     "AI engineer resume optimizer",

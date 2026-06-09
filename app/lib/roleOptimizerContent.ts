@@ -66,6 +66,23 @@ export type OptimizeHubContent = {
 
 export const OPTIMIZE_HUB_PATH = "/optimize-resume-for-job-description" as const;
 
+/** SERP title for role optimizer pages — front-loads free, AI, ATS, and no-login hooks. */
+export function buildRoleOptimizerMetaTitle(roleName: string): string {
+  return `Free AI ${roleName} Resume Optimizer — ATS friendly, No Login`;
+}
+
+/** Meta description for role optimizer pages (~155 chars). */
+export function buildRoleOptimizerMetaDescription(roleName: string): string {
+  const roleLower = roleName.toLowerCase();
+  return `Free AI ${roleLower} resume optimizer — tailor your resume to any job description. ATS-friendly match score, keyword gaps & bullet rewrites. No login required.`;
+}
+
+export const OPTIMIZE_HUB_META_TITLE =
+  "Free AI Resume Optimizer for Job Description — ATS friendly, No Login";
+
+export const OPTIMIZE_HUB_META_DESCRIPTION =
+  "Free AI resume optimizer — tailor your resume to any job posting. ATS-friendly match score, keyword gaps & evidence-backed rewrites. No login required.";
+
 /** @deprecated Use CHECK_RESUME_AGAINST_JD_FORM_HREF — tool page owns the workbench funnel. */
 export { CHECK_RESUME_AGAINST_JD_FORM_HREF as OPTIMIZE_HUB_FORM_HREF } from "@/app/lib/internalLinks";
 
@@ -85,8 +102,7 @@ export const OPTIMIZE_HUB_CONTENT: OptimizeHubContent = {
     "resume rewrite for job description",
   ],
   webAppName: "ResumeAtlas resume optimizer for job descriptions",
-  webAppDescription:
-    "Free AI resume optimization: paste a job description, get ATS compatibility checks, missing keywords, skill gaps, and tailored rewrite suggestions for that posting.",
+  webAppDescription: OPTIMIZE_HUB_META_DESCRIPTION,
   howItWorks: [
     {
       step: 1,

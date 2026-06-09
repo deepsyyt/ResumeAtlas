@@ -1,6 +1,10 @@
 import { getSiteUrl } from "@/app/lib/siteUrl";
-import type { RoleOptimizerContent } from "@/app/lib/roleOptimizerContent";
-import { OPTIMIZE_HUB_CONTENT, OPTIMIZE_HUB_PATH } from "@/app/lib/roleOptimizerContent";
+import {
+  buildRoleOptimizerMetaDescription,
+  OPTIMIZE_HUB_CONTENT,
+  OPTIMIZE_HUB_PATH,
+  type RoleOptimizerContent,
+} from "@/app/lib/roleOptimizerContent";
 
 const siteBase = () => getSiteUrl().replace(/\/$/, "");
 const abs = (path: string) => `${siteBase()}${path.startsWith("/") ? path : `/${path}`}`;
@@ -65,7 +69,7 @@ export function roleOptimizerWebApplicationJsonLd(role: RoleOptimizerContent) {
     url: abs(role.path),
     applicationCategory: "BusinessApplication",
     operatingSystem: "All",
-    description: role.description,
+    description: buildRoleOptimizerMetaDescription(role.roleName),
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
   };
 }

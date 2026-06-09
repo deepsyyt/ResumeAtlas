@@ -1,14 +1,19 @@
-import { buildRoleOptimizerPath, type RoleOptimizerContent } from "@/app/lib/roleOptimizerContent";
+import {
+  buildRoleOptimizerMetaDescription,
+  buildRoleOptimizerMetaTitle,
+  buildRoleOptimizerPath,
+  type RoleOptimizerContent,
+} from "@/app/lib/roleOptimizerContent";
 
 const slug = "analytics-manager";
+const roleName = "Analytics Manager";
 
 export const analyticsManagerOptimizer: RoleOptimizerContent = {
   slug,
   path: buildRoleOptimizerPath(slug),
-  roleName: "Analytics Manager",
-  title: "Analytics Manager Resume Optimizer for Job Description | ResumeAtlas",
-  description:
-    "Optimize your analytics manager resume for specific job descriptions with ATS-aligned keywords, leadership-focused positioning, and measurable impact narratives.",
+  roleName,
+  title: buildRoleOptimizerMetaTitle(roleName),
+  description: buildRoleOptimizerMetaDescription(roleName),
   h1: "Optimize Your Analytics Manager Resume for a Job Description",
   targetKeywords: [
     "analytics manager resume optimizer",

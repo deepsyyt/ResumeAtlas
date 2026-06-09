@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { RoleOptimizerPage } from "@/app/components/optimize/RoleOptimizerPage";
-import { buildRoleOptimizerPath } from "@/app/lib/roleOptimizerContent";
+import {
+  buildRoleOptimizerMetaDescription,
+  buildRoleOptimizerMetaTitle,
+  buildRoleOptimizerPath,
+} from "@/app/lib/roleOptimizerContent";
 import {
   ROLE_OPTIMIZER_ORDER,
   getRoleOptimizerByPath,
@@ -22,13 +26,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {};
   }
   const siteBase = getSiteUrl().replace(/\/$/, "");
+  const title = buildRoleOptimizerMetaTitle(role.roleName);
+  const description = buildRoleOptimizerMetaDescription(role.roleName);
   return {
-    title: role.title,
-    description: role.description,
+    title,
+    description,
     alternates: { canonical: role.path },
     openGraph: {
-      title: role.title,
-      description: role.description,
+      title,
+      description,
       url: `${siteBase}${role.path}`,
       type: "website",
     },

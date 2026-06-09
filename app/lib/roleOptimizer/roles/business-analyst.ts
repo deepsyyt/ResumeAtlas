@@ -1,14 +1,19 @@
-import { buildRoleOptimizerPath, type RoleOptimizerContent } from "@/app/lib/roleOptimizerContent";
+import {
+  buildRoleOptimizerMetaDescription,
+  buildRoleOptimizerMetaTitle,
+  buildRoleOptimizerPath,
+  type RoleOptimizerContent,
+} from "@/app/lib/roleOptimizerContent";
 
 const slug = "business-analyst";
+const roleName = "Business Analyst";
 
 export const businessAnalystOptimizer: RoleOptimizerContent = {
   slug,
   path: buildRoleOptimizerPath(slug),
-  roleName: "Business Analyst",
-  title: "Business Analyst Resume Optimizer for Job Description | ResumeAtlas",
-  description:
-    "Optimize and tailor your business analyst resume for ATS and keyword match, with stronger requirements, stakeholder, and impact-focused bullets.",
+  roleName,
+  title: buildRoleOptimizerMetaTitle(roleName),
+  description: buildRoleOptimizerMetaDescription(roleName),
   h1: "Optimize Your Business Analyst Resume for a Job Description",
   targetKeywords: [
     "business analyst resume optimizer",
