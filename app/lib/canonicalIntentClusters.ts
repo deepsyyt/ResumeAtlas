@@ -115,25 +115,26 @@ export const CLUSTER_KEYWORD_SCANNER_TOOL_COPY = {
 };
 
 /** ATS readability / parse / score (posting optional). */
+export const ATS_CHECKER_META_TITLE =
+  `Free AI ATS Resume Checker — ATS friendly, No Login${RESUME_ATLAS_TITLE_SUFFIX}`;
+
+export const ATS_CHECKER_META_DESCRIPTION =
+  "Free AI ATS resume checker — get your compatibility score, parsing analysis & format fixes. ATS-friendly scan with optional job-description match. No login required.";
+
+/** ATS readability / parse / score (posting optional). */
 export const CLUSTER_ATS_CHECKER_TOOL_COPY = {
-  titleAbsolute:
-    `Free ATS Resume Checker — Compatibility Score, Parsing & Format Guide (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
-  description:
-    "Free ATS resume checker guide: what is ATS, how scoring works, parsing, keyword matching, format examples, templates, and common mistakes. Run the free checker when ready — no signup.",
-  ogTitle:
-    `Free ATS Resume Checker — Score, Parsing & ATS Guide (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
-  ogDescription:
-    "ATS compatibility guide plus free resume checker: parsing, scoring, keyword matching, format examples, templates, and mistakes to fix.",
-  twitterTitle: "Free ATS resume checker (score + parsing guide)",
-  twitterDescription:
-    "ATS compatibility score, parsing explained, format examples, and mistake fixes—free, instant, JD optional.",
+  titleAbsolute: ATS_CHECKER_META_TITLE,
+  description: ATS_CHECKER_META_DESCRIPTION,
+  ogTitle: ATS_CHECKER_META_TITLE,
+  ogDescription: ATS_CHECKER_META_DESCRIPTION,
+  twitterTitle: "Free AI ATS Resume Checker — ATS friendly, No Login",
+  twitterDescription: ATS_CHECKER_META_DESCRIPTION,
   h1: "Check if your resume is ATS-friendly",
   intro:
     "Learn how applicant tracking systems read resumes: headings, bullets, dates, layout risks, and what a compatibility score actually means. When you are ready to scan your file, use our free resume checker — ATS parsing, job-description match, and optimization in one workflow.",
   topStripStrong: "ATS guide first; run the free checker when you are ready.",
   webAppName: "ResumeAtlas resume checker",
-  webAppDescription:
-    "Free resume checker: ATS parsing, evidence match vs job description, and AI bullet optimization in one workflow.",
+  webAppDescription: ATS_CHECKER_META_DESCRIPTION,
   differentiatorHeading: "Why ATS parsing matters before keyword tuning",
   differentiatorBody: [
     "Employers still care whether your file parses into the right fields. Multi-column layouts, icons, tables for core content, and odd section titles can silently weaken you, even when your experience is strong.",
