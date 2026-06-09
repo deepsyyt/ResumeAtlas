@@ -237,12 +237,12 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
     {
       question: "What is an ATS resume checker?",
       answer:
-        "It analyzes how well your resume is likely to perform in applicant tracking systems based on structure, formatting, and readability - how the system reads your file - not full job-description matching unless you add a posting.",
+        "It analyzes how well your resume is likely to perform in applicant tracking systems based on structure, formatting, and readability — how the system reads your file. ResumeAtlas runs ATS parsing as part of the free resume checker & optimizer when you paste your resume (and job description for full match).",
     },
     {
       question: "Is this ATS checker free?",
       answer:
-        "Yes. Paste your resume to get instant feedback for free with no signup required.",
+        "Yes. Use the free resume checker & optimizer — paste your resume and job description for ATS signals, evidence match, and optimization. No signup required.",
     },
     {
       question: "Why does ATS reject resumes?",
@@ -262,7 +262,7 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
     {
       question: "How can I improve my ATS score?",
       answer:
-        "Simplify layout (single column, standard headings), fix parsing issues first, then align keywords with your target posting where truthful. For full job-description matching, use the resume vs job description checker after formatting cleanup.",
+        "Simplify layout (single column, standard headings), fix parsing issues first, then align keywords with your target posting where truthful. Run the free resume checker & optimizer with your resume and job description to see ATS signals and match gaps together.",
     },
   ],
 };

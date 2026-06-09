@@ -28,7 +28,7 @@ export function HomeBrowseByRoleSection() {
   return (
     <section
       id="browse-by-role"
-      className="border-t border-slate-200 bg-slate-50/60"
+      className="border-t border-slate-200/60 bg-[#eef2f8]/80"
       aria-labelledby="home-browse-by-role-heading"
     >
       <script
@@ -61,7 +61,7 @@ export function HomeBrowseByRoleSection() {
           {HOME_ROLE_BROWSE_CARDS.map((card) => (
             <li
               key={card.slug}
-              className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm ring-1 ring-slate-900/[0.04] sm:p-4"
+              className="rounded-xl border border-white/80 bg-white/80 p-3.5 shadow-sm shadow-slate-900/[0.03] ring-1 ring-slate-900/[0.04] backdrop-blur-sm sm:p-4"
             >
               <h3 className="text-sm font-semibold text-slate-900">{card.roleName}</h3>
               <ul className="m-0 mt-2.5 list-none space-y-1.5 p-0 text-sm">

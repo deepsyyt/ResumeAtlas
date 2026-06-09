@@ -414,23 +414,13 @@ const nextConfig = {
       ...legacyThinPageRedirects,
       ...resumeGuideTopicRedirects,
       {
-        source: "/check-resume-against-job-description",
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: "/check-resume-against-job-description/",
-        destination: "/",
-        permanent: true,
-      },
-      {
         source: "/resume-vs-job-description-checker",
-        destination: "/",
+        destination: "/check-resume-against-job-description",
         permanent: true,
       },
       {
         source: "/resume-vs-job-description-checker/",
-        destination: "/",
+        destination: "/check-resume-against-job-description",
         permanent: true,
       },
       {

@@ -21,6 +21,29 @@ export function getAuthRedirectOrigin(): string {
   return base;
 }
 
+/** In-browser path to return to after OAuth (current page, normalized). */
+export function getPostAuthReturnPath(fallback = "/"): string {
+  if (typeof window === "undefined") return fallback;
+  const path = window.location.pathname.replace(/\/$/, "") || "/";
+  return path.startsWith("/") && !path.startsWith("//") ? path : fallback;
+}
+
+/** Same-page return path with optional post-OAuth optimizer query flags. */
+export function buildPostAuthReturnPath(
+  options?: {
+    openOptimizer?: boolean;
+    optimizerFlow?: "optimize" | "conversion";
+  },
+  fallback = "/"
+): string {
+  const base = getPostAuthReturnPath(fallback);
+  if (!options?.openOptimizer) return base;
+  const params = new URLSearchParams();
+  params.set("openOptimizer", "1");
+  if (options.optimizerFlow) params.set("optimizerFlow", options.optimizerFlow);
+  return `${base}?${params.toString()}`;
+}
+
 /** Full Supabase `redirectTo` / `emailRedirectTo` for `/auth/callback`. */
 export function buildAuthCallbackRedirectTo(nextPath: string): string {
   const origin = getAuthRedirectOrigin();

@@ -1447,7 +1447,7 @@ function dsEntry(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These examples are generic patterns. Your resume may still miss keywords required by ATS for a specific posting.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Entry-Level Data Scientist Resume Bullet Points?",
@@ -1582,7 +1582,7 @@ function dsJunior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These lines are patterns. Your resume still needs the exact tools and domains each employer lists in the job description.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Junior Data Scientist Resume Bullet Points?",
@@ -1691,7 +1691,7 @@ function dsSenior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These patterns are illustrative. Your resume must still match the exact tools, domains, and leadership verbs from each job description.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Senior Data Scientist Resume Bullet Points?",
@@ -1844,7 +1844,7 @@ function seEntry(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These examples are generic patterns. Your resume may still miss keywords required by ATS for a specific posting.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Entry-Level Software Engineer Resume Bullet Points?",
@@ -1979,7 +1979,7 @@ function seJunior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These are illustrative patterns. Your resume must still reflect the frameworks, cloud, and domains each posting requires.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Junior Software Engineer Resume Bullet Points?",
@@ -2086,7 +2086,7 @@ function seSenior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These examples are patterns. Your resume still needs the frameworks, cloud, and reliability terms each employer lists.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Senior Software Engineer Resume Bullet Points?",
@@ -2239,7 +2239,7 @@ function pmEntry(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These examples are generic patterns. Your resume may still miss keywords required by ATS for a specific posting.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Entry-Level Product Manager Resume Bullet Points?",
@@ -2375,7 +2375,7 @@ function pmJunior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These are templates. Your resume still needs the domain, metrics, and keywords from each specific job description.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Junior Product Manager Resume Bullet Points?",
@@ -2482,7 +2482,7 @@ function pmSenior(): ResumeBulletDetailCopy {
     earlyAtsWarning: {
       body: "These examples are templates. Your resume still needs the domain, metrics, and leadership verbs from each job description.",
       ctaLabel: "Check missing keywords in my resume",
-      href: "/#ats-checker-form",
+      href: "/check-resume-against-job-description#ats-checker-form",
     },
     snippetDefinition: {
       h2: "What Are Good Senior Product Manager Resume Bullet Points?",

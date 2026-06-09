@@ -1,5 +1,6 @@
 import Link from "next/link";
 import HomeClient from "@/app/HomeClient";
+import { ShareFriendsCta } from "@/app/components/ShareFriendsCta";
 import { JdMatchGuide } from "@/app/components/JdMatchGuide";
 import { LastUpdated } from "@/app/components/LastUpdated";
 import { PostingFitMethodologyAppendix } from "@/app/components/PostingFitMethodologyAppendix";
@@ -219,18 +220,24 @@ export function ToolClusterLanding({
                   Read answers about skill proof maps, gap analysis, privacy, and how the free
                   checker works.
                 </p>
-                <Link
-                  href="/faq"
-                  className="mt-4 inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
-                >
-                  View FAQ
-                </Link>
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                  <Link
+                    href="/faq"
+                    className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
+                  >
+                    View FAQ
+                  </Link>
+                  <ShareFriendsCta layout="button" />
+                </div>
               </section>
             ) : (
               <section id="faq">
-                <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-                  Frequently asked questions
-                </h2>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+                    Frequently asked questions
+                  </h2>
+                  <ShareFriendsCta layout="button" />
+                </div>
                 <div className="mt-5 space-y-5 text-sm sm:text-base text-slate-700">
                   {config.faq.map((item) => (
                     <div key={item.question}>
@@ -612,9 +619,12 @@ export function ToolClusterLanding({
         <ToolClusterNextSteps />
 
         <section id="faq">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Frequently asked questions
-          </h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+              Frequently asked questions
+            </h2>
+            <ShareFriendsCta layout="button" />
+          </div>
           <div className="mt-5 space-y-5 text-sm sm:text-base text-slate-700">
             {config.faq.map((item) => (
               <div key={item.question}>

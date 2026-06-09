@@ -239,18 +239,35 @@ type ThemeCoverageRowProps = {
   score: number;
   detail: string;
   index?: number;
+  compact?: boolean;
 };
 
-export function ThemeCoverageRow({ category, score, detail, index = 0 }: ThemeCoverageRowProps) {
+export function ThemeCoverageRow({
+  category,
+  score,
+  detail,
+  index = 0,
+  compact = false,
+}: ThemeCoverageRowProps) {
   return (
-    <li className="flex flex-col items-center rounded-lg border border-indigo-100/80 bg-white/75 px-1.5 py-2 text-center transition-colors hover:border-indigo-200 hover:bg-white">
-      <ScoreRing value={score} delayMs={120 + index * 50} />
-      <p className="mt-1.5 w-full text-[10px] font-semibold leading-tight text-indigo-950">
+    <li
+      className={`flex flex-col items-center rounded-lg border border-indigo-100/80 bg-white/75 text-center transition-colors hover:border-indigo-200 hover:bg-white ${
+        compact ? "px-1 py-1.5" : "px-1.5 py-2"
+      }`}
+    >
+      <ScoreRing value={score} size={compact ? 38 : 46} delayMs={120 + index * 50} />
+      <p
+        className={`w-full font-semibold leading-tight text-indigo-950 ${
+          compact ? "mt-1 text-[9px]" : "mt-1.5 text-[10px]"
+        }`}
+      >
         {category}
       </p>
-      <p className="mt-0.5 line-clamp-2 w-full text-[9px] leading-snug text-indigo-900/70">
-        {detail}
-      </p>
+      {!compact ? (
+        <p className="mt-0.5 line-clamp-2 w-full text-[9px] leading-snug text-indigo-900/70">
+          {detail}
+        </p>
+      ) : null}
     </li>
   );
 }

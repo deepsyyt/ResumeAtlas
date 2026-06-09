@@ -150,7 +150,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             <p className="mt-4 text-sm font-medium text-slate-800 max-w-2xl mx-auto">
               Check if your resume includes these keywords →{" "}
               <Link
-                href="/#ats-checker-form"
+                href="/check-resume-against-job-description#ats-checker-form"
                 className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 scan your resume for missing keywords

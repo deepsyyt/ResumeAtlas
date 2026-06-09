@@ -23,6 +23,15 @@ function contentWidth(d: PdfDoc): number {
   return d.page.width - d.page.margins.left - d.page.margins.right;
 }
 
+function pdfMarginLeft(d: PdfDoc): number {
+  return d.page.margins.left;
+}
+
+/** PDFKit keeps `doc.x` after indented bullets; reset before section titles and body blocks. */
+function resetPdfCursorX(d: PdfDoc): void {
+  d.x = pdfMarginLeft(d);
+}
+
 function remainingY(d: PdfDoc): number {
   return d.page.height - d.page.margins.bottom - d.y;
 }
@@ -98,12 +107,13 @@ function drawExperienceRoleRow(doc: PdfDoc, role: string, dates: string): void {
     doc.text(dateStr, left, top, { width: w, align: "right", lineBreak: false });
   }
   doc.y = top + rowH;
+  resetPdfCursorX(doc);
 }
 
 function writePdfBullet(doc: PdfDoc, bulletText: string, indentPt: number): void {
   const cleaned = sanitizeBulletPdf(bulletText);
   if (!cleaned) return;
-  const left = doc.page.margins.left + indentPt;
+  const left = pdfMarginLeft(doc) + indentPt;
   const w = contentWidth(doc) - indentPt;
   const lineGap = 1.05;
   const line = `• ${cleaned}`;
@@ -111,6 +121,7 @@ function writePdfBullet(doc: PdfDoc, bulletText: string, indentPt: number): void
   const h = doc.heightOfString(line, { width: w, lineGap }) + 3;
   ensureSpace(doc, h);
   doc.text(line, left, doc.y, { width: w, lineGap });
+  resetPdfCursorX(doc);
 }
 
 /** @param isFirstSection - first block after header rule uses tighter top gap; later sections get extra air above the title. */
@@ -120,11 +131,14 @@ function pdfSectionLabel(doc: PdfDoc, label: string, isFirstSection = false): vo
   }
   ensureSpace(doc, isFirstSection ? 30 : 42);
   doc.moveDown(isFirstSection ? 0.1 : 0.05);
+  resetPdfCursorX(doc);
+  const left = pdfMarginLeft(doc);
   doc
     .font("Helvetica-Bold")
     .fontSize(PDF_SECTION_PT)
     .fillColor("#0f172a")
-    .text(label.toUpperCase(), { align: "left" });
+    .text(label.toUpperCase(), left, doc.y, { width: contentWidth(doc), align: "left" });
+  resetPdfCursorX(doc);
   doc.moveDown(0.32);
 }
 
@@ -275,7 +289,13 @@ function renderStructuredResumeLikeUi(doc: PdfDoc, resume: Resume): void {
       const line = [edu.degree, edu.institution, edu.year].filter(Boolean).join(" · ").trim();
       if (!line) return;
       ensureSpace(doc, 20);
-      doc.font("Helvetica").fontSize(PDF_BODY_PT).fillColor("#0f172a").text(line, { align: "left" });
+      resetPdfCursorX(doc);
+      doc
+        .font("Helvetica")
+        .fontSize(PDF_BODY_PT)
+        .fillColor("#0f172a")
+        .text(line, pdfMarginLeft(doc), doc.y, { width: contentWidth(doc), align: "left" });
+      resetPdfCursorX(doc);
       doc.moveDown(0.2);
     });
   }
@@ -473,11 +493,16 @@ export async function POST(request: Request) {
           }
           firstRawSectionHeading = false;
           doc.moveDown(0.12);
+          resetPdfCursorX(doc);
           doc
             .font("Helvetica-Bold")
             .fontSize(PDF_SECTION_PT)
             .fillColor("#0f172a")
-            .text(t.toUpperCase(), { align: "left" });
+            .text(t.toUpperCase(), pdfMarginLeft(doc), doc.y, {
+              width: contentWidth(doc),
+              align: "left",
+            });
+          resetPdfCursorX(doc);
           doc.moveDown(0.32);
           continue;
         }

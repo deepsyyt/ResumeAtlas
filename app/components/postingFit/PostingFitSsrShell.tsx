@@ -72,7 +72,7 @@ export function PostingFitSsrShell() {
                   href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
                   className="inline-flex min-w-[min(100%,18rem)] items-center justify-center rounded-2xl bg-slate-900 px-8 py-3.5 text-base font-semibold text-white shadow-[0_14px_40px_-14px_rgba(15,23,42,0.55)] transition hover:bg-slate-800"
                 >
-                  Check my resume for this job
+                  Check my resume for this job (free)
                 </Link>
                 <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm font-medium text-slate-600 lg:justify-start">
                   <span>

@@ -10,9 +10,9 @@ import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIn
 /** Avoid importing `internalLinks` here — that module imports this file and causes a TDZ cycle at build. */
 export type RoleClusterLink = { path: string; label: string };
 
-export const CHECK_RESUME_AGAINST_JD_PATH = "/" as const;
+export const CHECK_RESUME_AGAINST_JD_PATH = "/check-resume-against-job-description" as const;
 export const CHECK_RESUME_AGAINST_JD_PRIMARY_CTA =
-  "Check resume against job description (free tool)" as const;
+  "Check resume against job description" as const;
 
 /** Roles with a three-page cluster (example + guide + keywords). */
 export type RoleClusterKey = RoleSlug | "data-engineer";

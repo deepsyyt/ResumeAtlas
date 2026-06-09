@@ -1,10 +1,20 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/app/components/Navbar";
 import { Footer } from "@/app/components/Footer";
+import { Navbar } from "@/app/components/Navbar";
 import { ProblemInterviewCallout } from "@/app/components/ProblemInterviewCallout";
 import Script from "next/script";
+import { GA_MEASUREMENT_ID } from "@/app/lib/gaConfig";
+import { HOME_PAGE_DESCRIPTION, HOME_PAGE_TITLE_ABSOLUTE } from "@/app/lib/homePageSeo";
 import { getSiteUrl } from "@/app/lib/siteUrl";
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700"],
+});
 
 const siteUrl = getSiteUrl();
 const websiteSchema = {
@@ -29,15 +39,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: "ResumeAtlas",
   manifest: "/manifest.webmanifest",
-  title: "Free AI Resume Optimizer & ATS Checker | ResumeAtlas",
-  description:
-    "100% free AI resume optimizer and ATS resume checker. Compare your resume to any job description, find missing keywords, and optimize bullets instantly. No signup.",
+  title: HOME_PAGE_TITLE_ABSOLUTE,
+  description: HOME_PAGE_DESCRIPTION,
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: "Free AI Resume Optimizer & ATS Checker | ResumeAtlas",
-    description:
-      "100% free: compare resume to job description, ATS match score, missing keywords, and AI resume optimization. Paste only, instant results.",
+    title: HOME_PAGE_TITLE_ABSOLUTE,
+    description: HOME_PAGE_DESCRIPTION,
     siteName: "ResumeAtlas",
   },
   icons: {
@@ -58,7 +66,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={plusJakarta.variable}>
       <head>
         <meta
           name="google-site-verification"
@@ -72,20 +80,23 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
+        {/* Sync stub so client components can queue events before gtag.js loads */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_MEASUREMENT_ID}');
+            `,
+          }}
+        />
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-64KDQ28C42"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
         />
-        <Script id="ga-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-64KDQ28C42');
-          `}
-        </Script>
       </head>
-      <body className="flex min-h-screen flex-col antialiased bg-white text-slate-900">
+      <body className="flex min-h-screen flex-col bg-[#f4f7fc] font-sans text-slate-900 antialiased">
         <Navbar />
         <main className="flex flex-1 flex-col pb-16">{children}</main>
         <ProblemInterviewCallout />

@@ -18,12 +18,14 @@ import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIn
 
 export type InternalLink = { path: string; label: string };
 
-/** Primary free tool landing: JD comparison (single canonical URL for all resume-JD intents). */
-export const CHECK_RESUME_AGAINST_JD_PATH = "/" as const;
+/** Primary free tool: AI resume checker, JD match, and optimizer (workbench). */
+export const CHECK_RESUME_AGAINST_JD_PATH = "/check-resume-against-job-description" as const;
 
-/** @deprecated Former tool URL; 301 → {@link CHECK_RESUME_AGAINST_JD_PATH}. Keep for OAuth/history. */
-export const LEGACY_CHECK_RESUME_AGAINST_JD_PATH =
-  "/check-resume-against-job-description" as const;
+/** Marketing homepage (funnel only; tool is {@link CHECK_RESUME_AGAINST_JD_PATH}). */
+export const HOME_MARKETING_PATH = "/" as const;
+
+/** @deprecated Homepage tool consolidated onto {@link CHECK_RESUME_AGAINST_JD_PATH}. */
+export const LEGACY_CHECK_RESUME_AGAINST_JD_PATH = CHECK_RESUME_AGAINST_JD_PATH;
 
 /** Same tool with in-page form anchor (primary funnel CTAs). */
 export const CHECK_RESUME_AGAINST_JD_FORM_HREF =
@@ -64,7 +66,19 @@ export const TOOL_PAGE_NAV_LABEL_SHORT = "Resume JD match" as const;
 
 /** Primary JD-tool CTA: keyword-rich anchor for buttons and links to the matcher. */
 export const CHECK_RESUME_AGAINST_JD_PRIMARY_CTA =
-  "Check resume against job description (free tool)" as const;
+  "Check resume against job description" as const;
+
+/** Navbar + hero CTA (shorter). */
+export const CHECK_RESUME_AGAINST_JD_HERO_CTA = "Check my resume free" as const;
+
+/** Primary nav label for the workbench tool. */
+export const PRIMARY_TOOL_NAV_LABEL = "Resume checker & optimizer" as const;
+
+export const PRIMARY_TOOL_NAV_LABEL_SHORT = "Checker" as const;
+
+export const ATS_RESUME_NAV_LABEL = "ATS resume checker" as const;
+
+export const ATS_RESUME_CHECKER_PATH = "/ats-resume-checker" as const;
 
 /** Primary ATS checker CTA on `/ats-resume-checker` (parsing/format, JD optional). */
 export const CHECK_ATS_RESUME_PRIMARY_CTA =

@@ -8,7 +8,7 @@
  * | Brand + tools hub | / |
  * | Resume ↔ JD   | `/` (posting-fit workbench on homepage) |
  * | Keyword gaps  | (consolidated into homepage workbench) |
- * | ATS read/score | /ats-resume-checker |
+ * | ATS education (traffic door → workbench) | /ats-resume-checker |
  * | ATS layout guide | /ats-resume-template |
  * | Work history section | /resume-guides/resume-work-experience-examples |
  * | Role examples index | /resume-examples |
@@ -23,6 +23,7 @@ import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
   RESUME_WORK_EXPERIENCE_GUIDE_PATH,
 } from "@/app/lib/internalLinks";
+import { HOME_PAGE_DESCRIPTION, HOME_PAGE_TITLE_ABSOLUTE } from "@/app/lib/homePageSeo";
 import {
   CONTENT_FRESHNESS_YEAR,
   CONTENT_LAST_UPDATED_LABEL,
@@ -34,49 +35,49 @@ const abs = (path: string) => `${siteBase()}${path.startsWith("/") ? path : `/${
 
 /** Resume ↔ this job description (tailor / compare / match). */
 export const CLUSTER_JD_MATCH_TOOL_COPY = {
-  titleAbsolute: `Free AI Resume Optimizer & ATS Checker${RESUME_ATLAS_TITLE_SUFFIX}`,
+  titleAbsolute: `Compare Resume to Job Description — Free AI Checker${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "100% free AI resume optimizer and ATS resume checker. Compare your resume to any job description, find missing keywords, and optimize bullets instantly. Paste only, no signup.",
+    "Compare your resume to any job description for free. Get evidence match, ATS score, keyword gaps, skill proof map, and AI optimization for that posting. Paste only, no signup.",
   ogTitle:
-    `Free AI Resume Optimizer & ATS Checker (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
+    `Compare Resume to Job Description — Free AI Checker (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
   ogDescription:
-    "100% free: compare resume to job description, ATS match score, missing keywords, and AI resume optimization. Instant results, paste only, no signup.",
-  twitterTitle: "Free AI resume optimizer & ATS checker",
+    "Free compare resume to job description tool: evidence match, ATS score, keyword gaps, skill proof map, and AI bullet optimization. Paste only, no signup.",
+  twitterTitle: "Compare resume to job description — free AI checker",
   twitterDescription:
-    "Compare resume to job description, find missing keywords, AI-optimize bullets. 100% free, no signup.",
+    "Compare resume to job description: evidence match, keyword gaps, and AI optimization. Free, paste only, no signup.",
   h1: "Compare resume to job description: evidence match, skill proof map & evidence-first optimization",
   intro:
     "Paste your resume and the exact job description. See how much of the job you prove in real project bullets (not just skills lists), a skill-by-skill proof map, honest gap callouts, and reference ATS metrics. Then run evidence-first optimization: move supported JD skills into the right bullets with architecture, deployment, and impact proof. No signup.",
   /** Human-facing homepage hero (metadata keeps SEO `h1` / `intro`). */
   heroEyebrow: "Free resume vs job description checker",
-  heroH1: "Compare your resume to any job description",
+  heroH1: "Match your resume to the job description",
   heroIntro:
-    "Paste your resume and job description to see how much you actually prove in project bullets, not just skills lists. Get a proof map, honest gap callouts, and AI optimization that strengthens thin evidence without inventing experience.",
+    "Compare alignment with the posting you paste, review evidence and skill gaps, then apply AI optimization to strengthen bullets grounded in work you can defend.",
   topStripStrong:
     "Analyze proof, then optimize: evidence match, skill gaps, and interview-safe bullet rewrites for the posting you paste.",
-  webAppName: "ResumeAtlas free AI resume optimizer and ATS checker",
+  webAppName: "ResumeAtlas compare resume to job description checker",
   webAppDescription:
-    "100% free AI resume optimizer and ATS checker: compare resume to job description, find missing keywords, and optimize bullets for that posting.",
+    "Free tool to compare resume to job description: evidence match, ATS score, keyword gaps, skill proof map, and AI optimization for that posting.",
   differentiatorHeading: "Evidence match analysis and optimization in one free tool",
   differentiatorBody: [
     "This page is not keyword stuffing. After you paste resume + job description, you get an evidence match score, what-we-measured signals (impact, architecture, deployment, JD skills in bullets), and a skill-by-skill proof map. Optimization moves real work into project bullets and leaves unsupported requirements honest.",
     "ATS keyword score is shown as a reference metric only. It can look fine when proof is thin. Use the ATS checker for parsing and layout; use this page when you need to see what you actually prove for this posting and strengthen bullets without inventing skills.",
   ],
   serpVariantsParagraph:
-    "People search compare resume to job description, resume match score, resume gap analysis, optimize resume for job description, and tailor resume to job description. ResumeAtlas on the homepage is the canonical free tool: read evidence match and skill proof, close honest gaps, then optimize with evidence-first rewrites.",
+    "People search compare resume to job description, resume match score, resume gap analysis, optimize resume for job description, and tailor resume to job description. This page is the canonical free tool: read evidence match and skill proof, close honest gaps, then optimize with evidence-first rewrites.",
   howItWorksHeading: "How evidence analysis and optimization works",
   whyMatchHeading: "Why proof in bullets beats keyword lists alone",
   resultsHeading: "What the intelligence dashboard highlights",
 };
 
-/** @deprecated Homepage uses {@link CLUSTER_JD_MATCH_TOOL_COPY} via `buildToolClusterMetadata`. */
+/** Homepage `/` marketing metadata (see `buildHomeMarketingMetadata`). */
 export const CLUSTER_HOME_METADATA = {
-  title: CLUSTER_JD_MATCH_TOOL_COPY.titleAbsolute,
-  description: CLUSTER_JD_MATCH_TOOL_COPY.description,
+  title: HOME_PAGE_TITLE_ABSOLUTE,
+  description: HOME_PAGE_DESCRIPTION,
   canonicalPath: "/" as const,
   openGraph: {
-    title: CLUSTER_JD_MATCH_TOOL_COPY.ogTitle,
-    description: CLUSTER_JD_MATCH_TOOL_COPY.ogDescription,
+    title: HOME_PAGE_TITLE_ABSOLUTE,
+    description: HOME_PAGE_DESCRIPTION,
     url: abs("/"),
     siteName: "ResumeAtlas" as const,
     type: "website" as const,
@@ -118,28 +119,28 @@ export const CLUSTER_ATS_CHECKER_TOOL_COPY = {
   titleAbsolute:
     `Free ATS Resume Checker — Compatibility Score, Parsing & Format Guide (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Free ATS resume checker: get your compatibility score, parsing diagnostics, and a full ATS guide—what is ATS, how scoring works, keyword matching, format examples, templates, and common mistakes. No signup.",
+    "Free ATS resume checker guide: what is ATS, how scoring works, parsing, keyword matching, format examples, templates, and common mistakes. Run the free checker when ready — no signup.",
   ogTitle:
     `Free ATS Resume Checker — Score, Parsing & ATS Guide (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
   ogDescription:
-    "Paste your resume for a free ATS compatibility score plus guides on ATS parsing, scoring, keyword matching, resume format, templates, and mistakes to fix.",
+    "ATS compatibility guide plus free resume checker: parsing, scoring, keyword matching, format examples, templates, and mistakes to fix.",
   twitterTitle: "Free ATS resume checker (score + parsing guide)",
   twitterDescription:
     "ATS compatibility score, parsing explained, format examples, and mistake fixes—free, instant, JD optional.",
   h1: "Check if your resume is ATS-friendly",
   intro:
-    "Paste your resume to see how applicant tracking systems are likely to read it: headings, bullets, dates, and layout risks that confuse parsers. The score here is about machine readability and common ATS friction, not the same thing as “did I mirror every line of this job description?”",
-  topStripStrong: "ATS-first check: structure and parsing before keyword tuning.",
-  webAppName: "ATS resume checker",
+    "Learn how applicant tracking systems read resumes: headings, bullets, dates, layout risks, and what a compatibility score actually means. When you are ready to scan your file, use our free resume checker — ATS parsing, job-description match, and optimization in one workflow.",
+  topStripStrong: "ATS guide first; run the free checker when you are ready.",
+  webAppName: "ResumeAtlas resume checker",
   webAppDescription:
-    "Estimate ATS readability: structure, parsing-friendly layout, and compatibility scoring. Optional job description for keyword overlap.",
-  differentiatorHeading: "ATS readability vs resume-to-job-description matching",
+    "Free resume checker: ATS parsing, evidence match vs job description, and AI bullet optimization in one workflow.",
+  differentiatorHeading: "Why ATS parsing matters before keyword tuning",
   differentiatorBody: [
     "Employers still care whether your file parses into the right fields. Multi-column layouts, icons, tables for core content, and odd section titles can silently weaken you, even when your experience is strong.",
-    "When your main question is how well you match one posting end-to-end, use the job description matcher with that JD. When your main question is whether the file itself will survive ATS ingestion, stay on this checker.",
+    "Read this guide to fix structure and format mistakes. Then run the free resume checker & optimizer with your resume and target job description — you get ATS readability signals, evidence match, and tailored bullet suggestions without switching tools.",
   ],
   serpVariantsParagraph:
-    "Searchers ask what is ATS, how ATS scoring works, ATS parsing explained, ATS keyword matching, ATS resume format examples, ATS resume templates, ATS resume mistakes, and ATS compatibility score. This page is the canonical ATS checker for parsing, structure, and compatibility; optional JD adds keyword overlap only.",
+    "Searchers ask what is ATS, how ATS scoring works, ATS parsing explained, ATS keyword matching, ATS resume format examples, ATS resume templates, ATS resume mistakes, and ATS compatibility score. This page owns ATS education; the live scan lives on the resume checker & optimizer.",
   howItWorksHeading: "How this ATS resume checker works",
   whyMatchHeading: "Why fix parsing before you chase every keyword",
   resultsHeading: "What your ATS check includes",

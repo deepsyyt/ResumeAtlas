@@ -1,154 +1,105 @@
 import Link from "next/link";
-import HomeClient from "@/app/HomeClient";
 import { AtsResumeCheckerGuide } from "@/app/components/AtsResumeCheckerGuide";
 import { LastUpdated } from "@/app/components/LastUpdated";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
-import { ToolClusterNextSteps } from "@/app/components/ToolClusterNextSteps";
-import { ToolClusterRelatedLinks } from "@/app/components/ToolClusterRelatedLinks";
 import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
-  COMPARE_RESUME_WITH_JD_ANCHOR,
-  MATCH_RESUME_TO_JOB_DESCRIPTION_ANCHOR,
-  RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
+  CHECK_RESUME_AGAINST_JD_PATH,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
 import {
   TOOL_CLUSTER_ATS_FREE,
   toolClusterBreadcrumbSchema,
   toolClusterFaqSchema,
-  toolClusterWebApplicationSchema,
 } from "@/app/lib/toolClusterPages";
 
 const path = TOOL_CLUSTER_ATS_FREE.path;
 
 /**
- * ATS compliance / parsing / score positioning - distinct from the JD matcher
- * (homepage `/`).
+ * ATS topical cluster — educational guide + CTAs to the single workbench (`/check-resume-against-job-description`).
+ * Not a separate tool surface (no embedded paste form).
  */
 export function ATSResumeCheckerFreeLanding() {
   return (
-    <div className="min-h-screen bg-white text-slate-900">
-      <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 text-center">
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
+    <main className="min-h-screen bg-white text-slate-900">
+      <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50/90 to-white">
+        <div className="mx-auto max-w-4xl px-4 py-12 text-center sm:px-6 sm:py-14 lg:px-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-800">
+            ATS guide · parsing · format · compatibility
+          </p>
+          <h1 className="mt-3 text-pretty text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
             {TOOL_CLUSTER_ATS_FREE.h1}
           </h1>
-          <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="mx-auto mt-4 max-w-2xl text-pretty text-base leading-relaxed text-slate-600 sm:text-lg">
             {TOOL_CLUSTER_ATS_FREE.intro}
           </p>
+          <p className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs font-medium text-slate-600 sm:text-sm">
+            <span>✓ Free</span>
+            <span className="text-slate-300" aria-hidden>
+              ·
+            </span>
+            <span>✓ One workflow</span>
+            <span className="text-slate-300" aria-hidden>
+              ·
+            </span>
+            <span>✓ No signup</span>
+          </p>
+          <Link
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+            className="mt-8 inline-flex rounded-full bg-slate-900 px-6 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          >
+            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+          </Link>
+          <p className="mx-auto mt-3 max-w-lg text-xs text-slate-500 sm:text-sm">
+            Paste resume and job description in our free checker — ATS parsing, evidence match, and
+            AI optimization in one place.
+          </p>
         </div>
       </section>
 
-      <section className="border-b border-slate-200 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 text-center">
-          <p className="text-sm sm:text-base text-slate-900">
-            <strong>{TOOL_CLUSTER_ATS_FREE.topStripStrong}</strong>
-          </p>
-          <p className="mt-2 text-xs sm:text-sm font-medium text-slate-700">
-            <span aria-hidden="true">✔</span> Free <span className="text-slate-400">•</span>{" "}
-            <span aria-hidden="true">✔</span> Instant Results{" "}
-            <span className="text-slate-400">•</span> <span aria-hidden="true">✔</span> No Signup
-          </p>
-          <a
-            href="#ats-checker-form"
-            className="mt-4 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
-          >
-            {TOOL_CLUSTER_ATS_FREE.ctaAnchor}
-          </a>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm">
-            {[
-              "Resume not getting shortlisted?",
-              "Missing keywords for your role?",
-              "ATS score too low?",
-            ].map((line) => (
-              <span
-                key={line}
-                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 font-medium text-slate-700"
-              >
-                {line}
-              </span>
+      <div className="mx-auto max-w-3xl space-y-12 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+        <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
+            {TOOL_CLUSTER_ATS_FREE.differentiatorHeading}
+          </h2>
+          <div className="mt-3 space-y-3 text-sm leading-relaxed text-slate-700 sm:text-base">
+            {TOOL_CLUSTER_ATS_FREE.differentiatorBody.map((para, i) => (
+              <p key={i}>{para}</p>
             ))}
           </div>
+        </section>
+
+        <div id="ats-guide">
+          <AtsResumeCheckerGuide />
         </div>
-      </section>
 
-      <HomeClient variant="toolOnly" analysisMode="atsCompliance" />
-
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
-        <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            How this free ATS resume checker works
+        <section className="rounded-2xl border border-slate-900/10 bg-slate-900 p-6 text-center text-white sm:p-8">
+          <h2 className="text-lg font-semibold tracking-tight sm:text-xl">
+            Ready to check your resume?
           </h2>
-          <ol className="mt-4 space-y-4 list-decimal pl-5 text-sm sm:text-base text-slate-700">
-            <li>
-              <strong className="text-slate-900">Paste your resume.</strong> Copy-paste your resume
-              text into the field.
-            </li>
-            <li>
-              <strong className="text-slate-900">ATS parsing simulation.</strong> The analysis
-              reads your resume the way many ATS parsers consume plain text: sections, bullets, and
-              structure.
-            </li>
-            <li>
-              <strong className="text-slate-900">Compatibility score and issue signals.</strong> You
-              get an ATS compatibility score plus parsing and formatting risk metrics.
-            </li>
-            <li>
-              <strong className="text-slate-900">Fix suggestions.</strong> Use the takeaways to
-              simplify layout, strengthen headings, and improve bullets before you apply.
-            </li>
-          </ol>
-        </section>
-
-        <AtsResumeCheckerGuide />
-
-        <section className="rounded-xl border border-amber-200 bg-amber-50/40 p-5 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
-            ATS resume scan vs keyword matching
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
-            {TOOL_CLUSTER_ATS_FREE.differentiatorBody[0]}
+          <p className="mx-auto mt-2 max-w-xl text-sm text-slate-200 sm:text-base">
+            Run the free resume checker &amp; optimizer — ATS readability, job-description match, and
+            bullet optimization without switching tools.
           </p>
-          <p className="mt-3 text-sm sm:text-base text-slate-700">
-            Compare your resume with a specific job description:{" "}
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              {COMPARE_RESUME_WITH_JD_ANCHOR}
+          <Link
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+            className="mt-6 inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+          >
+            {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+          </Link>
+          <p className="mt-3 text-xs text-slate-400">
+            Opens{" "}
+            <Link href={CHECK_RESUME_AGAINST_JD_PATH} className="underline underline-offset-2">
+              Resume checker &amp; optimizer
             </Link>
-            ,{" "}
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              {RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR}
-            </Link>
-            , or{" "}
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              {MATCH_RESUME_TO_JOB_DESCRIPTION_ANCHOR}
-            </Link>
-            .
           </p>
         </section>
-
-        <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
-          <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-            {TOOL_CLUSTER_ATS_FREE.serpVariantsParagraph}
-          </p>
-        </section>
-
-        <ToolClusterRelatedLinks currentPath={path} />
-
-        <ToolClusterNextSteps />
 
         <section id="faq">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             Frequently asked questions
           </h2>
-          <div className="mt-5 space-y-5 text-sm sm:text-base text-slate-700">
+          <div className="mt-5 space-y-5 text-sm text-slate-700 sm:text-base">
             {TOOL_CLUSTER_ATS_FREE.faq.map((item) => (
               <div key={item.question}>
                 <h3 className="font-semibold text-slate-900">{item.question}</h3>
@@ -158,35 +109,24 @@ export function ATSResumeCheckerFreeLanding() {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-900/10 bg-slate-900 text-white p-6 sm:p-8 text-center">
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight">Final step</h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-200 max-w-xl mx-auto">
-            Do not let formatting or parsing issues block your resume before a recruiter sees it.
-            Check your ATS compatibility score now and tighten structure first.
+        <section className="rounded-xl border border-slate-200 bg-slate-50/80 px-5 py-6 text-center sm:px-6">
+          <h2 className="text-lg font-semibold text-slate-900">More answers</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Evidence match, optimization, interviews, and how the checker works.
           </p>
-          <a
-            href="#ats-checker-form"
-            className="mt-6 inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-100 transition"
+          <Link
+            href="/faq"
+            className="mt-4 inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:border-slate-400"
           >
-            {TOOL_CLUSTER_ATS_FREE.ctaAnchor}
-          </a>
+            View FAQ
+          </Link>
         </section>
 
-        <RelatedResumeGuidesSection
-          currentPath={path}
-          className="border-t border-slate-200 pt-8"
-        />
+        <RelatedResumeGuidesSection currentPath={path} className="border-t border-slate-200 pt-8" />
 
         <LastUpdated className="text-xs text-slate-500" />
       </div>
 
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(toolClusterWebApplicationSchema(TOOL_CLUSTER_ATS_FREE)),
-        }}
-      />
       <script
         type="application/ld+json"
         suppressHydrationWarning
@@ -201,6 +141,6 @@ export function ATSResumeCheckerFreeLanding() {
           __html: JSON.stringify(toolClusterBreadcrumbSchema(TOOL_CLUSTER_ATS_FREE)),
         }}
       />
-    </div>
+    </main>
   );
 }

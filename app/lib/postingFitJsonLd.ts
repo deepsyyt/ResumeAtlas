@@ -1,11 +1,14 @@
 import type { ToolClusterPageConfig } from "@/app/lib/toolClusterPages";
 import { toolClusterAbsoluteUrl } from "@/app/lib/toolClusterPages";
-import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
+import { CHECK_RESUME_AGAINST_JD_PATH, HOME_MARKETING_PATH } from "@/app/lib/internalLinks";
+import { getSiteUrl } from "@/app/lib/siteUrl";
+
+const siteBase = () => getSiteUrl().replace(/\/$/, "");
 
 const LIST_ITEM = "https://schema.org/ListItem";
 
 export function postingFitWorkbenchBreadcrumbJsonLd() {
-  const home = toolClusterAbsoluteUrl(CHECK_RESUME_AGAINST_JD_PATH);
+  const toolUrl = toolClusterAbsoluteUrl(CHECK_RESUME_AGAINST_JD_PATH);
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -13,8 +16,14 @@ export function postingFitWorkbenchBreadcrumbJsonLd() {
       {
         "@type": LIST_ITEM,
         position: 1,
+        name: "ResumeAtlas",
+        item: `${siteBase()}${HOME_MARKETING_PATH}`,
+      },
+      {
+        "@type": LIST_ITEM,
+        position: 2,
         name: "Compare resume to job description",
-        item: home,
+        item: toolUrl,
       },
     ],
   };

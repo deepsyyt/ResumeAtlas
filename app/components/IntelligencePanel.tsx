@@ -25,6 +25,8 @@ import {
 } from "@/app/lib/scoreColors";
 import { DEMO_EVIDENCE_BULLET_PREVIEW } from "@/app/lib/demoEvidenceDashboard";
 import { EvidenceIntelligenceSection, ScoreBar } from "@/app/components/EvidenceIntelligenceSection";
+import { AnimatedIntelligenceDashboardPreview } from "@/app/components/postingFit/AnimatedIntelligenceDashboardPreview";
+import { OptimizePreviewBanner } from "@/app/components/postingFit/OptimizePreviewBanner";
 
 const OPTIMIZER_STATIC_BULLET_PREVIEW = DEMO_EVIDENCE_BULLET_PREVIEW;
 
@@ -76,6 +78,15 @@ type IntelligencePanelProps = {
   panelVariant?: "default" | "keywordScanner";
   /** Homepage workbench: hero already shows sample dashboard — keep this panel minimal. */
   compactHomeEmpty?: boolean;
+  /** Tool pages: minimal empty panel with tool-specific hint. */
+  compactToolEmpty?: boolean;
+  compactEmptyHint?: string;
+  /** Tinted preview column — elevate card on colored workbench background. */
+  previewSurface?: boolean;
+  /** Show live generation animation while analyze API runs. */
+  isAnalyzing?: boolean;
+  /** Tool workbench: compact, non-scrolling result preview with optimize CTA above. */
+  compactToolResult?: boolean;
 };
 
 export function IntelligencePanel({
@@ -89,9 +100,26 @@ export function IntelligencePanel({
   emptyStateVariant = "jd",
   panelVariant = "default",
   compactHomeEmpty = false,
+  compactToolEmpty = false,
+  compactEmptyHint,
+  previewSurface = false,
+  isAnalyzing = false,
+  compactToolResult = false,
 }: IntelligencePanelProps) {
+  const elevatedPanelClass = previewSurface
+    ? "rounded-xl border border-slate-200/90 bg-white p-2.5 shadow-xl shadow-black/25 ring-1 ring-white/10 sm:p-3"
+    : "rounded-xl bg-white p-2.5 sm:p-3 shadow-sm ring-1 ring-slate-900/[0.06]";
+  const elevatedEmptyClass = previewSurface
+    ? "flex min-h-[min(82vh,42rem)] flex-1 flex-col overflow-hidden rounded-xl bg-transparent"
+    : "flex min-h-[min(70vh,34rem)] flex-1 flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm ring-1 ring-slate-900/[0.05]";
+  const compactToolResultShellClass = previewSurface
+    ? "flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-xl bg-transparent"
+    : "flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm ring-1 ring-slate-900/[0.05]";
   const hasAny = !!analyzeResult;
   const emptyAts = emptyStateVariant === "ats";
+  const compactEmptyTitle = emptyAts
+    ? "Your ATS report appears here"
+    : "Your analysis report appears here";
   const isKeywordScanner = panelVariant === "keywordScanner";
 
   if (showLocked) {
@@ -126,15 +154,18 @@ export function IntelligencePanel({
 
   // Empty state — keep light until the user runs a check (hero shows illustrative preview).
   if (!hasAny) {
-    if (compactHomeEmpty) {
+    if (compactHomeEmpty || compactToolEmpty) {
+      const hint =
+        compactEmptyHint ??
+        (compactHomeEmpty
+          ? "Paste on the left and run a check. Your scores replace the sample dashboard above."
+          : emptyAts
+            ? "Paste your resume on the left and run a free ATS check."
+            : "Paste resume and job description on the left, then run evidence match and optimization.");
+
       return (
-        <section className="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 p-5 shadow-sm ring-1 ring-slate-900/[0.04] sm:p-6">
-          <div className="flex min-h-[12rem] flex-col items-center justify-center text-center">
-            <p className="text-sm font-medium text-slate-800">Your live analysis appears here</p>
-            <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-600">
-              Paste on the left and run a check. Your scores replace the sample dashboard above.
-            </p>
-          </div>
+        <section className={elevatedEmptyClass} aria-label={compactEmptyTitle}>
+          <AnimatedIntelligenceDashboardPreview hint={hint} isAnalyzing={isAnalyzing} />
         </section>
       );
     }
@@ -161,7 +192,7 @@ export function IntelligencePanel({
             📊
           </div>
           <h2 className="mt-4 text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
-            Your analysis appears here
+            Your analysis report appears here
           </h2>
           <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-600">
             {emptyAts
@@ -416,8 +447,239 @@ export function IntelligencePanel({
     );
   }
 
+  if (compactToolResult && previewSurface) {
+    const showOptimizeBanner = Boolean(onOpenOptimizer && analysisUsedJobDescription);
+    const resultResetKey = evidenceDashboard?.evidenceMatch ?? atsScore;
+
+    return (
+      <section className={compactToolResultShellClass} aria-label="Your analysis report">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          {showOptimizeBanner ? (
+            <div className="mb-3 shrink-0 px-1 sm:px-2">
+              <OptimizePreviewBanner
+                darkSurface
+                onOptimize={onOpenOptimizer}
+                resetKey={resultResetKey}
+              />
+            </div>
+          ) : null}
+
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xl shadow-black/25 ring-1 ring-slate-900/[0.04]">
+              <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-0.5 border-b border-slate-100 px-2.5 py-2 sm:px-3">
+                <div className="flex min-w-0 items-baseline gap-1.5">
+                  <h2 className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    {isKeywordScanner ? "Keyword scan" : "Intelligence"}
+                  </h2>
+                  <p className="truncate text-[11px] text-slate-600 sm:text-xs">
+                    {isKeywordScanner
+                      ? "Keyword gaps vs this posting"
+                      : analysisUsedJobDescription
+                        ? "Scroll for skill proof, gaps & metrics"
+                        : "ATS readability snapshot"}
+                  </p>
+                </div>
+                <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-500/50 bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                  Your result
+                </span>
+              </div>
+
+              <div className="preview-panel-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 pb-2.5 pt-1.5 sm:px-3 sm:pb-3">
+                {isKeywordScanner ? (
+                  <div className="rounded-xl border border-violet-200 bg-violet-50/70 px-3 py-2.5">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-violet-900">
+                      Keyword coverage vs this posting
+                    </p>
+                    <div className="mt-1.5 flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-3">
+                      <span className="text-2xl font-bold tabular-nums text-slate-900">
+                        {keywordNotApplicable ? "—" : `${keywordScore}%`}
+                      </span>
+                      <p className="min-w-0 flex-1 text-xs leading-snug text-slate-700">
+                        {analyzeResult?.summary}
+                      </p>
+                    </div>
+                    {missingSkills.length > 0 ? (
+                      <p className="mt-2 text-[11px] leading-snug text-slate-600">
+                        {missingSkills.length} missing keyword
+                        {missingSkills.length === 1 ? "" : "s"} — add a job-matched resume check for
+                        full evidence scoring.
+                      </p>
+                    ) : null}
+                  </div>
+                ) : evidenceDashboard && analysisUsedJobDescription ? (
+                  <>
+                    <EvidenceIntelligenceSection
+                      dashboard={evidenceDashboard}
+                      atsScoreReference={atsScore}
+                      experienceAlignment={{
+                        score: experienceScore,
+                        subtitle: buildExperienceAlignmentSubtitle({
+                          requiredMin: requiredYearsExperience,
+                          requiredMax: requiredYearsExperienceMax,
+                          resumeYears: resumeYearsExperience,
+                          verdictLabel: expAlignment.style.label,
+                        }),
+                      }}
+                      takeawayHeadline={analyzeResult?.summary}
+                      takeawaySubline={
+                        evidenceDashboard.riskAreas[0] ??
+                        "Optimize to strengthen architecture, deployment, and impact evidence in project bullets."
+                      }
+                      aboveSkillProof={
+                        showEvidenceOptimizeInsideDashboard ? evidenceOptimizeCard : undefined
+                      }
+                      previewDepth="toolScroll"
+                    />
+                    <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                      Reference metrics
+                    </p>
+                    <div className="mt-1.5 grid grid-cols-2 gap-1.5 lg:grid-cols-4">
+                      {keywordNotApplicable ? (
+                        <div className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5">
+                          <div className="flex items-center justify-between gap-1.5">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+                              Keyword coverage
+                            </p>
+                            <span
+                              className="h-2 w-2 shrink-0 rounded-full bg-slate-400"
+                              aria-hidden
+                              title="Not applicable"
+                            />
+                          </div>
+                          <p className="mt-0.5 text-sm font-semibold leading-snug text-slate-600">
+                            Not applicable (no job description provided)
+                          </p>
+                        </div>
+                      ) : (
+                        <MetricCard
+                          title="Keyword coverage"
+                          score={keywordScore}
+                          style={getKeywordCoverageStyle(keywordScore)}
+                          subtitle={
+                            totalKeywords > 0
+                              ? `${matchedSkills.length} / ${totalKeywords} matched. ${keywordLabel}.`
+                              : "% of JD skills present in the resume."
+                          }
+                          iconLabel={keywordLabel}
+                        />
+                      )}
+                      <MetricCard
+                        title="Semantic similarity"
+                        score={semanticScore}
+                        style={semanticStyle}
+                        subtitle={semanticStyle.label}
+                        iconLabel={semanticStyle.label}
+                      />
+                      <MetricCard
+                        title="Impact score"
+                        score={impactScore}
+                        style={impactStyle}
+                        subtitle="Based on quantified achievements (%, $, growth)."
+                        iconLabel={impactStyle.label}
+                      />
+                      <MetricCard
+                        title="Resume quality"
+                        score={qualityScore}
+                        style={qualityStyle}
+                        subtitle="Structure, bullet points, and clarity."
+                        iconLabel={qualityStyle.label}
+                      />
+                    </div>
+                    {improvementTips.length > 0 ? (
+                      <div className="mt-2 rounded-lg bg-amber-50/80 px-2.5 py-2">
+                        <div className="flex flex-col gap-1.5 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-800 mb-1">
+                              Fix before you apply
+                            </p>
+                            <ul className="list-disc list-inside space-y-0 text-[11px] leading-snug text-amber-900">
+                              {improvementTips.map((tip, i) => (
+                                <li key={i}>{tip}</li>
+                              ))}
+                            </ul>
+                          </div>
+                          {onOpenOptimizer ? (
+                            <button
+                              type="button"
+                              onClick={onOpenOptimizer}
+                              className="inline-flex w-full shrink-0 items-center justify-center rounded-lg bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-slate-800 sm:w-auto sm:min-w-[180px]"
+                            >
+                              Optimize this resume
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : null}
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full"
+                        style={{ backgroundColor: atsStyle.bgHex }}
+                      >
+                        <div
+                          className="absolute inset-0 rounded-full border-[3px]"
+                          style={{ borderColor: atsRingHex }}
+                        />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-white shadow-sm">
+                          <span className="text-xl font-bold text-slate-900 tabular-nums">
+                            {atsScore}%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-slate-900">ATS readability</p>
+                        <p
+                          className="mt-0.5 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold"
+                          style={{
+                            color: atsStyle.hex,
+                            backgroundColor: atsStyle.bgHex,
+                            borderColor: atsStyle.hex,
+                          }}
+                        >
+                          {getATSBadgeLabel(atsScore)}
+                        </p>
+                      </div>
+                    </div>
+                    <div
+                      className="flex items-start gap-2 rounded-lg border px-2.5 py-2"
+                      style={{ backgroundColor: atsStyle.bgHex, borderColor: atsStyle.hex }}
+                    >
+                      <span
+                        className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
+                        style={{ backgroundColor: atsStyle.hex }}
+                        aria-hidden
+                      />
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold leading-snug text-slate-900">
+                          {atsVerdict.headline}
+                        </p>
+                        <p className="mt-0.5 text-[11px] leading-snug text-slate-700">
+                          {atsVerdict.subline}
+                        </p>
+                      </div>
+                    </div>
+                    {!analysisUsedJobDescription ? (
+                      <Link
+                        href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                        className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"
+                      >
+                        {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+                      </Link>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="rounded-xl bg-white p-2.5 sm:p-3 shadow-sm ring-1 ring-slate-900/[0.06]">
+    <section className={elevatedPanelClass}>
       {/* Compact header: title + description, live result badge */}
       <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5">
         <div className="flex items-baseline gap-2 min-w-0">

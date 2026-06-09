@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { HOME_PAGE_DESCRIPTION } from "@/app/lib/homePageSeo";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 
 export default function manifest(): MetadataRoute.Manifest {
@@ -6,8 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "ResumeAtlas",
     short_name: "ResumeAtlas",
-    description:
-      "AI-powered ATS resume checker: compare your resume with job descriptions and optimize for specific roles.",
+    description: HOME_PAGE_DESCRIPTION,
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

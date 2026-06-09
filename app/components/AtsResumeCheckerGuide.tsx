@@ -259,8 +259,8 @@ Critical skills only in header graphic`}
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed">
           Your compatibility score summarizes how likely your resume is to parse cleanly and present
-          readable structure to an ATS. When you add a job description, keyword overlap can influence
-          the readout—but this page is not a full match report for one posting.
+          readable structure to an ATS. In the free resume checker, adding a job description also
+          surfaces evidence match and gap callouts for that posting — not just a parsing score.
         </p>
         <ul className="mt-4 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
           <li>
@@ -280,12 +280,12 @@ Critical skills only in header graphic`}
           Score drivers: parsing quality, section clarity, layout simplicity, and optional keyword
           signal vs a pasted posting.
         </p>
-        <a
-          href="#ats-checker-form"
+        <Link
+          href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
           className="mt-5 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
         >
           Get my ATS compatibility score (free)
-        </a>
+        </Link>
       </section>
     </div>
   );

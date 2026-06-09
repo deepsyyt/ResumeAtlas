@@ -40,6 +40,8 @@ export type EvidenceIntelligenceSectionProps = {
   aboveSkillProof?: ReactNode;
   /** Homepage hero: shorter slice of the dashboard (readable, not full scroll). */
   heroPreview?: boolean;
+  /** `topics`: through theme coverage only (tool empty state). `toolScroll`: compact through topics, full below-fold. `full`: entire dashboard. */
+  previewDepth?: "hero" | "topics" | "toolScroll" | "full";
 };
 
 export function EvidenceIntelligenceSection({
@@ -51,7 +53,11 @@ export function EvidenceIntelligenceSection({
   takeawaySubline,
   aboveSkillProof,
   heroPreview = false,
+  previewDepth,
 }: EvidenceIntelligenceSectionProps) {
+  const depth = previewDepth ?? (heroPreview ? "hero" : "full");
+  const compact = depth === "topics" || depth === "toolScroll";
+  const showBelowFold = depth === "full" || depth === "toolScroll";
   const signalMetrics = buildSignalMetrics(dashboard, experienceAlignment);
   const [expandedMetric, setExpandedMetric] = useState<string | null>(null);
   const headline =
@@ -71,19 +77,37 @@ export function EvidenceIntelligenceSection({
 
   return (
     <>
-      <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
-        <div className="min-w-0 flex-1 rounded-lg border border-slate-200/80 bg-gradient-to-br from-white to-slate-50 px-2.5 py-2 shadow-sm">
-          <div className="flex items-center gap-2.5 sm:gap-3">
+      <div
+        className={`flex flex-col sm:flex-row sm:items-start ${
+          compact ? "mt-1.5 gap-1.5 sm:gap-2" : "mt-2 gap-2 sm:gap-3"
+        }`}
+      >
+        <div
+          className={`min-w-0 flex-1 rounded-lg border border-slate-200/80 bg-gradient-to-br from-white to-slate-50 shadow-sm ${
+            compact ? "px-2 py-1.5" : "px-2.5 py-2"
+          }`}
+        >
+          <div className={`flex items-center ${compact ? "gap-2" : "gap-2.5 sm:gap-3"}`}>
             <div
-              className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full sm:h-[4.5rem] sm:w-[4.5rem]"
+              className={`relative flex shrink-0 items-center justify-center rounded-full ${
+                compact ? "h-14 w-14" : "h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]"
+              }`}
               style={{ backgroundColor: evidenceStyle.bgHex }}
             >
               <div
                 className="absolute inset-0 rounded-full border-[3px]"
                 style={{ borderColor: evidenceRing }}
               />
-              <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-white bg-white shadow-sm sm:h-12 sm:w-12">
-                <span className="text-xl font-bold text-slate-900 tabular-nums sm:text-2xl">
+              <div
+                className={`flex items-center justify-center rounded-full border-2 border-white bg-white shadow-sm ${
+                  compact ? "h-9 w-9" : "h-11 w-11 sm:h-12 sm:w-12"
+                }`}
+              >
+                <span
+                  className={`font-bold text-slate-900 tabular-nums ${
+                    compact ? "text-lg" : "text-xl sm:text-2xl"
+                  }`}
+                >
                   {dashboard.evidenceMatch}%
                 </span>
               </div>
@@ -101,19 +125,19 @@ export function EvidenceIntelligenceSection({
                 {getATSBadgeLabel(dashboard.evidenceMatch)}
               </p>
               <p className="mt-0.5 text-[11px] leading-snug text-slate-600">{EVIDENCE_MATCH_SUBTITLE}</p>
-              {isDemo ? (
+              {isDemo && !compact ? (
                 <p className="mt-0.5 text-[11px] text-slate-400">Sample result below</p>
               ) : null}
             </div>
           </div>
           <AnimatedScoreBar
             value={dashboard.evidenceMatch}
-            className="mt-2"
-            heightClass="h-1.5"
+            className={compact ? "mt-1.5" : "mt-2"}
+            heightClass={compact ? "h-1" : "h-1.5"}
           />
         </div>
         {atsStyle && atsScoreReference != null ? (
-          <div className="sm:max-w-[210px] sm:shrink-0 sm:self-stretch">
+          <div className={`sm:shrink-0 sm:self-stretch ${compact ? "sm:max-w-[188px]" : "sm:max-w-[210px]"}`}>
             <CompactScoreCard
               title={ATS_REFERENCE_TITLE}
               score={atsScoreReference}
@@ -124,7 +148,9 @@ export function EvidenceIntelligenceSection({
       </div>
 
       <div
-        className="mt-2 flex items-start gap-2 rounded-lg border px-2.5 py-2 transition-shadow hover:shadow-sm"
+        className={`flex items-start gap-2 rounded-lg border transition-shadow hover:shadow-sm ${
+          compact ? "mt-1.5 px-2 py-1.5" : "mt-2 px-2.5 py-2"
+        }`}
         style={{ backgroundColor: evidenceStyle.bgHex, borderColor: evidenceStyle.hex }}
       >
         <span
@@ -138,7 +164,11 @@ export function EvidenceIntelligenceSection({
         </div>
       </div>
 
-      <div className="mt-2 rounded-lg border border-indigo-200/80 bg-gradient-to-br from-indigo-50/90 via-white to-violet-50/40 px-2.5 py-2 shadow-sm">
+      <div
+        className={`rounded-lg border border-indigo-200/80 bg-gradient-to-br from-indigo-50/90 via-white to-violet-50/40 shadow-sm ${
+          compact ? "mt-1.5 px-2 py-1.5" : "mt-2 px-2.5 py-2"
+        }`}
+      >
         <p className="text-[10px] font-semibold uppercase tracking-wide text-indigo-950">
           {SIGNALS_SECTION_TITLE}
         </p>
@@ -166,10 +196,16 @@ export function EvidenceIntelligenceSection({
             <p className="text-[10px] font-bold uppercase tracking-wide text-indigo-950">
               Topics this job cares about
             </p>
-            <p className="mt-0.5 text-[10px] text-indigo-900/75">
-              How much your resume talks about each theme the JD mentions.
-            </p>
-            <ul className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {!compact ? (
+              <p className="mt-0.5 text-[10px] text-indigo-900/75">
+                How much your resume talks about each theme the JD mentions.
+              </p>
+            ) : null}
+            <ul
+              className={`grid grid-cols-2 sm:grid-cols-4 ${
+                compact ? "mt-1.5 gap-1.5" : "mt-2 gap-2"
+              }`}
+            >
               {dashboard.categories.map((c, index) => (
                 <ThemeCoverageRow
                   key={c.category}
@@ -177,6 +213,7 @@ export function EvidenceIntelligenceSection({
                   score={c.score}
                   detail={c.detail}
                   index={index}
+                  compact={compact}
                 />
               ))}
             </ul>
@@ -184,15 +221,21 @@ export function EvidenceIntelligenceSection({
         ) : null}
       </div>
 
+      {depth === "toolScroll" ? (
+        <p className="mt-2 text-center text-[10px] font-medium text-slate-500">
+          ↓ Scroll for skill-by-skill proof, risk areas & metrics
+        </p>
+      ) : null}
+
       {aboveSkillProof}
 
-      <SkillProofMapSection
-        rows={dashboard.skillProof}
-        className="mt-2"
-        maxRows={heroPreview ? 3 : undefined}
-      />
+      {showBelowFold ? (
+        <SkillProofMapSection rows={dashboard.skillProof} className="mt-2" />
+      ) : depth === "hero" ? (
+        <SkillProofMapSection rows={dashboard.skillProof} className="mt-2" maxRows={3} />
+      ) : null}
 
-      {!heroPreview && dashboard.riskAreas.length > 0 ? (
+      {showBelowFold && dashboard.riskAreas.length > 0 ? (
         <div className="mt-2 rounded-lg border border-amber-200 bg-gradient-to-r from-amber-50/90 to-orange-50/50 px-2 py-2 shadow-sm">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-900">
             {RISK_AREAS_TITLE}

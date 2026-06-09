@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useCallback, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ResumeForm, type GenerateInputs } from "@/app/components/ResumeForm";
@@ -17,6 +17,8 @@ import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout
 import {
   alignSupabaseOAuthAuthorizeUrl,
   buildAuthCallbackRedirectTo,
+  buildPostAuthReturnPath,
+  getPostAuthReturnPath,
 } from "@/app/lib/auth/redirect";
 import { createClient } from "@/app/lib/supabase/client";
 import type { Resume } from "@/app/types/resume";
@@ -253,6 +255,34 @@ function markAuthFlowSuccessTracked(flowId: string | null): void {
   }
 }
 
+function workbenchSplitPanelColors(
+  analysisMode: "jdMatch" | "atsCompliance" | "keywordScanner"
+) {
+  const previewCanvas =
+    "bg-[linear-gradient(160deg,#0f172a_0%,#1e293b_48%,#1e1b4b_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]";
+  const previewDivider = "border-slate-700/70";
+
+  if (analysisMode === "atsCompliance") {
+    return {
+      input: "bg-gradient-to-b from-sky-50/95 via-sky-50/50 to-indigo-50/20",
+      preview: previewCanvas,
+      divider: previewDivider,
+    };
+  }
+  if (analysisMode === "keywordScanner") {
+    return {
+      input: "bg-gradient-to-b from-emerald-50/95 via-emerald-50/50 to-teal-50/20",
+      preview: previewCanvas,
+      divider: previewDivider,
+    };
+  }
+  return {
+    input: "bg-gradient-to-b from-indigo-50/95 via-indigo-50/50 to-violet-50/20",
+    preview: previewCanvas,
+    divider: previewDivider,
+  };
+}
+
 export type HomeClientProps = {
   /** `toolOnly`: analyzer grid + modals only (for SEO landing pages with their own H1/copy). */
   variant?: "home" | "toolOnly";
@@ -274,9 +304,11 @@ export default function HomeClient({
   hidePostFormSections = false,
 }: HomeClientProps) {
   const isHome = variant === "home";
+  const isToolOnly = variant === "toolOnly";
   const isAtsCompliance = analysisMode === "atsCompliance";
   const isKeywordScanner = analysisMode === "keywordScanner";
   const router = useRouter();
+  const pathname = usePathname();
   const [usage, setUsage] = useState<Usage | null>(null);
   const [analysisQuota, setAnalysisQuota] = useState<AnalysisQuotaStatus | null>(null);
   const [limitModalOpen, setLimitModalOpen] = useState(false);
@@ -411,6 +443,7 @@ export default function HomeClient({
     if (!oauthPaths.has(path)) return;
     const sp = new URLSearchParams(window.location.search);
     if (!sp.get("code")) return;
+    if (!sp.has("next")) sp.set("next", path);
     window.location.replace(`${window.location.origin}/auth/callback?${sp.toString()}`);
   }, []);
 
@@ -627,9 +660,9 @@ export default function HomeClient({
       setOptimizeConversionModalOpen(false);
       setCreditModalOpen(true);
     }
-    // Clean the URL so refresh doesn't re-open the modal.
-    router.replace("/");
-  }, [analyzeResult, lastInputs, router]);
+    // Clean the URL so refresh doesn't re-open the modal (stay on same page).
+    router.replace(pathname || "/");
+  }, [analyzeResult, lastInputs, router, pathname]);
 
   const logAnalysisEvent = useCallback(
     async (eventType: string) => {
@@ -848,7 +881,7 @@ export default function HomeClient({
     const flowId = beginPendingAuthFlow("quota_modal", activeFunnelId);
     void flowId;
     try {
-      const redirectTo = buildAuthCallbackRedirectTo("/");
+      const redirectTo = buildAuthCallbackRedirectTo(getPostAuthReturnPath("/"));
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo },
@@ -889,7 +922,7 @@ export default function HomeClient({
         });
       }
       const redirectTo = buildAuthCallbackRedirectTo(
-        "/?openOptimizer=1&optimizerFlow=optimize"
+        buildPostAuthReturnPath({ openOptimizer: true, optimizerFlow: "optimize" })
       );
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -1052,13 +1085,17 @@ export default function HomeClient({
             funnelId: activeFunnelId ?? undefined,
           });
         }
-        const nextPath =
-          targetFlow === "conversion"
-            ? "/?openOptimizer=1&optimizerFlow=conversion"
-            : targetFlow === "optimize"
-              ? "/?openOptimizer=1&optimizerFlow=optimize"
-              : "/?openOptimizer=1";
-        const redirectTo = buildAuthCallbackRedirectTo(nextPath);
+        const redirectTo = buildAuthCallbackRedirectTo(
+          buildPostAuthReturnPath({
+            openOptimizer: true,
+            optimizerFlow:
+              targetFlow === "conversion"
+                ? "conversion"
+                : targetFlow === "optimize"
+                  ? "optimize"
+                  : undefined,
+          })
+        );
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: { redirectTo },
@@ -1220,10 +1257,12 @@ export default function HomeClient({
   };
 
   const Root = isHome ? "main" : "div";
+  const useSplitPanels = !isHome;
+  const splitPanels = workbenchSplitPanelColors(analysisMode);
   const rootClassName =
     isHome && !hideMarketingHero
       ? "min-h-screen flex flex-col bg-white"
-      : "flex flex-col bg-white";
+      : "flex flex-col";
 
   return (
     <Root
@@ -1366,8 +1405,21 @@ export default function HomeClient({
         ) : null}
 
         <div className={isHome ? "mt-3 sm:mt-4" : "mt-0 sm:mt-0"}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 flex-1 min-h-0">
-          <div className="lg:col-span-1" id="ats-checker-form">
+          <div
+            className={
+              useSplitPanels
+                ? "grid min-h-0 flex-1 grid-cols-1 gap-0 overflow-hidden rounded-2xl border border-slate-200/70 shadow-sm shadow-slate-900/[0.04] lg:grid-cols-3"
+                : "grid min-h-0 flex-1 grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3"
+            }
+          >
+          <div
+            className={
+              useSplitPanels
+                ? `border-b p-3 sm:p-4 lg:col-span-1 lg:border-b-0 lg:p-5 ${splitPanels.input} ${splitPanels.divider}`
+                : "lg:col-span-1"
+            }
+            id="ats-checker-form"
+          >
             {showForm && (
               <ResumeForm
                 resume={resume}
@@ -1380,15 +1432,40 @@ export default function HomeClient({
                 analysisQuota={analysisQuota}
                 onLoginForMoreScans={handleStartGoogleAuthForQuota}
                 isLoggingInForMoreScans={isStartingGoogleAuth}
+                showShareFriendsCta={isToolOnly}
               />
             )}
           </div>
-          <div className="lg:col-span-2 flex flex-col gap-4 min-h-0">
+          <div
+            className={
+              useSplitPanels
+                ? `flex min-h-0 flex-col gap-4 p-3 sm:p-4 lg:col-span-2 lg:border-l lg:p-5 ${splitPanels.preview} ${splitPanels.divider}`
+                : "flex min-h-0 flex-col gap-4 lg:col-span-2"
+            }
+          >
+            <div
+              className={
+                useSplitPanels
+                  ? "flex h-[min(82vh,42rem)] min-h-0 w-full flex-col overflow-hidden"
+                  : ""
+              }
+            >
             <IntelligencePanel
               analyzeResult={analyzeResult}
               showFullIntelligence={usage?.showFullIntelligence ?? false}
               showLocked={false}
               compactHomeEmpty={isHome && hideMarketingHero}
+              compactToolEmpty={isToolOnly}
+              compactToolResult={isToolOnly && useSplitPanels}
+              previewSurface={useSplitPanels}
+              isAnalyzing={isGenerating}
+              compactEmptyHint={
+                isToolOnly
+                  ? isAtsCompliance
+                    ? "Paste your resume on the left and run a free ATS check. Job description is optional."
+                    : "Paste resume and job description on the left, then run evidence match and optimization."
+                  : undefined
+              }
               onOpenOptimizer={
                 analyzeResult && lastInputs && lastAnalysisUsedJd
                   ? () => {
@@ -1408,6 +1485,7 @@ export default function HomeClient({
               emptyStateVariant={isAtsCompliance ? "ats" : "jd"}
               panelVariant={isKeywordScanner ? "keywordScanner" : "default"}
             />
+            </div>
             <CreditPackModal
               open={creditModalOpen}
               onClose={() => {

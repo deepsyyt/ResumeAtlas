@@ -2,8 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/app/lib/supabase/client";
-import type { ResumeDocument } from "@/app/lib/resumeDocument";
 import { StructuredResume } from "@/app/components/StructuredResume";
+import {
+  DEMO_OPTIMIZED_RESUME,
+  DEMO_OPTIMIZED_RESUME_HIGHLIGHTS,
+} from "@/app/lib/demoOptimizedResumePreview";
 import { ResumeOptimizationPanel } from "@/app/components/ResumeOptimizationPanel";
 import {
   formatCreditPackPrice,
@@ -28,27 +31,6 @@ export type CreditPackModalProps = {
   isStartingGoogleAuth?: boolean;
   isBusy?: boolean;
   funnelId?: string;
-};
-
-const PREVIEW_SAMPLE_RESUME: ResumeDocument = {
-  name: "DEEPIKA NADARAJAN",
-  title: "MANAGER LEAD DATA SCIENTIST",
-  summary:
-    "Data scientist with experience leading experimentation, ML-driven optimization, and business analytics. Rewritten for this JD to emphasize role-fit, ATS keywords, and measurable impact.",
-  skills: ["Python", "SQL", "NLP", "Experimentation", "A/B Testing", "LLM workflows"],
-  experience: [
-    {
-      company: "Manager | Lead Data Scientist",
-      role: "Data & AI",
-      dates: "2025 - Present",
-      bullets: [
-        "Rewrote weak bullet with role-specific verbs and quantified outcomes, improving recruiter skim clarity.",
-        "Added new JD-aligned bullet where existing project evidence supported experimentation ownership.",
-        "Improved keyword alignment while preserving truth-first claims and ATS readability.",
-      ],
-    },
-  ],
-  education: ["MS, Data Science"],
 };
 
 export function CreditPackModal({
@@ -193,19 +175,11 @@ export function CreditPackModal({
   const showStart = isLoggedIn && creditsRemaining > 0;
   const showPurchasePacks = !isLoggedIn || creditsRemaining === 0;
   const busy = isBusy || checkoutLoading !== null || isStartingGoogleAuth;
-  const previewKeywords = ["ATS", "optimization", "experimentation"];
-  const previewRewritten = [
-    "Rewrote weak bullet with role-specific verbs and quantified outcomes, improving recruiter skim clarity.",
-  ];
-  const previewNewBullets = [
-    "Added new JD-aligned bullet where existing project evidence supported experimentation ownership.",
-  ];
-  const previewKeywordBullets = [
-    "Improved keyword alignment while preserving truth-first claims and ATS readability.",
-  ];
-  const previewQuantified = [
-    "Rewrote weak bullet with role-specific verbs and quantified outcomes, improving recruiter skim clarity.",
-  ];
+  const previewKeywords = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.keywords];
+  const previewRewritten = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.rewritten];
+  const previewNewBullets = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.newBullets];
+  const previewKeywordBullets = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.keywordBullets];
+  const previewQuantified = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.quantified];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -468,7 +442,7 @@ export function CreditPackModal({
                   </div>
                   <div className="rounded-xl border border-slate-200 bg-white p-3 [&_button]:pointer-events-none [&_button]:opacity-60 [&_button]:cursor-not-allowed">
                     <StructuredResume
-                      resume={PREVIEW_SAMPLE_RESUME}
+                      resume={DEMO_OPTIMIZED_RESUME}
                       highlightKeywords={previewKeywords}
                       quantifiedBullets={previewQuantified}
                       highlightedBullets={previewRewritten}

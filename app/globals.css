@@ -1,3 +1,317 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+}
+
+@layer utilities {
+  /** Soft marketing canvas — not flat white */
+  .marketing-page-bg {
+    background-color: #f4f7fc;
+    background-image:
+      radial-gradient(ellipse 90% 60% at 50% -25%, rgba(99, 102, 241, 0.07), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 10%, rgba(14, 165, 233, 0.06), transparent 50%),
+      linear-gradient(180deg, #f2f6fc 0%, #f8fafc 42%, #f4f7fb 100%);
+  }
+
+  .marketing-hero-bg {
+    background-image:
+      radial-gradient(ellipse 75% 55% at 12% 0%, rgba(99, 102, 241, 0.09), transparent 52%),
+      radial-gradient(ellipse 65% 45% at 88% 8%, rgba(56, 189, 248, 0.08), transparent 48%);
+  }
+
+  .marketing-optimize-bg {
+    background-image:
+      radial-gradient(ellipse 70% 50% at 92% 40%, rgba(139, 92, 246, 0.07), transparent 55%),
+      radial-gradient(ellipse 55% 40% at 8% 60%, rgba(59, 130, 246, 0.05), transparent 50%);
+  }
+
+  .marketing-grid-overlay {
+    background-image:
+      linear-gradient(to right, rgb(148 163 184 / 0.055) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(148 163 184 / 0.055) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: linear-gradient(180deg, black 0%, black 72%, transparent 100%);
+  }
+
+  .analysis-preview-empty-title {
+    background: linear-gradient(
+      90deg,
+      #4f46e5 0%,
+      #7c3aed 25%,
+      #06b6d4 50%,
+      #a855f7 75%,
+      #4f46e5 100%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: analysis-title-shimmer 3.5s ease-in-out infinite,
+      analysis-title-blink 2.4s ease-in-out infinite;
+  }
+
+  /** Brighter gradient for typewriter status on dark preview canvas */
+  .analysis-preview-empty-title-dark {
+    background: linear-gradient(
+      90deg,
+      #e0e7ff 0%,
+      #c4b5fd 20%,
+      #67e8f9 42%,
+      #f0abfc 65%,
+      #e0e7ff 100%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.35));
+    animation: analysis-title-shimmer 3.5s ease-in-out infinite,
+      analysis-title-blink-glow 2.2s ease-in-out infinite;
+  }
+
+  .analysis-preview-intro-prominent {
+    background: linear-gradient(
+      90deg,
+      #a5b4fc 0%,
+      #c4b5fd 18%,
+      #22d3ee 38%,
+      #e879f9 58%,
+      #f0abfc 78%,
+      #a5b4fc 100%
+    );
+    background-size: 260% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 14px rgba(167, 139, 250, 0.55))
+      drop-shadow(0 0 28px rgba(34, 211, 238, 0.28));
+    animation: analysis-title-shimmer 2.8s ease-in-out infinite,
+      analysis-title-blink-glow 1.9s ease-in-out infinite;
+  }
+
+  .analysis-preview-intro-banner {
+    animation: analysis-intro-banner-pulse 2.4s ease-in-out infinite;
+  }
+
+  .share-referral-card {
+    border-width: 2px;
+    animation: share-referral-card-outline 2.2s ease-in-out infinite;
+  }
+
+  .share-referral-nav {
+    border-width: 2px;
+    animation: share-referral-nav-outline 2.2s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .share-referral-card,
+    .share-referral-nav {
+      animation: none;
+    }
+  }
+
+  .analysis-preview-glow {
+    animation: analysis-glow-pulse 3s ease-in-out infinite;
+  }
+
+  .analysis-preview-dot {
+    animation: analysis-dot-bounce 1.35s ease-in-out infinite;
+  }
+
+  .analysis-preview-dot:nth-child(2) {
+    animation-delay: 0.18s;
+  }
+
+  .analysis-preview-dot:nth-child(3) {
+    animation-delay: 0.36s;
+  }
+
+  .preview-panel-scroll {
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(148 163 184 / 0.85) rgb(241 245 249 / 0.5);
+  }
+
+  .preview-panel-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .preview-panel-scroll::-webkit-scrollbar-track {
+    background: rgb(241 245 249 / 0.55);
+    border-radius: 9999px;
+  }
+
+  .preview-panel-scroll::-webkit-scrollbar-thumb {
+    background-color: rgb(148 163 184 / 0.85);
+    border-radius: 9999px;
+    border: 2px solid rgb(241 245 249 / 0.55);
+    background-clip: padding-box;
+  }
+
+  .preview-panel-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(100 116 139 / 0.95);
+  }
+}
+
+@keyframes analysis-title-shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes analysis-title-blink {
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.72;
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes analysis-title-blink-glow {
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1) drop-shadow(0 0 14px rgba(167, 139, 250, 0.55))
+      drop-shadow(0 0 28px rgba(34, 211, 238, 0.28));
+  }
+  50% {
+    opacity: 0.78;
+    filter: brightness(1.35) drop-shadow(0 0 22px rgba(167, 139, 250, 0.75))
+      drop-shadow(0 0 36px rgba(34, 211, 238, 0.45));
+  }
+}
+
+@keyframes share-referral-card-outline {
+  0%,
+  100% {
+    border-color: rgb(252 211 77 / 0.85);
+    box-shadow:
+      0 0 0 1px rgba(245, 158, 11, 0.22),
+      0 1px 3px rgba(245, 158, 11, 0.1);
+  }
+  50% {
+    border-color: rgb(217 119 6 / 1);
+    box-shadow:
+      0 0 0 3px rgba(251, 191, 36, 0.48),
+      0 0 14px 3px rgba(245, 158, 11, 0.32);
+  }
+}
+
+@keyframes share-referral-nav-outline {
+  0%,
+  100% {
+    border-color: rgb(129 140 248 / 0.9);
+    box-shadow:
+      0 0 0 1px rgba(99, 102, 241, 0.2),
+      0 1px 3px rgba(79, 70, 229, 0.12);
+  }
+  50% {
+    border-color: rgb(79 70 229 / 1);
+    box-shadow:
+      0 0 0 3px rgba(129, 140, 248, 0.45),
+      0 0 14px 3px rgba(99, 102, 241, 0.28);
+  }
+}
+
+@keyframes analysis-intro-banner-pulse {
+  0%,
+  100% {
+    border-color: rgb(255 255 255 / 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  }
+  50% {
+    border-color: rgb(167 139 250 / 0.45);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.35),
+      0 0 24px rgba(129, 140, 248, 0.22);
+  }
+}
+
+@keyframes analysis-glow-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.9;
+  }
+}
+
+@keyframes analysis-dot-bounce {
+  0%,
+  70%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  35% {
+    transform: translateY(-5px);
+    opacity: 1;
+  }
+}
+
+.typewriter-cursor {
+  animation: typewriter-blink 1s step-end infinite;
+  font-weight: 400;
+  margin-left: 1px;
+}
+
+@keyframes typewriter-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.generating-scan-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -30%;
+  height: 38%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(129, 140, 248, 0.12) 45%,
+    rgba(167, 139, 250, 0.22) 50%,
+    rgba(129, 140, 248, 0.12) 55%,
+    transparent 100%
+  );
+  animation: generating-scan-sweep 2.8s ease-in-out infinite;
+}
+
+@keyframes generating-scan-sweep {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(320%);
+    opacity: 0;
+  }
+}

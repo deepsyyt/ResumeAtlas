@@ -24,7 +24,11 @@ export function JdMatchGuide({ homePageMode = false }: JdMatchGuideProps) {
     <div className={homePageMode ? "space-y-8" : "space-y-12"}>
       <nav
         aria-label="Resume vs job description guide"
-        className="rounded-2xl border border-slate-200 bg-slate-50/80 p-5 sm:p-6"
+        className={
+          homePageMode
+            ? "border-t border-slate-200/50 pt-10"
+            : "rounded-2xl border border-slate-200 bg-slate-50/80 p-5 sm:p-6"
+        }
       >
         <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
           {homePageMode ? "How analyze and optimize works" : "Resume vs job description guide"}
