@@ -114,34 +114,43 @@ export const CLUSTER_KEYWORD_SCANNER_TOOL_COPY = {
   resultsHeading: "What you see after scanning",
 };
 
-/** ATS readability / parse / score (posting optional). */
 export const ATS_CHECKER_META_TITLE =
-  `Free AI ATS Resume Checker — ATS friendly, No Login${RESUME_ATLAS_TITLE_SUFFIX}`;
+  `Free ATS Resume Checker | Parsing Score & Format Analysis${RESUME_ATLAS_TITLE_SUFFIX}`;
 
 export const ATS_CHECKER_META_DESCRIPTION =
-  "Free AI ATS resume checker — get your compatibility score, parsing analysis & format fixes. ATS-friendly scan with optional job-description match. No login required.";
+  "Free ATS resume checker. Analyze parsing compatibility, formatting issues, ATS readability, and keyword coverage before you apply. No signup required.";
 
-/** ATS readability / parse / score (posting optional). */
+export const ATS_CHECKER_WEB_APP_DESCRIPTION =
+  "Free ATS resume checker and resume parser for parsing score, readability, formatting, and ATS compatibility.";
+
+/** Prominent contextual link on `/ats-resume-checker` → JD workbench (not in title/meta/H1). */
+export const ATS_CHECKER_JD_CONTEXTUAL_LINK = {
+  prefix: "Need to compare your resume against a specific job posting? Use our ",
+  anchor: "resume-to-job description matcher",
+  suffix: ".",
+};
+
+/** ATS readability / parse / score — no JD-match SERP (see `/check-resume-against-job-description`). */
 export const CLUSTER_ATS_CHECKER_TOOL_COPY = {
   titleAbsolute: ATS_CHECKER_META_TITLE,
   description: ATS_CHECKER_META_DESCRIPTION,
   ogTitle: ATS_CHECKER_META_TITLE,
   ogDescription: ATS_CHECKER_META_DESCRIPTION,
-  twitterTitle: "Free AI ATS Resume Checker — ATS friendly, No Login",
+  twitterTitle: "Free ATS Resume Checker | Parsing Score & Format Analysis",
   twitterDescription: ATS_CHECKER_META_DESCRIPTION,
-  h1: "Check if your resume is ATS-friendly",
+  h1: "Check whether your resume passes ATS screening",
   intro:
-    "Learn how applicant tracking systems read resumes: headings, bullets, dates, layout risks, and what a compatibility score actually means. When you are ready to scan your file, use our free resume checker — ATS parsing, job-description match, and optimization in one workflow.",
-  topStripStrong: "ATS guide first; run the free checker when you are ready.",
-  webAppName: "ResumeAtlas resume checker",
-  webAppDescription: ATS_CHECKER_META_DESCRIPTION,
+    "Learn how ATS parsers read resumes: parsing, readability, formatting, and ATS compatibility signals—headings, bullets, dates, and layout risks that decide whether your file is parsable. Run a free ATS parsing check when you are ready.",
+  topStripStrong: "ATS parsing guide first; run the free readability check when you are ready.",
+  webAppName: "ResumeAtlas ATS resume checker",
+  webAppDescription: ATS_CHECKER_WEB_APP_DESCRIPTION,
   differentiatorHeading: "Why ATS parsing matters before keyword tuning",
   differentiatorBody: [
     "Employers still care whether your file parses into the right fields. Multi-column layouts, icons, tables for core content, and odd section titles can silently weaken you, even when your experience is strong.",
-    "Read this guide to fix structure and format mistakes. Then run the free resume checker & optimizer with your resume and target job description — you get ATS readability signals, evidence match, and tailored bullet suggestions without switching tools.",
+    "Read this guide to fix structure and format mistakes, then run the free ATS checker for parsing and readability signals before you tailor keywords for a role.",
   ],
   serpVariantsParagraph:
-    "Searchers ask what is ATS, how ATS scoring works, ATS parsing explained, ATS keyword matching, ATS resume format examples, ATS resume templates, ATS resume mistakes, and ATS compatibility score. This page owns ATS education; the live scan lives on the resume checker & optimizer.",
+    "Searchers ask about ATS parser behavior, ATS parsing, ATS readability, resume parser tools, parsable resume format, resume formatting for ATS, ATS compatibility, and how ATS scoring works. This page owns parsing and readability education; run the free checker for a live score.",
   howItWorksHeading: "How this ATS resume checker works",
   whyMatchHeading: "Why fix parsing before you chase every keyword",
   resultsHeading: "What your ATS check includes",

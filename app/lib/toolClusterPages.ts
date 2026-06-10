@@ -223,19 +223,22 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
   exampleFixLine:
     "Fix first: one-column layout, standard headings, and consistent bullet/date formatting.",
   keywords: [
-    "ATS resume checker",
-    "what is ATS",
-    "how ATS scoring works",
+    "ATS parser",
     "ATS parsing",
-    "ATS keyword matching",
-    "ATS resume format",
-    "ATS resume template",
-    "ATS resume mistakes",
-    "ATS compatibility score",
-    "ATS friendly resume check",
-    "check resume for ATS compatibility",
-    "resume that will pass ATS",
+    "ATS resume parser",
+    "resume parser ATS",
+    "resume format checker",
+    "ATS readability",
+    "parsable resume",
+    "ATS resume checker",
+    "resume parser",
+    "ATS compatibility",
     "resume formatting for ATS",
+    "ATS resume format",
+    "how ATS scoring works",
+    "check resume for ATS compatibility",
+    "ATS resume mistakes",
+    "ATS resume template",
   ],
   faq: [
     {
@@ -246,12 +249,12 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
     {
       question: "What is an ATS resume checker?",
       answer:
-        "It analyzes how well your resume is likely to perform in applicant tracking systems based on structure, formatting, and readability — how the system reads your file. ResumeAtlas runs ATS parsing as part of the free resume checker & optimizer when you paste your resume (and job description for full match).",
+        "It acts like a resume parser for ATS: it scores parsing, readability, formatting, and ATS compatibility—how cleanly your file maps into experience, skills, and education fields. This page explains those signals; run the free checker for a live ATS parsing and readability score.",
     },
     {
       question: "Is this ATS checker free?",
       answer:
-        "Yes. Use the free resume checker & optimizer — paste your resume and job description for ATS signals, evidence match, and optimization. No signup required.",
+        "Yes. Paste your resume for a free ATS parsing and format check with no signup. To compare against a specific job description, use the resume vs job description checker on ResumeAtlas.",
     },
     {
       question: "Why does ATS reject resumes?",
@@ -271,7 +274,7 @@ export const TOOL_CLUSTER_ATS_FREE: ToolClusterPageConfig = {
     {
       question: "How can I improve my ATS score?",
       answer:
-        "Simplify layout (single column, standard headings), fix parsing issues first, then align keywords with your target posting where truthful. Run the free resume checker & optimizer with your resume and job description to see ATS signals and match gaps together.",
+        "Improve ATS readability first: single-column layout, standard headings, consistent formatting, and a parsable resume structure. Fix parsing issues before keyword tuning. Run the free ATS checker for parsing and compatibility score, then compare to a job description when you need keyword gaps.",
     },
   ],
 };

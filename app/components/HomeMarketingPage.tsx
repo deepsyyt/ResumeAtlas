@@ -3,6 +3,7 @@ import { HomeBrowseByRoleSection } from "@/app/components/HomeBrowseByRoleSectio
 import { HomeOptimizedResumePreviewSection } from "@/app/components/HomeOptimizedResumePreviewSection";
 import { HomeStep1PreviewSection } from "@/app/components/HomeStep1PreviewSection";
 import {
+  ATS_RESUME_CHECKER_PATH,
   CHECK_RESUME_AGAINST_JD_PATH,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
@@ -48,7 +49,7 @@ export function HomeMarketingPage() {
             What you get for free
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            One workflow: free ATS resume checker, resume keyword scan, and AI resume optimizer.
+            One workflow: ATS compatibility check, resume keyword scan, and AI resume optimizer.
           </p>
           <ul className="mt-8 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
             {HOME_CAPABILITY_CARDS.map((card) => (
@@ -59,7 +60,10 @@ export function HomeMarketingPage() {
                 <h3 className="text-sm font-semibold text-slate-900">{card.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
                   {"bodyLink" in card ? (
-                    <HomeContextualLink parts={card.bodyLink} />
+                    <HomeContextualLink
+                      parts={card.bodyLink}
+                      href={card.key === "ats-checker" ? ATS_RESUME_CHECKER_PATH : CHECK_RESUME_AGAINST_JD_PATH}
+                    />
                   ) : (
                     card.body
                   )}

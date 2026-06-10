@@ -18,11 +18,11 @@ export function AtsResumeCheckerGuide() {
         className="rounded-2xl border border-slate-200 bg-slate-50/80 p-5 sm:p-6"
       >
         <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
-          ATS resume checker guide
+          ATS parsing and readability guide
         </h2>
         <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-          Everything on this page is ATS-specific: how systems read resumes, how scores work, and
-          what to fix before you apply.
+          How ATS parsers read resumes: parsing, readability, formatting, ATS compatibility, and what
+          to fix so your file stays parsable before you apply.
         </p>
         <ul className="mt-4 flex flex-wrap gap-2 list-none m-0 p-0">
           {ATS_GUIDE_SECTIONS.map((s) => (
@@ -72,9 +72,10 @@ export function AtsResumeCheckerGuide() {
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed">
           ATS scoring is not one universal number—each employer configures weights differently. Most
-          systems combine signals from parsing quality, keyword overlap with the posting, experience
-          filters, and sometimes semantic relevance. A resume that parses cleanly but lacks role
-          keywords may score lower than a simpler file that mirrors the job description.
+          systems start with parsing and readability: can the resume parser map your formatting into
+          fields? Then they layer keyword overlap, experience filters, and sometimes semantic
+          relevance. A parsable resume with weak structure still loses to a simpler file that parses
+          cleanly.
         </p>
         <ol className="mt-4 space-y-3 list-decimal pl-5 text-sm sm:text-base text-slate-700">
           <li>
@@ -169,7 +170,7 @@ export function AtsResumeCheckerGuide() {
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
-            <h3 className="text-sm font-semibold text-emerald-950">ATS-friendly pattern</h3>
+            <h3 className="text-sm font-semibold text-emerald-950">Parsable resume pattern</h3>
             <pre className="mt-2 text-xs sm:text-[13px] text-slate-800 whitespace-pre-wrap font-mono leading-relaxed">
               {`SUMMARY
 Data analyst with 4+ years SQL and Python...
@@ -258,9 +259,16 @@ Critical skills only in header graphic`}
           ATS compatibility score
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed">
-          Your compatibility score summarizes how likely your resume is to parse cleanly and present
-          readable structure to an ATS. In the free resume checker, adding a job description also
-          surfaces evidence match and gap callouts for that posting — not just a parsing score.
+          Your ATS compatibility score summarizes parsing, readability, and formatting—how likely an
+          ATS parser is to read your resume into the right fields. Run the free checker for that
+          score;{" "}
+          <Link
+            href={CHECK_RESUME_AGAINST_JD_PATH}
+            className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+          >
+            compare resume to a job description
+          </Link>{" "}
+          when you need keyword gaps on top of parsing signals.
         </p>
         <ul className="mt-4 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
           <li>

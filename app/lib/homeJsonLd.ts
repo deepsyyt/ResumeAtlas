@@ -3,7 +3,7 @@ import { getSiteUrl } from "@/app/lib/siteUrl";
 
 const siteBase = () => getSiteUrl().replace(/\/$/, "");
 
-/** Homepage category hub — AI/ATS checker and resume optimizer (not JD-compare SERP). */
+/** Homepage category hub — AI checker and optimizer (ATS checker SERP: `/ats-resume-checker`). */
 export function homeWebApplicationJsonLd() {
   return {
     "@context": "https://schema.org",
@@ -16,7 +16,7 @@ export function homeWebApplicationJsonLd() {
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     featureList: [
       "Free AI resume checker",
-      "ATS resume checker and compatibility scan",
+      "ATS compatibility and parsing check",
       "Resume keyword scanner",
       "ATS keyword matching",
       "AI resume optimizer and bullet rewrites",

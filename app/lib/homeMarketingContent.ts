@@ -96,8 +96,12 @@ export const HOME_CAPABILITY_CARDS: HomeCapabilityCard[] = [
   },
   {
     key: "ats-checker",
-    title: "Free ATS resume checker",
-    body: "Scan resume for keywords, parsing risk, structure, and ATS readability before you tailor.",
+    title: "ATS compatibility check",
+    bodyLink: {
+      prefix: "Scan resume for keywords, parsing risk, and format readability. Use our ",
+      anchor: "free ATS resume checker",
+      suffix: " for a dedicated parsing and format readout.",
+    },
   },
   {
     key: "ai-optimize",

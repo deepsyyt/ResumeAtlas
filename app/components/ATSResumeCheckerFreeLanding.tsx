@@ -7,6 +7,7 @@ import {
   CHECK_RESUME_AGAINST_JD_PATH,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
+import { ATS_CHECKER_JD_CONTEXTUAL_LINK } from "@/app/lib/canonicalIntentClusters";
 import {
   TOOL_CLUSTER_ATS_FREE,
   toolClusterBreadcrumbSchema,
@@ -26,13 +27,23 @@ export function ATSResumeCheckerFreeLanding() {
       <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50/90 to-white">
         <div className="mx-auto max-w-4xl px-4 py-12 text-center sm:px-6 sm:py-14 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-800">
-            ATS guide · parsing · format · compatibility
+            ATS parser · readability · formatting · compatibility
           </p>
           <h1 className="mt-3 text-pretty text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
             {TOOL_CLUSTER_ATS_FREE.h1}
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-base leading-relaxed text-slate-600 sm:text-lg">
             {TOOL_CLUSTER_ATS_FREE.intro}
+          </p>
+          <p className="mx-auto mt-5 max-w-2xl rounded-xl border border-sky-200 bg-sky-50/60 px-4 py-3 text-pretty text-sm leading-relaxed text-slate-700 sm:px-5 sm:text-base">
+            {ATS_CHECKER_JD_CONTEXTUAL_LINK.prefix}
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_PATH}
+              className="font-semibold text-sky-900 underline underline-offset-2 hover:text-sky-950"
+            >
+              {ATS_CHECKER_JD_CONTEXTUAL_LINK.anchor}
+            </Link>
+            {ATS_CHECKER_JD_CONTEXTUAL_LINK.suffix}
           </p>
           <p className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs font-medium text-slate-600 sm:text-sm">
             <span>✓ Free</span>
@@ -52,8 +63,8 @@ export function ATSResumeCheckerFreeLanding() {
             {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
           </Link>
           <p className="mx-auto mt-3 max-w-lg text-xs text-slate-500 sm:text-sm">
-            Paste resume and job description in our free checker — ATS parsing, evidence match, and
-            AI optimization in one place.
+            Paste your resume for a free ATS parsing check—resume parser score, readability, and
+            formatting signals before you apply.
           </p>
         </div>
       </section>
@@ -79,8 +90,7 @@ export function ATSResumeCheckerFreeLanding() {
             Ready to check your resume?
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-sm text-slate-200 sm:text-base">
-            Run the free resume checker &amp; optimizer — ATS readability, job-description match, and
-            bullet optimization without switching tools.
+            Run the free ATS checker for parsing, readability, and formatting score.
           </p>
           <Link
             href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
@@ -113,7 +123,7 @@ export function ATSResumeCheckerFreeLanding() {
         <section className="rounded-xl border border-slate-200 bg-slate-50/80 px-5 py-6 text-center sm:px-6">
           <h2 className="text-lg font-semibold text-slate-900">More answers</h2>
           <p className="mt-2 text-sm text-slate-600">
-            Evidence match, optimization, interviews, and how the checker works.
+            ATS parsing, optimization, interviews, and how the checker works.
           </p>
           <Link
             href="/faq"

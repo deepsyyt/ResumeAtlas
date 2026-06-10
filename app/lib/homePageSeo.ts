@@ -5,7 +5,7 @@ import { getSiteUrl } from "@/app/lib/siteUrl";
 const siteBase = () => getSiteUrl().replace(/\/$/, "");
 const ogImage = () => `${siteBase()}/og-resume-checker.png`;
 
-/** Aligns with on-page H1 (`HOME_MARKETING_H1`). Category hub — not JD-compare intent (see checker page). */
+/** Aligns with on-page H1 (`HOME_MARKETING_H1`). Category hub — not JD-compare or ATS-checker SERP (see workbench URLs). */
 export const HOME_PAGE_TITLE_ABSOLUTE =
   `Free AI Resume Checker & ATS Resume Optimizer${RESUME_ATLAS_TITLE_SUFFIX}`;
 
@@ -25,7 +25,6 @@ export function buildHomeMarketingMetadata(): Metadata {
       "resume optimizer",
       "resume optimization tool",
       "ai resume checker",
-      "ats resume checker",
       "scan resume for keywords",
       "resume keyword scanner",
       "ats keyword matching resume",
