@@ -5,6 +5,7 @@ import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+  RESUME_KEYWORD_SCANNER_FORM_HREF,
   RESUME_SKILLS_GUIDE_PATH,
 } from "@/app/lib/internalLinks";
 import { ATS_RESUME_TEMPLATE_DOCX_HREF, ATS_RESUME_TEMPLATE_TXT_HREF } from "@/app/lib/atsTemplateDownloads";
@@ -667,7 +668,7 @@ export function AtsResumeTemplateGuide() {
               {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
             <Link
-              href="/"
+              href={RESUME_KEYWORD_SCANNER_FORM_HREF}
               className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
             >
               Resume keyword scanner

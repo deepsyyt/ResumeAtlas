@@ -11,6 +11,7 @@ import {
 import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  RESUME_KEYWORD_SCANNER_FORM_HREF,
 } from "@/app/lib/internalLinks";
 import {
   DEFAULT_SEO_SAMPLE_BULLETS,
@@ -24,7 +25,7 @@ import { goodResumeSnippet } from "@/app/lib/roleHubSeo";
 const ROLE = "Product Manager";
 
 const JD_CHECK_HREF = CHECK_RESUME_AGAINST_JD_FORM_HREF;
-const KEYWORD_SCANNER_HREF = CHECK_RESUME_AGAINST_JD_FORM_HREF;
+const KEYWORD_SCANNER_HREF = RESUME_KEYWORD_SCANNER_FORM_HREF;
 const ATS_CHECKER_HREF = "/ats-resume-checker";
 
 const COPY_PASTE_TEMPLATE = `ALEX RIVERA

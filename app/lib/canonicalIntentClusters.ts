@@ -6,7 +6,8 @@
  * |----------------|----------------|
  * | Homepage discovery | `/` exposes **role-only** link clusters (`#browse-by-role`); product/tools stay in-page and nav, not separate “topics” columns. |
  * | Brand + category hub (AI/ATS checker, optimizer) | / |
- * | Resume ↔ JD compare / match / keyword scanner | `/check-resume-against-job-description` |
+ * | Resume ↔ JD compare / match / score | `/check-resume-against-job-description` |
+ * | Keyword gap scan (missing terms vs posting) | `/resume-keyword-scanner` |
  * | ATS education (traffic door → workbench) | /ats-resume-checker |
  * | ATS layout guide | /ats-resume-template |
  * | Work history section | /resume-guides/resume-work-experience-examples |
@@ -87,17 +88,18 @@ export const CLUSTER_HOME_METADATA = {
 /** Missing keywords vs a pasted posting (gap list intent). */
 export const CLUSTER_KEYWORD_SCANNER_TOOL_COPY = {
   titleAbsolute:
-    "Resume Keyword Scanner (Free) - Find Missing Keywords (2026) | ResumeAtlas",
+    `Resume Keyword Scanner | Find Missing ATS Keywords Free${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Scan your resume against a job description and find missing keywords, weak coverage, and ATS-relevant term gaps. Free, instant, and no signup.",
-  ogTitle: "Resume Keyword Scanner (Free, 2026) - Missing Keywords Finder | ResumeAtlas",
+    "Scan your resume against a job description and discover missing keywords, weak coverage, and ATS-relevant term gaps. Free, instant, and no signup.",
+  ogTitle:
+    `Resume Keyword Scanner | Find Missing ATS Keywords Free${RESUME_ATLAS_TITLE_SUFFIX}`,
   ogDescription:
-    "Find missing resume keywords vs a real job posting, skill gaps and ATS keyword coverage, instantly.",
-  twitterTitle: "Resume keyword scanner (free)",
+    "Find missing resume keywords vs a real job posting — skill gaps and ATS keyword coverage, instantly.",
+  twitterTitle: "Resume Keyword Scanner | Find Missing ATS Keywords Free",
   twitterDescription: "Keyword gaps vs a detailed JD, instant; works with long postings.",
-  h1: "Scan your resume for missing keywords (vs this job description)",
+  h1: "Scan Your Resume for Missing ATS Keywords",
   intro:
-    "Paste your resume and a job description to see which important terms from the posting are missing or only appear weakly in your resume. This page is optimized for keyword gap scanning and ATS keyword coverage for that role, not for full match storytelling or formatting-only audits.",
+    "Paste your resume and job description to find missing keywords, weak keyword coverage, and ATS skill gaps in seconds.",
   topStripStrong: "Keyword gap scan: resume text vs the posting you paste.",
   webAppName: "Resume keyword scanner",
   webAppDescription:

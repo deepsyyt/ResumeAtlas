@@ -36,6 +36,9 @@ function priorityForPath(pathname: string): number {
   if (pathname === "/ats-resume-checker") {
     return 0.91;
   }
+  if (pathname === "/resume-keyword-scanner") {
+    return 0.9;
+  }
   if (pathname === "/resume-examples") return 0.86;
   if (pathname === "/resume-keywords" || pathname === "/resume-guides") return 0.87;
   if (pathname.startsWith("/resume-examples/")) return 0.88;
@@ -101,7 +104,7 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     priority: priorityForPath("/methodology"),
   });
   const toolClusterLastMod = new Date("2026-03-29");
-  const toolClusterPaths = ["/ats-resume-checker"] as const;
+  const toolClusterPaths = ["/ats-resume-checker", "/resume-keyword-scanner"] as const;
   for (const p of toolClusterPaths) {
     entries.push({
       url: `${base}${p}`,

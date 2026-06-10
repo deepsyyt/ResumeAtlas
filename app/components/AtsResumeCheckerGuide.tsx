@@ -6,6 +6,7 @@ import {
 import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PATH,
+  RESUME_KEYWORD_SCANNER_FORM_HREF,
 } from "@/app/lib/internalLinks";
 
 const sectionClass = "scroll-mt-20";
@@ -146,13 +147,20 @@ export function AtsResumeCheckerGuide() {
         </p>
         <p className="mt-3 text-sm sm:text-base text-slate-700 leading-relaxed">
           On this checker, keywords are <strong className="text-slate-900">optional</strong>: paste
-          a job description to see overlap alongside parsing signals. For a posting-first gap list
-          and tailoring priorities, use the{" "}
+          a job description to see overlap alongside parsing signals. For a posting-first missing-keyword
+          list, use the{" "}
+          <Link
+            href={RESUME_KEYWORD_SCANNER_FORM_HREF}
+            className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+          >
+            resume keyword scanner
+          </Link>
+          . For full match scoring and optimization, use the{" "}
           <Link
             href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
           >
-            resume keyword scanner / JD matcher
+            resume vs job description matcher
           </Link>
           . Keyword stuffing without evidence still fails human review—match honestly in bullets and
           skills.

@@ -25,8 +25,6 @@ export function buildHomeMarketingMetadata(): Metadata {
       "resume optimizer",
       "resume optimization tool",
       "ai resume checker",
-      "scan resume for keywords",
-      "resume keyword scanner",
       "ats keyword matching resume",
       "ai resume optimizer",
     ],

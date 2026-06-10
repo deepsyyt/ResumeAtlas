@@ -5,6 +5,7 @@ import {
   CHECK_RESUME_AGAINST_JD_PATH,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
   LEGACY_CHECK_RESUME_AGAINST_JD_PATH,
+  RESUME_KEYWORD_SCANNER_PATH,
   RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
 } from "@/app/lib/internalLinks";
 import {
@@ -340,13 +341,10 @@ export const TOOL_CLUSTER_SCORE: ToolClusterPageConfig = {
 };
 
 export const TOOL_CLUSTER_KEYWORD_SCANNER: ToolClusterPageConfig = {
-  path: CHECK_RESUME_AGAINST_JD_PATH,
+  path: RESUME_KEYWORD_SCANNER_PATH,
   breadcrumbName: "Resume Keyword Scanner",
   clusterLinkAnchor: "resume keyword scanner",
   ...CLUSTER_KEYWORD_SCANNER_TOOL_COPY,
-  titleAbsolute: "Resume Keyword Scanner (Find Missing ATS Keywords Free) | ResumeAtlas",
-  ogTitle: "Resume Keyword Scanner (Find Missing ATS Keywords Free)",
-  twitterTitle: "Resume Keyword Scanner (Missing ATS Keywords)",
   ctaAnchor: "Scan my resume for missing keywords",
   exampleJobRequires: "Machine learning, SQL, A/B testing, and stakeholder communication.",
   exampleResumeContains: "Python, data analysis, dashboards.",
@@ -356,13 +354,19 @@ export const TOOL_CLUSTER_KEYWORD_SCANNER: ToolClusterPageConfig = {
     "Fix first: add concrete SQL + experiment bullets tied to project outcomes.",
   keywords: [
     "resume keyword scanner",
-    "resume keyword checker",
+    "keyword scanner",
+    "resume keywords scanner",
+    "scan resume for keywords",
+    "keyword finder",
+    "missing resume keywords",
     "job description keyword finder",
-    "resume keyword analyzer",
     "scanning resumes for keywords",
-    "keywords for resume scanners",
+    "ATS keyword scanner",
+    "resume keyword checker",
+    "resume keyword analyzer",
     "cv keyword scanner",
     "find keywords from job description",
+    "discover missing resume keywords",
   ],
   faq: [
     {
@@ -456,6 +460,7 @@ export const TOOL_CLUSTER_COMPAT: ToolClusterPageConfig = {
 /** All tool cluster pages (primary first). */
 export const ALL_TOOL_CLUSTER_CONFIGS: ToolClusterPageConfig[] = [
   TOOL_CLUSTER_PRIMARY,
+  TOOL_CLUSTER_KEYWORD_SCANNER,
   TOOL_CLUSTER_ATS_FREE,
 ];
 

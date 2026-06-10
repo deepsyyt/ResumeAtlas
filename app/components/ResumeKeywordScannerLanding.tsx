@@ -2,7 +2,6 @@ import Link from "next/link";
 import HomeClient from "@/app/HomeClient";
 import { LastUpdated } from "@/app/components/LastUpdated";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
-import { ToolClusterNextSteps } from "@/app/components/ToolClusterNextSteps";
 import { ToolClusterRelatedLinks } from "@/app/components/ToolClusterRelatedLinks";
 import {
   CHECK_ATS_COMPATIBILITY_ANCHOR,
@@ -19,270 +18,120 @@ import {
 
 const path = TOOL_CLUSTER_KEYWORD_SCANNER.path;
 
+const WHAT_YOU_GET = [
+  "Missing ATS keywords",
+  "Keyword coverage score",
+  "Weak skills coverage",
+  "Suggested optimization areas",
+] as const;
+
+function TrustStrip({ className = "" }: { className?: string }) {
+  return (
+    <p className={`text-xs font-medium text-slate-700 sm:text-sm ${className}`}>
+      <span aria-hidden="true">✓</span> Free <span className="text-slate-400">•</span>{" "}
+      <span aria-hidden="true">✓</span> No signup <span className="text-slate-400">•</span>{" "}
+      <span aria-hidden="true">✓</span> Results in seconds
+    </p>
+  );
+}
+
 /**
- * Keyword gaps + missing skills vs a job description - distinct from ATS parsing, overall score, and full JD matcher narrative.
+ * Keyword gaps + missing skills vs a job description — tool-first layout (screenshot above the fold).
  */
 export function ResumeKeywordScannerLanding() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
-      <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 text-center">
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
+      <section
+        className="border-b border-slate-200 bg-gradient-to-b from-emerald-50/50 to-white"
+        aria-labelledby="keyword-scanner-heading"
+      >
+        <div className="mx-auto max-w-7xl px-4 py-4 text-center sm:px-6 sm:py-5 sm:text-left lg:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-800 sm:text-xs">
+            Free resume keyword scanner
+          </p>
+          <h1
+            id="keyword-scanner-heading"
+            className="mt-1 text-pretty text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl lg:text-[1.65rem]"
+          >
             {TOOL_CLUSTER_KEYWORD_SCANNER.h1}
           </h1>
-          <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="mx-auto mt-2 max-w-2xl text-pretty text-sm leading-relaxed text-slate-600 sm:mx-0 sm:text-[15px]">
             {TOOL_CLUSTER_KEYWORD_SCANNER.intro}
           </p>
         </div>
       </section>
 
+      <HomeClient variant="toolOnly" analysisMode="keywordScanner" />
+
       <section className="border-b border-slate-200 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 text-center">
-          <p className="text-sm sm:text-base text-slate-900">
-            <strong>{TOOL_CLUSTER_KEYWORD_SCANNER.topStripStrong}</strong>
-          </p>
-          <p className="mt-2 text-xs sm:text-sm font-medium text-slate-700">
-            <span aria-hidden="true">✔</span> Free <span className="text-slate-400">•</span>{" "}
-            <span aria-hidden="true">✔</span> Instant Results{" "}
-            <span className="text-slate-400">•</span> <span aria-hidden="true">✔</span> No Signup
-          </p>
+        <div className="mx-auto max-w-4xl px-4 py-4 text-center sm:px-6 sm:py-5 lg:px-8">
           <a
             href="#ats-checker-form"
-            className="mt-4 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition"
+            className="inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
           >
             {TOOL_CLUSTER_KEYWORD_SCANNER.ctaAnchor}
           </a>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm">
-            {[
-              "Resume not getting shortlisted?",
-              "Missing keywords for your role?",
-              "ATS score too low?",
-            ].map((line) => (
-              <span
-                key={line}
-                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 font-medium text-slate-700"
+          <TrustStrip className="mt-3" />
+        </div>
+      </section>
+
+      <section className="border-b border-emerald-200/80 bg-emerald-50/40">
+        <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-7 lg:px-8">
+          <h2 className="text-center text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
+            What you&apos;ll get
+          </h2>
+          <ul className="mx-auto mt-4 grid max-w-2xl gap-2.5 sm:grid-cols-2">
+            {WHAT_YOU_GET.map((item) => (
+              <li
+                key={item}
+                className="flex items-start gap-2.5 rounded-lg border border-emerald-200/80 bg-white/80 px-3.5 py-2.5 text-sm text-slate-800"
               >
-                {line}
-              </span>
+                <span className="mt-0.5 shrink-0 font-semibold text-emerald-700" aria-hidden>
+                  ✓
+                </span>
+                {item}
+              </li>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-emerald-200 bg-emerald-50/30">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
-            {TOOL_CLUSTER_KEYWORD_SCANNER.differentiatorHeading}
-          </h2>
-          <div className="mt-3 space-y-2.5 text-sm sm:text-base text-slate-700 leading-relaxed">
-            {TOOL_CLUSTER_KEYWORD_SCANNER.differentiatorBody.map((para, i) => (
-              <p key={i}>{para}</p>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-indigo-200 bg-indigo-50/40">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
-            Query intent this page owns
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
-            This URL is built for searches like "resume keyword scanner", "resume keyword checker",
-            "job description keyword finder", and "resume keyword analyzer". It is focused on
-            keyword gap detection versus one pasted posting, not full ATS formatting audits.
-          </p>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm text-slate-700">
-            <li>Use this page to find missing terms and weak coverage fast.</li>
-            <li>Use ATS checker for parser and formatting compatibility.</li>
-            <li>Use resume-vs-JD matcher for full narrative fit and section priorities.</li>
           </ul>
         </div>
       </section>
 
-      <HomeClient variant="toolOnly" analysisMode="keywordScanner" />
-
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
-        <section className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Scan your resume for keywords
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-700">
-            Paste your resume and a job description in the form above to:
-          </p>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>Detect missing keywords</li>
-            <li>Identify skill gaps</li>
-            <li>Analyze keyword relevance vs that posting</li>
-            <li>Improve ATS keyword coverage</li>
-          </ul>
-          <p className="mt-3 text-sm text-slate-600">
-            Paste-only (no file upload). The job description is required so gaps are measured against
-            a real posting.
-          </p>
-        </section>
-
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            How keyword gap scoring works
-          </h2>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>Extracts repeated must-have terms from the job description.</li>
-            <li>Checks whether those terms appear in summary, skills, and bullet context.</li>
-            <li>Flags weak coverage where terms are missing or unsupported by evidence.</li>
-          </ul>
-          <p className="mt-3 text-sm text-slate-600">
-            Goal: close honest gaps so ATS and recruiters can map your fit faster.
-          </p>
-        </section>
-
+      <div className="mx-auto max-w-3xl space-y-8 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
         <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            How resume keyword scanning works
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            {TOOL_CLUSTER_KEYWORD_SCANNER.howItWorksHeading}
           </h2>
-          <ol className="mt-4 space-y-4 list-decimal pl-5 text-sm sm:text-base text-slate-700">
+          <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-relaxed text-slate-700 sm:text-base">
             <li>
-              <strong className="text-slate-900">Paste your resume.</strong> Enter your resume
-              text.
+              <strong className="text-slate-900">Paste resume and job description.</strong> Copy the
+              posting you are applying to — gaps are measured against that exact role.
             </li>
             <li>
-              <strong className="text-slate-900">Keyword extraction.</strong> Skills and terms from
-              your resume are compared to the job description.
+              <strong className="text-slate-900">Extract must-have terms.</strong> Repeated skills,
+              tools, and phrases from the job description are compared to your resume text.
             </li>
             <li>
-              <strong className="text-slate-900">Gap detection.</strong> Missing or weak keywords
-              from the posting are highlighted.
+              <strong className="text-slate-900">See missing and weak keywords.</strong> Get a
+              coverage readout, skill gaps, and where terms are absent or unsupported.
             </li>
             <li>
-              <strong className="text-slate-900">Optimization suggestions.</strong> Use the takeaway
-              to strengthen bullets and skills where truthful.
+              <strong className="text-slate-900">Fix honest gaps before you apply.</strong> Strengthen
+              bullets and skills where the posting expects proof — not keyword stuffing.
             </li>
           </ol>
+          <p className="mt-3 text-sm text-slate-600">
+            Paste-only (no file upload). Job description required so results reflect a real posting.
+          </p>
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Missing keywords in your resume
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
-            Many resumes fail ATS because they do not include the right keywords for the role.
-            Common gap areas:
-          </p>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>Technical skills (for example Python, SQL, machine learning)</li>
-            <li>Tools and frameworks</li>
-            <li>Role-specific terminology</li>
-            <li>Action verbs and impact language</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Why keywords matter for ATS
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
-            Applicant tracking systems scan resumes for relevant keywords before ranking candidates.
-            Without strong keyword coverage:
-          </p>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>Your resume may not be shortlisted</li>
-            <li>Recruiters may never see your profile</li>
-            <li>Your experience may be undervalued</li>
-          </ul>
-        </section>
-
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Role-specific keyword examples (quick map)
-          </h2>
-          <div className="mt-4 space-y-4 text-sm sm:text-base text-slate-700">
-            <div>
-              <h3 className="font-semibold text-slate-900">Software engineer</h3>
-              <p className="mt-1">
-                API design, CI/CD, test coverage, latency, incident response, cloud platform terms.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">Data scientist</h3>
-              <p className="mt-1">
-                SQL, experimentation, model evaluation, feature engineering, stakeholder communication.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">Product manager</h3>
-              <p className="mt-1">
-                roadmap ownership, prioritization, activation/retention metrics, cross-functional execution.
-              </p>
-            </div>
-          </div>
-          <p className="mt-4 text-sm text-slate-700">
-            For deeper role-level vocabulary, browse{" "}
-            <Link
-              href="/ats-keywords"
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              ATS keyword guides by role
-            </Link>
-            .
-          </p>
-        </section>
-
-        <section className="rounded-2xl border border-amber-200 bg-amber-50/40 p-5 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
-            Common mistakes with keyword scanners
-          </h2>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>Chasing every keyword without matching your real experience.</li>
-            <li>Adding terms in skills but not proving them in bullets/projects.</li>
-            <li>Using one scanner output for every posting instead of per-job tailoring.</li>
-            <li>Ignoring synonym variants used in the target posting.</li>
-          </ul>
-        </section>
-
-        <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
-          <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-            {TOOL_CLUSTER_KEYWORD_SCANNER.serpVariantsParagraph}
-          </p>
-        </section>
-
-        <ToolClusterRelatedLinks currentPath={path} />
-
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900">
-            Real-world keyword proof example
-          </h2>
-          <p className="mt-2 text-sm font-medium text-slate-900">Resume contains</p>
-          <ul className="mt-1 list-disc pl-5 text-sm text-slate-700">
-            <li>Python</li>
-            <li>Data analysis</li>
-          </ul>
-          <p className="mt-3 text-sm font-medium text-slate-900">Missing keywords (from posting)</p>
-          <ul className="mt-1 list-disc pl-5 text-sm text-slate-700">
-            <li>Machine learning</li>
-            <li>SQL</li>
-            <li>Data visualization</li>
-          </ul>
-          <p className="mt-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Result:</strong> keyword coverage estimated at 61%,
-            with likely ranking drag for jobs emphasizing experimentation and SQL depth.
-          </p>
-          <p className="mt-2 text-sm text-slate-700">
-            <strong className="text-slate-900">Fix:</strong> add truthful SQL + A/B testing evidence
-            in project and experience bullets, then rescan against the same posting.
-          </p>
-        </section>
-
-        <section className="rounded-xl border border-amber-200 bg-amber-50/40 p-5 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
+          <h2 className="text-lg font-semibold tracking-tight text-slate-900">
             Keyword scanner vs resume matching
           </h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
-            This page is built for <strong className="text-slate-900">keyword and skill gaps</strong>{" "}
-            versus a pasted job description, not a full formatting audit or a deep narrative match
-            report.
-          </p>
-          <p className="mt-3 text-sm sm:text-base text-slate-700">
-            For deeper role comparison and match scoring, use the{" "}
+          <p className="mt-2 text-sm leading-relaxed text-slate-700 sm:text-base">
+            This page is built for <strong className="text-slate-900">missing keywords and skill gaps</strong>{" "}
+            vs one posting — not ATS formatting audits or full match scoring. For evidence match,
+            optimization, and download, use the{" "}
             <Link
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
@@ -293,24 +142,39 @@ export function ResumeKeywordScannerLanding() {
           </p>
         </section>
 
-        <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            How to improve keyword coverage
+        <ToolClusterRelatedLinks currentPath={path} />
+
+        <section id="faq">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Frequently asked questions
           </h2>
-          <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm sm:text-base text-slate-700">
-            <li>Add role-specific skills</li>
-            <li>Include tools and technologies</li>
-            <li>Use language from job descriptions you target</li>
-            <li>Mention projects and measurable results</li>
-            <li>Avoid vague, generic wording</li>
-          </ul>
+          <div className="mt-5 space-y-5 text-sm text-slate-700 sm:text-base">
+            {TOOL_CLUSTER_KEYWORD_SCANNER.faq.map((item) => (
+              <div key={item.question}>
+                <h3 className="font-semibold text-slate-900">{item.question}</h3>
+                <p className="mt-1">{item.answer}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-slate-900/10 bg-slate-900 p-6 text-center text-white sm:p-8">
+          <h2 className="text-lg font-semibold tracking-tight sm:text-xl">Scan before you apply</h2>
+          <p className="mx-auto mt-2 max-w-xl text-sm text-slate-200 sm:text-base">
+            Close honest keyword gaps so ATS and recruiters can map your fit faster.
+          </p>
+          <a
+            href="#ats-checker-form"
+            className="mt-5 inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+          >
+            {TOOL_CLUSTER_KEYWORD_SCANNER.ctaAnchor}
+          </a>
+          <TrustStrip className="mt-3 text-slate-300" />
         </section>
 
         <section>
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Improve your resume further
-          </h2>
-          <ul className="mt-3 list-disc pl-5 space-y-2 text-sm sm:text-base text-slate-700">
+          <h2 className="text-lg font-semibold tracking-tight text-slate-900">Related tools</h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
             <li>
               <Link
                 href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
@@ -340,51 +204,10 @@ export function ResumeKeywordScannerLanding() {
                 Role-based keyword guides
               </Link>
             </li>
-            <li>
-              <Link
-                href="/resume-guides/resume-skills-examples"
-                className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                Resume skills examples & format
-              </Link>
-            </li>
           </ul>
         </section>
 
-        <ToolClusterNextSteps />
-
-        <section id="faq">
-          <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Frequently asked questions
-          </h2>
-          <div className="mt-5 space-y-5 text-sm sm:text-base text-slate-700">
-            {TOOL_CLUSTER_KEYWORD_SCANNER.faq.map((item) => (
-              <div key={item.question}>
-                <h3 className="font-semibold text-slate-900">{item.question}</h3>
-                <p className="mt-1">{item.answer}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="rounded-2xl border border-slate-900/10 bg-slate-900 text-white p-6 sm:p-8 text-center">
-          <h2 className="text-lg sm:text-xl font-semibold tracking-tight">Final step</h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-200 max-w-xl mx-auto">
-            Do not let missing keywords cost you interviews. Scan your resume against a posting and
-            close honest gaps before you apply.
-          </p>
-          <a
-            href="#ats-checker-form"
-            className="mt-6 inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-100 transition"
-          >
-            {TOOL_CLUSTER_KEYWORD_SCANNER.ctaAnchor}
-          </a>
-        </section>
-
-        <RelatedResumeGuidesSection
-          currentPath={path}
-          className="border-t border-slate-200 pt-8"
-        />
+        <RelatedResumeGuidesSection currentPath={path} className="border-t border-slate-200 pt-8" />
 
         <LastUpdated className="text-xs text-slate-500" />
       </div>

@@ -11,6 +11,7 @@ import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIn
 export type RoleClusterLink = { path: string; label: string };
 
 export const CHECK_RESUME_AGAINST_JD_PATH = "/check-resume-against-job-description" as const;
+export const RESUME_KEYWORD_SCANNER_PATH = "/resume-keyword-scanner" as const;
 export const CHECK_RESUME_AGAINST_JD_PRIMARY_CTA =
   "Check resume against job description" as const;
 
@@ -32,6 +33,7 @@ export const ATS_RESUME_CHECKER_PATH = "/ats-resume-checker" as const;
 
 export const MONEY_PAGE_LINKS: readonly RoleClusterLink[] = [
   { path: CHECK_RESUME_AGAINST_JD_PATH, label: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA },
+  { path: RESUME_KEYWORD_SCANNER_PATH, label: "Resume keyword scanner" },
   { path: ATS_RESUME_CHECKER_PATH, label: "ATS resume checker" },
 ];
 

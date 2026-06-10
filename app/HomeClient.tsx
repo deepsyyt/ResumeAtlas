@@ -1371,7 +1371,9 @@ export default function HomeClient({
                 isToolOnly
                   ? isAtsCompliance
                     ? "Paste your resume on the left and run a free ATS check. Job description is optional."
-                    : "Paste resume and job description on the left, then run evidence match and optimization."
+                    : isKeywordScanner
+                      ? "Paste resume and job description on the left, then scan for missing keywords."
+                      : "Paste resume and job description on the left, then run evidence match and optimization."
                   : undefined
               }
               onOpenOptimizer={

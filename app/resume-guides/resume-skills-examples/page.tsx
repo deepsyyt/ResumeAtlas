@@ -5,6 +5,7 @@ import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+  RESUME_KEYWORD_SCANNER_FORM_HREF,
 } from "@/app/lib/internalLinks";
 import { CONTENT_FRESHNESS_YEAR, CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
 import { getSiteUrl } from "@/app/lib/siteUrl";
@@ -118,9 +119,9 @@ export default function ResumeSkillsExamplesPage() {
             <Link href="/ats-keywords" className="font-semibold text-sky-800 underline underline-offset-2">
               resume keywords hub
             </Link>
-            . To scan a specific job description, use the{" "}
+            .             To scan a specific job description, use the{" "}
             <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              href={RESUME_KEYWORD_SCANNER_FORM_HREF}
               className="font-semibold text-sky-800 underline underline-offset-2"
             >
               resume keyword scanner
@@ -261,7 +262,7 @@ export default function ResumeSkillsExamplesPage() {
             </li>
             <li>
               <Link
-                href="/"
+                href={RESUME_KEYWORD_SCANNER_FORM_HREF}
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Resume keyword scanner
@@ -269,7 +270,7 @@ export default function ResumeSkillsExamplesPage() {
             </li>
             <li>
               <Link
-                href="/"
+                href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
                 className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 Resume vs job description mismatch

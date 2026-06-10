@@ -21,6 +21,9 @@ export type InternalLink = { path: string; label: string };
 /** Primary free tool: AI resume checker, JD match, and optimizer (workbench). */
 export const CHECK_RESUME_AGAINST_JD_PATH = "/check-resume-against-job-description" as const;
 
+/** Keyword gap scan vs a pasted job description (missing terms, not full JD match narrative). */
+export const RESUME_KEYWORD_SCANNER_PATH = "/resume-keyword-scanner" as const;
+
 /** Marketing homepage (funnel only; tool is {@link CHECK_RESUME_AGAINST_JD_PATH}). */
 export const HOME_MARKETING_PATH = "/" as const;
 
@@ -30,6 +33,9 @@ export const LEGACY_CHECK_RESUME_AGAINST_JD_PATH = CHECK_RESUME_AGAINST_JD_PATH;
 /** Same tool with in-page form anchor (primary funnel CTAs). */
 export const CHECK_RESUME_AGAINST_JD_FORM_HREF =
   `${CHECK_RESUME_AGAINST_JD_PATH}#ats-checker-form` as const;
+
+export const RESUME_KEYWORD_SCANNER_FORM_HREF =
+  `${RESUME_KEYWORD_SCANNER_PATH}#ats-checker-form` as const;
 
 /** Hub for optimize / tailor resume to job description intent (role spokes link here). */
 export const OPTIMIZE_RESUME_FOR_JD_PATH =
@@ -110,6 +116,7 @@ const ARTICLE_LINKS: InternalLink[] = [
     path: CHECK_RESUME_AGAINST_JD_PATH,
     label: RESUME_VS_JOB_DESCRIPTION_CHECKER_ANCHOR,
   },
+  { path: RESUME_KEYWORD_SCANNER_PATH, label: "resume keyword scanner" },
   { path: "/ats-resume-checker", label: "ATS resume checker" },
   {
     path: ATS_RESUME_TEMPLATE_GUIDE_PATH,
@@ -190,6 +197,7 @@ export const ALL_SEO_LINKS: InternalLink[] = [
 const POPULAR_PILLAR_PATHS = new Set(ROLE_PILLAR_LINKS.slice(0, 6).map((l) => l.path));
 const FEATURED_PATHS = new Set<string>([
   CHECK_RESUME_AGAINST_JD_PATH,
+  RESUME_KEYWORD_SCANNER_PATH,
   "/ats-resume-checker",
   ...Array.from(POPULAR_PILLAR_PATHS),
 ]);
@@ -197,6 +205,7 @@ const FEATURED_PATHS = new Set<string>([
 /** Dense semantic internal links: 6-8 topically related paths per page for topical authority. */
 const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   [CHECK_RESUME_AGAINST_JD_PATH]: [
+    RESUME_KEYWORD_SCANNER_PATH,
     "/ats-resume-checker",
     "/resume-examples",
     "/resume-keywords",
@@ -206,6 +215,15 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/problems/ats-rejecting-my-resume",
     "/resume-examples/data-analyst",
     "/data-analyst-resume-keywords",
+  ],
+  [RESUME_KEYWORD_SCANNER_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/ats-resume-checker",
+    "/resume-keywords",
+    "/resume-examples",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    "/data-analyst-resume-keywords",
+    "/problems/ats-rejecting-my-resume",
   ],
   [ATS_RESUME_TEMPLATE_GUIDE_PATH]: [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -329,6 +347,7 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   ],
   "/ats-resume-checker": [
     CHECK_RESUME_AGAINST_JD_PATH,
+    RESUME_KEYWORD_SCANNER_PATH,
     "/resume-examples",
     "/resume-keywords",
     "/resume-guides",

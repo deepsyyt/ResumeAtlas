@@ -16,11 +16,16 @@ export function normalizePathname(pathname: string): string {
   return pathname;
 }
 
-import { TOOL_CLUSTER_PATHS_FOR_OAUTH } from "@/app/lib/toolClusterPages";
+import {
+  CHECK_RESUME_AGAINST_JD_PATH,
+  RESUME_KEYWORD_SCANNER_FORM_HREF,
+  RESUME_KEYWORD_SCANNER_PATH,
+} from "@/app/lib/internalLinks";
 
 const ATS_CALLOUT_PATHS = new Set<string>([
   "/ats-resume-template",
-  ...TOOL_CLUSTER_PATHS_FOR_OAUTH,
+  CHECK_RESUME_AGAINST_JD_PATH,
+  "/ats-resume-checker",
 ]);
 
 /**
@@ -44,6 +49,9 @@ export function resolveProblemInterviewCallout(
   if (p === "/optimize") {
     return null;
   }
+  if (p === RESUME_KEYWORD_SCANNER_PATH) {
+    return null;
+  }
 
   const isRoleKeywordsPath =
     /^\/[^/]+-resume-keywords$/.test(p) ||
@@ -54,8 +62,8 @@ export function resolveProblemInterviewCallout(
   if (p === "/ats-keywords" || isRoleKeywordsPath) {
     return {
       prefix: "Worried about keyword gaps on your resume? ",
-      linkText: "Scan your resume against a job posting",
-      href: "/check-resume-against-job-description#ats-checker-form",
+      linkText: "Scan your resume for missing keywords",
+      href: RESUME_KEYWORD_SCANNER_FORM_HREF,
     };
   }
 

@@ -454,33 +454,23 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: "/resume-keyword-scanner",
-        destination: "/#jd-keyword-matching",
-        permanent: true,
-      },
-      {
-        source: "/resume-keyword-scanner/",
-        destination: "/#jd-keyword-matching",
-        permanent: true,
-      },
-      {
         source: "/resume-keywords-scanner",
-        destination: "/",
+        destination: "/resume-keyword-scanner",
         permanent: true,
       },
       {
         source: "/resume-keywords-scanner/",
-        destination: "/",
+        destination: "/resume-keyword-scanner",
         permanent: true,
       },
       {
         source: "/keyword-scanner",
-        destination: "/",
+        destination: "/resume-keyword-scanner",
         permanent: true,
       },
       {
         source: "/keyword-scanner/",
-        destination: "/",
+        destination: "/resume-keyword-scanner",
         permanent: true,
       },
       {
@@ -505,22 +495,22 @@ const nextConfig = {
       },
       {
         source: "/job-description-keyword-finder",
-        destination: "/",
+        destination: "/resume-keyword-scanner",
         permanent: true,
       },
       {
         source: "/job-description-keyword-finder/",
-        destination: "/",
+        destination: "/resume-keyword-scanner",
         permanent: true,
       },
       {
         source: "/resume-keyword-checker",
-        destination: "/",
+        destination: "/resume-keyword-scanner",
         permanent: true,
       },
       {
         source: "/resume-keyword-checker/",
-        destination: "/",
+        destination: "/resume-keyword-scanner",
         permanent: true,
       },
       {

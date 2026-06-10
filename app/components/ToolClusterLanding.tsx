@@ -17,6 +17,7 @@ import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PATH,
+  RESUME_KEYWORD_SCANNER_FORM_HREF,
   OPTIMIZE_RESUME_FOR_JD_PATH,
 } from "@/app/lib/internalLinks";
 
@@ -448,7 +449,7 @@ export function ToolClusterLanding({
             <li>
               Need only missing terms list? Use{" "}
               <Link
-                href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                href={RESUME_KEYWORD_SCANNER_FORM_HREF}
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
                 resume keyword scanner

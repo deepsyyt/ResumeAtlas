@@ -17,7 +17,7 @@ export function homeWebApplicationJsonLd() {
     featureList: [
       "Free AI resume checker",
       "ATS compatibility and parsing check",
-      "Resume keyword scanner",
+      "Resume vs job description matching",
       "ATS keyword matching",
       "AI resume optimizer and bullet rewrites",
       "Edit and export PDF or DOCX",
