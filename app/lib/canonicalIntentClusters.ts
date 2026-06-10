@@ -115,7 +115,7 @@ export const CLUSTER_KEYWORD_SCANNER_TOOL_COPY = {
 };
 
 export const ATS_CHECKER_META_TITLE =
-  `Free ATS Resume Checker | Parsing Score & Format Analysis${RESUME_ATLAS_TITLE_SUFFIX}`;
+  `Free ATS Resume Checker | ATS Score, Parsing & Format Analysis${RESUME_ATLAS_TITLE_SUFFIX}`;
 
 export const ATS_CHECKER_META_DESCRIPTION =
   "Free ATS resume checker. Analyze parsing compatibility, formatting issues, ATS readability, and keyword coverage before you apply. No signup required.";
@@ -136,7 +136,7 @@ export const CLUSTER_ATS_CHECKER_TOOL_COPY = {
   description: ATS_CHECKER_META_DESCRIPTION,
   ogTitle: ATS_CHECKER_META_TITLE,
   ogDescription: ATS_CHECKER_META_DESCRIPTION,
-  twitterTitle: "Free ATS Resume Checker | Parsing Score & Format Analysis",
+  twitterTitle: "Free ATS Resume Checker | ATS Score, Parsing & Format Analysis",
   twitterDescription: ATS_CHECKER_META_DESCRIPTION,
   h1: "Check whether your resume passes ATS screening",
   intro:
