@@ -114,7 +114,7 @@ export const ALT_ROLE_KEYWORD_PAGES: Record<AltRoleKeywordSlug, AltRoleKeywordPa
     path: pathFor("systems-analyst"),
     roleName: "Systems Analyst",
     h1: `Systems Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
-    title: `Systems Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR}) - ATS List${RESUME_ATLAS_TITLE_SUFFIX}`,
+    title: `Systems Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | SDLC, UML & ATS Checklist${RESUME_ATLAS_TITLE_SUFFIX}`,
     description:
       "Systems analyst resume keywords for ATS: IT support, applications, integrations, SQL, troubleshooting, and SDLC terms. Distinct from business analyst—scan your resume against the job description free.",
     intro:

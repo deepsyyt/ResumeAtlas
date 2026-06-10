@@ -163,6 +163,6 @@ export const analyticsManagerOptimizer: RoleOptimizerContent = {
         "ResumeAtlas compares your resume to each posting and surfaces requirement gaps, then suggests rewrites that emphasize the most relevant outcomes for that specific context. You can quickly produce versions optimized for product analytics, revenue analytics, operations analytics, or BI leadership while keeping content accurate and concise.",
     },
   ],
+  /** Example adjacency only — no keyword hub (data analyst keywords page owns DA intent). */
   relatedExamplePath: "/data-analyst-resume-guide",
-  relatedKeywordsPath: "/data-analyst-resume-keywords",
 };

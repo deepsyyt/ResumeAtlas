@@ -20,6 +20,39 @@ export const ROLE_KEYWORDS_PRIMARY_H2: Record<RoleSlug, string> = {
   "full-stack-developer": `Full-Stack Developer Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
 };
 
+/** Above-the-fold priority terms for `/data-analyst-resume-keywords` (GSC head terms). */
+export const DATA_ANALYST_HERO_KEYWORDS = [
+  "SQL",
+  "Tableau",
+  "Excel",
+  "Dashboarding",
+  "ETL",
+  "Data modeling",
+  "KPI reporting",
+  "Stakeholder communication",
+] as const;
+
+/** H2 + list for `data analytics keywords` query cluster on the data analyst hub. */
+export const DATA_ANALYST_ANALYTICS_KEYWORDS_SECTION = {
+  h2: "Data Analytics Resume Keywords",
+  intro:
+    "Many postings use data analytics wording instead of data analyst in the title. These analytics resume keywords overlap with the lists below—mirror the job description literally.",
+  keywords: [
+    "Cohort analysis",
+    "Funnel analysis",
+    "Segmentation",
+    "Attribution",
+    "Data visualization",
+    "KPI reporting",
+    "A/B testing",
+    "Retention analysis",
+    "Forecasting",
+    "Root cause analysis",
+    "Data quality",
+    "Stakeholder reporting",
+  ],
+} as const;
+
 /** Secondary H2 targeting alternate query variants (long-tail). */
 export const ROLE_KEYWORDS_SECONDARY_H2: Partial<Record<RoleSlug, string>> = {
   "data-analyst": `Keywords for Data Analyst Resume (${CONTENT_FRESHNESS_YEAR} ATS Checklist)`,
@@ -98,7 +131,7 @@ export const ROLE_KEYWORDS_SENIORITY: Partial<
 /** Clarify role scope to reduce wrong-query impressions (GSC bleed). */
 export const ROLE_KEYWORDS_SCOPE_NOTE: Partial<Record<RoleSlug, string>> = {
   "data-analyst":
-    "This checklist is for data analyst and analytics roles—not Power BI–only (DAX/Fabric), SQL developer, data engineer, BSA, or systems analyst titles. Use /power-bi-resume-keywords for Power BI–centric JDs; /sql-developer-resume-keywords or /data-engineer-resume-keywords when those stacks dominate; alt BSA/systems/BI pages for other titles.",
+    "This checklist is for data analyst and analytics roles only—not business analyst, systems analyst, or data scientist titles. Use /business-analyst-resume-keywords, /systems-analyst-resume-keywords, or /data-scientist-resume-keywords for those roles. For Power BI–only, SQL developer, or data engineer stacks, use the dedicated keyword pages linked from /resume-keywords.",
   "data-scientist":
     "Focused on data scientist and ML-heavy analytics roles—not data engineer pipeline ownership. Use /data-engineer-resume-keywords when the JD emphasizes Spark, Airflow, warehouses, and ETL over experimentation and modeling.",
   "business-analyst":

@@ -8,7 +8,8 @@ import { ROLE_OPTIMIZER_ORDER } from "@/app/lib/roleOptimizer/roles/index";
 export type OptimizeClusterNav = {
   roleName: string;
   optimizerPath: string;
-  keywordsPath: string;
+  /** Omitted when optimizer has no dedicated keyword hub (e.g. analytics manager). */
+  keywordsPath?: string;
   examplePath: string;
 };
 
@@ -21,7 +22,7 @@ const byKeywordsPath = new Map<string, OptimizeClusterNav>();
 const byExamplePath = new Map<string, OptimizeClusterNav>();
 
 for (const role of ROLE_OPTIMIZER_ORDER) {
-  if (!role.relatedKeywordsPath || !role.relatedExamplePath) continue;
+  if (!role.relatedExamplePath) continue;
   const nav: OptimizeClusterNav = {
     roleName: role.roleName,
     optimizerPath: role.path,
@@ -29,7 +30,9 @@ for (const role of ROLE_OPTIMIZER_ORDER) {
     examplePath: role.relatedExamplePath,
   };
   byOptimizerPath.set(normalize(role.path), nav);
-  byKeywordsPath.set(normalize(role.relatedKeywordsPath), nav);
+  if (role.relatedKeywordsPath) {
+    byKeywordsPath.set(normalize(role.relatedKeywordsPath), nav);
+  }
   byExamplePath.set(normalize(role.relatedExamplePath), nav);
   if (isResumeExampleClusterSlug(role.slug)) {
     byExamplePath.set(normalize(resumeExampleClusterPath(role.slug)), nav);
@@ -37,7 +40,7 @@ for (const role of ROLE_OPTIMIZER_ORDER) {
 }
 
 export function getOptimizeClusterNavFromRole(role: RoleOptimizerContent): OptimizeClusterNav | null {
-  if (!role.relatedKeywordsPath || !role.relatedExamplePath) return null;
+  if (!role.relatedExamplePath) return null;
   return {
     roleName: role.roleName,
     optimizerPath: role.path,

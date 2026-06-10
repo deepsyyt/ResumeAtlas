@@ -14,6 +14,8 @@ import {
 import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 import { CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
 import {
+  DATA_ANALYST_ANALYTICS_KEYWORDS_SECTION,
+  DATA_ANALYST_HERO_KEYWORDS,
   ROLE_KEYWORDS_FAQ,
   ROLE_KEYWORDS_SCOPE_NOTE,
   ROLE_KEYWORDS_SECONDARY_H2,
@@ -80,7 +82,9 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
     .join(", ")}, plus terms ATS and recruiters prioritize for this role.`;
 
   const faqSchema = roleKeywordsFaqSchema(roleSlug);
-  const optimizeCluster = getOptimizeClusterNav(keywordsPublicPath);
+  const optimizeClusterRaw = getOptimizeClusterNav(keywordsPublicPath);
+  const optimizeCluster =
+    optimizeClusterRaw && optimizeClusterRaw.roleName === config.roleName ? optimizeClusterRaw : null;
 
   const itemListSchema = {
     "@context": "https://schema.org",
@@ -111,6 +115,26 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               className="mt-3 text-xs text-slate-500"
               label={CONTENT_LAST_UPDATED_LABEL}
             />
+            {isDataAnalystKeywordsPage ? (
+              <div className="mt-5 mx-auto max-w-2xl rounded-xl border border-sky-200 bg-sky-50/70 p-4 text-left sm:p-5">
+                <p className="text-xs font-semibold uppercase tracking-wide text-sky-900">
+                  Most important data analyst resume keywords
+                </p>
+                <ul className="mt-3 flex flex-wrap gap-2 list-none p-0 m-0">
+                  {DATA_ANALYST_HERO_KEYWORDS.map((keyword) => (
+                    <li
+                      key={keyword}
+                      className="rounded-full border border-sky-200 bg-white px-3 py-1 text-sm font-medium text-slate-800"
+                    >
+                      {keyword}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-xs text-slate-600">
+                  Copy-paste into skills and bullets where truthful. Full categorized lists below.
+                </p>
+              </div>
+            ) : null}
             <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
               {introFreshnessEcho}
               Copy-ready {config.roleName.toLowerCase()} resume keywords recruiters and ATS look for—grouped by
@@ -120,6 +144,32 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             {scopeNote ? (
               <p className="mt-3 text-sm text-amber-900/90 max-w-2xl mx-auto rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2">
                 {scopeNote}
+              </p>
+            ) : null}
+            {isDataAnalystKeywordsPage ? (
+              <p className="mt-3 text-sm text-slate-600 max-w-2xl mx-auto">
+                Wrong role?{" "}
+                <Link
+                  href="/business-analyst-resume-keywords"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  Business analyst keywords
+                </Link>
+                ,{" "}
+                <Link
+                  href="/systems-analyst-resume-keywords"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  systems analyst keywords
+                </Link>
+                , or{" "}
+                <Link
+                  href="/data-scientist-resume-keywords"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  data science keywords
+                </Link>
+                .
               </p>
             ) : null}
             <p className="mt-3 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto">{exactQueryMatchLine}</p>
@@ -146,6 +196,14 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               <a href="#checklist" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
                 Checklist
               </a>
+              {isDataAnalystKeywordsPage ? (
+                <a
+                  href="#data-analytics-keywords"
+                  className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900"
+                >
+                  Analytics keywords
+                </a>
+              ) : null}
             </div>
             <p className="mt-4 text-sm font-medium text-slate-800 max-w-2xl mx-auto">
               Check if your resume includes these keywords →{" "}
@@ -195,6 +253,32 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             <p className="mt-2 text-sm text-slate-700">
               Use this section when your search or job posting uses alternate wording. The full categorized
               lists below include tools, technical skills, and action verbs.
+            </p>
+          </section>
+        ) : null}
+
+        {isDataAnalystKeywordsPage ? (
+          <section
+            id="data-analytics-keywords"
+            className="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-6 sm:p-8 scroll-mt-20"
+          >
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+              {DATA_ANALYST_ANALYTICS_KEYWORDS_SECTION.h2}
+            </h2>
+            <p className="mt-2 text-sm text-slate-700">{DATA_ANALYST_ANALYTICS_KEYWORDS_SECTION.intro}</p>
+            <ul className="mt-4 flex flex-wrap gap-2 list-none p-0 m-0">
+              {DATA_ANALYST_ANALYTICS_KEYWORDS_SECTION.keywords.map((keyword) => (
+                <li
+                  key={keyword}
+                  className="rounded-full border border-indigo-200 bg-white px-3 py-1 text-sm text-slate-800"
+                >
+                  {keyword}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-sm text-slate-600">
+              Search variants: data analytics keywords, data analytics keywords list, data analytics resume
+              keywords.
             </p>
           </section>
         ) : null}

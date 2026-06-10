@@ -24,12 +24,16 @@ export function RoleOptimizeClusterNav({ cluster, currentPath, className = "" }:
       label: `${cluster.roleName} resume optimizer`,
       description: "Tailor your resume to a job description with match score and AI rewrites",
     },
-    {
-      key: "keywords",
-      path: cluster.keywordsPath,
-      label: `${cluster.roleName} resume keywords`,
-      description: "ATS keyword checklist and gap scan for this role",
-    },
+    ...(cluster.keywordsPath
+      ? [
+          {
+            key: "keywords" as const,
+            path: cluster.keywordsPath,
+            label: `${cluster.roleName} resume keywords`,
+            description: "ATS keyword checklist and gap scan for this role",
+          },
+        ]
+      : []),
     {
       key: "example",
       path: cluster.examplePath,
@@ -46,7 +50,7 @@ export function RoleOptimizeClusterNav({ cluster, currentPath, className = "" }:
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
         {cluster.roleName} resume cluster
       </p>
-      <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+      <ul className={`mt-4 grid gap-3 ${items.length === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
         {items.map((item) => {
           const itemPath = item.path.replace(/\/$/, "") || "/";
           const isCurrent = itemPath === normalized;

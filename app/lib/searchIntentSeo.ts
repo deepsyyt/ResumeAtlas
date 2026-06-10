@@ -93,7 +93,7 @@ export function roleResumeExampleListMeta(role: RoleSlug): { title: string; desc
 }
 
 const ROLE_KEYWORDS_SERP_TOOL_HINT: Record<RoleSlug, string> = {
-  "data-analyst": "SQL, Python, Power BI, dashboards",
+  "data-analyst": "SQL, Tableau, Excel, Looker, dashboarding",
   "data-scientist": "Python, SQL, ML, experimentation",
   "software-engineer": "TypeScript, React, APIs, cloud, testing",
   "product-manager": "roadmaps, discovery, metrics, launches",
@@ -105,7 +105,16 @@ const ROLE_KEYWORDS_SERP_TOOL_HINT: Record<RoleSlug, string> = {
   "full-stack-developer": "React, Node.js, SQL, REST APIs, full-stack delivery",
 };
 
+/** Unique SERP titles per role — avoids copy-paste `Free ATS List` cannibalization across analyst siblings. */
+const ROLE_KEYWORDS_SERP_TITLE_OVERRIDE: Partial<Record<RoleSlug, string>> = {
+  "data-analyst": `Top Data Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | ATS Skills Checklist${RESUME_ATLAS_TITLE_SUFFIX}`,
+  "business-analyst": `Business Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | Requirements, Jira & ATS Skills${RESUME_ATLAS_TITLE_SUFFIX}`,
+  "data-scientist": `Data Scientist Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | Python, ML & ATS Skills${RESUME_ATLAS_TITLE_SUFFIX}`,
+};
+
 function roleKeywordsSerpTitle(roleName: string, role: RoleSlug): string {
+  const override = ROLE_KEYWORDS_SERP_TITLE_OVERRIDE[role];
+  if (override) return override;
   const shortName =
     role === "devops-engineer" ? "DevOps" : roleName;
   return `${shortName} Resume Keywords (${CONTENT_FRESHNESS_YEAR}) - Free ATS List${RESUME_ATLAS_TITLE_SUFFIX}`;
@@ -113,7 +122,7 @@ function roleKeywordsSerpTitle(roleName: string, role: RoleSlug): string {
 
 const ROLE_KEYWORDS_CTR_DESCRIPTION: Partial<Record<RoleSlug, string>> = {
   "data-analyst":
-    "Free data analyst resume keywords for ATS: SQL, Python, Power BI, dashboards, and experiment language. Copy the list, then scan your resume against the job description for missing terms.",
+    "Data analyst resume keywords ATS checklist for 2026: SQL, Tableau, Excel, Looker, dbt, dashboarding, ETL, and KPI reporting. Copy-paste list, then scan your resume against the job description for missing terms.",
   "data-scientist":
     "Data scientist resume keywords recruiters search for—Python, SQL, ML, experimentation, deployment. Free ATS checklist; paste your JD to see keyword gaps before you apply.",
   "devops-engineer":

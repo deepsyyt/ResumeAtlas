@@ -178,7 +178,7 @@ export const ROLE_CONTENT_MAP: Record<RoleSlug, RoleContent> = {
       "Retention analysis",
       "Attribution",
       "Segmentation",
-      "Business intelligence",
+      "BI dashboards",
       "Root cause analysis",
     ],
     exampleBullets: [
@@ -192,7 +192,7 @@ export const ROLE_CONTENT_MAP: Record<RoleSlug, RoleContent> = {
     keywordClusters: {
       data: ["Funnel analysis", "Cohort analysis", "Segmentation", "Root cause analysis", "Attribution"],
       tools: ["SQL", "Looker", "Tableau", "Excel", "dbt"],
-      concepts: ["A/B testing", "KPI reporting", "Data quality", "Business intelligence", "Forecasting"],
+      concepts: ["A/B testing", "KPI reporting", "Data quality", "Business intelligence reporting", "Forecasting"],
     },
     keywordMistakes: [
       "Listing SQL, Tableau, or Looker without showing one outcome metric tied to each tool.",
