@@ -13,7 +13,9 @@ export function JdWorkbenchPageChrome() {
     postingFitWorkbenchBreadcrumbJsonLd(),
     postingFitWebApplicationJsonLd(TOOL_CLUSTER_PRIMARY),
   ];
+  const eyebrow = TOOL_CLUSTER_PRIMARY.heroEyebrow;
   const pageH1 = TOOL_CLUSTER_PRIMARY.heroH1 ?? TOOL_CLUSTER_PRIMARY.h1;
+  const intro = TOOL_CLUSTER_PRIMARY.heroIntro ?? TOOL_CLUSTER_PRIMARY.intro;
 
   return (
     <>
@@ -25,7 +27,27 @@ export function JdWorkbenchPageChrome() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }}
         />
       ))}
-      <h1 className="sr-only">{pageH1}</h1>
+      <section
+        className="border-b border-slate-200 bg-gradient-to-b from-sky-50/40 to-white"
+        aria-labelledby="jd-workbench-heading"
+      >
+        <div className="mx-auto max-w-7xl px-4 py-4 text-center sm:px-6 sm:py-5 sm:text-left lg:px-8">
+          {eyebrow ? (
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-sky-800 sm:text-xs">
+              {eyebrow}
+            </p>
+          ) : null}
+          <h1
+            id="jd-workbench-heading"
+            className="mt-1 text-pretty text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl"
+          >
+            {pageH1}
+          </h1>
+          <p className="mx-auto mt-2 max-w-2xl text-pretty text-sm leading-relaxed text-slate-600 sm:mx-0 sm:text-[15px]">
+            {intro}
+          </p>
+        </div>
+      </section>
     </>
   );
 }
