@@ -58,7 +58,7 @@ export function HomeMarketingPage() {
               >
                 <h3 className="text-sm font-semibold text-slate-900">{card.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
-                  {"bodyLink" in card && card.bodyLink ? (
+                  {"bodyLink" in card ? (
                     <HomeContextualLink parts={card.bodyLink} />
                   ) : (
                     card.body

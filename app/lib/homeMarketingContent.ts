@@ -72,7 +72,19 @@ export type HomeContextualLink = {
   suffix: string;
 };
 
-export const HOME_CAPABILITY_CARDS = [
+export type HomeCapabilityCard =
+  | {
+      key: string;
+      title: string;
+      bodyLink: HomeContextualLink;
+    }
+  | {
+      key: string;
+      title: string;
+      body: string;
+    };
+
+export const HOME_CAPABILITY_CARDS: HomeCapabilityCard[] = [
   {
     key: "jd-compare",
     title: "Resume vs job description",
@@ -97,7 +109,7 @@ export const HOME_CAPABILITY_CARDS = [
     title: "Edit and download",
     body: "Review every change, tweak in the editor, then export when ready.",
   },
-] as const;
+];
 
 export const HOME_HOW_IT_WORKS_STEPS = [
   {
