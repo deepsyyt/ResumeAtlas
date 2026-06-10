@@ -11,6 +11,7 @@ import {
   TOOL_CLUSTER_ATS_FREE,
   toolClusterBreadcrumbSchema,
   toolClusterFaqSchema,
+  toolClusterWebApplicationSchema,
 } from "@/app/lib/toolClusterPages";
 
 const path = TOOL_CLUSTER_ATS_FREE.path;
@@ -127,6 +128,13 @@ export function ATSResumeCheckerFreeLanding() {
         <LastUpdated className="text-xs text-slate-500" />
       </div>
 
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(toolClusterWebApplicationSchema(TOOL_CLUSTER_ATS_FREE)),
+        }}
+      />
       <script
         type="application/ld+json"
         suppressHydrationWarning

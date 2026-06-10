@@ -5,9 +5,8 @@
  * | Cluster        | Canonical path |
  * |----------------|----------------|
  * | Homepage discovery | `/` exposes **role-only** link clusters (`#browse-by-role`); product/tools stay in-page and nav, not separate “topics” columns. |
- * | Brand + tools hub | / |
- * | Resume ↔ JD   | `/` (posting-fit workbench on homepage) |
- * | Keyword gaps  | (consolidated into homepage workbench) |
+ * | Brand + category hub (AI/ATS checker, optimizer) | / |
+ * | Resume ↔ JD compare / match / keyword scanner | `/check-resume-against-job-description` |
  * | ATS education (traffic door → workbench) | /ats-resume-checker |
  * | ATS layout guide | /ats-resume-template |
  * | Work history section | /resume-guides/resume-work-experience-examples |
@@ -36,22 +35,22 @@ const abs = (path: string) => `${siteBase()}${path.startsWith("/") ? path : `/${
 /** Resume ↔ this job description (tailor / compare / match). */
 export const CLUSTER_JD_MATCH_TOOL_COPY = {
   titleAbsolute:
-    "Compare Resume to Job Description Free | ATS Match & Missing Keywords",
+    "Compare Resume to Job Description Free | ATS Match and Keyword Gaps",
   description:
     "Compare your resume against a job description in seconds. Get ATS match score, missing keywords, skill gaps, and optimization suggestions. Free, no signup required.",
   ogTitle:
-    `Compare Resume to Job Description Free | ATS Match & Missing Keywords (${CONTENT_FRESHNESS_YEAR})`,
+    `Compare Resume to Job Description Free | ATS Match and Keyword Gaps (${CONTENT_FRESHNESS_YEAR})`,
   ogDescription:
     "Compare your resume against a job description in seconds. Get ATS match score, missing keywords, skill gaps, and optimization suggestions. Free, no signup required.",
-  twitterTitle: "Compare resume to job description free — ATS match",
+  twitterTitle: "Compare resume to job description free | ATS match and keyword gaps",
   twitterDescription:
     "ATS match score, missing keywords, skill gaps, and optimization suggestions. Free, no signup required.",
-  h1: "Compare resume to job description free — ATS match & missing keywords",
+  h1: "Compare resume to a job description | free ATS match and keyword gaps",
   intro:
     "Paste your resume and the exact job description. See how much of the job you prove in real project bullets (not just skills lists), a skill-by-skill proof map, honest gap callouts, and reference ATS metrics. Then run evidence-first optimization: move supported JD skills into the right bullets with architecture, deployment, and impact proof. No signup.",
   /** Visible workbench hero — aligned with title/meta for SERP consistency. */
   heroEyebrow: "Free resume vs job description checker",
-  heroH1: "Compare your resume to a job description free — ATS match & missing keywords",
+  heroH1: "Compare your resume to a job description | free ATS match and keyword gaps",
   heroIntro:
     "Compare your resume against a job description in seconds. Get ATS match score, missing keywords, skill gaps, and optimization suggestions. Free, no signup required.",
   topStripStrong:

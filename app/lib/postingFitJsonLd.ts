@@ -1,5 +1,5 @@
 import type { ToolClusterPageConfig } from "@/app/lib/toolClusterPages";
-import { toolClusterAbsoluteUrl } from "@/app/lib/toolClusterPages";
+import { toolClusterAbsoluteUrl, toolClusterWebApplicationSchema } from "@/app/lib/toolClusterPages";
 import { CHECK_RESUME_AGAINST_JD_PATH, HOME_MARKETING_PATH } from "@/app/lib/internalLinks";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 
@@ -30,24 +30,14 @@ export function postingFitWorkbenchBreadcrumbJsonLd() {
 }
 
 export function postingFitWebApplicationJsonLd(config: ToolClusterPageConfig) {
-  const features = [
-    "ATS match score for a pasted job description",
-    "Resume keyword gap analysis and missing keywords",
-    "Resume JD match and skill gap readout",
-    "AI resume optimization and bullet tailoring",
-  ];
-  return {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: "ResumeAtlas compare and optimize for job descriptions",
-    url: toolClusterAbsoluteUrl(config.path),
-    applicationCategory: "BusinessApplication",
-    operatingSystem: "All",
-    description:
-      "Compare resume to job description: ATS match score, resume JD match, keyword gap analysis, missing keywords, and AI resume optimization for that posting.",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-    featureList: features,
-  };
+  return toolClusterWebApplicationSchema(config, {
+    featureList: [
+      "Compare resume to job description",
+      "Resume match score and ATS match score",
+      "Resume keyword gap analysis and missing keywords",
+      "Tailor resume to job description with AI optimization",
+    ],
+  });
 }
 
 export function postingFitFaqJsonLd(

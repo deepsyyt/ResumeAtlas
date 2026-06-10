@@ -6,6 +6,9 @@ import {
 } from "@/app/lib/internalLinks";
 import {
   HOME_COMPARE_METRICS,
+  HOME_COMPARE_SECTION_DETAIL_LINK_ANCHOR,
+  HOME_COMPARE_SECTION_DETAIL_LINK_PREFIX,
+  HOME_COMPARE_SECTION_DETAIL_LINK_SUFFIX,
   HOME_COMPARE_SECTION_EYEBROW,
   HOME_COMPARE_SECTION_HEADING,
   HOME_COMPARE_SECTION_INTRO,
@@ -68,6 +71,17 @@ export function HomeStep1PreviewSection() {
                   </li>
                 ))}
               </ol>
+
+              <p className="mx-auto mt-5 max-w-lg text-pretty text-sm leading-relaxed text-slate-600 sm:text-base lg:mx-0">
+                {HOME_COMPARE_SECTION_DETAIL_LINK_PREFIX}
+                <Link
+                  href={CHECK_RESUME_AGAINST_JD_PATH}
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  {HOME_COMPARE_SECTION_DETAIL_LINK_ANCHOR}
+                </Link>
+                {HOME_COMPARE_SECTION_DETAIL_LINK_SUFFIX}
+              </p>
 
               <div className="mt-7 flex flex-col items-center gap-3 lg:items-start">
                 <Link

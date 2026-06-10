@@ -9,7 +9,29 @@ import {
 import {
   HOME_CAPABILITY_CARDS,
   HOME_HOW_IT_WORKS_STEPS,
+  type HomeContextualLink,
 } from "@/app/lib/homeMarketingContent";
+
+const contextualLinkClassName =
+  "font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950";
+
+function HomeContextualLink({
+  parts,
+  href = CHECK_RESUME_AGAINST_JD_PATH,
+}: {
+  parts: HomeContextualLink;
+  href?: string;
+}) {
+  return (
+    <>
+      {parts.prefix}
+      <Link href={href} className={contextualLinkClassName}>
+        {parts.anchor}
+      </Link>
+      {parts.suffix}
+    </>
+  );
+}
 
 export function HomeMarketingPage() {
   return (
@@ -26,16 +48,22 @@ export function HomeMarketingPage() {
             What you get for free
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            One workflow: check ATS fit, compare to a job description, then optimize with AI.
+            One workflow: free ATS resume checker, resume keyword scan, and AI resume optimizer.
           </p>
           <ul className="mt-8 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
             {HOME_CAPABILITY_CARDS.map((card) => (
               <li
-                key={card.title}
+                key={card.key}
                 className="rounded-2xl border border-white/80 bg-white/75 p-4 text-left shadow-sm shadow-slate-900/[0.04] ring-1 ring-slate-900/[0.04] backdrop-blur-sm"
               >
                 <h3 className="text-sm font-semibold text-slate-900">{card.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{card.body}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+                  {"bodyLink" in card && card.bodyLink ? (
+                    <HomeContextualLink parts={card.bodyLink} />
+                  ) : (
+                    card.body
+                  )}
+                </p>
               </li>
             ))}
           </ul>
@@ -66,7 +94,12 @@ export function HomeMarketingPage() {
                   {step.emoji}
                 </p>
                 <h3 className="mt-2 text-sm font-semibold text-slate-900">{step.title}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-slate-600">{step.line}</p>
+                <p className="mt-1 text-sm leading-relaxed text-slate-600">
+                  {"lineLead" in step && step.lineLead ? (
+                    <HomeContextualLink parts={step.lineLead} />
+                  ) : null}
+                  {step.line}
+                </p>
               </li>
             ))}
           </ol>

@@ -1,9 +1,10 @@
 import { leadershipSignalLabel, type JdRoleLevel } from "@/app/lib/jdRoleLevel";
 import type { EvidenceDashboard, EvidenceStrength } from "@/app/lib/resumeEvidenceScore";
 
-export const EVIDENCE_MATCH_TITLE = "Evidence match";
+/** Familiar SERP language first; Evidence Match is the product metric name in parentheses. */
+export const EVIDENCE_MATCH_TITLE = "Job description match score (Evidence Match)";
 export const EVIDENCE_MATCH_SUBTITLE =
-  "How much of this job you prove in experience and project bullets, not just skills lists.";
+  "Resume-to-job match: how much of this posting you prove in project bullets, not just skills lists.";
 
 export const OPTIMIZE_EVIDENCE_MATCH_TITLE = "Proof changes from optimization";
 export const OPTIMIZE_EVIDENCE_MATCH_SUBTITLE =

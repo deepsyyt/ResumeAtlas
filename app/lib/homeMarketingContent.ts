@@ -1,26 +1,33 @@
 /** Shared homepage funnel copy (marketing `/` only — tool lives on the checker page). */
 
-/** Page topic — checker + optimizer for any role. */
-export const HOME_MARKETING_H1 = "AI resume checker and optimizer for any job role";
+/** Page topic — category hub (checker + optimizer). JD-compare SERP lives on the workbench URL. */
+export const HOME_MARKETING_H1 = "Free AI resume checker and ATS resume optimizer";
 
 export const HOME_MARKETING_TRUST_EYEBROW = "100% free · no signup";
 
 /** Compare section — first capability (no “Step 1” in UI). */
-export const HOME_COMPARE_SECTION_EYEBROW = "First, compare to the job";
+export const HOME_COMPARE_SECTION_EYEBROW = "First, check ATS and keyword fit";
 
-export const HOME_COMPARE_SECTION_HEADING = "Compare your resume to the job description";
+export const HOME_COMPARE_SECTION_HEADING = "Resume fit readout for the posting you paste";
 
 export const HOME_COMPARE_SECTION_INTRO =
   "Paste your resume and a job description. You get a clear readout for that posting. Free, instant, paste-only.";
 
+/** Contextual internal link copy (homepage → JD workbench). */
+export const HOME_COMPARE_SECTION_DETAIL_LINK_PREFIX = "Need a detailed comparison? ";
+export const HOME_COMPARE_SECTION_DETAIL_LINK_SUFFIX =
+  " to identify keyword gaps, missing requirements, and ATS issues.";
+export const HOME_COMPARE_SECTION_DETAIL_LINK_ANCHOR =
+  "compare your resume against a job description";
+
 export const HOME_COMPARE_METRICS = [
   {
-    label: "Evidence match",
-    body: "how much of this job you prove in experience and project bullets, not just a skills list.",
+    label: "Job description match score (Evidence Match)",
+    body: "resume-to-job match — how much of the posting you prove in project bullets, not just a skills list.",
   },
   {
     label: "ATS keyword score",
-    body: "whether your resume is easy for ATS to read, plus keyword overlap with the posting.",
+    body: "resume keyword scan: ATS readability plus keyword overlap with the posting.",
   },
   {
     label: "Skill proof map",
@@ -59,20 +66,34 @@ export const HOME_OPTIMIZE_POINTS = [
   },
 ] as const;
 
+export type HomeContextualLink = {
+  prefix: string;
+  anchor: string;
+  suffix: string;
+};
+
 export const HOME_CAPABILITY_CARDS = [
   {
-    title: "Check resume vs job description",
-    body: "See evidence match, skill proof map, and honest gaps for the posting you paste.",
+    key: "jd-compare",
+    title: "Resume vs job description",
+    bodyLink: {
+      prefix: "You can ",
+      anchor: "compare your resume to a job description",
+      suffix: " and see job description match score, skill proof map, and keyword gaps.",
+    },
   },
   {
+    key: "ats-checker",
     title: "Free ATS resume checker",
-    body: "Scan parsing risk, structure, and readability before you tailor keywords.",
+    body: "Scan resume for keywords, parsing risk, structure, and ATS readability before you tailor.",
   },
   {
+    key: "ai-optimize",
     title: "AI resume optimization",
     body: "Strengthen thin bullets with architecture, deployment, and impact from work you already did.",
   },
   {
+    key: "edit-download",
     title: "Edit and download",
     body: "Review every change, tweak in the editor, then export when ready.",
   },
@@ -83,13 +104,18 @@ export const HOME_HOW_IT_WORKS_STEPS = [
     key: "paste",
     emoji: "📝",
     title: "Paste resume & job description",
+    lineLead: {
+      prefix: "Open the free ",
+      anchor: "resume-job comparison tool",
+      suffix: " and paste both documents. ",
+    },
     line: "Copy-paste your resume and the posting. No file upload.",
   },
   {
     key: "analyze",
     emoji: "📊",
-    title: "ATS + evidence match",
-    line: "Get compatibility signals, proof map, and gap callouts for that job.",
+    title: "ATS scan + job match",
+    line: "Get ATS keyword match, resume match score, proof map, and gap callouts.",
   },
   {
     key: "aiOptimize",

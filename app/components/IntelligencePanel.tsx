@@ -178,7 +178,7 @@ export function IntelligencePanel({
           "Optional: add a job description for evidence match",
         ]
       : [
-          "Evidence match score for this job description",
+          "Job description match score (Evidence Match)",
           "Skill-by-skill proof map and topic coverage",
           "Honest gap callouts plus optimize option",
         ];

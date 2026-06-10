@@ -54,7 +54,7 @@ export function PostingFitSsrShell() {
 
               <ul className="mx-auto mt-6 hidden max-w-md space-y-2 text-left text-sm text-slate-700 lg:mx-0 lg:block">
                 {[
-                  "Evidence match score for this job description",
+                  "Job description match score (Evidence Match)",
                   "Skill-by-skill proof map and topic coverage",
                   "Optimize thin bullets without inventing experience",
                 ].map((line) => (

@@ -100,12 +100,15 @@ export function toolClusterAbsoluteUrl(path: string): string {
   return `${siteBase()}${path}`;
 }
 
-export function toolClusterWebApplicationSchema(config: ToolClusterPageConfig) {
-  return {
+export function toolClusterWebApplicationSchema(
+  config: ToolClusterPageConfig,
+  options?: { featureList?: readonly string[]; url?: string }
+) {
+  const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: config.webAppName,
-    url: toolClusterAbsoluteUrl(config.path),
+    url: options?.url ?? toolClusterAbsoluteUrl(config.path),
     applicationCategory: "BusinessApplication",
     operatingSystem: "All",
     description: config.webAppDescription,
@@ -115,6 +118,10 @@ export function toolClusterWebApplicationSchema(config: ToolClusterPageConfig) {
       priceCurrency: "USD",
     },
   };
+  if (options?.featureList?.length) {
+    schema.featureList = [...options.featureList];
+  }
+  return schema;
 }
 
 export function toolClusterFaqSchema(config: ToolClusterPageConfig) {
@@ -172,31 +179,33 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   exampleResumeContains: "Python, dashboards, and ad-hoc analysis.",
   exampleMissing: "SQL depth, experimentation, and stakeholder-facing outcomes.",
   exampleScoreLine:
-    "Evidence match: ~58% before optimization (ATS keyword score ~66% for reference).",
+    "Job description match score (Evidence Match): ~58% before optimization (ATS keyword score ~66% for reference).",
   exampleFixLine:
-    "After evidence-first optimization: SQL and experiment proof moved into project bullets; estimated evidence match ~72%.",
+    "After evidence-first optimization: SQL and experiment proof moved into project bullets; estimated job description match ~72%.",
   keywords: [
     "compare resume to job description",
     "compare resume to job posting",
+    "compare my resume to job description",
+    "check resume against job description",
+    "resume to job description match",
+    "resume match with job description",
+    "resume job description comparison",
+    "resume vs job description scanner",
+    "tailor resume to job description free",
+    "compare resume and job description",
+    "compare cv to job description",
+    "resume matching with job description",
+    "match resume to job description",
     "resume match score",
-    "ATS match score",
     "resume job description match",
-    "resume JD match",
-    "resume keyword scanner",
+    "resume vs job description checker",
+    "resume matching tool",
+    "job description comparison",
     "resume gap analysis",
     "keyword gap analysis",
-    "job description analysis",
-    "match resume to job description",
-    "resume vs job description checker",
-    "tailor resume to job description",
-    "AI resume optimization",
-    "optimize resume for job description",
-    "resume keyword checker",
-    "job description keyword finder",
-    "resume matching tool",
-    "scan resume for keywords",
-    "skill gap analysis",
     "missing resume keywords",
+    "job description analysis",
+    "optimize resume for job description",
   ],
   faq: [...JD_MATCH_WORKBENCH_FAQ],
 };
