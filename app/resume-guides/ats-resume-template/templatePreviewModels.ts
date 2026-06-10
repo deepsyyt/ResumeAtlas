@@ -27,39 +27,28 @@ export type TemplatePreviewModel = {
 };
 
 export const PREVIEW_GENERAL: TemplatePreviewModel = {
-  eyebrow: "Template A",
-  cardTitle: "General / early career",
+  eyebrow: "Featured template",
+  cardTitle: "Professional ATS layout",
   name: "Jordan Lee",
-  roleLine: "Operations analytics · early career",
-  contactLine: "Boston, MA · jordan.lee@email.com · (555) 010-0199",
+  roleLine: "Senior Business Analyst · 8+ years",
+  contactLine: "Chicago, IL · jordan.lee@email.com · (555) 010-0199",
   contactLine2: "linkedin.com/in/jordanlee",
   summary:
-    "Economics graduate targeting operations analytics roles. Internship-proven at turning messy operational data into weekly KPI packs, exec-ready Excel readouts, and SQL-backed answers for account managers, comfortable owning the loop from raw tables to clear stakeholder updates under tight deadlines.",
-  skills: "SQL · Microsoft Excel · Google Sheets · Tableau (basics) · Python (pandas, introductory)",
+    "Senior business analyst with 8+ years translating requirements into shipped solutions. Delivers SQL-backed reporting, executive dashboards, and cross-functional alignment that improves forecast accuracy and cycle time across finance and operations.",
+  skills:
+    "SQL · Power BI · Tableau · Excel · Requirements gathering · Process mapping · Jira · Stakeholder management",
   experienceJob: {
-    title: "Operations Analytics Intern",
-    company: "Acme Logistics",
-    dates: "Jun 2023 - Aug 2024",
+    title: "Senior Business Analyst",
+    company: "Northwind Financial",
+    dates: "2019 – Present",
   },
   bullets: [
-    "Built weekly KPI pack in Excel; reduced prep time from roughly 4 hours to under 90 minutes.",
-    "Joined and cleaned shipment-level tables (5k+ rows/week) for ad-hoc questions from account managers.",
+    "Led requirements workshops with 12 stakeholders; delivered a unified KPI framework adopted across finance and ops, reducing conflicting metrics by 38%.",
+    "Built Power BI executive dashboard suite; cut monthly close reporting time from 6 days to 2.5 days.",
+    "Mapped order-to-cash processes and authored 140+ user stories; accelerated release cadence by 22% over three quarters.",
+    "Partnered with engineering on API integration specs; reduced production defects tied to requirements gaps by 31%.",
   ],
-  projects: [
-    {
-      title: "Campus operations KPI dashboard (Tableau + SQL)",
-      context: "Academic project · team of 3",
-      outcome:
-        "Modeled dining-hall traffic and staffing gaps from 18 months of facility logs; surfaced $120K annualized overtime risk and a staffing plan adopted by the student union board.",
-    },
-    {
-      title: "Cohort retention capstone (Python + Excel)",
-      context: "Senior thesis · anonymized sample data",
-      outcome:
-        "Segmented first-year retention drivers with logistic-style feature exploration; delivered a 12-slide readout and reproducible notebook the department reused for advising outreach.",
-    },
-  ],
-  education: "BS Economics · State University · May 2024",
+  education: "MBA · Midwest University · 2018",
 };
 
 export const PREVIEW_DATA_ANALYST: TemplatePreviewModel = {

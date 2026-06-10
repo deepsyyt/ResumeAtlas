@@ -1,23 +1,22 @@
 JORDAN LEE
-Boston, MA · jordan.lee@email.com · (555) 010-0199 · linkedin.com/in/jordanlee
+Chicago, IL · jordan.lee@email.com · (555) 010-0199 · linkedin.com/in/jordanlee
 
 SUMMARY
-Economics graduate targeting operations analytics roles. Internship-proven at turning messy operational data into weekly KPI packs, exec-ready Excel readouts, and SQL-backed answers for account managers—comfortable owning the loop from raw tables to clear stakeholder updates under tight deadlines.
+Senior business analyst with 8+ years translating requirements into shipped solutions. Delivers SQL-backed reporting, executive dashboards, and cross-functional alignment that improves forecast accuracy and cycle time across finance and operations.
 
 SKILLS
-SQL · Microsoft Excel · Google Sheets · Tableau (basics) · Python (pandas, introductory)
+SQL · Power BI · Tableau · Excel · Requirements gathering · Process mapping · Jira · Stakeholder management
 
 EXPERIENCE
-Operations Analytics Intern · Acme Logistics · Jun 2023–Aug 2024
-• Built weekly KPI pack in Excel; reduced prep time from roughly 4 hours to under 90 minutes.
-• Joined and cleaned shipment-level tables (5k+ rows/week) for ad-hoc questions from account managers.
+Senior Business Analyst · Northwind Financial · 2019-Present
+• Led requirements workshops with 12 stakeholders; delivered a unified KPI framework adopted across finance and ops, reducing conflicting metrics by 38%.
+• Built Power BI executive dashboard suite; cut monthly close reporting time from 6 days to 2.5 days.
+• Mapped order-to-cash processes and authored 140+ user stories; accelerated release cadence by 22% over three quarters.
+• Partnered with engineering on API integration specs; reduced production defects tied to requirements gaps by 31%.
 
-PROJECTS
-Campus operations KPI dashboard (Tableau + SQL) · Academic project · team of 3
-• Modeled dining-hall traffic and staffing gaps from 18 months of facility logs; surfaced $120K annualized overtime risk and a staffing plan adopted by the student union board.
-
-Cohort retention capstone (Python + Excel) · Senior thesis · anonymized sample data
-• Segmented first-year retention drivers with logistic-style feature exploration; delivered a 12-slide readout and reproducible notebook the department reused for advising outreach.
+Business Analyst · Lakeside Corp · 2016-2019
+• Standardized reporting definitions in SQL and Excel; eliminated duplicate KPI versions used by three departments.
+• Facilitated UAT for a billing integration; documented 48 acceptance scenarios with zero rollback on launch.
 
 EDUCATION
-BS Economics · State University · May 2024
+MBA · Midwest University · 2018 · BS Finance · 2014

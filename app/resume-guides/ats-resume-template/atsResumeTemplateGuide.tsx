@@ -136,6 +136,44 @@ function atsGuideArticleJsonLd() {
   };
 }
 
+function atsGuideHowToJsonLd() {
+  const base = getSiteUrl().replace(/\/$/, "");
+  const url = `${base}${ATS_RESUME_TEMPLATE_GUIDE_PATH}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "Download and use the free ATS resume template",
+    description: CLUSTER_ATS_GUIDE_METADATA.description,
+    url,
+    step: [
+      {
+        "@type": "HowToStep",
+        position: 1,
+        name: "Download or copy the template",
+        text: "Download the Word .docx or plain .txt file, or copy the plain-text template from the page.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 2,
+        name: "Replace placeholder content",
+        text: "Swap in your real roles, skills, and metrics while keeping standard section headings.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 3,
+        name: "Keep ATS-safe structure",
+        text: "Use a single column and standard headings: Summary, Experience, Skills, Education.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 4,
+        name: "Export a machine-readable file",
+        text: "Export a text-based PDF or .docx. Avoid image-only PDFs or scanned files.",
+      },
+    ],
+  };
+}
+
 function atsGuideBreadcrumbJsonLd() {
   const base = getSiteUrl().replace(/\/$/, "");
   return {
@@ -155,6 +193,7 @@ function atsGuideBreadcrumbJsonLd() {
 
 export function AtsResumeTemplateGuide() {
   const articleLd = atsGuideArticleJsonLd();
+  const howToLd = atsGuideHowToJsonLd();
   const breadcrumbLd = atsGuideBreadcrumbJsonLd();
 
   return (
@@ -166,7 +205,7 @@ export function AtsResumeTemplateGuide() {
               Best ATS template resource · examples · format rules
             </p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[2.35rem] lg:leading-tight">
-              ATS Resume Template (Free + ATS-Friendly Format for {CONTENT_FRESHNESS_YEAR})
+              {CLUSTER_ATS_GUIDE_METADATA.h1}
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
               Download ATS-friendly resume templates in Word / Google Docs, copy a plain-text version, and see
@@ -183,6 +222,67 @@ export function AtsResumeTemplateGuide() {
             docxHref={ATS_RESUME_TEMPLATE_DOCX_HREF}
             structureHref={`${ATS_RESUME_TEMPLATE_GUIDE_PATH}#ats-resume-template`}
           />
+
+          <div className="mx-auto mt-10 max-w-4xl grid gap-4 sm:grid-cols-2">
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 sm:p-5">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-emerald-950">ATS safe</h2>
+              <ul className="mt-3 space-y-2 text-sm text-slate-800">
+                <li className="flex gap-2">
+                  <span className="shrink-0 text-emerald-700" aria-hidden>
+                    ✓
+                  </span>
+                  Single column
+                </li>
+                <li className="flex gap-2">
+                  <span className="shrink-0 text-emerald-700" aria-hidden>
+                    ✓
+                  </span>
+                  Standard section headings
+                </li>
+                <li className="flex gap-2">
+                  <span className="shrink-0 text-emerald-700" aria-hidden>
+                    ✓
+                  </span>
+                  Text-based PDF
+                </li>
+                <li className="flex gap-2">
+                  <span className="shrink-0 text-emerald-700" aria-hidden>
+                    ✓
+                  </span>
+                  Recruiter readable
+                </li>
+              </ul>
+            </div>
+            <div className="rounded-xl border border-rose-200 bg-rose-50/40 p-4 sm:p-5">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-rose-950">ATS risky</h2>
+              <ul className="mt-3 space-y-2 text-sm text-slate-800">
+                <li className="flex gap-2">
+                  <span className="shrink-0 text-rose-700" aria-hidden>
+                    ✗
+                  </span>
+                  Two-column layouts
+                </li>
+                <li className="flex gap-2">
+                  <span className="shrink-0 text-rose-700" aria-hidden>
+                    ✗
+                  </span>
+                  Skill bars
+                </li>
+                <li className="flex gap-2">
+                  <span className="shrink-0 text-rose-700" aria-hidden>
+                    ✗
+                  </span>
+                  Graphics and icons
+                </li>
+                <li className="flex gap-2">
+                  <span className="shrink-0 text-rose-700" aria-hidden>
+                    ✗
+                  </span>
+                  Text in images
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -658,6 +758,11 @@ export function AtsResumeTemplateGuide() {
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }}
       />
     </main>
   );

@@ -157,14 +157,22 @@ export const CLUSTER_ATS_CHECKER_TOOL_COPY = {
 };
 
 /** Long-form: templates, layout, how ATS reads resumes (education, not interactive product). */
+export const ATS_TEMPLATE_META_TITLE =
+  `Free ATS Resume Template (${CONTENT_FRESHNESS_YEAR}) | Word, Google Docs & Copy-Paste${RESUME_ATLAS_TITLE_SUFFIX}`;
+
+export const ATS_TEMPLATE_META_DESCRIPTION =
+  "Free ATS resume template for 2026. Download Word format, copy-paste plain text version, and Google Docs template. ATS-friendly layout with real examples.";
+
+export const ATS_TEMPLATE_H1 = "Free ATS Resume Template for Word and Google Docs";
+
 export const CLUSTER_ATS_GUIDE_METADATA = {
   path: ATS_RESUME_TEMPLATE_GUIDE_PATH,
-  title: `ATS Resume Template That Passes Screening (Free + Copyable, ${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
-  description:
-    `Free ATS resume template (${CONTENT_FRESHNESS_YEAR}): copyable layout, Word downloads, format rules, and examples that pass applicant tracking systems—not role keyword lists (those live on role keyword pages).`,
-  ogTitle: `ATS Resume Template & Format (${CONTENT_FRESHNESS_YEAR}) - Pass ATS Screening${RESUME_ATLAS_TITLE_SUFFIX}`,
-  ogDescription:
-    "ATS resume format, template, and examples: layout and parsing rules to pass screening. Use the JD matcher to scan keywords for a specific posting.",
+  title: ATS_TEMPLATE_META_TITLE,
+  description: ATS_TEMPLATE_META_DESCRIPTION,
+  h1: ATS_TEMPLATE_H1,
+  /** Same as `title` — one SERP string for HTML, OG, and Article schema. */
+  ogTitle: ATS_TEMPLATE_META_TITLE,
+  ogDescription: ATS_TEMPLATE_META_DESCRIPTION,
   openGraphUrl: abs(ATS_RESUME_TEMPLATE_GUIDE_PATH),
 };
 
