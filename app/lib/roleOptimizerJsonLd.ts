@@ -65,7 +65,7 @@ export function roleOptimizerWebApplicationJsonLd(role: RoleOptimizerContent) {
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: `${role.roleName} resume optimizer`,
+    name: `Compare ${role.roleName} resume to job description`,
     url: abs(role.path),
     applicationCategory: "BusinessApplication",
     operatingSystem: "All",

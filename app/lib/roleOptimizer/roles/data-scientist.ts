@@ -1,6 +1,7 @@
 import {
   buildRoleOptimizerMetaDescription,
   buildRoleOptimizerMetaTitle,
+  buildRoleOptimizerH1,
   buildRoleOptimizerPath,
   type RoleOptimizerContent,
 } from "@/app/lib/roleOptimizerContent";
@@ -14,13 +15,14 @@ export const dataScientistOptimizer: RoleOptimizerContent = {
   roleName,
   title: buildRoleOptimizerMetaTitle(roleName),
   description: buildRoleOptimizerMetaDescription(roleName),
-  h1: "Optimize Your Data Scientist Resume for a Job Description",
+  h1: buildRoleOptimizerH1(roleName),
   targetKeywords: [
-    "data scientist resume optimizer",
+    "compare data scientist resume to job description",
     "tailor data scientist resume to job description",
-    "machine learning resume keywords",
+    "data scientist resume match job description",
     "ATS data scientist resume",
     "data science resume optimization",
+    "machine learning resume keywords",
     "feature engineering resume bullets",
     "model deployment resume examples",
   ],

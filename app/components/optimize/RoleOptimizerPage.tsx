@@ -6,7 +6,6 @@ import { RoleOptimizeClusterNav } from "@/app/components/optimize/RoleOptimizeCl
 import { LastUpdated } from "@/app/components/LastUpdated";
 import { CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
 import {
-  ANALYZE_OPTIMIZE_RESUME_JD_CTA,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PATH,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
@@ -15,6 +14,10 @@ import type { RoleOptimizerContent } from "@/app/lib/roleOptimizerContent";
 import {
   OPTIMIZE_HUB_CONTENT,
   OPTIMIZE_HUB_PATH,
+  ROLE_OPTIMIZER_HERO_BULLETS,
+  ROLE_OPTIMIZER_HERO_CTA,
+  buildRoleOptimizerH1,
+  buildRoleOptimizerHeroIntro,
   ROLE_OPTIMIZER_ORDER,
 } from "@/app/lib/roleOptimizerContent";
 import { getOptimizeClusterNavFromRole } from "@/app/lib/roleOptimizer/clusterNav";
@@ -36,7 +39,7 @@ export function RoleOptimizerPage({ role }: Props) {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="mx-auto max-w-4xl px-4 pb-10 pt-6 text-center sm:px-6 sm:pb-12 sm:pt-8 lg:px-8">
+        <div className="mx-auto max-w-4xl px-4 pb-8 pt-6 text-center sm:px-6 sm:pb-10 sm:pt-8 lg:px-8">
           <nav aria-label="Breadcrumb" className="mb-4 text-left text-sm text-slate-600">
             <ol className="flex flex-wrap items-center gap-1.5">
               <li>
@@ -59,28 +62,37 @@ export function RoleOptimizerPage({ role }: Props) {
             </ol>
           </nav>
           <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            {role.h1}
+            {buildRoleOptimizerH1(role.roleName)}
           </h1>
-          <LastUpdated className="mt-3 text-xs text-slate-500" label={CONTENT_LAST_UPDATED_LABEL} />
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
-            {role.introParagraphs[0]}
+            {buildRoleOptimizerHeroIntro(role.roleName)}
           </p>
+          <ul className="mx-auto mt-5 inline-grid gap-2 text-left text-sm text-slate-700 sm:text-base">
+            {ROLE_OPTIMIZER_HERO_BULLETS.map((item) => (
+              <li key={item} className="flex items-center gap-2">
+                <span className="text-emerald-600" aria-hidden="true">
+                  ✓
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-sm font-medium text-slate-700">Free. No login required.</p>
           <a
             href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-            className="mt-6 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="mt-5 inline-flex rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
           >
-            {ANALYZE_OPTIMIZE_RESUME_JD_CTA}
+            {ROLE_OPTIMIZER_HERO_CTA}
           </a>
+          <LastUpdated className="mt-4 text-xs text-slate-500" label={CONTENT_LAST_UPDATED_LABEL} />
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl space-y-10 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
-        {cluster ? (
-          <RoleOptimizeClusterNav cluster={cluster} currentPath={role.path} />
-        ) : null}
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        <JdDemonstrationSection role={role} hideCta />
+      </div>
 
-        <JdDemonstrationSection role={role} />
-
+      <div className="mx-auto max-w-3xl space-y-10 px-4 pb-10 sm:px-6 sm:pb-12 lg:px-8">
         <RoleKeywordChecklistSection role={role} />
 
         <section id="intro" className={sectionClass}>
@@ -88,7 +100,7 @@ export function RoleOptimizerPage({ role }: Props) {
             Why {role.roleName.toLowerCase()} resumes need job-description tailoring
           </h2>
           <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700 sm:text-base">
-            {role.introParagraphs.slice(1).map((p, i) => (
+            {role.introParagraphs.map((p, i) => (
               <p key={i}>{p}</p>
             ))}
           </div>
@@ -160,25 +172,6 @@ export function RoleOptimizerPage({ role }: Props) {
         {cluster ? (
           <RoleOptimizeClusterNav cluster={cluster} currentPath={role.path} />
         ) : null}
-
-        <section
-          id="cta"
-          className="rounded-2xl border border-sky-100 bg-sky-50/60 p-6 text-center sm:p-8"
-        >
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Analyze and optimize for your next application
-          </h2>
-          <p className="mt-3 text-sm text-slate-700 sm:text-base">
-            Open the free compare tool: match score, gap analysis, and AI optimization for the{" "}
-            {role.roleName.toLowerCase()} posting you paste.
-          </p>
-          <a
-            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-            className="mt-5 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
-          >
-            {ANALYZE_OPTIMIZE_RESUME_JD_CTA}
-          </a>
-        </section>
 
         <OptimizePagesToolCta roleName={role.roleName} />
       </div>

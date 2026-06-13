@@ -4,9 +4,9 @@ import {
 } from "@/app/lib/internalLinks";
 import type { RoleOptimizerContent } from "@/app/lib/roleOptimizerContent";
 
-type Props = { role: RoleOptimizerContent };
+type Props = { role: RoleOptimizerContent; hideCta?: boolean };
 
-export function JdDemonstrationSection({ role }: Props) {
+export function JdDemonstrationSection({ role, hideCta = false }: Props) {
   const demo = role.jdDemonstration;
 
   return (
@@ -65,12 +65,14 @@ export function JdDemonstrationSection({ role }: Props) {
       </div>
 
       <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">{demo.outro}</p>
-      <a
-        href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-        className="mt-5 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
-      >
-        {ANALYZE_OPTIMIZE_RESUME_JD_CTA}
-      </a>
+      {hideCta ? null : (
+        <a
+          href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+          className="mt-5 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+        >
+          {ANALYZE_OPTIMIZE_RESUME_JD_CTA}
+        </a>
+      )}
     </section>
   );
 }

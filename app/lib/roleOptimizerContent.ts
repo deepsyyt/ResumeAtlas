@@ -66,15 +66,35 @@ export type OptimizeHubContent = {
 
 export const OPTIMIZE_HUB_PATH = "/optimize-resume-for-job-description" as const;
 
-/** SERP title for role optimizer pages — front-loads free, AI, ATS, and no-login hooks. */
+/** H1 for role optimizer pages — matches compare-resume-to-JD search intent. */
+export function buildRoleOptimizerH1(roleName: string): string {
+  return `Compare Your ${roleName} Resume to a Job Description`;
+}
+
+/** Outcome-focused hero intro (above the fold). */
+export function buildRoleOptimizerHeroIntro(roleName: string): string {
+  const roleLower = roleName.toLowerCase();
+  return `Compare your ${roleLower} resume against a job description. Get an ATS match score, missing keywords, skill gaps, and AI-powered rewrite suggestions in under a minute.`;
+}
+
+export const ROLE_OPTIMIZER_HERO_BULLETS = [
+  "ATS match score",
+  "Missing keywords",
+  "Skill gap analysis",
+  "Resume bullet rewrites",
+] as const;
+
+export const ROLE_OPTIMIZER_HERO_CTA = "Analyze my resume" as const;
+
+/** SERP title for role optimizer pages — aligned with compare-to-JD intent. */
 export function buildRoleOptimizerMetaTitle(roleName: string): string {
-  return `Free AI ${roleName} Resume Optimizer — ATS friendly, No Login`;
+  return `Compare ${roleName} Resume to Job Description — Free ATS Match Score`;
 }
 
 /** Meta description for role optimizer pages (~155 chars). */
 export function buildRoleOptimizerMetaDescription(roleName: string): string {
   const roleLower = roleName.toLowerCase();
-  return `Free AI ${roleLower} resume optimizer — tailor your resume to any job description. ATS-friendly match score, keyword gaps & bullet rewrites. No login required.`;
+  return `Compare your ${roleLower} resume to any job description. Free ATS match score, missing keywords, skill gaps & bullet rewrites. No login required.`;
 }
 
 export const OPTIMIZE_HUB_META_TITLE =
