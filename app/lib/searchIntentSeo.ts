@@ -109,7 +109,7 @@ const ROLE_KEYWORDS_SERP_TOOL_HINT: Record<RoleSlug, string> = {
 const ROLE_KEYWORDS_SERP_TITLE_OVERRIDE: Partial<Record<RoleSlug, string>> = {
   "data-analyst": `Top Data Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | ATS Skills Checklist${RESUME_ATLAS_TITLE_SUFFIX}`,
   "business-analyst": `Business Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | Requirements, Jira & ATS Skills${RESUME_ATLAS_TITLE_SUFFIX}`,
-  "data-scientist": `Data Scientist Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | Python, ML & ATS Skills${RESUME_ATLAS_TITLE_SUFFIX}`,
+  "data-scientist": `Data Science Resume Keywords (${CONTENT_FRESHNESS_YEAR}) – ATS Keywords for Data Scientists${RESUME_ATLAS_TITLE_SUFFIX}`,
 };
 
 function roleKeywordsSerpTitle(roleName: string, role: RoleSlug): string {
@@ -124,7 +124,7 @@ const ROLE_KEYWORDS_CTR_DESCRIPTION: Partial<Record<RoleSlug, string>> = {
   "data-analyst":
     "Data analyst resume keywords ATS checklist for 2026: SQL, Tableau, Excel, Looker, dbt, dashboarding, ETL, and KPI reporting. Copy-paste list, then scan your resume against the job description for missing terms.",
   "data-scientist":
-    "Data scientist resume keywords recruiters search for—Python, SQL, ML, experimentation, deployment. Free ATS checklist; paste your JD to see keyword gaps before you apply.",
+    "ATS keywords for data scientist resumes (2026): Python, SQL, machine learning, experimentation, forecasting, feature engineering. Copy-ready checklist—scan your resume against any job description.",
   "devops-engineer":
     "DevOps resume keywords for ATS: Kubernetes, Terraform, CI/CD, AWS, SRE. Free copy-ready list plus job-description scan to find missing tools and reliability terms.",
   "machine-learning-engineer":

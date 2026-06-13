@@ -20,6 +20,7 @@ import {
   ROLE_KEYWORDS_SCOPE_NOTE,
   ROLE_KEYWORDS_SECONDARY_H2,
   ROLE_KEYWORDS_SENIORITY,
+  ROLE_KEYWORDS_HERO_INTRO,
   roleKeywordsFaqSchema,
 } from "@/app/lib/roleKeywordsPageConfig";
 import { ROLE_KEYWORD_INTENTS, type RoleKeywordIntent } from "@/app/lib/roleSeo";
@@ -51,6 +52,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
   const isDataAnalystKeywordsPage = roleSlug === "data-analyst";
   const isMachineLearningEngineerPage = roleSlug === "machine-learning-engineer";
   const scopeNote = ROLE_KEYWORDS_SCOPE_NOTE[roleSlug];
+  const heroIntro = ROLE_KEYWORDS_HERO_INTRO[roleSlug];
   const secondaryH2 = ROLE_KEYWORDS_SECONDARY_H2[roleSlug];
   const clusterSectionTitle =
     roleSlug === "software-engineer"
@@ -136,10 +138,14 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               </div>
             ) : null}
             <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-              {introFreshnessEcho}
-              Copy-ready {config.roleName.toLowerCase()} resume keywords recruiters and ATS look for—grouped by
-              tools, skills, and verbs. Mirror terms from the job description where they match your real work,
-              then scan for gaps against that posting.
+              {heroIntro ?? (
+                <>
+                  {introFreshnessEcho}
+                  Copy-ready {config.roleName.toLowerCase()} resume keywords recruiters and ATS look for—grouped by
+                  tools, skills, and verbs. Mirror terms from the job description where they match your real work,
+                  then scan for gaps against that posting.
+                </>
+              )}
             </p>
             {scopeNote ? (
               <p className="mt-3 text-sm text-amber-900/90 max-w-2xl mx-auto rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2">

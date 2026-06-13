@@ -9,7 +9,7 @@ export type RoleKeywordsFaqItem = {
 /** Primary GSC-style phrase for the main keyword list H2 (exact-match SEO). */
 export const ROLE_KEYWORDS_PRIMARY_H2: Record<RoleSlug, string> = {
   "data-analyst": `Data Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
-  "data-scientist": `Data Scientist Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
+  "data-scientist": `Data Science Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
   "software-engineer": `Software Engineer Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
   "product-manager": `Product Manager Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
   "business-analyst": `Business Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
@@ -18,6 +18,12 @@ export const ROLE_KEYWORDS_PRIMARY_H2: Record<RoleSlug, string> = {
   "machine-learning-engineer": `Machine Learning Engineer Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
   "devops-engineer": `DevOps Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
   "full-stack-developer": `Full-Stack Developer Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
+};
+
+/** Role-specific hero intro (above-the-fold). Falls back to generic copy when omitted. */
+export const ROLE_KEYWORDS_HERO_INTRO: Partial<Record<RoleSlug, string>> = {
+  "data-scientist":
+    "Copy-ready ATS keywords for data scientist resumes including Python, SQL, machine learning, experimentation, forecasting, feature engineering, and stakeholder communication.",
 };
 
 /** Above-the-fold priority terms for `/data-analyst-resume-keywords` (GSC head terms). */
@@ -56,7 +62,7 @@ export const DATA_ANALYST_ANALYTICS_KEYWORDS_SECTION = {
 /** Secondary H2 targeting alternate query variants (long-tail). */
 export const ROLE_KEYWORDS_SECONDARY_H2: Partial<Record<RoleSlug, string>> = {
   "data-analyst": `Keywords for Data Analyst Resume (${CONTENT_FRESHNESS_YEAR} ATS Checklist)`,
-  "data-scientist": `Data Science Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
+  "data-scientist": `Data Scientist Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
   "machine-learning-engineer": `Machine Learning Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
   "software-engineer": `Software Engineer Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR})`,
   "business-analyst": `Keywords for Business Analyst Resume (${CONTENT_FRESHNESS_YEAR})`,
