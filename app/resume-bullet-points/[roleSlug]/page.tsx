@@ -11,6 +11,10 @@ import {
   levelLabel,
   RESUME_BULLET_LEVELS,
   RESUME_BULLET_ROLES,
+  countUniqueResumeBulletHubExamples,
+  defensibleBulletCountLabel,
+  buildResumeBulletHubMetaTitle,
+  buildResumeBulletHubMetaDescription,
   type ResumeBulletRole,
 } from "@/app/lib/resumeBulletPointContent";
 import { ResumeBulletLevelEmbed } from "@/app/components/ResumeBulletLevelEmbed";
@@ -32,21 +36,25 @@ export function generateMetadata({ params }: { params: PageParams }): Metadata {
   const hub = getResumeBulletHub(params.roleSlug);
   const canonicalPath = `/${params.roleSlug}-resume-bullet-points`;
   const canonical = `${getSiteUrl().replace(/\/$/, "")}${canonicalPath}`;
+  const metaTitle = buildResumeBulletHubMetaTitle(params.roleSlug, hub);
+  const metaDescription = buildResumeBulletHubMetaDescription(params.roleSlug, hub);
   return {
-    title: hub.metaTitle,
-    description: hub.metaDescription,
-    keywords: hub.keywords,
+    title: { absolute: metaTitle },
+    description: metaDescription,
+    keywords: [...hub.keywords],
     alternates: { canonical: canonicalPath },
+    robots: { index: true, follow: true },
     openGraph: {
-      title: hub.metaTitle,
-      description: hub.metaDescription,
+      title: metaTitle,
+      description: metaDescription,
       url: canonical,
+      siteName: "ResumeAtlas",
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: hub.metaTitle,
-      description: hub.metaDescription,
+      title: metaTitle,
+      description: metaDescription,
     },
   };
 }
@@ -58,6 +66,8 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
   const canonicalPath = publicPathForBulletHub(role);
   const previewPlain = getHubPreviewPlainText(hub);
   const previewFlat = flattenHubPreviewBullets(hub);
+  const uniqueExampleCount = countUniqueResumeBulletHubExamples(role);
+  const exampleCountLabel = defensibleBulletCountLabel(uniqueExampleCount);
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -91,8 +101,8 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
   const webPageSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: hub.metaTitle,
-    description: hub.metaDescription,
+    name: buildResumeBulletHubMetaTitle(role, hub),
+    description: buildResumeBulletHubMetaDescription(role, hub),
     url: `${getSiteUrl().replace(/\/$/, "")}${canonicalPath}`,
     isPartOf: { "@type": "WebSite", name: "ResumeAtlas" },
   };
@@ -123,6 +133,9 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
           </h1>
           <p className="mt-4 text-base leading-relaxed text-slate-700 sm:text-lg">
             {hub.heroSubheadline}
+          </p>
+          <p className="mt-2 text-sm font-medium text-slate-600">
+            {exampleCountLabel} copy-paste examples on this page—entry-level, junior, and senior sections first.
           </p>
           <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-slate-600 sm:text-sm">
             <span className="inline-flex items-center gap-1">

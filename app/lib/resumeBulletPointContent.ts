@@ -583,22 +583,28 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
   "software-engineer": {
     roleName: "Software Engineer",
     metaTitle:
-      "Software Engineer Resume Bullet Points (2026, by Experience Level) | ResumeAtlas",
+      "Software Engineer Resume Bullet Points (2026): Copy-Paste Examples | ResumeAtlas",
     metaDescription:
-      "50+ software engineer resume bullet point examples for entry-level, junior, senior, backend, frontend, and full-stack roles. Copy-paste bullets, then check your resume against a job description.",
+      "Copy-paste software engineer resume bullet points for entry-level, junior, and senior roles. Examples with metrics for backend, frontend, full-stack, and staff—adapt to your stack.",
     keywords: [
       "software engineer resume bullet points",
-      "software developer resume bullets",
-      "junior software engineer resume",
-      "senior software engineer resume bullets",
+      "software engineer bullet points",
+      "resume bullet point examples software engineer",
+      "software engineer resume bullet points examples",
+      "entry level software engineer resume bullet points",
+      "junior software engineer resume bullet points",
+      "senior software engineer resume bullet points",
+      "software developer resume bullet points",
       "backend developer resume bullet points",
       "frontend developer resume bullet points",
-      "ATS software engineer keywords",
-      "resume lines for engineers",
+      "full stack developer resume bullet points",
+      "copy paste software engineer resume bullets",
+      "software engineer resume lines",
+      "ATS software engineer resume",
     ],
     h1: "Software Engineer Resume Bullet Points (2026)",
     heroSubheadline:
-      "50+ software engineer resume bullet point examples for entry-level, junior, senior, staff, backend, frontend, and full-stack roles—copy, adapt, then compare your resume to the job you want.",
+      "Resume bullet point examples for entry-level, junior, senior, staff, backend, frontend, and full-stack roles—organized by level so you can copy, adapt, and use patterns that match your scope.",
     aboveFoldBullets: [
       "Shipped TypeScript/React features behind REST APIs; cut p95 latency 22% on a core checkout path.",
       "Hardened CI with Playwright + unit tests; dropped flaky integration failure rate from 11% to under 2%.",
@@ -626,7 +632,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     previewSectionIntro:
       "Sixteen more software engineer resume bullet points by theme—machine learning, data, projects, and business impact. Use them as patterns alongside the entry-level, junior, and senior sections above.",
     previewSection: {
-      h2: "Software Engineer Resume Bullet Point Examples (Preview)",
+      h2: "Software Engineer Resume Bullet Points by Theme",
       groups: [
         {
           label: "Machine learning",
@@ -2652,6 +2658,47 @@ export function getResumeBulletDetail(
   level: ResumeBulletLevel
 ): ResumeBulletDetailCopy {
   return DETAIL[role][level]();
+}
+
+/** Every copy-paste bullet line rendered on the role bullet hub (hero + levels + themed groups). */
+export function collectResumeBulletHubExampleLines(role: ResumeBulletRole): string[] {
+  const hub = getResumeBulletHub(role);
+  const lines: string[] = [...hub.aboveFoldBullets, ...flattenHubPreviewBullets(hub)];
+  for (const level of RESUME_BULLET_LEVELS) {
+    const d = getResumeBulletDetail(role, level);
+    if (d.studentIntentBlock) lines.push(...d.studentIntentBlock.bullets);
+    if (d.aboveFoldBullets) lines.push(...d.aboveFoldBullets);
+    for (const p of d.projects) lines.push(...p.bullets);
+    if (d.leadershipBullets) lines.push(...d.leadershipBullets);
+  }
+  return lines;
+}
+
+export function countUniqueResumeBulletHubExamples(role: ResumeBulletRole): number {
+  return new Set(collectResumeBulletHubExampleLines(role)).size;
+}
+
+/** Round down to nearest 5 for title/meta claims (e.g. 72 unique → "70+"). */
+export function defensibleBulletCountLabel(uniqueCount: number): string {
+  const floored = Math.floor(uniqueCount / 5) * 5;
+  return `${Math.max(floored, 5)}+`;
+}
+
+export function buildResumeBulletHubMetaTitle(
+  role: ResumeBulletRole,
+  hub: ResumeBulletHubCopy = getResumeBulletHub(role)
+): string {
+  const label = defensibleBulletCountLabel(countUniqueResumeBulletHubExamples(role));
+  return `${hub.h1}: ${label} Copy-Paste Examples | ResumeAtlas`;
+}
+
+export function buildResumeBulletHubMetaDescription(
+  role: ResumeBulletRole,
+  hub: ResumeBulletHubCopy = getResumeBulletHub(role)
+): string {
+  const label = defensibleBulletCountLabel(countUniqueResumeBulletHubExamples(role));
+  const roleLower = hub.roleName.toLowerCase();
+  return `Copy-paste ${roleLower} resume bullet points for entry-level, junior, and senior roles. ${label} examples with metrics—backend, frontend, full-stack, and staff. Adapt to your stack.`;
 }
 
 /**
