@@ -17,6 +17,7 @@ import {
   RESUME_EXAMPLE_CLUSTER_SLUGS,
   resumeExampleClusterPath,
 } from "@/app/lib/resumeExampleClusterPages";
+import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
 import { OPTIMIZE_HUB_PATH } from "@/app/lib/roleOptimizerContent";
 import { ROLE_OPTIMIZER_ORDER } from "@/app/lib/roleOptimizer/registry";
 
@@ -30,6 +31,7 @@ const LEGAL_PATHS = [
 
 function priorityForPath(pathname: string): number {
   if (pathname === "/") return 1.0;
+  if (pathname === CHECK_RESUME_AGAINST_JD_PATH) return 0.96;
   if (pathname === OPTIMIZE_HUB_PATH) return 0.89;
   if (pathname.endsWith("-resume-optimizer")) return 0.84;
   if (pathname === "/methodology") return 0.93;
@@ -81,6 +83,13 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     lastModified: new Date("2026-03-09"),
     changeFrequency: "weekly" as const,
     priority: priorityForPath("/"),
+  });
+  const primaryToolLastMod = new Date("2026-06-13");
+  entries.push({
+    url: `${base}${CHECK_RESUME_AGAINST_JD_PATH}`,
+    lastModified: primaryToolLastMod,
+    changeFrequency: "weekly" as const,
+    priority: priorityForPath(CHECK_RESUME_AGAINST_JD_PATH),
   });
   const optimizerLastMod = new Date("2026-06-07");
   entries.push({
