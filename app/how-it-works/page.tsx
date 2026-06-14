@@ -1,3 +1,7 @@
+import { buildHowItWorksPageMetadata } from "@/app/lib/howItWorksPageSeo";
+
+export const metadata = buildHowItWorksPageMetadata();
+
 export default function HowItWorksPage() {
   return (
     <main className="min-h-screen bg-white">

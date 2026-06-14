@@ -18,6 +18,8 @@ import {
   resumeExampleClusterPath,
 } from "@/app/lib/resumeExampleClusterPages";
 import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
+import { FAQ_PAGE_PATH } from "@/app/lib/faqPageSeo";
+import { HOW_IT_WORKS_PATH } from "@/app/lib/howItWorksPageSeo";
 import { OPTIMIZE_HUB_PATH } from "@/app/lib/roleOptimizerContent";
 import { ROLE_OPTIMIZER_ORDER } from "@/app/lib/roleOptimizer/registry";
 
@@ -32,9 +34,11 @@ const LEGAL_PATHS = [
 function priorityForPath(pathname: string): number {
   if (pathname === "/") return 1.0;
   if (pathname === CHECK_RESUME_AGAINST_JD_PATH) return 0.96;
+  if (pathname === FAQ_PAGE_PATH) return 0.89;
   if (pathname === OPTIMIZE_HUB_PATH) return 0.89;
   if (pathname.endsWith("-resume-optimizer")) return 0.84;
   if (pathname === "/methodology") return 0.93;
+  if (pathname === HOW_IT_WORKS_PATH) return 0.78;
   if (pathname === "/ats-resume-checker") {
     return 0.91;
   }
@@ -90,6 +94,19 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     lastModified: primaryToolLastMod,
     changeFrequency: "weekly" as const,
     priority: priorityForPath(CHECK_RESUME_AGAINST_JD_PATH),
+  });
+  const siteSupportLastMod = new Date("2026-06-13");
+  entries.push({
+    url: `${base}${FAQ_PAGE_PATH}`,
+    lastModified: siteSupportLastMod,
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath(FAQ_PAGE_PATH),
+  });
+  entries.push({
+    url: `${base}${HOW_IT_WORKS_PATH}`,
+    lastModified: siteSupportLastMod,
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath(HOW_IT_WORKS_PATH),
   });
   const optimizerLastMod = new Date("2026-06-07");
   entries.push({
