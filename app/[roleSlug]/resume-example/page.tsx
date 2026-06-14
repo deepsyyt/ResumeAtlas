@@ -21,6 +21,7 @@ import {
 } from "@/app/lib/searchIntentSeo";
 import { resumeExamplePublicPath } from "@/app/lib/seoPages";
 import { isResumeExampleClusterSlug } from "@/app/lib/resumeExampleClusterPages";
+import { isResumeBulletRole, publicPathForBulletHub } from "@/app/lib/resumeBulletPointContent";
 import type { ResumeSeoTopic } from "@/app/lib/resumeTopicTypes";
 import { ResumeTopicSectionForGuide } from "@/app/components/resumeTopicGuide";
 import { RolePostingFitMoat } from "@/app/components/postingFit/RolePostingFitMoat";
@@ -97,6 +98,7 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
   const isDataAnalyst = role === "data-analyst";
   const keywordsPagePath = roleResumeKeywordsPath(role);
   const examplePath = roleResumeExamplePath(role);
+  const bulletHubPath = isResumeBulletRole(role) ? publicPathForBulletHub(role) : null;
   const optimizeCluster = getOptimizeClusterNav(examplePath);
   const roleLower = config.roleName.toLowerCase();
   const heroHeading = isDataAnalyst
@@ -197,7 +199,14 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
             >
               {isDataAnalyst ? "Tailor to Job Description" : CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
-            {!isDataAnalyst ? (
+            {!isDataAnalyst && bulletHubPath ? (
+              <Link
+                href={bulletHubPath}
+                className="inline-flex rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-800 transition hover:bg-slate-50"
+              >
+                View resume bullet points
+              </Link>
+            ) : !isDataAnalyst ? (
               <Link
                 href="#bullet-points"
                 className="inline-flex rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-800 transition hover:bg-slate-50"
@@ -206,7 +215,7 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
               </Link>
             ) : null}
           </div>
-          {role === "software-engineer" || role === "data-analyst" || role === "product-manager" ? (
+          {role === "data-analyst" || role === "product-manager" ? (
             <div className="mx-auto mt-8 max-w-3xl">
               <RolePostingFitMoat role={role} />
             </div>

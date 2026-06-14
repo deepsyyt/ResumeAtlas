@@ -1,7 +1,7 @@
 import type { RoleSlug } from "@/app/lib/seoPages";
 import { roleResumePillarPath } from "@/app/lib/searchIntentSeo";
 
-/** Public links point at the role pillar (`/{role}-resume-guide#bullet-points`); legacy `/resume-bullet-points/...` URLs 301 there. */
+/** Public bullet hub URLs (`/{role}-resume-bullet-points`); resume guide owns summary/skills/projects. */
 export const RESUME_BULLET_ROLES = [
   "data-analyst",
   "business-analyst",
@@ -585,17 +585,20 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     metaTitle:
       "Software Engineer Resume Bullet Points (2026, by Experience Level) | ResumeAtlas",
     metaDescription:
-      "Bullet-point bank for software engineer resumes: entry, junior, and senior examples with metrics for backend, frontend, APIs, reliability, and impact.",
+      "50+ software engineer resume bullet point examples for entry-level, junior, senior, backend, frontend, and full-stack roles. Copy-paste bullets, then check your resume against a job description.",
     keywords: [
       "software engineer resume bullet points",
       "software developer resume bullets",
       "junior software engineer resume",
+      "senior software engineer resume bullets",
+      "backend developer resume bullet points",
+      "frontend developer resume bullet points",
       "ATS software engineer keywords",
       "resume lines for engineers",
     ],
-    h1: "40+ Software Engineer Resume Bullet Points Hiring Teams Read",
+    h1: "Software Engineer Resume Bullet Points (2026)",
     heroSubheadline:
-      "Shipped features, reliability work, and scale, broken out by level so your bullets match the job you want, not a generic template.",
+      "50+ software engineer resume bullet point examples for entry-level, junior, senior, staff, backend, frontend, and full-stack roles—copy, adapt, then compare your resume to the job you want.",
     aboveFoldBullets: [
       "Shipped TypeScript/React features behind REST APIs; cut p95 latency 22% on a core checkout path.",
       "Hardened CI with Playwright + unit tests; dropped flaky integration failure rate from 11% to under 2%.",
@@ -606,7 +609,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     roleKeywordDensity:
       "Strong software engineer resume bullet points should name your stack (TypeScript, React, Node, cloud), reliability signals (tests, SLOs, latency), and measurable outcomes hiring managers can verify.",
     introIntentStack:
-      "These software engineer resume bullet points reflect what hiring teams expect in 2026, including measurable impact, clear ownership, and ATS-friendly phrasing. Software engineer resume bullet points need to match your level, entry-level, junior, or senior, and the ATS keywords in each posting. This hub links full example pages for every stage, plus free tools to find missing keywords and compare your resume to the job description.",
+      "These software engineer resume bullet points reflect what hiring teams expect in 2026, including measurable impact, clear ownership, and ATS-friendly phrasing. Match bullets to your level—entry-level, junior, or senior—and to the ATS keywords in each posting. Jump to a level above, then compare your resume to a job description to close gaps before you apply.",
     snippetDefinition: {
       h2: "What Are Good Software Engineer Resume Bullet Points?",
       line1:
@@ -615,13 +618,13 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
         "They should also pass ATS screening for that employer: mirror important keywords from the job description honestly, especially tools and domains the role emphasizes.",
     },
     paragraphs: [
-      "Strong engineering resumes prove ownership: what you built, under what constraints, with what measurable result (latency, incidents, adoption). The three pages below mirror how IC scope grows, from bootcamp and internship projects to services, CI, and cross-team architecture.",
+      "Strong engineering resumes prove ownership: what you built, under what constraints, with what measurable result (latency, incidents, adoption). The entry-level, junior, and senior sections below mirror how IC scope grows—from bootcamp and internship projects to services, CI, and cross-team architecture.",
       "Use stacks and numbers you can defend. If you did not own the rollout, say how you contributed; if you measured p95 or error budgets, say so. Vague “improved performance” lines get skipped.",
     ],
     semanticVariation:
       "Think of these as resume lines and achievement bullets: short resume statements that prove impact. Hiring managers skim for proof, not buzzwords.",
     previewSectionIntro:
-      "Below are 16 software engineer resume bullet points across ML-related work, data-heavy debugging, project delivery, and business impact, use them as patterns, then open entry-level, junior, or senior pages for deeper banks.",
+      "Sixteen more software engineer resume bullet points by theme—machine learning, data, projects, and business impact. Use them as patterns alongside the entry-level, junior, and senior sections above.",
     previewSection: {
       h2: "Software Engineer Resume Bullet Point Examples (Preview)",
       groups: [
@@ -2694,15 +2697,19 @@ export function splitProjectsAtBulletCount(
   return { visible, rest };
 }
 
+export function bulletLevelAnchorId(level: ResumeBulletLevel): string {
+  return `level-${level}`;
+}
+
 export function publicPathForBulletHub(role: ResumeBulletRole): string {
-  return `${roleResumePillarPath(role)}#bullet-points`;
+  return `/${role}-resume-bullet-points`;
 }
 
 export function publicPathForBulletDetail(
   role: ResumeBulletRole,
-  _level: ResumeBulletLevel
+  level: ResumeBulletLevel
 ): string {
-  return `${roleResumePillarPath(role)}#bullet-points`;
+  return `${publicPathForBulletHub(role)}#${bulletLevelAnchorId(level)}`;
 }
 
 export const RESUME_BULLET_LEVELS: ResumeBulletLevel[] = [

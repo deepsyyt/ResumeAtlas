@@ -19,6 +19,10 @@ import {
 } from "@/app/lib/resumeExampleClusterPages";
 import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
 import { FAQ_PAGE_PATH } from "@/app/lib/faqPageSeo";
+import {
+  RESUME_BULLET_ROLES,
+  publicPathForBulletHub,
+} from "@/app/lib/resumeBulletPointContent";
 import { OPTIMIZE_HUB_PATH } from "@/app/lib/roleOptimizerContent";
 import { ROLE_OPTIMIZER_ORDER } from "@/app/lib/roleOptimizer/registry";
 
@@ -59,6 +63,9 @@ function priorityForPath(pathname: string): number {
   if (pathname.startsWith("/ats-resume-template-")) return 0.84;
   if (pathname.endsWith("-resume-guide")) return 0.84;
   if (pathname.endsWith("-resume-keywords")) return 0.86;
+  if (/^\/[^/]+-resume-bullet-points(-entry-level|-junior|-senior)?$/.test(pathname)) {
+    return 0.87;
+  }
   if (
     /^\/[a-z0-9-]+$/.test(pathname) &&
     Object.prototype.hasOwnProperty.call(KEYWORD_PAGES, pathname.slice(1))
@@ -100,6 +107,16 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: priorityForPath(FAQ_PAGE_PATH),
   });
+  const resumeBulletLastMod = new Date("2026-06-13");
+  for (const role of RESUME_BULLET_ROLES) {
+    const hubPath = publicPathForBulletHub(role);
+    entries.push({
+      url: `${base}${hubPath}`,
+      lastModified: resumeBulletLastMod,
+      changeFrequency: "monthly" as const,
+      priority: priorityForPath(hubPath),
+    });
+  }
   const optimizerLastMod = new Date("2026-06-07");
   entries.push({
     url: `${base}${OPTIMIZE_HUB_PATH}`,

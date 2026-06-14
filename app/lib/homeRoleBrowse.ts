@@ -1,5 +1,5 @@
 import { buildRoleOptimizerPath } from "@/app/lib/roleOptimizerContent";
-import { isResumeBulletRole } from "@/app/lib/resumeBulletPointContent";
+import { isResumeBulletRole, publicPathForBulletHub } from "@/app/lib/resumeBulletPointContent";
 import { ROLE_OPTIMIZER_ORDER } from "@/app/lib/roleOptimizer/registry";
 import { KEYWORD_PAGES, resumeExamplePublicPath, type RoleSlug } from "@/app/lib/seoPages";
 import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIntentSeo";
@@ -28,7 +28,7 @@ function cardFromKeywordSlug(slug: RoleSlug): HomeRoleBrowseCard {
     guidePath: pillarPath,
     keywordsPath: roleResumeKeywordsPath(slug),
     optimizerPath: optimizerPathBySlug[slug],
-    bulletGuideAnchor: isResumeBulletRole(slug) ? `${pillarPath}#bullet-points` : undefined,
+    bulletGuideAnchor: isResumeBulletRole(slug) ? publicPathForBulletHub(slug) : undefined,
   };
 }
 

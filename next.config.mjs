@@ -94,6 +94,16 @@ const nextConfig = {
         source: "/:roleSlug-resume-keywords/",
         destination: "/:roleSlug/keywords",
       },
+      ...RESUME_BULLET_ROLES.flatMap((role) => [
+        {
+          source: `/${role}-resume-bullet-points`,
+          destination: `/resume-bullet-points/${role}`,
+        },
+        {
+          source: `/${role}-resume-bullet-points/`,
+          destination: `/resume-bullet-points/${role}`,
+        },
+      ]),
       // Role optimizer spokes (`/{slug}-resume-optimizer`) internally serve `/resume-optimizer/{slug}`.
       {
         source: "/:roleSlug-resume-optimizer",
@@ -109,113 +119,118 @@ const nextConfig = {
     const pillar = (role) => `/${role}-resume-guide`;
 
     const pathnameBulletRedirects = RESUME_BULLET_ROLES.flatMap((role) => {
-      const dest = pillar(role);
+      const hub = `/${role}-resume-bullet-points`;
       return [
         {
           source: `/resume-bullet-points/${role}`,
-          destination: dest,
+          destination: hub,
           permanent: true,
         },
         {
           source: `/resume-bullet-points/${role}/`,
-          destination: dest,
+          destination: hub,
           permanent: true,
         },
         {
           source: `/resume-bullet-points/${role}/entry-level`,
-          destination: dest,
+          destination: `${hub}#level-entry-level`,
+          permanent: true,
+        },
+        {
+          source: `/resume-bullet-points/${role}/entry-level/`,
+          destination: `${hub}#level-entry-level`,
           permanent: true,
         },
         {
           source: `/resume-bullet-points/${role}/junior`,
-          destination: dest,
+          destination: `${hub}#level-junior`,
+          permanent: true,
+        },
+        {
+          source: `/resume-bullet-points/${role}/junior/`,
+          destination: `${hub}#level-junior`,
           permanent: true,
         },
         {
           source: `/resume-bullet-points/${role}/senior`,
-          destination: dest,
+          destination: `${hub}#level-senior`,
+          permanent: true,
+        },
+        {
+          source: `/resume-bullet-points/${role}/senior/`,
+          destination: `${hub}#level-senior`,
           permanent: true,
         },
       ];
     });
 
-    const hyphenBulletRedirects = RESUME_BULLET_ROLES.flatMap((role) => {
-      const dest = pillar(role);
+    const hyphenBulletLevelRedirects = RESUME_BULLET_ROLES.flatMap((role) => {
+      const hub = `/${role}-resume-bullet-points`;
       return [
         {
-          source: `/${role}-resume-bullet-points`,
-          destination: dest,
-          permanent: true,
-        },
-        {
-          source: `/${role}-resume-bullet-points/`,
-          destination: dest,
-          permanent: true,
-        },
-        {
           source: `/${role}-resume-bullet-points-entry-level`,
-          destination: dest,
+          destination: `${hub}#level-entry-level`,
           permanent: true,
         },
         {
           source: `/${role}-resume-bullet-points-entry-level/`,
-          destination: dest,
+          destination: `${hub}#level-entry-level`,
           permanent: true,
         },
         {
           source: `/${role}-resume-bullet-points-junior`,
-          destination: dest,
+          destination: `${hub}#level-junior`,
           permanent: true,
         },
         {
           source: `/${role}-resume-bullet-points-junior/`,
-          destination: dest,
+          destination: `${hub}#level-junior`,
           permanent: true,
         },
         {
           source: `/${role}-resume-bullet-points-senior`,
-          destination: dest,
+          destination: `${hub}#level-senior`,
           permanent: true,
         },
         {
           source: `/${role}-resume-bullet-points-senior/`,
-          destination: dest,
+          destination: `${hub}#level-senior`,
           permanent: true,
         },
       ];
     });
 
     const resumeBulletLegacyTopicRedirects = RESUME_BULLET_ROLES.flatMap((role) => {
-      const dest = pillar(role);
+      const hub = `/${role}-resume-bullet-points`;
       return [
         {
-          source: `/${role}/resume/bullet-points`,
-          destination: dest,
-          permanent: true,
-        },
-        {
-          source: `/${role}/resume/bullet-points/`,
-          destination: dest,
-          permanent: true,
-        },
-        {
           source: `/${role}/resume/bullet-points-entry-level`,
-          destination: dest,
+          destination: `${hub}#level-entry-level`,
           permanent: true,
         },
         {
           source: `/${role}/resume/bullet-points-entry-level/`,
-          destination: dest,
+          destination: `${hub}#level-entry-level`,
+          permanent: true,
+        },
+        {
+          source: `/${role}/resume/bullet-points-junior`,
+          destination: `${hub}#level-junior`,
+          permanent: true,
+        },
+        {
+          source: `/${role}/resume/bullet-points-junior/`,
+          destination: `${hub}#level-junior`,
           permanent: true,
         },
         {
           source: `/${role}/resume/bullet-points-senior`,
-          destination: dest,
+          destination: `${hub}#level-senior`,
           permanent: true,
         },
         {
           source: `/${role}/resume/bullet-points-senior/`,
-          destination: dest,
+          destination: `${hub}#level-senior`,
           permanent: true,
         },
       ];
@@ -283,18 +298,25 @@ const nextConfig = {
         "responsibilities",
         "experience-examples",
       ];
-      return topics.flatMap((topic) => [
-        {
-          source: `/${role}/resume/${topic}`,
-          destination: `${pillar(role)}#${topic}`,
-          permanent: true,
-        },
-        {
-          source: `/${role}/resume/${topic}/`,
-          destination: `${pillar(role)}#${topic}`,
-          permanent: true,
-        },
-      ]);
+      const bulletHubSet = new Set(RESUME_BULLET_ROLES);
+      return topics.flatMap((topic) => {
+        const destination =
+          topic === "bullet-points" && bulletHubSet.has(role)
+            ? `/${role}-resume-bullet-points`
+            : `${pillar(role)}#${topic}`;
+        return [
+          {
+            source: `/${role}/resume/${topic}`,
+            destination,
+            permanent: true,
+          },
+          {
+            source: `/${role}/resume/${topic}/`,
+            destination,
+            permanent: true,
+          },
+        ];
+      });
     });
 
     const standaloneRoleHubToPillarRedirects =
@@ -402,7 +424,7 @@ const nextConfig = {
 
     return [
       ...pathnameBulletRedirects,
-      ...hyphenBulletRedirects,
+      ...hyphenBulletLevelRedirects,
       ...resumeBulletLegacyTopicRedirects,
       ...resumeTemplateToPillarRedirects,
       ...roleKeywordIntentRedirects,

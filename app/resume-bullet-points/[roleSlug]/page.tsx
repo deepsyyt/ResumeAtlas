@@ -6,12 +6,14 @@ import {
   getHubPreviewPlainText,
   flattenHubPreviewBullets,
   isResumeBulletRole,
-  publicPathForBulletDetail,
   publicPathForBulletHub,
+  bulletLevelAnchorId,
   levelLabel,
   RESUME_BULLET_LEVELS,
+  RESUME_BULLET_ROLES,
   type ResumeBulletRole,
 } from "@/app/lib/resumeBulletPointContent";
+import { ResumeBulletLevelEmbed } from "@/app/components/ResumeBulletLevelEmbed";
 import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
@@ -21,16 +23,8 @@ import { ResumeBulletPreviewCopyButton } from "@/app/components/ResumeBulletPrev
 
 type PageParams = { roleSlug: string };
 
-function levelAnchorId(level: string): string {
-  return `level-${level}`;
-}
-
 export function generateStaticParams(): { roleSlug: ResumeBulletRole }[] {
-  return [
-    { roleSlug: "data-scientist" },
-    { roleSlug: "software-engineer" },
-    { roleSlug: "product-manager" },
-  ];
+  return RESUME_BULLET_ROLES.map((roleSlug) => ({ roleSlug }));
 }
 
 export function generateMetadata({ params }: { params: PageParams }): Metadata {
@@ -159,20 +153,34 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              href="#level-previews"
               className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+            >
+              View examples
+            </Link>
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50"
             >
               {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
             </Link>
-            <Link
-              href="/resume-keyword-scanner#ats-checker-form"
-              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50"
-            >
-              Find missing keywords in your {hub.roleName.toLowerCase()} resume
-            </Link>
           </div>
+          <nav
+            className="mt-6 flex flex-wrap justify-center gap-2 sm:justify-start"
+            aria-label="Jump to experience level"
+          >
+            {RESUME_BULLET_LEVELS.map((level) => (
+              <a
+                key={level}
+                href={`#${bulletLevelAnchorId(level)}`}
+                className="inline-flex rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 transition hover:border-sky-300 hover:text-sky-900"
+              >
+                {levelLabel(level)}
+              </a>
+            ))}
+          </nav>
           <p className="mt-3 max-w-xl text-xs text-slate-500">
-            Paste resume + job description to see overlap and gaps—before you rewrite bullets blind.
+            Copy-paste examples below, then compare your resume to a job description before you apply.
           </p>
 
           <ul className="mt-6 space-y-2.5 rounded-xl border border-slate-200 bg-white/80 px-4 py-4 text-sm leading-snug text-slate-800 shadow-sm sm:text-[15px]">
@@ -183,131 +191,76 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
               </li>
             ))}
           </ul>
-
-          <div className="mt-10 space-y-4 text-sm leading-relaxed text-slate-700 sm:text-base">
-            <p className="font-medium text-slate-800">{hub.introIntentStack}</p>
-            <section
-              id="what-are-good"
-              className="scroll-mt-24 rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-4 sm:px-5"
-              aria-labelledby="snippet-definition-heading"
-            >
-              <h2
-                id="snippet-definition-heading"
-                className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl"
-              >
-                {hub.snippetDefinition.h2}
-              </h2>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700 sm:text-base">
-                {hub.snippetDefinition.line1}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700 sm:text-base">
-                {hub.snippetDefinition.line2}
-              </p>
-            </section>
-            <p>{hub.paragraphs[0]}</p>
-            <p>{hub.paragraphs[1]}</p>
-            <p className="text-slate-600">{hub.semanticVariation}</p>
-            <p className="text-slate-700">{hub.roleKeywordDensity}</p>
-          </div>
-
-          <p className="mt-5 text-xs font-medium uppercase tracking-wide text-slate-500">{hub.authorityLine}</p>
-
-          <p className="mt-6 text-sm leading-relaxed text-slate-700">
-            Compared to the posting, many resumes lose keyword overlap first—so run a scan to{" "}
-            <Link
-              href="/resume-keyword-scanner#ats-checker-form"
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              find missing keywords in your {hub.roleName.toLowerCase()} resume
-            </Link>
-            . You can also{" "}
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              compare your resume with this job description
-            </Link>{" "}
-            to see exact gaps—not guesswork. If screening feels random,{" "}
-            <Link
-              href="/how-to-pass-ats"
-              className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-            >
-              check why your resume gets rejected by ATS
-            </Link>{" "}
-            before you rewrite more bullets.
-          </p>
-
-          <nav
-            className="mt-8 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-200 pt-6 text-sm"
-            aria-label="Jump to level sections"
-          >
-            <span className="font-medium text-slate-500">Jump to:</span>
-            <a
-              href="#what-are-good"
-              className="font-semibold text-slate-600 underline underline-offset-2 hover:text-slate-900"
-            >
-              Definition
-            </a>
-            {RESUME_BULLET_LEVELS.map((level) => (
-              <a
-                key={level}
-                href={`#${levelAnchorId(level)}`}
-                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                {levelLabel(level)}
-              </a>
-            ))}
-            <a
-              href="#preview"
-              className="font-semibold text-slate-600 underline underline-offset-2 hover:text-slate-900"
-            >
-              Preview bullets
-            </a>
-          </nav>
         </div>
       </section>
 
       <div className="mx-auto max-w-3xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
+        <section id="level-previews" className="scroll-mt-24 space-y-16">
+          {RESUME_BULLET_LEVELS.map((level) => (
+            <ResumeBulletLevelEmbed key={level} role={role} level={level} />
+          ))}
+        </section>
+
         <section id="preview" className="scroll-mt-24">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            {hub.previewSection.h2}
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-700">{hub.previewSectionIntro}</p>
-          <p className="mt-2 text-xs text-slate-500">
-            Crawlable HTML (collapsed by default)—full per-level banks live on entry-level, junior, and senior pages.
-          </p>
-          <details className="mt-4 group rounded-2xl border border-slate-200 bg-white shadow-sm open:shadow-md">
-            <summary className="cursor-pointer list-none rounded-2xl px-4 py-4 text-sm font-semibold text-slate-900 sm:px-5 sm:py-4 [&::-webkit-details-marker]:hidden">
-              <span className="flex items-center justify-between gap-3">
-                <span>
-                  Show {previewFlat.length} example resume bullet points (copy & paste)
-                </span>
-                <span className="text-slate-400 group-open:rotate-180 transition">▼</span>
-              </span>
-            </summary>
-            <div className="border-t border-slate-100 px-4 pb-5 pt-2 sm:px-5">
-              <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-3">
-                <p className="text-xs text-slate-500">Copy all preview text for your notes or editor.</p>
-                <ResumeBulletPreviewCopyButton
-                  text={previewPlain}
-                  tailoredCtaHref={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-                  tailoredCtaLabel="Generate from my resume"
-                />
-              </div>
-              <div className="mt-4 space-y-6">
-                {hub.previewSection.groups.map((g) => (
-                  <div key={g.label}>
-                    <h3 className="text-sm font-semibold text-slate-800">{g.label}</h3>
-                    <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
-                      {g.bullets.map((line, i) => (
-                        <li key={`${g.label}-${i}`}>{line}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+                {hub.previewSection.h2}
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700">{hub.previewSectionIntro}</p>
             </div>
-          </details>
+            <ResumeBulletPreviewCopyButton
+              text={previewPlain}
+              tailoredCtaHref={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              tailoredCtaLabel="Generate from my resume"
+            />
+          </div>
+          <div className="mt-6 space-y-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            {hub.previewSection.groups.map((g) => (
+              <div key={g.label}>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">{g.label}</h3>
+                <ul className="mt-3 list-disc space-y-2.5 pl-5 text-sm text-slate-800 sm:text-base">
+                  {g.bullets.map((line, i) => (
+                    <li key={`${g.label}-${i}`}>{line}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section
+          id="how-to-use"
+          className="scroll-mt-24 space-y-4 text-sm leading-relaxed text-slate-700 sm:text-base"
+          aria-labelledby="how-to-use-heading"
+        >
+          <h2 id="how-to-use-heading" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            How to use these {hub.roleName.toLowerCase()} resume bullet points
+          </h2>
+          <p className="font-medium text-slate-800">{hub.introIntentStack}</p>
+          <section
+            id="what-are-good"
+            className="rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-4 sm:px-5"
+            aria-labelledby="snippet-definition-heading"
+          >
+            <h3
+              id="snippet-definition-heading"
+              className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl"
+            >
+              {hub.snippetDefinition.h2}
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700 sm:text-base">
+              {hub.snippetDefinition.line1}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700 sm:text-base">
+              {hub.snippetDefinition.line2}
+            </p>
+          </section>
+          <p>{hub.paragraphs[0]}</p>
+          <p>{hub.paragraphs[1]}</p>
+          <p className="text-slate-600">{hub.semanticVariation}</p>
+          <p className="text-slate-700">{hub.roleKeywordDensity}</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{hub.authorityLine}</p>
         </section>
 
         <section
@@ -330,56 +283,6 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
               Fix my resume bullet points for this job
             </Link>
           </div>
-        </section>
-
-        <section id="pick-level" className="scroll-mt-24">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-                Full examples by level (40+ lines each path)
-              </h2>
-              <p className="mt-2 text-sm text-slate-600">
-                Each page expands into project-wise blocks—deeper than this hub preview.
-              </p>
-            </div>
-          </div>
-
-          <ul className="mt-8 space-y-4">
-            {RESUME_BULLET_LEVELS.map((level) => {
-              const href = publicPathForBulletDetail(role, level);
-              const card = hub.levelCards[level];
-              return (
-                <li key={level} id={levelAnchorId(level)} className="scroll-mt-24">
-                  <Link
-                    href={href}
-                    className="group block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-sky-300 hover:shadow-md sm:p-6"
-                  >
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                      <div className="min-w-0 flex-1">
-                        <span className="inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sky-800">
-                          {levelLabel(level)}
-                        </span>
-                        <p className="mt-3 text-base font-semibold text-slate-900 group-hover:text-sky-900">
-                          {card.hook}
-                        </p>
-                        <ul className="mt-3 space-y-2 text-sm text-slate-600">
-                          {card.whatsInside.map((line) => (
-                            <li key={line} className="flex gap-2">
-                              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-500" />
-                              <span>{line}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <span className="shrink-0 text-sm font-semibold text-sky-700 group-hover:text-sky-900">
-                        Open examples →
-                      </span>
-                    </div>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
         </section>
 
         <section

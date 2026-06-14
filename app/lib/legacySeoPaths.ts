@@ -3,6 +3,12 @@
  * Kept in one module so edge middleware and scripts stay aligned.
  */
 
+import {
+  RESUME_BULLET_ROLES,
+  publicPathForBulletHub,
+  type ResumeBulletRole,
+} from "@/app/lib/resumeBulletPointContent";
+
 export const ROLE_SLUGS_FOR_LEGACY_REDIRECTS = [
   "data-analyst",
   "data-scientist",
@@ -35,6 +41,7 @@ export const ROLE_RESUME_TOPICS_FOR_LEGACY_REDIRECTS = [
 ] as const;
 
 const ROLE_SET = new Set<string>(ROLE_SLUGS_FOR_LEGACY_REDIRECTS);
+const BULLET_ROLE_SET = new Set<string>(RESUME_BULLET_ROLES);
 
 export function roleResumeKeywordsPublicPath(role: string): string {
   return `/${role}-resume-keywords`;
@@ -59,11 +66,14 @@ export function resolveLegacyKeywordsRedirect(pathname: string): string | null {
   return null;
 }
 
-/** Legacy `/{role}/resume/{topic}` → public resume guide anchor. */
+/** Legacy `/{role}/resume/{topic}` → public resume guide anchor or bullet hub. */
 export function resolveLegacyResumeTopicRedirect(pathname: string): string | null {
   for (const role of ROLE_SLUGS_FOR_LEGACY_REDIRECTS) {
     for (const topic of ROLE_RESUME_TOPICS_FOR_LEGACY_REDIRECTS) {
       if (pathname === `/${role}/resume/${topic}` || pathname === `/${role}/resume/${topic}/`) {
+        if (topic === "bullet-points" && BULLET_ROLE_SET.has(role)) {
+          return publicPathForBulletHub(role as ResumeBulletRole);
+        }
         return `${roleResumeGuidePublicPath(role)}#${topic}`;
       }
     }

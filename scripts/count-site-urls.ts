@@ -14,10 +14,7 @@ import {
   INDEXED_PROBLEM_SLUGS,
   PROBLEM_REDIRECT_SOURCE_SLUGS,
 } from "../app/lib/problemPages";
-import {
-  RESUME_BULLET_ROLES,
-  RESUME_BULLET_LEVELS,
-} from "../app/lib/resumeBulletPointContent";
+import { RESUME_BULLET_ROLES, publicPathForBulletHub } from "../app/lib/resumeBulletPointContent";
 
 const ROLES = Object.keys(KEYWORD_PAGES) as RoleSlug[];
 
@@ -126,10 +123,14 @@ function main() {
   }
 
   for (const role of RESUME_BULLET_ROLES) {
+    addIndexed(publicPathForBulletHub(role));
     addRedirect("/resume-bullet-points/" + role);
-    for (const level of RESUME_BULLET_LEVELS) {
-      addRedirect("/resume-bullet-points/" + role + "/" + level);
-    }
+    addRedirect("/" + role + "-resume-bullet-points-entry-level");
+    addRedirect("/" + role + "-resume-bullet-points-junior");
+    addRedirect("/" + role + "-resume-bullet-points-senior");
+    addRedirect("/resume-bullet-points/" + role + "/entry-level");
+    addRedirect("/resume-bullet-points/" + role + "/junior");
+    addRedirect("/resume-bullet-points/" + role + "/senior");
   }
 
   for (const p of EXTRA_STATIC_PATHS) addIndexed(p);
