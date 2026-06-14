@@ -7,7 +7,7 @@
  */
 import { getDedupedSitemapEntries } from "../app/lib/sitemapEntries";
 import { KEYWORD_PAGES, type RoleSlug } from "../app/lib/seoPages";
-import { ALT_ROLE_KEYWORD_SLUGS, getAltRoleKeywordConfig } from "../app/lib/altRoleKeywordPages";
+import { getIndexedAltRoleKeywordSlugs, getAltRoleKeywordConfig } from "../app/lib/altRoleKeywordPages";
 import { PILOT_KEYWORD_SLUGS, getPilotKeywordConfig } from "../app/lib/pilotKeywordPages";
 import { ROLE_KEYWORD_INTENTS } from "../app/lib/roleSeo";
 import {
@@ -86,7 +86,7 @@ function main() {
     }
   }
 
-  for (const slug of ALT_ROLE_KEYWORD_SLUGS) {
+  for (const slug of getIndexedAltRoleKeywordSlugs()) {
     addIndexed(getAltRoleKeywordConfig(slug).path);
   }
   for (const slug of PILOT_KEYWORD_SLUGS) {

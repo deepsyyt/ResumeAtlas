@@ -14,6 +14,7 @@ import {
 import { ROLE_CONTENT_MAP } from "@/app/lib/roleContentMap";
 import { CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
 import {
+  BUSINESS_ANALYST_BSA_KEYWORDS_SECTION,
   DATA_ANALYST_ANALYTICS_KEYWORDS_SECTION,
   DATA_ANALYST_HERO_KEYWORDS,
   ROLE_KEYWORDS_FAQ,
@@ -50,6 +51,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
   const keywordHubTitle = roleResumeKeywordsH1(roleSlug);
   const keywordsPublicPath = roleResumeKeywordsPath(roleSlug);
   const isDataAnalystKeywordsPage = roleSlug === "data-analyst";
+  const isBusinessAnalystKeywordsPage = roleSlug === "business-analyst";
   const isMachineLearningEngineerPage = roleSlug === "machine-learning-engineer";
   const scopeNote = ROLE_KEYWORDS_SCOPE_NOTE[roleSlug];
   const heroIntro = ROLE_KEYWORDS_HERO_INTRO[roleSlug];
@@ -178,6 +180,32 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                 .
               </p>
             ) : null}
+            {isBusinessAnalystKeywordsPage ? (
+              <p className="mt-3 text-sm text-slate-600 max-w-2xl mx-auto">
+                Wrong role?{" "}
+                <Link
+                  href="#business-systems-analyst-keywords"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  Business systems analyst keywords
+                </Link>
+                ,{" "}
+                <Link
+                  href="/systems-analyst-resume-keywords"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  systems analyst keywords
+                </Link>
+                , or{" "}
+                <Link
+                  href="/business-intelligence-resume-keywords"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  business intelligence keywords
+                </Link>
+                .
+              </p>
+            ) : null}
             <p className="mt-3 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto">{exactQueryMatchLine}</p>
             <p className="mt-3 text-sm text-slate-700 max-w-2xl mx-auto">
               For resume examples, templates, and bullet banks, use the{" "}
@@ -208,6 +236,14 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                   className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900"
                 >
                   Analytics keywords
+                </a>
+              ) : null}
+              {isBusinessAnalystKeywordsPage ? (
+                <a
+                  href="#business-systems-analyst-keywords"
+                  className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900"
+                >
+                  BSA keywords
                 </a>
               ) : null}
             </div>
@@ -285,6 +321,37 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             <p className="mt-4 text-sm text-slate-600">
               Search variants: data analytics keywords, data analytics keywords list, data analytics resume
               keywords.
+            </p>
+          </section>
+        ) : null}
+
+        {isBusinessAnalystKeywordsPage ? (
+          <section
+            id="business-systems-analyst-keywords"
+            className="rounded-2xl border border-violet-200 bg-violet-50/40 p-6 sm:p-8 scroll-mt-20"
+          >
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+              {BUSINESS_ANALYST_BSA_KEYWORDS_SECTION.h2}
+            </h2>
+            <p className="mt-2 text-sm text-slate-700">{BUSINESS_ANALYST_BSA_KEYWORDS_SECTION.intro}</p>
+            <ul className="mt-4 flex flex-wrap gap-2 list-none p-0 m-0">
+              {BUSINESS_ANALYST_BSA_KEYWORDS_SECTION.keywords.map((keyword) => (
+                <li
+                  key={keyword}
+                  className="rounded-full border border-violet-200 bg-white px-3 py-1 text-sm text-slate-800"
+                >
+                  {keyword}
+                </li>
+              ))}
+            </ul>
+            <ul className="mt-5 list-disc space-y-2 pl-5 text-sm text-slate-700">
+              {BUSINESS_ANALYST_BSA_KEYWORDS_SECTION.exampleBullets.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+            <p className="mt-4 text-sm text-slate-600">
+              Search variants: business systems analyst resume keywords, BSA resume keywords, keywords for
+              business systems analyst resume.
             </p>
           </section>
         ) : null}

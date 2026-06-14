@@ -44,7 +44,7 @@ export const ALT_ROLE_KEYWORD_PAGES: Record<AltRoleKeywordSlug, AltRoleKeywordPa
     scopeNote:
       "This page is for business systems analyst (BSA) titles. For classic business analyst (BA) process work, use our business analyst keyword page. For SQL-heavy analytics roles, use the data analyst keyword page.",
     relatedKeywordPages: [
-      { path: "/business-analyst-resume-keywords", label: "Business analyst resume keywords" },
+      { path: "/business-analyst-resume-keywords#business-systems-analyst-keywords", label: "Business systems analyst resume keywords" },
       { path: "/data-analyst-resume-keywords", label: "Data analyst resume keywords" },
     ],
     relatedGuidePages: [
@@ -271,6 +271,13 @@ export const ALT_ROLE_KEYWORD_PAGES: Record<AltRoleKeywordSlug, AltRoleKeywordPa
 export const ALT_ROLE_KEYWORD_SLUGS = Object.keys(
   ALT_ROLE_KEYWORD_PAGES
 ) as AltRoleKeywordSlug[];
+
+/** Standalone URL merged into `/business-analyst-resume-keywords#business-systems-analyst-keywords`. */
+export const MERGED_ALT_ROLE_KEYWORD_SLUG = "business-systems-analyst" as const satisfies AltRoleKeywordSlug;
+
+export function getIndexedAltRoleKeywordSlugs(): AltRoleKeywordSlug[] {
+  return ALT_ROLE_KEYWORD_SLUGS.filter((slug) => slug !== MERGED_ALT_ROLE_KEYWORD_SLUG);
+}
 
 export function getAltRoleKeywordConfig(slug: AltRoleKeywordSlug): AltRoleKeywordPageConfig {
   return ALT_ROLE_KEYWORD_PAGES[slug];

@@ -59,6 +59,41 @@ export const DATA_ANALYST_ANALYTICS_KEYWORDS_SECTION = {
   ],
 } as const;
 
+/** Fragment + public href after merging standalone BSA keyword URL into the BA hub. */
+export const BUSINESS_ANALYST_BSA_KEYWORDS_SECTION_ID = "business-systems-analyst-keywords" as const;
+export const BUSINESS_ANALYST_BSA_KEYWORDS_HREF =
+  `/business-analyst-resume-keywords#${BUSINESS_ANALYST_BSA_KEYWORDS_SECTION_ID}` as const;
+
+/** BSA keyword cluster on `/business-analyst-resume-keywords` (replaces `/business-systems-analyst-resume-keywords`). */
+export const BUSINESS_ANALYST_BSA_KEYWORDS_SECTION = {
+  h2: `Business Systems Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
+  intro:
+    "Postings titled business systems analyst (BSA) emphasize integrations, solution design, UAT, and enterprise systems—not only process mapping. Use these keywords when the job description says BSA; classic BA keywords above still apply for requirements and stakeholder work.",
+  keywords: [
+    "Business systems analyst",
+    "Requirements gathering",
+    "Solution design",
+    "User stories",
+    "Acceptance criteria",
+    "UAT",
+    "Process mapping",
+    "BPMN",
+    "Systems integration",
+    "Stakeholder management",
+    "SQL",
+    "Jira",
+    "Functional specifications",
+    "Gap analysis",
+    "Change management",
+  ],
+  exampleBullets: [
+    "Elicited BSA requirements across finance and operations, reducing post-build change requests by 32% using structured user stories and acceptance criteria in Jira.",
+    "Led UAT for a billing-system integration, documenting defects and sign-off criteria that cut production rollback risk on launch weekend.",
+    "Mapped as-is/to-be workflows in Visio for order-to-cash, identifying integration points that saved ~700 hours of manual reconciliation annually.",
+    "Partnered with engineering on API and data requirements, translating business rules into functional specs consumed by three delivery squads.",
+  ],
+} as const;
+
 /** Secondary H2 targeting alternate query variants (long-tail). */
 export const ROLE_KEYWORDS_SECONDARY_H2: Partial<Record<RoleSlug, string>> = {
   "data-analyst": `Keywords for Data Analyst Resume (${CONTENT_FRESHNESS_YEAR} ATS Checklist)`,
@@ -141,7 +176,7 @@ export const ROLE_KEYWORDS_SCOPE_NOTE: Partial<Record<RoleSlug, string>> = {
   "data-scientist":
     "Focused on data scientist and ML-heavy analytics roles—not data engineer pipeline ownership. Use /data-engineer-resume-keywords when the JD emphasizes Spark, Airflow, warehouses, and ETL over experimentation and modeling.",
   "business-analyst":
-    "Focused on business analyst (BA) job titles—not BSA, systems analyst, or BI-only roles. Use /business-systems-analyst-resume-keywords or /systems-analyst-resume-keywords when the posting uses those titles instead of BA.",
+    "Focused on business analyst (BA) job titles. Business systems analyst (BSA) keywords are in the section below. For IT systems analyst roles, use /systems-analyst-resume-keywords. For BI-only postings, use /business-intelligence-resume-keywords.",
   "machine-learning-engineer":
     "Covers machine learning engineer (MLE) and production ML roles. For general data science research wording, also scan our data scientist keyword list.",
   "full-stack-developer":
@@ -248,7 +283,12 @@ export const ROLE_KEYWORDS_FAQ: Record<RoleSlug, RoleKeywordsFaqItem[]> = {
     {
       question: "Are business analyst and systems analyst resume keywords the same?",
       answer:
-        "No. Systems analyst postings often skew IT infrastructure and support integrations. This page targets classic BA work: requirements, process, and delivery alignment.",
+        "No. Systems analyst postings often skew IT applications, support, and integrations. Use /systems-analyst-resume-keywords when the job title says systems analyst. This page targets classic BA work: requirements, process, and delivery alignment.",
+    },
+    {
+      question: "Is a business systems analyst the same as a business analyst?",
+      answer:
+        "Overlap exists, but BSA postings often emphasize integrations, enterprise systems, and technical requirements. Use the business systems analyst section on this page for BSA titles; lead with classic BA keywords when the posting is process and delivery focused.",
     },
     {
       question: "What are business analyst resume keywords for ATS in 2026?",

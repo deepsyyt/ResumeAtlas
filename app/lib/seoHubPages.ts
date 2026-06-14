@@ -1,7 +1,7 @@
 import { DATA_ENGINEER_RESUME_GUIDE_PATH } from "@/app/lib/dataEngineerResumeGuide";
 import {
   ALT_ROLE_KEYWORD_PAGES,
-  ALT_ROLE_KEYWORD_SLUGS,
+  getIndexedAltRoleKeywordSlugs,
 } from "@/app/lib/altRoleKeywordPages";
 import { CONTENT_FRESHNESS_YEAR, RESUME_ATLAS_TITLE_SUFFIX } from "@/app/lib/searchIntentSeo";
 import {
@@ -104,7 +104,7 @@ function pilotKeywordHubItems(): HubLinkItem[] {
 }
 
 function altKeywordHubItems(): HubLinkItem[] {
-  return ALT_ROLE_KEYWORD_SLUGS.map((slug) => {
+  return getIndexedAltRoleKeywordSlugs().map((slug) => {
     const c = ALT_ROLE_KEYWORD_PAGES[slug];
     return {
       path: c.path,
@@ -133,7 +133,7 @@ export function getResumeKeywordsHubSections(): HubLinkSection[] {
       items: pilots,
     },
     {
-      title: "Business systems analyst, systems analyst & BI keyword guides",
+      title: "Systems analyst & BI keyword guides",
       items: alt,
     },
     {

@@ -56,7 +56,7 @@ export function resolveProblemInterviewCallout(
   const isRoleKeywordsPath =
     /^\/[^/]+-resume-keywords$/.test(p) ||
     /^\/[^/]+-resume-guide$/.test(p) ||
-    /^\/(business-systems-analyst|systems-analyst|business-intelligence|data-engineer|sql-developer|power-bi)-resume-keywords$/.test(
+    /^\/(systems-analyst|business-intelligence|data-engineer|sql-developer|power-bi)-resume-keywords$/.test(
       p
     );
   if (p === "/ats-keywords" || isRoleKeywordsPath) {

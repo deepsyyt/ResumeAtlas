@@ -1,6 +1,6 @@
 import {
   ALT_ROLE_KEYWORD_PAGES,
-  ALT_ROLE_KEYWORD_SLUGS,
+  getIndexedAltRoleKeywordSlugs,
   isAltRoleKeywordPath,
 } from "@/app/lib/altRoleKeywordPages";
 import {
@@ -174,7 +174,7 @@ const ROLE_KEYWORD_HUB_LINKS: InternalLink[] = (Object.keys(KEYWORD_PAGES) as Ro
   label: `${KEYWORD_PAGES[role].roleName} resume keywords`,
 }));
 
-const ALT_ROLE_KEYWORD_HUB_LINKS: InternalLink[] = ALT_ROLE_KEYWORD_SLUGS.map((slug) => {
+const ALT_ROLE_KEYWORD_HUB_LINKS: InternalLink[] = getIndexedAltRoleKeywordSlugs().map((slug) => {
   const page = ALT_ROLE_KEYWORD_PAGES[slug];
   return { path: page.path, label: `${page.roleName} resume keywords` };
 });
@@ -324,8 +324,8 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   ],
   "/business-analyst-resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,
-    "/business-systems-analyst-resume-keywords",
     "/systems-analyst-resume-keywords",
+    "/business-intelligence-resume-keywords",
     roleResumePillarPath("business-analyst"),
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/resume-examples",

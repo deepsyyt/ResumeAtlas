@@ -6,7 +6,7 @@ import {
   type RoleSlug,
 } from "@/app/lib/seoPages";
 import { INDEXED_PROBLEM_SLUGS } from "@/app/lib/problemPages";
-import { ALT_ROLE_KEYWORD_SLUGS, getAltRoleKeywordConfig } from "@/app/lib/altRoleKeywordPages";
+import { getAltRoleKeywordConfig, getIndexedAltRoleKeywordSlugs } from "@/app/lib/altRoleKeywordPages";
 import { PILOT_KEYWORD_SLUGS, getPilotKeywordConfig } from "@/app/lib/pilotKeywordPages";
 import { DATA_ENGINEER_RESUME_GUIDE_PATH } from "@/app/lib/dataEngineerResumeGuide";
 import {
@@ -189,7 +189,7 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
   const seoHubLastMod = new Date("2026-06-02");
 
   // Alt + pilot keyword pages are featured on /resume-keywords (not separate hub indexes).
-  for (const altSlug of ALT_ROLE_KEYWORD_SLUGS) {
+  for (const altSlug of getIndexedAltRoleKeywordSlugs()) {
     const altPath = getAltRoleKeywordConfig(altSlug).path;
     entries.push({
       url: `${base}${altPath}`,

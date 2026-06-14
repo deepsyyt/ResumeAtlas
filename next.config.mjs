@@ -684,6 +684,16 @@ const nextConfig = {
         destination: "/product-manager-resume-guide",
         permanent: true,
       },
+      {
+        source: "/business-systems-analyst-resume-keywords",
+        destination: "/business-analyst-resume-keywords#business-systems-analyst-keywords",
+        permanent: true,
+      },
+      {
+        source: "/business-systems-analyst-resume-keywords/",
+        destination: "/business-analyst-resume-keywords#business-systems-analyst-keywords",
+        permanent: true,
+      },
       // Legacy /seo/* and /{role}/keywords/* handled by middleware.ts
       {
         source: "/problems",
