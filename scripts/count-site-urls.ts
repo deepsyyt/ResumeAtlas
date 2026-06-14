@@ -34,7 +34,6 @@ const RESUME_TOPICS = [
 const EXTRA_STATIC_PATHS: string[] = [
   "/tools",
   "/faq",
-  "/how-it-works",
   "/optimize",
   "/auth/callback",
   "/business-analyst-vs-data-analyst-resume",
@@ -60,6 +59,7 @@ const REDIRECT_ONLY_PATHS: string[] = [
   "/tableau-data-analyst-resume-example",
   "/ats-resume-template-software-engineer",
   "/resume-keyword-scanner",
+  "/how-it-works",
   "/ats-keywords",
 ];
 

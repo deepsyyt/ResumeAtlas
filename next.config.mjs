@@ -694,6 +694,16 @@ const nextConfig = {
         destination: "/business-analyst-resume-keywords#business-systems-analyst-keywords",
         permanent: true,
       },
+      {
+        source: "/how-it-works",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
+      {
+        source: "/how-it-works/",
+        destination: "/check-resume-against-job-description",
+        permanent: true,
+      },
       // Legacy /seo/* and /{role}/keywords/* handled by middleware.ts
       {
         source: "/problems",
