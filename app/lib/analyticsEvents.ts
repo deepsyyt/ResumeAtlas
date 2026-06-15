@@ -22,6 +22,7 @@ export type UserState = "anonymous" | "logged_in";
 
 export type OptimizationClickSurface =
   | "intelligence_panel"
+  | "score_row"
   | "preview_banner"
   | "post_dashboard_nudge"
   | "oauth_return"
