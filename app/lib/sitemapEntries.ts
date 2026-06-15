@@ -47,6 +47,7 @@ function priorityForPath(pathname: string): number {
   if (pathname.startsWith("/resume-examples/")) return 0.88;
   if (pathname.startsWith("/problems/")) return 0.92;
   if (pathname.startsWith("/how-ats-")) return 0.92;
+  if (pathname.startsWith("/resumeatlas-vs-")) return 0.88;
   if (
     pathname === "/ats-resume-template" ||
     pathname === "/resume-guides/resume-work-experience-examples" ||
@@ -168,6 +169,18 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     lastModified: new Date("2026-04-02"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/customize-resume-without-lying"),
+  });
+  entries.push({
+    url: `${base}/resumeatlas-vs-jobscan`,
+    lastModified: new Date("2026-06-15"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/resumeatlas-vs-jobscan"),
+  });
+  entries.push({
+    url: `${base}/resumeatlas-vs-resume-worded`,
+    lastModified: new Date("2026-06-15"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/resumeatlas-vs-resume-worded"),
   });
   const legalLastMod = new Date("2026-03-23");
   for (const path of LEGAL_PATHS) {

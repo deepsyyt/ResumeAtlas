@@ -77,6 +77,10 @@ export const CHECK_RESUME_AGAINST_JD_PRIMARY_CTA =
 /** Navbar + hero CTA (shorter). */
 export const CHECK_RESUME_AGAINST_JD_HERO_CTA = "Check my resume free" as const;
 
+/** Competitor comparison pages: message match for alternative-intent traffic. */
+export const COMPETITOR_COMPARISON_CTA =
+  "Compare my resume to a job description free" as const;
+
 /** Primary nav label for the workbench tool. */
 export const PRIMARY_TOOL_NAV_LABEL = "Resume checker & optimizer" as const;
 
