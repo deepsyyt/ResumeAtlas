@@ -180,6 +180,7 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
   }
 
   const resumeGuideLastMod = new Date("2026-03-09");
+  const roleKeywordsLastMod = new Date("2026-06-15");
   const roleHubLastMod = new Date("2026-04-09");
   for (const { slug } of Object.values(KEYWORD_PAGES)) {
     const roleHubPath = `/${slug}`;
@@ -201,7 +202,7 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     const resumeKeywordsPath = `/${slug}-resume-keywords`;
     entries.push({
       url: `${base}${resumeKeywordsPath}`,
-      lastModified: resumeGuideLastMod,
+      lastModified: roleKeywordsLastMod,
       changeFrequency: "monthly" as const,
       priority: priorityForPath(resumeKeywordsPath),
     });
