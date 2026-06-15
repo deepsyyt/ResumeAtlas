@@ -3,12 +3,18 @@
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 
-const OPTIMIZE_MESSAGE = "Optimize your resume for this job role";
+export const OPTIMIZE_PREVIEW_MESSAGE = "Optimize your resume for this job role";
+export { ANALYSIS_REPORT_HEADING } from "@/app/lib/evidenceMetricCopy";
 
 type Props = {
   onOptimize?: () => void;
   /** Stacked on the dark tool preview column. */
   darkSurface?: boolean;
+  /** Compact row inside the Intelligence scroll panel. */
+  inline?: boolean;
+  message?: string;
+  /** When false, hides the optimize CTA even if onOptimize is set. */
+  showCta?: boolean;
   /** Re-run typewriter when a new analysis lands. */
   resetKey?: string | number;
 };
@@ -16,11 +22,15 @@ type Props = {
 export function OptimizePreviewBanner({
   onOptimize,
   darkSurface = false,
+  inline = false,
+  message = OPTIMIZE_PREVIEW_MESSAGE,
+  showCta,
   resetKey = "idle",
 }: Props) {
   const reduceMotion = useReducedMotion();
-  const fullText = OPTIMIZE_MESSAGE;
+  const fullText = message;
   const [visibleChars, setVisibleChars] = useState(reduceMotion ? fullText.length : 0);
+  const ctaVisible = (showCta ?? Boolean(onOptimize)) && onOptimize != null;
 
   useEffect(() => {
     if (reduceMotion) {
@@ -37,6 +47,25 @@ export function OptimizePreviewBanner({
   }, [visibleChars, fullText.length, reduceMotion]);
 
   const showCursor = visibleChars < fullText.length;
+
+  if (inline) {
+    return (
+      <div
+        className="rounded-lg border border-indigo-200/70 bg-gradient-to-r from-indigo-50/90 via-white to-violet-50/40 px-2.5 py-2"
+        aria-label={fullText}
+      >
+        <p className="text-[11px] font-semibold leading-snug text-indigo-950 sm:text-xs" aria-live="polite">
+          <span className="text-indigo-900">{fullText.slice(0, visibleChars)}</span>
+          {showCursor ? (
+            <span className="typewriter-cursor font-normal text-indigo-500" aria-hidden>
+              |
+            </span>
+          ) : null}
+          <span className="sr-only">{fullText}</span>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative z-10 shrink-0 text-center">
@@ -77,7 +106,7 @@ export function OptimizePreviewBanner({
           <span className="sr-only">{fullText}</span>
         </p>
 
-        {onOptimize ? (
+        {ctaVisible ? (
           <button
             type="button"
             onClick={onOptimize}

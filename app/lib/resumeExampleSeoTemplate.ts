@@ -31,9 +31,9 @@ export const RESUME_EXAMPLE_SERP_VARIANTS: Record<
 > = {
   "data-analyst": [
     {
-      title: "Data Analyst Resume Example (ATS Template + Skills + Bullet Points) 2026",
+      title: `Data Analyst Resume Example (+ Metrics & Keywords) ${RESUME_EXAMPLE_SERP_TITLE_YEAR}`,
       description:
-        "Use this ATS-friendly data analyst resume example with SQL/Python skills, bullet points, and a copy-paste template that gets interviews.",
+        "Data analyst resume example with SQL/Python skills, measurable bullet points, and section patterns recruiters and ATS look for.",
     },
     {
       title: `Data Analyst Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR}): Match Resume to Job Description`,
@@ -43,14 +43,14 @@ export const RESUME_EXAMPLE_SERP_VARIANTS: Record<
     {
       title: `Data Analyst Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR}) for ATS Screening + Interviews`,
       description:
-        "Template + sample resume for data analysts: SQL, dashboards, and outcomes. Tighten keywords and formatting, run a free ATS check, then compare your resume to each posting.",
+        "Sample resume for data analysts: SQL, dashboards, and outcomes. Tighten keywords and formatting, run a free ATS check, then compare your resume to each posting.",
     },
   ],
   "product-manager": [
     {
-      title: `Product Manager Resume Example (${CONTENT_FRESHNESS_YEAR}) - ATS Template + Metrics`,
+      title: `Product Manager Resume Example (+ Achievement Bullets) ${RESUME_EXAMPLE_SERP_TITLE_YEAR}`,
       description:
-        `Updated ${CONTENT_LAST_UPDATED_LABEL}: product manager resume example with ATS-friendly template, roadmap and launch bullets, and measurable outcomes for ${CONTENT_FRESHNESS_YEAR} PM hiring.`,
+        `Updated ${CONTENT_LAST_UPDATED_LABEL}: product manager resume example with roadmap and launch bullets and measurable outcomes for ${CONTENT_FRESHNESS_YEAR} PM hiring.`,
     },
     {
       title: `Product Manager Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR}): Roadmaps, Metrics, Launches`,
@@ -58,9 +58,9 @@ export const RESUME_EXAMPLE_SERP_VARIANTS: Record<
         "PM resume sample for roadmaps, stakeholders, and measurable impact. Keyword-friendly for ATS. Match resume to job descriptions free and run the ATS resume checker on ResumeAtlas.",
     },
     {
-      title: `PM Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR}): Full Sample + ATS-Friendly Template`,
+      title: `Product Manager Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR}): Full Sample + Bullet Patterns`,
       description:
-        "Full product manager resume example plus a clean one-column template. Improve fit with a free resume vs job description check and ATS scoring on ResumeAtlas.",
+        "Full product manager resume example with a clean one-column layout. Improve fit with a free resume vs job description check and ATS scoring on ResumeAtlas.",
     },
   ],
 };
@@ -79,12 +79,17 @@ function pickResumeExampleSerpVariant(
   return variants[variantIndex] ?? variants[0];
 }
 
-/** Same string as `<title>` / Open Graph for the active variant; use for on-page H1 alignment. */
+/** Same string as `<title>` / Open Graph for the active variant (without brand suffix). */
 export function getResumeExampleSerpTitle(
   pageKey: StandaloneResumeExampleRole,
   variantIndex: 0 | 1 | 2 = RESUME_EXAMPLE_SERP_ACTIVE_VARIANT
 ): string {
   return pickResumeExampleSerpVariant(pageKey, variantIndex).title;
+}
+
+/** On-page H1 — short role example intent (not the full SERP title). */
+export function getResumeExampleSerpH1(pageKey: StandaloneResumeExampleRole): string {
+  return pageKey === "data-analyst" ? "Data Analyst Resume Example" : "Product Manager Resume Example";
 }
 
 export function buildResumeExampleMetadata(

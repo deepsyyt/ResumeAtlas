@@ -395,10 +395,10 @@ export function AtsResumeTemplateGuide() {
             </li>
             <li>
               <Link
-                href="/software-engineer-resume-keywords"
+                href="/software-engineer-resume-guide"
                 className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
               >
-                ATS resume template  -  software engineer (keyword strip + starter text)
+                Software engineer resume example (sample + bullet patterns)
               </Link>
             </li>
           </ul>

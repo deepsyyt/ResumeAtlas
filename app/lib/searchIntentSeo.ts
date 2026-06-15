@@ -22,7 +22,7 @@ export function stripResumeAtlasTitleSuffix(title: string): string {
 /**
  * Canonical URL owners (indexed) vs. query intent - use when writing titles, descriptions, and internal links.
  *
- * **`/{role}-resume-guide`** - Example, template, bullets, summary, and projects (guide intent).
+ * **`/{role}-resume-guide`** - Role resume example, bullets, summary, and projects (guide intent). Generic “ATS template” SERP belongs on `/ats-resume-template` only.
  *
  * **`/{role}-resume-keywords`** - ATS keyword lists and JD-gap scanning (keyword intent). Serves `/{role}/keywords`.
  *
@@ -54,41 +54,50 @@ export function roleResumeKeywordsPath(role: RoleSlug): string {
   return `/${role}-resume-keywords`;
 }
 
+/** SERP `<title>` stem per role — no “template” (owned by `/ats-resume-template`). */
+const ROLE_RESUME_EXAMPLE_TITLE_STEM: Record<RoleSlug, string> = {
+  "software-engineer": `Software Engineer Resume Example (+ Bullet Library) (${RESUME_EXAMPLE_SERP_TITLE_YEAR})`,
+  "data-analyst": `Data Analyst Resume Example (+ Metrics & Keywords) (${RESUME_EXAMPLE_SERP_TITLE_YEAR})`,
+  "product-manager": `Product Manager Resume Example (+ Achievement Bullets) (${RESUME_EXAMPLE_SERP_TITLE_YEAR})`,
+  "data-scientist": `Data Scientist Resume Example (+ Projects & Bullets) (${RESUME_EXAMPLE_SERP_TITLE_YEAR})`,
+  "business-analyst": `Business Analyst Resume Example (+ Requirements & Bullets) (${RESUME_EXAMPLE_SERP_TITLE_YEAR})`,
+  "frontend-developer": `Frontend Developer Resume Example (+ Projects & Bullets) (${RESUME_EXAMPLE_SERP_TITLE_YEAR})`,
+  "backend-developer": `Backend Developer Resume Example (+ API & Impact Bullets) (${RESUME_EXAMPLE_SERP_TITLE_YEAR})`,
+  "machine-learning-engineer": `Machine Learning Engineer Resume Example (+ MLOps Bullets) (${RESUME_EXAMPLE_SERP_TITLE_YEAR})`,
+  "devops-engineer": `DevOps Resume Example (+ CI/CD & Reliability Bullets) (${RESUME_EXAMPLE_SERP_TITLE_YEAR})`,
+  "full-stack-developer": `Full Stack Developer Resume Example (+ Stack & Bullets) (${RESUME_EXAMPLE_SERP_TITLE_YEAR})`,
+};
+
+/** On-page H1 — short role example intent (aligns with title, without SERP extras). */
+export function roleResumeExampleH1(role: RoleSlug): string {
+  return `${KEYWORD_PAGES[role].roleName} Resume Example`;
+}
+
+export function roleResumeExampleTitleStem(role: RoleSlug): string {
+  return ROLE_RESUME_EXAMPLE_TITLE_STEM[role];
+}
+
 export function roleResumeExampleListMeta(role: RoleSlug): { title: string; description: string } {
   const kw = KEYWORD_PAGES[role];
   const resumeSlug = `${role}-resume-example` as ResumeSlug;
   const sample = RESUME_PAGES[resumeSlug];
   const rn = kw.roleName;
-  const title =
-    role === "software-engineer"
-      ? `Software Engineer Resume Example, Sample & Template (${RESUME_EXAMPLE_SERP_TITLE_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`
-      : role === "data-scientist"
-        ? `Data Scientist Resume Example, Sample & Template (${RESUME_EXAMPLE_SERP_TITLE_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`
-      : role === "data-analyst"
-        ? `Data Analyst Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR} ATS-Friendly Template)${RESUME_ATLAS_TITLE_SUFFIX}`
-      : role === "product-manager"
-        ? `Product Manager Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR} ATS-Friendly Template)${RESUME_ATLAS_TITLE_SUFFIX}`
-      : role === "devops-engineer"
-        ? `DevOps Resume Example (${RESUME_EXAMPLE_SERP_TITLE_YEAR} ATS-Friendly Template)${RESUME_ATLAS_TITLE_SUFFIX}`
-      : `${rn} Resume Example, Sample & Template (${RESUME_EXAMPLE_SERP_TITLE_YEAR}) - ATS Sections${RESUME_ATLAS_TITLE_SUFFIX}`;
+  const title = `${ROLE_RESUME_EXAMPLE_TITLE_STEM[role]}${RESUME_ATLAS_TITLE_SUFFIX}`;
   const baseDesc =
     role === "software-engineer"
-      ? "Use a software engineer resume example, sample, and ATS-friendly template with summary/objective patterns, project bullets, and stack-specific impact lines."
+      ? "Software engineer resume example with summary patterns, project bullets, and stack-specific impact lines recruiters and ATS look for."
       : role === "data-scientist"
-        ? "Use a data scientist resume example, sample, and ATS-friendly template with summary/objective patterns, skills, projects, and measurable bullet points."
+        ? "Data scientist resume example with skills, projects, and measurable bullet patterns for ML and analytics roles."
       : role === "data-analyst"
-        ? "Use a data analyst resume example with SQL, dashboard, and impact-focused bullets in ATS-friendly format."
+        ? "Data analyst resume example with SQL, dashboard, and impact-focused bullets in a scannable one-column layout."
       : role === "product-manager"
-        ? "Use a product manager resume example with roadmap, metrics, and launch-focused bullets in ATS-friendly format."
+        ? "Product manager resume example with roadmap, metrics, and launch-focused bullets that prove outcomes."
       : role === "devops-engineer"
-        ? "Use a DevOps resume example with cloud, CI/CD, reliability, and ATS-safe structure for recruiter scans."
+        ? "DevOps resume example with cloud, CI/CD, reliability, and impact bullets for infrastructure roles."
       : sample?.metaDescription ??
-        `ATS-friendly ${rn.toLowerCase()} resume example with summary, skills, projects, and bullet patterns on one page.`;
+        `${rn} resume example with summary, skills, projects, and bullet patterns on one page.`;
   const keywordHubHint = ` ATS keyword checklists for this role are on ${roleResumeKeywordsPath(role)}—not this page.`;
-  const description =
-    role === "software-engineer"
-      ? `${baseDesc}${keywordHubHint}`
-      : `${baseDesc} Patterns align with ${CONTENT_FRESHNESS_YEAR} ATS and recruiter expectations. Use it as a resume template and sample: mirror the sections, then match your resume to a job description with our free tools before you apply.${keywordHubHint}`;
+  const description = `${baseDesc} Mirror the section structure, then match your resume to a job description with our free tools before you apply.${keywordHubHint}`;
   return { title, description };
 }
 

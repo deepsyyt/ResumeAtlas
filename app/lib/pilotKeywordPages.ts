@@ -378,7 +378,7 @@ export const PILOT_KEYWORD_PAGES: Record<PilotKeywordSlug, PilotKeywordPageConfi
     ],
     relatedGuidePages: [
       { path: "/data-engineer-resume-guide", label: "Data engineer resume guide" },
-      { path: "/resume-examples/data-engineer", label: "Data engineer resume example" },
+      { path: "/data-engineer-resume-guide", label: "Data engineer resume example" },
     ],
     faq: [
       {

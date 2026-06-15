@@ -287,7 +287,7 @@ export default function ResumeExamplesIndexPage() {
 
             <p className="mt-1 text-sm text-slate-500">
 
-              One canonical URL per role at <code className="text-xs">/resume-examples/[role]</code>.
+              One canonical URL per role at <code className="text-xs">/[role]-resume-guide</code> (browse hub below).
 
             </p>
 

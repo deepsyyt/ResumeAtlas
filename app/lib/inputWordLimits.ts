@@ -2,7 +2,7 @@
  * Word limits for resume + job description inputs (LLM cost, latency, abuse).
  */
 export const JOB_DESCRIPTION_MAX_WORDS = 650;
-export const RESUME_TEXT_MAX_WORDS = 1000;
+export const RESUME_TEXT_MAX_WORDS = 2000;
 
 export function countWords(text: string): number {
   const t = String(text ?? "").trim();

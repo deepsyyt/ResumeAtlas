@@ -1,3 +1,5 @@
+import { roleResumePillarPath } from "@/app/lib/searchIntentSeo";
+
 export type ResumeSlug =
   | "data-analyst-resume-example"
   | "business-analyst-resume-example"
@@ -24,9 +26,9 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
   "data-analyst-resume-example": {
     slug: "data-analyst-resume-example",
     roleName: "Data Analyst",
-    h1: "Data Analyst Resume Example & Template (ATS-Friendly + Sample Projects)",
+    h1: "Data Analyst Resume Example (SQL, Dashboards & Impact Bullets)",
     metaDescription:
-      "Data analyst resume example and copy-paste template: SQL, Python, Power BI, metrics, and sample bullets for data analytics roles. ATS-friendly format, then match to any job description.",
+      "Data analyst resume example with SQL, Python, Power BI, metrics, and sample bullets for data analytics roles. Scannable layout, then match to any job description.",
     exampleTitle: "Data Analyst - Resume Example",
     summary:
       "Data analyst with 4+ years of experience turning messy data into clear, actionable insights for product, marketing, and operations teams across B2B SaaS.",
@@ -120,9 +122,9 @@ export const RESUME_PAGES: Record<ResumeSlug, ResumePageConfig> = {
   "product-manager-resume-example": {
     slug: "product-manager-resume-example",
     roleName: "Product Manager",
-    h1: "Product Manager Resume Example & Template (ATS-Friendly + Real Projects)",
+    h1: "Product Manager Resume Example (Roadmaps, Metrics & Launches)",
     metaDescription:
-      "Product manager resume examples, sample resume, and templates: roadmaps, metrics, B2B and API PM angles, product lead and data PM keywords. Copy-paste ATS-friendly resume for product management; match any job description.",
+      "Product manager resume example with roadmaps, metrics, B2B and API PM angles, and launch-focused bullets. Copy-paste sample for product management; match any job description.",
     exampleTitle: "Product Manager - Resume Example",
     summary:
       "Product manager with 7+ years of experience owning B2B SaaS products from discovery to launch, focused on impact and execution.",
@@ -309,30 +311,10 @@ export function roleResumeSamplePath(role: RoleSlug): string {
   return `/${role}-resume-guide#bullet-points`;
 }
 
-/** Roles with indexed `/resume-examples/{role}` pages (subset of cluster; excludes data-engineer). */
-const RESUME_EXAMPLE_CLUSTER_ROLE_SLUGS = new Set<RoleSlug>([
-  "data-analyst",
-  "software-engineer",
-  "product-manager",
-  "business-analyst",
-  "data-scientist",
-  "machine-learning-engineer",
-  "devops-engineer",
-  "frontend-developer",
-  "backend-developer",
-]);
-
 /**
- * Public URL for “resume example” intent: `/resume-examples/{role}` for high-demand cluster roles;
- * otherwise consolidated `/{role}-resume-guide` or sample anchor.
+ * Public URL for “resume example” intent — always `/{role}-resume-guide` (role + intent taxonomy).
  */
 export function resumeExamplePublicPath(role: RoleSlug): string {
-  if (RESUME_EXAMPLE_CLUSTER_ROLE_SLUGS.has(role)) {
-    return `/resume-examples/${role}`;
-  }
-  for (const r of ROLES_WITH_STANDALONE_RESUME_EXAMPLE_PAGE) {
-    if (r === role) return `/${role}-resume-guide`;
-  }
-  return roleResumeSamplePath(role);
+  return roleResumePillarPath(role);
 }
 

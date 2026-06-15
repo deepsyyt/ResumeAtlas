@@ -15,12 +15,11 @@ import { CONTENT_FRESHNESS_YEAR } from "@/app/lib/contentFreshness";
 import { buildResumeExampleMetadata } from "@/app/lib/resumeExampleSeoTemplate";
 import {
   absoluteCanonicalUrl,
+  roleResumeExampleH1,
   roleResumeExampleListMeta,
   roleResumeExamplePath,
   roleResumeKeywordsPath,
 } from "@/app/lib/searchIntentSeo";
-import { resumeExamplePublicPath } from "@/app/lib/seoPages";
-import { isResumeExampleClusterSlug } from "@/app/lib/resumeExampleClusterPages";
 import { isResumeBulletRole, publicPathForBulletHub } from "@/app/lib/resumeBulletPointContent";
 import type { ResumeSeoTopic } from "@/app/lib/resumeTopicTypes";
 import { ResumeTopicSectionForGuide } from "@/app/components/resumeTopicGuide";
@@ -91,9 +90,6 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
   if (!config) notFound();
 
   const role = params.roleSlug;
-  const clusterExamplePath = isResumeExampleClusterSlug(role)
-    ? resumeExamplePublicPath(role)
-    : null;
   const showFullSampleAppendix = role === "product-manager";
   const isDataAnalyst = role === "data-analyst";
   const keywordsPagePath = roleResumeKeywordsPath(role);
@@ -101,12 +97,10 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
   const bulletHubPath = isResumeBulletRole(role) ? publicPathForBulletHub(role) : null;
   const optimizeCluster = getOptimizeClusterNav(examplePath);
   const roleLower = config.roleName.toLowerCase();
-  const heroHeading = isDataAnalyst
-    ? "Data Analyst Resume Example That Gets Interviews (2026)"
-    : `${config.roleName} resume example, sample & template`;
+  const heroHeading = roleResumeExampleH1(role);
   const heroIntro = isDataAnalyst
-    ? "Use recruiter-ready examples, ATS-friendly templates, and proven bullet points for SQL, Excel, Python, Tableau, Power BI, and analytics roles."
-    : `These section-by-section patterns reflect how hiring teams and ATS tools read ${roleLower} resumes in ${CONTENT_FRESHNESS_YEAR}—plain-text structure, proof in bullets, and honest posting-aligned language. Use it as a sample outline, then compare your resume to a job description to close gaps before you apply.`;
+    ? "Recruiter-ready example with SQL, Python, Tableau, Power BI, and analytics bullet patterns—plain-text structure and measurable outcomes."
+    : `These section-by-section patterns reflect how hiring teams and ATS tools read ${roleLower} resumes in ${CONTENT_FRESHNESS_YEAR}—plain-text structure, proof in bullets, and honest posting-aligned language. Use this sample outline, then compare your resume to a job description to close gaps before you apply.`;
 
   return (
     <>
@@ -126,39 +120,17 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
             {heroIntro}
           </p>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-700">
-            {clusterExamplePath ? (
-              <>
-                Full ATS sample with recruiter review:{" "}
-                <Link
-                  href={clusterExamplePath}
-                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  {roleLower} resume example
-                </Link>
-                . Keywords:{" "}
-                <Link
-                  href={keywordsPagePath}
-                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  {roleLower} resume keywords
-                </Link>
-                . Section patterns and bullets stay on this guide.
-              </>
-            ) : (
-              <>
-                For ATS keyword lists and missing terms from a job description, use the{" "}
-                <Link
-                  href={keywordsPagePath}
-                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-                >
-                  {roleLower} resume keywords
-                </Link>{" "}
-                page. Bullet patterns and templates stay on this guide.
-              </>
-            )}
+            For ATS keyword lists and missing terms from a job description, use the{" "}
+            <Link
+              href={keywordsPagePath}
+              className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
+              {roleLower} resume keywords
+            </Link>{" "}
+            page. Section patterns and bullet examples stay on this guide.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            {(isDataAnalyst ? (["resume-example", "ats-template", "skills", "resume-bullet-points-h2", "faq"] as const) : MERGED_TOPICS).map((t) => (
+            {(isDataAnalyst ? (["resume-example", "outline", "skills", "resume-bullet-points-h2", "faq"] as const) : MERGED_TOPICS).map((t) => (
               <Link
                 key={t}
                 href={`#${isDataAnalyst ? t : anchorForTopic(t as ResumeSeoTopic)}`}
@@ -187,10 +159,10 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
             ) : null}
             {isDataAnalyst ? (
               <Link
-                href="#ats-template"
+                href="#outline"
                 className="inline-flex rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-800 transition hover:bg-slate-50"
               >
-                Copy ATS Template
+                Copy outline
               </Link>
             ) : null}
             <Link

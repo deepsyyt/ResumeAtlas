@@ -1,6 +1,6 @@
 import {
   isResumeExampleClusterSlug,
-  resumeExampleClusterPath,
+  resumeExampleClusterLegacyPath,
 } from "@/app/lib/resumeExampleClusterPages";
 import type { RoleOptimizerContent } from "@/app/lib/roleOptimizerContent";
 import { ROLE_OPTIMIZER_ORDER } from "@/app/lib/roleOptimizer/roles/index";
@@ -35,7 +35,7 @@ for (const role of ROLE_OPTIMIZER_ORDER) {
   }
   byExamplePath.set(normalize(role.relatedExamplePath), nav);
   if (isResumeExampleClusterSlug(role.slug)) {
-    byExamplePath.set(normalize(resumeExampleClusterPath(role.slug)), nav);
+    byExamplePath.set(normalize(resumeExampleClusterLegacyPath(role.slug)), nav);
   }
 }
 

@@ -1,10 +1,9 @@
 import { DATA_ENGINEER_RESUME_GUIDE_PATH } from "@/app/lib/dataEngineerResumeGuide";
 import {
   isResumeExampleClusterSlug,
-  resumeExampleClusterPath,
   type ResumeExampleClusterSlug,
 } from "@/app/lib/resumeExampleClusterPages";
-import { KEYWORD_PAGES, resumeExamplePublicPath, type RoleSlug } from "@/app/lib/seoPages";
+import { KEYWORD_PAGES, type RoleSlug } from "@/app/lib/seoPages";
 import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIntentSeo";
 
 /** Avoid importing `internalLinks` here — that module imports this file and causes a TDZ cycle at build. */
@@ -85,12 +84,6 @@ function roleNameFor(key: RoleClusterKey): string {
 export function getRoleClusterTriangle(key: RoleClusterKey): RoleClusterTriangle {
   const roleName = roleNameFor(key);
   const examplePath =
-    key === "data-engineer"
-      ? resumeExampleClusterPath("data-engineer")
-      : isResumeExampleClusterSlug(key)
-        ? resumeExampleClusterPath(key)
-        : resumeExamplePublicPath(key);
-  const guidePath =
     key === "data-engineer" ? DATA_ENGINEER_RESUME_GUIDE_PATH : roleResumePillarPath(key);
   const keywordsPath =
     key === "data-engineer" ? "/data-engineer-resume-keywords" : roleResumeKeywordsPath(key);
@@ -100,7 +93,7 @@ export function getRoleClusterTriangle(key: RoleClusterKey): RoleClusterTriangle
     roleName,
     examplePath,
     exampleLabel: `${roleName} resume example`,
-    guidePath,
+    guidePath: null,
     guideLabel: `${roleName} resume guide`,
     keywordsPath,
     keywordsLabel: `${roleName} resume keywords`,

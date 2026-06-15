@@ -243,11 +243,8 @@ function classifySkillEvidence(
     (b) => b.location === "project" && resumeShowsSkillEvidence(b.text, skill)
   );
   if (projectHits.length > 0) {
-    const strong = projectHits.some(
-      (b) => METRIC_RE.test(b.text) || ARCHITECTURE_RE.test(b.text) || DEPLOYMENT_RE.test(b.text)
-    );
     return {
-      strength: strong ? "strong" : "medium",
+      strength: "strong",
       mentionCount: Math.max(mentionCount, projectHits.length),
       evidenceLocation: "project",
       evidenceHint: projectHits[0]?.hint,
@@ -259,7 +256,7 @@ function classifySkillEvidence(
   );
   if (expHits.length > 0) {
     return {
-      strength: expHits.some((b) => METRIC_RE.test(b.text)) ? "medium" : "weak",
+      strength: "strong",
       mentionCount: Math.max(mentionCount, expHits.length),
       evidenceLocation: "experience",
       evidenceHint: expHits[0]?.hint,
@@ -269,11 +266,11 @@ function classifySkillEvidence(
   const skillsOnly = bullets.some(
     (b) => b.location === "skills" && resumeShowsSkillEvidence(b.text, skill)
   );
-  if (skillsOnly || mentionCount > 0) {
+  if (skillsOnly) {
     return {
-      strength: "weak",
+      strength: "medium",
       mentionCount,
-      evidenceLocation: skillsOnly ? "skills_only" : "summary",
+      evidenceLocation: "skills_only",
     };
   }
 
@@ -412,16 +409,11 @@ function detectScopeIndicators(args: {
     found.add("collaboration");
   }
 
-  const provedSkills = args.skillProof.filter(
-    (s) =>
-      s.strength !== "gap" &&
-      s.evidenceLocation !== "skills_only" &&
-      s.evidenceLocation !== "none"
-  );
+  const provedSkills = args.skillProof.filter((s) => s.strength === "strong");
   const requiredSkills = args.skillProof.filter((s) => s.jdRequired);
   const proofDenominator = Math.max(requiredSkills.length, args.skillProof.length, 1);
   const proofRatio = provedSkills.length / proofDenominator;
-  if (proofRatio >= 0.45 || provedSkills.some((s) => s.strength === "strong" || s.strength === "medium")) {
+  if (proofRatio >= 0.45 || provedSkills.length > 0) {
     found.add("technical_proof");
   }
 
@@ -499,12 +491,16 @@ function buildRiskAreas(
   const risks: string[] = [];
   const level = seniority.roleLevel;
 
-  const weakRequired = skillProof.filter((s) => s.jdRequired && (s.strength === "gap" || s.strength === "weak"));
+  const weakRequired = skillProof.filter(
+    (s) => s.jdRequired && (s.strength === "gap" || s.strength === "medium" || s.strength === "weak")
+  );
   for (const s of weakRequired.slice(0, 3)) {
     if (s.strength === "gap") {
       risks.push(`${s.skill}: required in JD, not evidenced in resume (not invented)`);
-    } else {
+    } else if (s.strength === "medium") {
       risks.push(`${s.skill}: only listed in skills, not proven in project bullets`);
+    } else {
+      risks.push(`${s.skill}: only in summary, not proven in work bullets`);
     }
   }
 
@@ -544,9 +540,7 @@ function computeSnapshot(
   const leadershipSignal = signalScore(bullets, LEADERSHIP_RE);
   const deploymentSignal = signalScore(bullets, DEPLOYMENT_RE);
 
-  const proved = skillProof.filter(
-    (s) => s.strength !== "gap" && s.evidenceLocation !== "skills_only" && s.evidenceLocation !== "none"
-  ).length;
+  const proved = skillProof.filter((s) => s.strength === "strong").length;
   const jdSkillsTotal = jdSkills.length;
   const jdSkillProof =
     jdSkillsTotal > 0 ? Math.round((proved / jdSkillsTotal) * 100) : 100;
@@ -748,20 +742,23 @@ function buildSkillImprovementNote(
 ): string {
   const topicPrefix = jdTopic ? `${jdTopic}: ` : "";
 
-  if (before.strength === "weak" && after.evidenceLocation === "project") {
-    return `${topicPrefix}Moved from skills list into project bullets this JD emphasizes`;
-  }
-  if (before.strength === "medium" && after.strength === "strong") {
-    return `${topicPrefix}Strengthened with architecture, deployment, or impact proof aligned to this role`;
+  if (
+    (before.strength === "medium" || before.strength === "weak") &&
+    after.strength === "strong"
+  ) {
+    if (before.evidenceLocation === "skills_only") {
+      return `${topicPrefix}Moved from skills list into work bullets this JD emphasizes`;
+    }
+    if (before.evidenceLocation === "summary") {
+      return `${topicPrefix}Moved from summary into work bullets this JD emphasizes`;
+    }
+    return `${topicPrefix}Proof upgraded to match what this job cares about`;
   }
   if (topicDetail && jdTopic) {
     const detail = topicDetail.replace(new RegExp(`^${jdTopic}\\s*`, "i"), "").trim();
     if (detail && !detail.toLowerCase().includes("not found")) {
       return `${topicPrefix}${detail.charAt(0).toUpperCase()}${detail.slice(1)}`;
     }
-  }
-  if (before.strength === "medium") {
-    return `${topicPrefix}Mentioned in experience — now proven more strongly in project bullets`;
   }
   return `${topicPrefix}Proof upgraded to match what this job cares about`;
 }

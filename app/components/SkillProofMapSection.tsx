@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { AnimatedScoreBar, strengthBarHex, strengthBarPercent } from "@/app/components/EvidenceMetricBar";
 import {
   SKILL_PROOF_MAP_INTRO,
@@ -64,11 +65,13 @@ export function SkillProofMapSection({
   maxRows = SKILL_PROOF_DASHBOARD_ROW_LIMIT,
   className = "mt-3",
 }: SkillProofMapSectionProps) {
+  const [missingExpanded, setMissingExpanded] = useState(false);
+
   if (rows.length === 0) return null;
 
   const sorted = sortSkillProofForDisplay(rows);
   const visible = sorted.slice(0, maxRows);
-  const hiddenCount = sorted.length - visible.length;
+  const hiddenMissing = sorted.slice(maxRows).filter((row) => row.strength === "gap");
 
   return (
     <div
@@ -130,10 +133,28 @@ export function SkillProofMapSection({
           </tbody>
         </table>
       </div>
-      {hiddenCount > 0 ? (
-        <p className="mt-1.5 text-[10px] text-slate-500">
-          + {hiddenCount} more JD skill{hiddenCount === 1 ? "" : "s"} not shown (same proof map).
-        </p>
+      {hiddenMissing.length > 0 ? (
+        <div className="mt-1.5">
+          <button
+            type="button"
+            onClick={() => setMissingExpanded((open) => !open)}
+            aria-expanded={missingExpanded}
+            className="text-left text-[10px] font-medium text-indigo-600 transition-colors hover:text-indigo-800 focus:outline-none focus-visible:underline"
+          >
+            + {hiddenMissing.length} more JD skill{hiddenMissing.length === 1 ? "" : "s"} missing in
+            your resume
+            <span className="text-indigo-500"> {missingExpanded ? "▾ Hide" : "▸ Show"}</span>
+          </button>
+          {missingExpanded ? (
+            <ul className="mt-1 space-y-0.5 rounded-md border border-slate-200/80 bg-white/70 px-2 py-1.5">
+              {hiddenMissing.map((row) => (
+                <li key={row.skill} className="text-[10px] leading-snug text-slate-700">
+                  • {row.skill}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
       ) : null}
     </div>
   );

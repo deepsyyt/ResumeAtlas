@@ -1,9 +1,13 @@
+import { DATA_ENGINEER_RESUME_GUIDE_PATH } from "@/app/lib/dataEngineerResumeGuide";
 import { CONTENT_FRESHNESS_YEAR } from "@/app/lib/contentFreshness";
-import { RESUME_ATLAS_TITLE_SUFFIX } from "@/app/lib/searchIntentSeo";
+import {
+  RESUME_ATLAS_TITLE_SUFFIX,
+  roleResumeKeywordsPath,
+  roleResumePillarPath,
+} from "@/app/lib/searchIntentSeo";
 import type { RoleSlug } from "@/app/lib/seoPages";
-import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIntentSeo";
 
-/** Roles with dedicated `/resume-examples/{slug}` pages (high “resume example” demand). Excludes full-stack. */
+/** Roles with rich example content (legacy `/resume-examples/{slug}` 301 → `/{slug}-resume-guide`). */
 export type ResumeExampleClusterSlug =
   | "data-analyst"
   | "software-engineer"
@@ -38,6 +42,12 @@ export const RESUME_EXAMPLE_CLUSTER_SLUGS: readonly ResumeExampleClusterSlug[] =
 ];
 
 export function resumeExampleClusterPath(slug: ResumeExampleClusterSlug): string {
+  if (slug === "data-engineer") return DATA_ENGINEER_RESUME_GUIDE_PATH;
+  return roleResumePillarPath(slug as RoleSlug);
+}
+
+/** Legacy cluster URL (301 only — do not link in new copy). */
+export function resumeExampleClusterLegacyPath(slug: ResumeExampleClusterSlug): string {
   return `/resume-examples/${slug}`;
 }
 
@@ -96,8 +106,20 @@ export type ResumeExampleClusterConfig = {
   downloadFilename: string;
 };
 
-function metaTitle(roleName: string): string {
-  return `${roleName} Resume Example (${CONTENT_FRESHNESS_YEAR} ATS-Friendly Sample)${RESUME_ATLAS_TITLE_SUFFIX}`;
+function metaTitle(_roleName: string, slug: ResumeExampleClusterSlug): string {
+  const stems: Record<ResumeExampleClusterSlug, string> = {
+    "data-analyst": `Data Analyst Resume Example (+ Metrics & Keywords)`,
+    "software-engineer": `Software Engineer Resume Example (+ Bullet Library)`,
+    "product-manager": `Product Manager Resume Example (+ Achievement Bullets)`,
+    "data-engineer": `Data Engineer Resume Example (+ Pipeline & Bullets)`,
+    "business-analyst": `Business Analyst Resume Example (+ Requirements & Bullets)`,
+    "data-scientist": `Data Scientist Resume Example (+ Projects & Bullets)`,
+    "machine-learning-engineer": `Machine Learning Engineer Resume Example (+ MLOps Bullets)`,
+    "devops-engineer": `DevOps Resume Example (+ CI/CD & Reliability Bullets)`,
+    "frontend-developer": `Frontend Developer Resume Example (+ Projects & Bullets)`,
+    "backend-developer": `Backend Developer Resume Example (+ API & Impact Bullets)`,
+  };
+  return `${stems[slug]} (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`;
 }
 
 function keywordsAndGuide(slug: ResumeExampleClusterSlug): { keywordsPath: string; guidePath: string } {
@@ -135,9 +157,9 @@ function baseConfig(
     slug,
     roleName,
     roleNameLower,
-    title: metaTitle(roleName),
+    title: metaTitle(roleName, slug),
     description,
-    h1: `${roleName} Resume Example (${CONTENT_FRESHNESS_YEAR} ATS-Friendly Sample)`,
+    h1: `${roleName} Resume Example`,
     opening,
     whoFor,
     atsSummary,

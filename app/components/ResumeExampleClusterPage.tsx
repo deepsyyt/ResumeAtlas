@@ -153,8 +153,12 @@ export function ResumeExampleClusterPage({ slug }: Props) {
             />
           </div>
           <p className="mt-3 text-sm text-slate-600">
-            Downloadable structure: copy the block above into a plain .docx or ATS-safe template—no tables, text boxes,
-            or icons in the body.
+            Downloadable structure: copy the block above into a plain .docx or one-column layout—no tables, text boxes,
+            icons, or graphics for core text. Need a Word/Google Docs starter? Use the{" "}
+            <Link href="/ats-resume-template" className="font-semibold text-sky-700 underline underline-offset-2">
+              ATS resume template guide
+            </Link>
+            .
           </p>
         </section>
 

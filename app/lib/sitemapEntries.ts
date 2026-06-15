@@ -10,13 +10,8 @@ import { getAltRoleKeywordConfig, getIndexedAltRoleKeywordSlugs } from "@/app/li
 import { PILOT_KEYWORD_SLUGS, getPilotKeywordConfig } from "@/app/lib/pilotKeywordPages";
 import { DATA_ENGINEER_RESUME_GUIDE_PATH } from "@/app/lib/dataEngineerResumeGuide";
 import {
-  RESUME_GUIDES_HUB_PATH,
   RESUME_KEYWORDS_HUB_PATH,
 } from "@/app/lib/seoHubPages";
-import {
-  RESUME_EXAMPLE_CLUSTER_SLUGS,
-  resumeExampleClusterPath,
-} from "@/app/lib/resumeExampleClusterPages";
 import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
 import { FAQ_PAGE_PATH } from "@/app/lib/faqPageSeo";
 import {
@@ -254,23 +249,7 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     changeFrequency: "weekly" as const,
     priority: priorityForPath(RESUME_KEYWORDS_HUB_PATH),
   });
-  entries.push({
-    url: `${base}${RESUME_GUIDES_HUB_PATH}`,
-    lastModified: seoHubLastMod,
-    changeFrequency: "weekly" as const,
-    priority: priorityForPath(RESUME_GUIDES_HUB_PATH),
-  });
-
-  const resumeExampleClusterLastMod = seoHubLastMod;
-  for (const clusterSlug of RESUME_EXAMPLE_CLUSTER_SLUGS) {
-    const clusterPath = resumeExampleClusterPath(clusterSlug);
-    entries.push({
-      url: `${base}${clusterPath}`,
-      lastModified: resumeExampleClusterLastMod,
-      changeFrequency: "monthly" as const,
-      priority: priorityForPath(clusterPath),
-    });
-  }
+  // `/resume-guides` and `/resume-guides/ats-resume-template` 308 → `/ats-resume-template` — omit from sitemap.
 
   const problemsHubLastMod = new Date("2026-03-25");
   // `/problems` hub is intentionally low-demand (noindex set on the page).

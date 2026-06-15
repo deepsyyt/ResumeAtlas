@@ -550,7 +550,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     relatedSearches: [
       { label: "data scientist resume summary", href: "/data-scientist-resume-guide#summary" },
       { label: "data scientist resume objective", href: "/data-scientist-resume-guide#summary" },
-      { label: "data scientist resume template", href: "/data-scientist-resume-guide" },
+      { label: "data scientist resume example", href: "/data-scientist-resume-guide" },
       { label: "data scientist resume keywords", href: "/data-scientist-resume-keywords" },
     ],
     levelCards: {
@@ -700,7 +700,7 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
     ],
     relatedSearches: [
       { label: "software engineer resume summary", href: "/software-engineer-resume-guide#summary" },
-      { label: "software engineer resume template", href: "/software-engineer-resume-guide" },
+      { label: "software engineer resume example", href: "/software-engineer-resume-guide" },
       { label: "software engineer resume sample", href: "/software-engineer-resume-guide" },
       { label: "software engineer resume keywords", href: "/software-engineer-resume-keywords" },
     ],

@@ -195,7 +195,7 @@ export const CLUSTER_RESUME_EXAMPLES_INDEX_METADATA = {
   path: "/resume-examples" as const,
   title: `Resume Examples by Role (Browse + Open Your Sample Page)${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    `Browse ${CONTENT_FRESHNESS_YEAR} resume examples by role: each card links to that role’s canonical sample page (summary, skills, projects, bullets), not duplicate thin URLs. Use this hub to pick your job family, then open that role’s page. For ATS layout rules, read the ATS resume guide; for compare resume to a posting, use the free matcher.`,
+    `Browse ${CONTENT_FRESHNESS_YEAR} resume examples by role: each card links to that role’s canonical guide at /[role]-resume-guide (summary, skills, projects, bullets). Use this hub to pick your job family. For ATS layout rules, read the ATS resume guide; for compare resume to a posting, use the free matcher.`,
   ogTitle: `Resume Examples by Role | ResumeAtlas`,
   ogDescription:
     `ATS-friendly resume examples by role for ${CONTENT_FRESHNESS_YEAR} job searches, one canonical URL per role.`,

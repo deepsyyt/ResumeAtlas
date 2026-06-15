@@ -121,10 +121,10 @@ export function DataAnalystResumeExampleMain({ omitHero = false }: { omitHero?: 
         <section className="border-b border-slate-200 bg-slate-50/60">
           <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
             <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              Data Analyst Resume Example That Gets Interviews (2026)
+              Data Analyst Resume Example
             </h1>
             <p className="mt-3 max-w-2xl text-base text-slate-600 sm:text-lg">
-              ATS-friendly resume example with SQL/Python skills, bullet points, and copy-paste template.
+              SQL/Python skills, measurable bullet points, and section patterns recruiters and ATS look for.
             </p>
             <p className="mt-3 text-sm font-medium text-slate-500">Updated 2026 • ATS-Friendly • Real Metrics Examples</p>
             <p className="mt-3 max-w-2xl text-sm text-slate-600">
@@ -145,10 +145,10 @@ export function DataAnalystResumeExampleMain({ omitHero = false }: { omitHero?: 
                 View Resume Example
               </Link>
               <Link
-                href="#template"
+                href="#outline"
                 className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
               >
-                Copy Template
+                Copy outline
               </Link>
               <Link
                 href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
@@ -210,12 +210,17 @@ export function DataAnalystResumeExampleMain({ omitHero = false }: { omitHero?: 
           </div>
         </section>
 
-        <section id="template" aria-labelledby="template-h2">
-          <h2 id="template-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            Data Analyst Resume Template
+        <section id="outline" aria-labelledby="outline-h2">
+          <h2 id="outline-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Data Analyst Resume Outline (Copy-Paste)
           </h2>
           <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
-            Fill-in template: replace every `[placeholder]` with your own details and metrics.
+            Fill-in outline: replace every `[placeholder]` with your own details and metrics. For a downloadable ATS
+            layout, use the{" "}
+            <Link href="/ats-resume-template" className="font-semibold underline underline-offset-2">
+              free ATS resume template
+            </Link>
+            .
           </div>
           <pre className="mt-4 max-h-[22rem] overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs leading-relaxed text-slate-800 sm:text-sm">
             {COPY_PASTE_TEMPLATE}

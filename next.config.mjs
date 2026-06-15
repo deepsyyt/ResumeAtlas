@@ -48,7 +48,7 @@ const RESUME_EXAMPLE_STANDALONE_ROLES = [
   "full-stack-developer",
 ];
 
-/** High-demand “resume example” pages at `/resume-examples/{slug}` (align with app/lib/resumeExampleClusterPages.ts). */
+/** High-demand resume example roles (legacy `/resume-examples/{slug}` 301 → `/{slug}-resume-guide`). */
 const RESUME_EXAMPLE_CLUSTER_SLUGS = [
   "data-analyst",
   "software-engineer",
@@ -346,11 +346,25 @@ const nextConfig = {
       },
     ]);
 
+    const resumeExampleClusterToGuideRedirects = RESUME_EXAMPLE_CLUSTER_SLUGS.flatMap((slug) => {
+      const destination = slug === "data-engineer" ? "/data-engineer-resume-guide" : pillar(slug);
+      return [
+        {
+          source: `/resume-examples/${slug}`,
+          destination,
+          permanent: true,
+        },
+        {
+          source: `/resume-examples/${slug}/`,
+          destination,
+          permanent: true,
+        },
+      ];
+    });
+
     const legacyHyphenExampleRedirects = [
       ...ROLE_SLUGS.flatMap((role) => {
-        const destination = RESUME_EXAMPLE_CLUSTER_SET.has(role)
-          ? `/resume-examples/${role}`
-          : pillar(role);
+        const destination = pillar(role);
         return [
           {
             source: `/${role}-resume-example`,
@@ -366,12 +380,12 @@ const nextConfig = {
       }),
       {
         source: "/data-engineer-resume-example",
-        destination: "/resume-examples/data-engineer",
+        destination: "/data-engineer-resume-guide",
         permanent: true,
       },
       {
         source: "/data-engineer-resume-example/",
-        destination: "/resume-examples/data-engineer",
+        destination: "/data-engineer-resume-guide",
         permanent: true,
       },
     ];
@@ -432,6 +446,7 @@ const nextConfig = {
       ...standaloneRoleHubToPillarRedirects,
       ...roleKeywordsHubRedirects,
       ...legacyHyphenExampleRedirects,
+      ...resumeExampleClusterToGuideRedirects,
       ...seoBulletRedirects,
       ...legacyThinPageRedirects,
       ...resumeGuideTopicRedirects,

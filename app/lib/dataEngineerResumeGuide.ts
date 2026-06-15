@@ -12,7 +12,7 @@ export const DATA_ENGINEER_RESUME_GUIDE = {
   h1: `Data Engineer Resume Guide (${CONTENT_FRESHNESS_YEAR})`,
   intro:
     "This guide covers how to structure a data engineer resume for ATS and hiring managers—pipeline ownership, warehouse platforms, orchestration, and reliability metrics. For a full annotated sample with recruiter review, use the data engineer resume example page; for keyword lists, use the keywords hub.",
-  examplePath: "/resume-examples/data-engineer",
+  examplePath: DATA_ENGINEER_RESUME_GUIDE_PATH,
   keywordsPath: "/data-engineer-resume-keywords",
   sections: [
     {

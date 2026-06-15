@@ -1,10 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useState } from "react";
 import {
+  AnalysisReportCard,
   AnimatedScoreBar,
-  CompactScoreCard,
+  IntelligenceScoreCard,
   SignalMetricCard,
   ThemeCoverageRow,
 } from "@/app/components/EvidenceMetricBar";
@@ -12,8 +12,11 @@ import { SkillProofMapSection } from "@/app/components/SkillProofMapSection";
 import {
   ATS_REFERENCE_SUBTITLE,
   ATS_REFERENCE_TITLE,
+  EVIDENCE_MATCH_CARD_LABEL,
   EVIDENCE_MATCH_SUBTITLE,
   EVIDENCE_MATCH_TITLE,
+  atsShortlistLikelihoodLine,
+  evidenceInterviewLikelihoodLine,
   RISK_AREAS_INTRO,
   RISK_AREAS_TITLE,
   SIGNALS_SECTION_INTRO,
@@ -23,7 +26,7 @@ import {
   type ExperienceAlignmentMetric,
 } from "@/app/lib/evidenceMetricCopy";
 import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
-import { getScoreStyle, getATSRingHex, getATSBadgeLabel } from "@/app/lib/scoreColors";
+import { getScoreStyle, getATSBadgeLabel } from "@/app/lib/scoreColors";
 
 function ScoreBar({ score, hex }: { score: number; hex: string }) {
   return <AnimatedScoreBar value={score} colorHex={hex} heightClass="h-1" className="mt-1" />;
@@ -38,6 +41,8 @@ export type EvidenceIntelligenceSectionProps = {
   takeawaySubline?: string;
   /** Rendered directly above skill-by-skill proof (e.g. optimize CTA). */
   aboveSkillProof?: ReactNode;
+  /** Opens optimizer from the score-row analysis card. */
+  onOptimize?: () => void;
   /** Homepage hero: shorter slice of the dashboard (readable, not full scroll). */
   heroPreview?: boolean;
   /** `topics`: through theme coverage only (tool empty state). `toolScroll`: compact through topics, full below-fold. `full`: entire dashboard. */
@@ -53,13 +58,13 @@ export function EvidenceIntelligenceSection({
   takeawaySubline,
   aboveSkillProof,
   heroPreview = false,
+  onOptimize,
   previewDepth,
 }: EvidenceIntelligenceSectionProps) {
   const depth = previewDepth ?? (heroPreview ? "hero" : "full");
   const compact = depth === "topics" || depth === "toolScroll";
   const showBelowFold = depth === "full" || depth === "toolScroll";
   const signalMetrics = buildSignalMetrics(dashboard, experienceAlignment);
-  const [expandedMetric, setExpandedMetric] = useState<string | null>(null);
   const headline =
     takeawayHeadline ??
     (isDemo
@@ -72,79 +77,36 @@ export function EvidenceIntelligenceSection({
       : dashboard.riskAreas[0] ??
         "Move tools and outcomes from lists into project bullets where your experience supports it.");
   const evidenceStyle = getScoreStyle(dashboard.evidenceMatch);
-  const evidenceRing = getATSRingHex(dashboard.evidenceMatch);
-  const atsStyle = atsScoreReference != null ? getScoreStyle(atsScoreReference) : null;
+  const showAtsCard = atsScoreReference != null;
+  const showAnalysisCard = onOptimize != null;
+  const scoreCardCount = 1 + (showAtsCard ? 1 : 0) + (showAnalysisCard ? 1 : 0);
+  const scoreGridCols =
+    scoreCardCount >= 3 ? "lg:grid-cols-3" : scoreCardCount === 2 ? "lg:grid-cols-2" : "";
 
   return (
     <>
       <div
-        className={`flex flex-col sm:flex-row sm:items-start ${
-          compact ? "mt-1.5 gap-1.5 sm:gap-2" : "mt-2 gap-2 sm:gap-3"
+        className={`grid grid-cols-1 gap-2.5 ${scoreGridCols} lg:items-stretch ${
+          compact ? "mt-1.5" : "mt-2"
         }`}
       >
-        <div
-          className={`min-w-0 flex-1 rounded-lg border border-slate-200/80 bg-gradient-to-br from-white to-slate-50 shadow-sm ${
-            compact ? "px-2 py-1.5" : "px-2.5 py-2"
-          }`}
-        >
-          <div className={`flex items-center ${compact ? "gap-2" : "gap-2.5 sm:gap-3"}`}>
-            <div
-              className={`relative flex shrink-0 items-center justify-center rounded-full ${
-                compact ? "h-14 w-14" : "h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem]"
-              }`}
-              style={{ backgroundColor: evidenceStyle.bgHex }}
-            >
-              <div
-                className="absolute inset-0 rounded-full border-[3px]"
-                style={{ borderColor: evidenceRing }}
-              />
-              <div
-                className={`flex items-center justify-center rounded-full border-2 border-white bg-white shadow-sm ${
-                  compact ? "h-9 w-9" : "h-11 w-11 sm:h-12 sm:w-12"
-                }`}
-              >
-                <span
-                  className={`font-bold text-slate-900 tabular-nums ${
-                    compact ? "text-lg" : "text-xl sm:text-2xl"
-                  }`}
-                >
-                  {dashboard.evidenceMatch}%
-                </span>
-              </div>
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-slate-900 leading-tight">{EVIDENCE_MATCH_TITLE}</p>
-              <p
-                className="mt-0.5 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold"
-                style={{
-                  color: evidenceStyle.hex,
-                  backgroundColor: evidenceStyle.bgHex,
-                  borderColor: evidenceStyle.hex,
-                }}
-              >
-                {getATSBadgeLabel(dashboard.evidenceMatch)}
-              </p>
-              <p className="mt-0.5 text-[11px] leading-snug text-slate-600">{EVIDENCE_MATCH_SUBTITLE}</p>
-              {isDemo && !compact ? (
-                <p className="mt-0.5 text-[11px] text-slate-400">Sample result below</p>
-              ) : null}
-            </div>
-          </div>
-          <AnimatedScoreBar
-            value={dashboard.evidenceMatch}
-            className={compact ? "mt-1.5" : "mt-2"}
-            heightClass={compact ? "h-1" : "h-1.5"}
+        <IntelligenceScoreCard
+          label={EVIDENCE_MATCH_CARD_LABEL}
+          labelTitle={EVIDENCE_MATCH_TITLE}
+          score={dashboard.evidenceMatch}
+          badgeLabel={getATSBadgeLabel(dashboard.evidenceMatch)}
+          subtitle={EVIDENCE_MATCH_SUBTITLE}
+          secondaryLine={evidenceInterviewLikelihoodLine(dashboard.evidenceMatch)}
+        />
+        {showAtsCard ? (
+          <IntelligenceScoreCard
+            label={ATS_REFERENCE_TITLE}
+            score={atsScoreReference}
+            subtitle={ATS_REFERENCE_SUBTITLE}
+            secondaryLine={atsShortlistLikelihoodLine(atsScoreReference)}
           />
-        </div>
-        {atsStyle && atsScoreReference != null ? (
-          <div className={`sm:shrink-0 sm:self-stretch ${compact ? "sm:max-w-[188px]" : "sm:max-w-[210px]"}`}>
-            <CompactScoreCard
-              title={ATS_REFERENCE_TITLE}
-              score={atsScoreReference}
-              subtitle={ATS_REFERENCE_SUBTITLE}
-            />
-          </div>
         ) : null}
+        {showAnalysisCard ? <AnalysisReportCard onOptimize={onOptimize} /> : null}
       </div>
 
       <div
@@ -184,10 +146,6 @@ export function EvidenceIntelligenceSection({
               value={metric.value}
               hint={metric.hint}
               index={index}
-              expanded={expandedMetric === metric.key}
-              onToggle={() =>
-                setExpandedMetric((prev) => (prev === metric.key ? null : metric.key))
-              }
             />
           ))}
         </div>

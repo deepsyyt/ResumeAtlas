@@ -3,6 +3,8 @@ import type { EvidenceDashboard, EvidenceStrength } from "@/app/lib/resumeEviden
 
 /** Familiar SERP language first; Evidence Match is the product metric name in parentheses. */
 export const EVIDENCE_MATCH_TITLE = "Job description match score (Evidence Match)";
+/** Compact label for the score-row card (full title available via tooltip). */
+export const EVIDENCE_MATCH_CARD_LABEL = "Evidence match";
 export const EVIDENCE_MATCH_SUBTITLE =
   "Resume-to-job match: how much of this posting you prove in project bullets, not just skills lists.";
 
@@ -11,8 +13,27 @@ export const OPTIMIZE_EVIDENCE_MATCH_SUBTITLE =
   "Green +N in rewrites = bullets that gained that proof signal. Full-resume % is context for the whole document.";
 
 export const ATS_REFERENCE_TITLE = "ATS keyword score";
-export const ATS_REFERENCE_SUBTITLE =
-  "Formatting and keyword overlap only. Can look good even when proof is thin.";
+export const ATS_REFERENCE_SUBTITLE = "Formatting and keyword overlap only.";
+
+export const ANALYSIS_REPORT_HEADING = "Your Analysis report";
+export const ANALYSIS_REPORT_SUBTITLE =
+  "Tailor project bullets to this posting with evidence-first rewrites.";
+
+function clampLikelihoodPct(score: number): number {
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+/** Second line under ATS keyword score card — derived from the displayed score. */
+export function atsShortlistLikelihoodLine(score: number): string {
+  const pct = clampLikelihoodPct(score);
+  return `~${pct}% estimated shortlist likelihood after ATS review.`;
+}
+
+/** Second line under Evidence Match — derived from the evidence match score. */
+export function evidenceInterviewLikelihoodLine(score: number): string {
+  const pct = clampLikelihoodPct(score);
+  return `~${pct}% estimated interview clearance at current proof level.`;
+}
 
 export const SIGNALS_SECTION_TITLE = "What we measured";
 export const SIGNALS_SECTION_INTRO =
@@ -28,7 +49,7 @@ export type ExperienceAlignmentMetric = {
 
 export const SKILL_PROOF_MAP_TITLE = "Skill-by-skill proof";
 export const SKILL_PROOF_MAP_INTRO =
-  "For each JD skill: is it shown in real work, only listed, or missing?";
+  "For each JD skill: proven in work bullets, only listed, or missing?";
 
 export const OPTIMIZE_SKILL_PROOF_TITLE = "Skills strengthened for this job";
 export const OPTIMIZE_SKILL_PROOF_INTRO =
@@ -36,6 +57,22 @@ export const OPTIMIZE_SKILL_PROOF_INTRO =
 
 export const RISK_AREAS_TITLE = "Fix before you apply";
 export const RISK_AREAS_INTRO = "Honest gaps only. We never invent skills you do not have.";
+
+/** Fix banner when JD lists skills not proven in work bullets (missing from resume or skills-list only). */
+export function missingSkillsImprovementTip(args: {
+  missingCount: number;
+  requiredMissingCount?: number;
+  hasRequiredPreferred?: boolean;
+}): string {
+  const { missingCount, requiredMissingCount = 0, hasRequiredPreferred = false } = args;
+  if (missingCount <= 0) return "";
+
+  if (hasRequiredPreferred && requiredMissingCount > 0) {
+    return `${requiredMissingCount} required skill${requiredMissingCount === 1 ? "" : "s"} from this job ${requiredMissingCount === 1 ? "isn't" : "aren't"} proven in your work bullets yet — add ${requiredMissingCount === 1 ? "it" : "them"} only where your experience supports ${requiredMissingCount === 1 ? "it" : "them"}.`;
+  }
+
+  return `${missingCount} skill${missingCount === 1 ? "" : "s"} this job asks for ${missingCount === 1 ? "isn't" : "aren't"} shown in your work bullets yet — add ${missingCount === 1 ? "an example" : "examples"} in experience only if you've actually used ${missingCount === 1 ? "it" : "them"}.`;
+}
 
 export const OPTIMIZE_RISK_AREAS_TITLE = "Still honest gaps";
 export const OPTIMIZE_RISK_AREAS_INTRO =
@@ -114,11 +151,11 @@ export function signalMetricHint(key: EvidenceSignalKey, roleLevel: JdRoleLevel)
 export function evidenceStrengthDescription(strength: EvidenceStrength): string {
   switch (strength) {
     case "strong":
-      return "Shown in a project or role bullet with detail";
+      return "In a project or role bullet — counts as work proof";
     case "medium":
-      return "Mentioned in experience text; could be stronger";
+      return "Skills list only — move into work bullets";
     case "weak":
-      return "Skills list only, not proven in work bullets";
+      return "Summary only — not in project or role bullets";
     case "gap":
       return "Not in resume (left honest, not invented)";
   }

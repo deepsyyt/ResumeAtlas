@@ -37,7 +37,7 @@ const OPTIMIZER_EXTRA_ROLE_CARDS: HomeRoleBrowseCard[] = [
   {
     slug: "data-engineer",
     roleName: "Data Engineer",
-    examplePath: "/resume-examples/data-engineer",
+    examplePath: "/data-engineer-resume-guide",
     guidePath: "/data-engineer-resume-guide",
     keywordsPath: "/data-engineer-resume-keywords",
     optimizerPath: buildRoleOptimizerPath("data-engineer"),
@@ -45,7 +45,7 @@ const OPTIMIZER_EXTRA_ROLE_CARDS: HomeRoleBrowseCard[] = [
   {
     slug: "ai-engineer",
     roleName: "AI Engineer",
-    examplePath: "/resume-examples/software-engineer",
+    examplePath: "/software-engineer-resume-guide",
     guidePath: "/software-engineer-resume-guide",
     keywordsPath: "/software-engineer-resume-keywords",
     optimizerPath: buildRoleOptimizerPath("ai-engineer"),
@@ -53,7 +53,7 @@ const OPTIMIZER_EXTRA_ROLE_CARDS: HomeRoleBrowseCard[] = [
   {
     slug: "analytics-manager",
     roleName: "Analytics Manager",
-    examplePath: "/resume-examples/data-analyst",
+    examplePath: "/data-analyst-resume-guide",
     guidePath: "/data-analyst-resume-guide",
     keywordsPath: "/data-analyst-resume-keywords",
     optimizerPath: buildRoleOptimizerPath("analytics-manager"),

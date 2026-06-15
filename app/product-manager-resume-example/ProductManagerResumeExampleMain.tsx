@@ -16,7 +16,7 @@ import {
 import {
   DEFAULT_SEO_SAMPLE_BULLETS,
   DEFAULT_TOP_ATS_KEYWORDS,
-  getResumeExampleSerpTitle,
+  getResumeExampleSerpH1,
   mergeResumeExampleFaqSchema,
   type FaqSchemaEntity,
 } from "@/app/lib/resumeExampleSeoTemplate";
@@ -137,7 +137,7 @@ export function ProductManagerResumeExampleMain({ omitHero = false }: { omitHero
         <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
           <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
             <h1 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              {getResumeExampleSerpTitle("product-manager")}
+              {getResumeExampleSerpH1("product-manager")}
             </h1>
             <ResumeExampleSeoIntro role={ROLE} />
             <p className="mt-3 text-sm font-medium text-slate-500">
@@ -311,10 +311,10 @@ export function ProductManagerResumeExampleMain({ omitHero = false }: { omitHero
           </div>
         </div>
 
-        {/* 3. Template */}
+        {/* 3. Copy-paste outline */}
         <div>
           <h3 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
-            Product Manager Resume Template (Copy-Paste)
+            Product Manager Resume Outline (Copy-Paste)
           </h3>
           <p className="mt-3 text-sm text-slate-600 sm:text-base">
             Plain text, one column, standard headings. Easy for ATS to read. Copy into Word or Google
@@ -377,9 +377,9 @@ export function ProductManagerResumeExampleMain({ omitHero = false }: { omitHero
             Product manager query intent this page targets
           </h2>
           <p className="mt-2 text-sm text-slate-700 sm:text-base">
-            This page is designed for high-intent searches like "product manager resume example",
-            "product manager resume template", and "product manager resume examples". It combines an
-            ATS-friendly sample with role-specific bullet guidance and conversion-focused links.
+            This page is designed for high-intent searches like "product manager resume example" and
+            "product manager resume examples". It combines a scannable sample with role-specific bullet guidance and
+            conversion-focused links. For a downloadable ATS layout, use the ATS resume template guide.
           </p>
           <ul className="mt-3 list-disc pl-5 space-y-1.5 text-sm text-slate-700 sm:text-base">
             <li>Use this page for structure and example language.</li>

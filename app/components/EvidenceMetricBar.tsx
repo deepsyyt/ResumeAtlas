@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { getScoreStyle } from "@/app/lib/scoreColors";
 import type { EvidenceStrength } from "@/app/lib/resumeEvidenceScore";
+import {
+  ANALYSIS_REPORT_HEADING,
+  ANALYSIS_REPORT_SUBTITLE,
+} from "@/app/lib/evidenceMetricCopy";
 
 export function strengthBarPercent(strength: EvidenceStrength): number {
   switch (strength) {
@@ -100,8 +104,6 @@ type SignalMetricCardProps = {
   value: number;
   hint: string;
   index?: number;
-  expanded?: boolean;
-  onToggle?: () => void;
 };
 
 export function SignalMetricCard({
@@ -109,14 +111,11 @@ export function SignalMetricCard({
   value,
   hint,
   index = 0,
-  expanded = false,
-  onToggle,
 }: SignalMetricCardProps) {
   const style = getScoreStyle(value);
-  const interactive = onToggle != null;
 
-  const body = (
-    <>
+  return (
+    <div className="rounded-lg border border-white/90 bg-white/90 px-2 py-1.5 shadow-sm ring-1 ring-slate-100">
       <div className="flex items-start justify-between gap-2">
         <span className="text-[11px] font-semibold leading-snug text-slate-800">{label}</span>
         <span
@@ -127,41 +126,8 @@ export function SignalMetricCard({
         </span>
       </div>
       <AnimatedScoreBar value={value} className="mt-1.5" heightClass="h-1.5" delayMs={index * 60} />
-      <p
-        className={`mt-1 text-[10px] leading-snug text-slate-600 ${
-          expanded || !interactive ? "" : "line-clamp-2"
-        }`}
-      >
-        {hint}
-      </p>
-      {interactive ? (
-        <p className="mt-0.5 text-[9px] font-medium text-indigo-600/80">
-          {expanded ? "Tap to collapse" : "Tap for details"}
-        </p>
-      ) : null}
-    </>
-  );
-
-  if (!interactive) {
-    return (
-      <div className="rounded-lg border border-white/90 bg-white/90 px-2 py-1.5 shadow-sm ring-1 ring-slate-100">
-        {body}
-      </div>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      className={`w-full rounded-lg border px-2 py-1.5 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
-        expanded
-          ? "border-indigo-300 bg-white ring-2 ring-indigo-100"
-          : "border-white/90 bg-white/90 ring-1 ring-slate-100 hover:border-indigo-200"
-      }`}
-    >
-      {body}
-    </button>
+      <p className="mt-1 text-[10px] leading-snug text-slate-600">{hint}</p>
+    </div>
   );
 }
 
@@ -272,27 +238,145 @@ export function ThemeCoverageRow({
   );
 }
 
+type IntelligenceScoreCardProps = {
+  label: string;
+  /** Full title on hover (e.g. long evidence match name). */
+  labelTitle?: string;
+  score?: number;
+  badgeLabel?: string;
+  subtitle?: string;
+  secondaryLine?: string;
+  variant?: "default" | "highlight";
+  footer?: React.ReactNode;
+  className?: string;
+};
+
+export function IntelligenceScoreCard({
+  label,
+  labelTitle,
+  score,
+  badgeLabel,
+  subtitle,
+  secondaryLine,
+  variant = "default",
+  footer,
+  className = "",
+}: IntelligenceScoreCardProps) {
+  const style = score != null ? getScoreStyle(score) : null;
+  const isHighlight = variant === "highlight";
+
+  return (
+    <div
+      className={`flex h-full flex-col rounded-xl border p-2.5 shadow-sm ${
+        isHighlight ? "analysis-report-card" : "border-slate-200/80 bg-white"
+      } ${className}`}
+      title={labelTitle}
+    >
+      <p
+        className={`text-[10px] font-semibold leading-snug ${
+          isHighlight
+            ? "analysis-report-title font-bold text-[11px]"
+            : "uppercase tracking-wide text-slate-500"
+        }`}
+      >
+        {label}
+      </p>
+
+      {score != null && style ? (
+        <>
+          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span
+              className="text-xl font-bold tabular-nums leading-none sm:text-2xl"
+              style={{ color: style.hex }}
+            >
+              {score}%
+            </span>
+            {badgeLabel ? (
+              <span
+                className="inline-flex rounded-full border px-1.5 py-0.5 text-[10px] font-semibold"
+                style={{
+                  color: style.hex,
+                  backgroundColor: style.bgHex,
+                  borderColor: `${style.hex}44`,
+                }}
+              >
+                {badgeLabel}
+              </span>
+            ) : null}
+          </div>
+          <AnimatedScoreBar
+            value={score}
+            colorHex={style.hex}
+            heightClass="h-1.5"
+            className="mt-2"
+          />
+        </>
+      ) : null}
+
+      <div className={`space-y-1 ${score != null ? "mt-2" : "mt-2"} flex-1`}>
+        {subtitle ? <p className="text-[10px] leading-snug text-slate-600">{subtitle}</p> : null}
+        {secondaryLine ? (
+          <p className="text-[10px] leading-snug text-slate-500">{secondaryLine}</p>
+        ) : null}
+      </div>
+
+      {footer ? (
+        <div className={`shrink-0 ${score != null || subtitle ? "mt-auto pt-2.5" : "mt-2"}`}>
+          {footer}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 type CompactScoreCardProps = {
   title: string;
   score: number;
   subtitle?: string;
+  secondaryLine?: string;
 };
 
-export function CompactScoreCard({ title, score, subtitle }: CompactScoreCardProps) {
-  const style = getScoreStyle(score);
+export function CompactScoreCard({ title, score, subtitle, secondaryLine }: CompactScoreCardProps) {
   return (
-    <div
-      className="rounded-lg border px-2 py-2 transition-shadow hover:shadow-sm"
-      style={{ borderColor: `${style.hex}33`, backgroundColor: style.bgHex }}
-    >
-      <p className="text-[10px] font-semibold text-slate-800">{title}</p>
-      <p className="mt-0.5 text-base font-bold tabular-nums leading-none" style={{ color: style.hex }}>
-        {score}%
-      </p>
-      <AnimatedScoreBar value={score} heightClass="h-1" className="mt-1.5" />
-      {subtitle ? (
-        <p className="mt-1 text-[10px] leading-snug text-slate-600">{subtitle}</p>
-      ) : null}
-    </div>
+    <IntelligenceScoreCard
+      label={title}
+      score={score}
+      subtitle={subtitle}
+      secondaryLine={secondaryLine}
+      className="h-full"
+    />
+  );
+}
+
+type AnalysisReportCardProps = {
+  onOptimize: () => void;
+};
+
+export function AnalysisReportCard({ onOptimize }: AnalysisReportCardProps) {
+  return (
+    <IntelligenceScoreCard
+      variant="highlight"
+      label={ANALYSIS_REPORT_HEADING}
+      subtitle={ANALYSIS_REPORT_SUBTITLE}
+      className="h-full"
+      footer={
+        <button
+          type="button"
+          onClick={onOptimize}
+          className="analysis-report-cta relative w-full overflow-hidden rounded-lg px-2 py-2 text-[10px] font-semibold text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-1"
+        >
+          <span
+            className="analysis-report-cta-shine pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/35 to-transparent"
+            aria-hidden
+          />
+          <span className="relative inline-flex w-full items-center justify-center gap-1">
+            Optimize for this job
+            <span aria-hidden className="text-[11px] leading-none opacity-90">
+              →
+            </span>
+          </span>
+        </button>
+      }
+    />
   );
 }

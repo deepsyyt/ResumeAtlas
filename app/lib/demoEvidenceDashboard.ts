@@ -50,7 +50,7 @@ export const DEMO_EVIDENCE_DASHBOARD: EvidenceDashboard = {
     },
     {
       skill: "Python",
-      strength: "medium",
+      strength: "strong",
       mentionCount: 12,
       evidenceLocation: "experience",
       evidenceHint: "Multiple ML projects",
@@ -66,14 +66,14 @@ export const DEMO_EVIDENCE_DASHBOARD: EvidenceDashboard = {
     },
     {
       skill: "AWS",
-      strength: "weak",
+      strength: "medium",
       mentionCount: 1,
       evidenceLocation: "skills_only",
       jdRequired: true,
     },
     {
       skill: "MLOps",
-      strength: "medium",
+      strength: "strong",
       mentionCount: 2,
       evidenceLocation: "project",
       evidenceHint: "Airflow DAGs, monitoring",

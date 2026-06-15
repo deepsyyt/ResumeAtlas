@@ -24,11 +24,10 @@ import {
   getResumeQualityStyle,
 } from "@/app/lib/scoreColors";
 import { DEMO_EVIDENCE_BULLET_PREVIEW } from "@/app/lib/demoEvidenceDashboard";
+import { missingSkillsImprovementTip } from "@/app/lib/evidenceMetricCopy";
 import { EvidenceIntelligenceSection, ScoreBar } from "@/app/components/EvidenceIntelligenceSection";
 import type { OptimizationClickSurface } from "@/app/lib/analyticsEvents";
 import { AnimatedIntelligenceDashboardPreview } from "@/app/components/postingFit/AnimatedIntelligenceDashboardPreview";
-import { OptimizePreviewBanner } from "@/app/components/postingFit/OptimizePreviewBanner";
-
 const OPTIMIZER_STATIC_BULLET_PREVIEW = DEMO_EVIDENCE_BULLET_PREVIEW;
 
 /** Bold missing skills (from JD) and numbers/metrics (18%, 2x, 3+) in "After" text. */
@@ -262,11 +261,12 @@ export function IntelligencePanel({
   const improvementTips: string[] = [];
   if (analysisUsedJobDescription) {
     if (missingSkills.length > 0) {
-      improvementTips.push(
-        hasRequiredPreferred && missingRequired.length > 0
-          ? `Strengthen evidence for ${missingRequired.length} required JD skill${missingRequired.length === 1 ? "" : "s"} in project bullets (only where your experience supports it)`
-          : `Map ${missingSkills.length} JD skill${missingSkills.length === 1 ? "" : "s"} to project proof in your experience section`
-      );
+      const tip = missingSkillsImprovementTip({
+        missingCount: missingSkills.length,
+        requiredMissingCount: missingRequired.length,
+        hasRequiredPreferred,
+      });
+      if (tip) improvementTips.push(tip);
     }
     if (impactScore < 70) {
       improvementTips.push(
@@ -449,22 +449,9 @@ export function IntelligencePanel({
   }
 
   if (compactToolResult && previewSurface) {
-    const showOptimizeBanner = Boolean(onOpenOptimizer && analysisUsedJobDescription);
-    const resultResetKey = evidenceDashboard?.evidenceMatch ?? atsScore;
-
     return (
       <section className={compactToolResultShellClass} aria-label="Your analysis report">
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-          {showOptimizeBanner ? (
-            <div className="mb-3 shrink-0 px-1 sm:px-2">
-              <OptimizePreviewBanner
-                darkSurface
-                onOptimize={() => onOpenOptimizer?.("preview_banner")}
-                resetKey={resultResetKey}
-              />
-            </div>
-          ) : null}
-
           <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xl shadow-black/25 ring-1 ring-slate-900/[0.04]">
               <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-0.5 border-b border-slate-100 px-2.5 py-2 sm:px-3">
@@ -512,6 +499,11 @@ export function IntelligencePanel({
                     <EvidenceIntelligenceSection
                       dashboard={evidenceDashboard}
                       atsScoreReference={atsScore}
+                      onOptimize={
+                        onOpenOptimizer
+                          ? () => onOpenOptimizer("score_row")
+                          : undefined
+                      }
                       experienceAlignment={{
                         score: experienceScore,
                         subtitle: buildExperienceAlignmentSubtitle({
@@ -724,6 +716,9 @@ export function IntelligencePanel({
         <EvidenceIntelligenceSection
           dashboard={evidenceDashboard}
           atsScoreReference={atsScore}
+          onOptimize={
+            onOpenOptimizer ? () => onOpenOptimizer("score_row") : undefined
+          }
           experienceAlignment={{
             score: experienceScore,
             subtitle: buildExperienceAlignmentSubtitle({
