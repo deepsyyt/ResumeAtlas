@@ -23,13 +23,15 @@ import {
   ROLE_KEYWORDS_SENIORITY,
   ROLE_KEYWORDS_HERO_INTRO,
   roleKeywordsFaqSchema,
+  getRoleKeywordsPageLayout,
 } from "@/app/lib/roleKeywordsPageConfig";
-import { ROLE_KEYWORD_INTENTS, type RoleKeywordIntent } from "@/app/lib/roleSeo";
+import { type RoleKeywordIntent } from "@/app/lib/roleSeo";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import {
   ATS_RESUME_TEMPLATE_GUIDE_PATH,
+  ATS_RESUME_CHECKER_PATH,
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
-  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+  RESUME_KEYWORD_SCANNER_PATH,
 } from "@/app/lib/internalLinks";
 import { getOptimizeClusterNav } from "@/app/lib/roleOptimizer/clusterNav";
 import {
@@ -56,6 +58,8 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
   const scopeNote = ROLE_KEYWORDS_SCOPE_NOTE[roleSlug];
   const heroIntro = ROLE_KEYWORDS_HERO_INTRO[roleSlug];
   const secondaryH2 = ROLE_KEYWORDS_SECONDARY_H2[roleSlug];
+  const pageLayout = getRoleKeywordsPageLayout(roleSlug);
+  const heroAnswer = pageLayout.heroAnswer;
   const clusterSectionTitle =
     roleSlug === "software-engineer"
       ? "Software engineer keyword clusters"
@@ -93,8 +97,8 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
   const itemListSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `${config.roleName} top resume keywords`,
-    itemListElement: topKeywords.slice(0, 20).map((keyword, index) => ({
+    name: pageLayout.itemListSchemaName ?? `${config.roleName} top resume keywords`,
+    itemListElement: (heroAnswer?.primaryKeywords ?? topKeywords.slice(0, 20)).map((keyword, index) => ({
       "@type": "ListItem",
       position: index + 1,
       name: keyword,
@@ -137,6 +141,45 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                 <p className="mt-3 text-xs text-slate-600">
                   Copy-paste into skills and bullets where truthful. Full categorized lists below.
                 </p>
+              </div>
+            ) : null}
+            {heroAnswer ? (
+              <div
+                id="hero-keywords"
+                className="mt-5 mx-auto max-w-2xl rounded-xl border border-sky-200 bg-sky-50/70 p-4 text-left sm:p-5 scroll-mt-20"
+              >
+                <h2 className="text-lg font-semibold tracking-tight text-slate-900">{heroAnswer.primaryH2}</h2>
+                <ul className="mt-3 columns-1 sm:columns-2 gap-x-6 list-disc pl-5 text-sm text-slate-800 space-y-1">
+                  {heroAnswer.primaryKeywords.map((keyword) => (
+                    <li key={keyword}>{keyword}</li>
+                  ))}
+                </ul>
+                <h3 className="mt-5 text-sm font-semibold uppercase tracking-wide text-slate-700">
+                  {heroAnswer.technicalSkillsH2}
+                </h3>
+                <ul className="mt-2 flex flex-wrap gap-2 list-none p-0 m-0">
+                  {heroAnswer.technicalSkills.map((keyword) => (
+                    <li
+                      key={keyword}
+                      className="rounded-full border border-sky-200 bg-white px-3 py-1 text-sm font-medium text-slate-800"
+                    >
+                      {keyword}
+                    </li>
+                  ))}
+                </ul>
+                <h3 className="mt-4 text-sm font-semibold uppercase tracking-wide text-slate-700">
+                  {heroAnswer.actionVerbsH2}
+                </h3>
+                <ul className="mt-2 flex flex-wrap gap-2 list-none p-0 m-0">
+                  {heroAnswer.actionVerbs.map((keyword) => (
+                    <li
+                      key={keyword}
+                      className="rounded-full border border-sky-200 bg-white px-3 py-1 text-sm font-medium text-slate-800"
+                    >
+                      {keyword}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ) : null}
             <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
@@ -206,29 +249,51 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                 .
               </p>
             ) : null}
-            <p className="mt-3 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto">{exactQueryMatchLine}</p>
-            <p className="mt-3 text-sm text-slate-700 max-w-2xl mx-auto">
-              For resume examples, templates, and bullet banks, use the{" "}
-              <Link
-                href={mergedGuidePath}
-                className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
-              >
-                {config.roleName.toLowerCase()} resume example guide
-              </Link>
-              . This URL is for keyword lists and job-description matching only.
-            </p>
+            {!pageLayout.compactHero ? (
+              <p className="mt-3 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto">{exactQueryMatchLine}</p>
+            ) : null}
+            {!pageLayout.compactHero ? (
+              <p className="mt-3 text-sm text-slate-700 max-w-2xl mx-auto">
+                For resume examples, templates, and bullet banks, use the{" "}
+                <Link
+                  href={mergedGuidePath}
+                  className="font-semibold text-sky-700 underline underline-offset-2 hover:text-sky-900"
+                >
+                  {config.roleName.toLowerCase()} resume example guide
+                </Link>
+                . This URL is for keyword lists and job-description matching only.
+              </p>
+            ) : null}
             <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm">
-              <a href="#top-keywords" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
-                Top keywords
+              {pageLayout.showTopKeywordsSection ? (
+                <a href="#top-keywords" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
+                  Top keywords
+                </a>
+              ) : heroAnswer ? (
+                <a href="#hero-keywords" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
+                  Top keywords
+                </a>
+              ) : null}
+              {pageLayout.showExampleBullets ? (
+                <a href="#example-bullets" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
+                  Bullet examples
+                </a>
+              ) : null}
+              {pageLayout.showKeywordGapsSection ? (
+                <a href="#keyword-gaps" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
+                  JD vs Resume gaps
+                </a>
+              ) : null}
+              {pageLayout.showChecklistSection ? (
+                <a href="#checklist" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
+                  Checklist
+                </a>
+              ) : null}
+              <a href="#kw-categories-heading" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
+                Categories
               </a>
-              <a href="#example-bullets" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
-                Bullet examples
-              </a>
-              <a href="#keyword-gaps" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
-                JD vs Resume gaps
-              </a>
-              <a href="#checklist" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
-                Checklist
+              <a href="#faq" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:text-slate-900">
+                FAQ
               </a>
               {isDataAnalystKeywordsPage ? (
                 <a
@@ -247,49 +312,53 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                 </a>
               ) : null}
             </div>
-            <p className="mt-4 text-sm font-medium text-slate-800 max-w-2xl mx-auto">
-              Check if your resume includes these keywords →{" "}
-              <Link
-                href="/check-resume-against-job-description#ats-checker-form"
-                className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
-              >
-                scan your resume for missing keywords
-              </Link>
-            </p>
-            <p className="mt-3 text-sm text-slate-600 max-w-2xl mx-auto">
-              For this role, ATS scans usually reward specific tooling such as{" "}
-              {roleContent.tools.slice(0, 4).join(", ")} and verbs like{" "}
-              {roleContent.domainVerbs.slice(0, 3).join(", ")}.
-            </p>
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-left max-w-2xl mx-auto">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                JD vs resume quick comparison
-              </p>
-              <p className="mt-2 text-sm text-slate-700">
-                <strong className="text-slate-900">JD asks:</strong> {roleContent.tools.slice(0, 3).join(", ")},{" "}
-                measurable impact, and role-specific delivery terms.
-              </p>
-              <p className="mt-1 text-sm text-slate-700">
-                <strong className="text-slate-900">Resumes often miss:</strong> one or more required tool terms,
-                quantified outcomes, and domain verbs in top bullets.
-              </p>
-            </div>
-            <Link
-              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-              className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
-            >
-              Scan my resume for keyword gaps
-            </Link>
+            {!pageLayout.compactHero ? (
+              <>
+                <p className="mt-4 text-sm font-medium text-slate-800 max-w-2xl mx-auto">
+                  Check if your resume includes these keywords →{" "}
+                  <Link
+                    href="/check-resume-against-job-description#ats-checker-form"
+                    className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                  >
+                    scan your resume for missing keywords
+                  </Link>
+                </p>
+                <p className="mt-3 text-sm text-slate-600 max-w-2xl mx-auto">
+                  For this role, ATS scans usually reward specific tooling such as{" "}
+                  {roleContent.tools.slice(0, 4).join(", ")} and verbs like{" "}
+                  {roleContent.domainVerbs.slice(0, 3).join(", ")}.
+                </p>
+                <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-left max-w-2xl mx-auto">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    JD vs resume quick comparison
+                  </p>
+                  <p className="mt-2 text-sm text-slate-700">
+                    <strong className="text-slate-900">JD asks:</strong> {roleContent.tools.slice(0, 3).join(", ")},{" "}
+                    measurable impact, and role-specific delivery terms.
+                  </p>
+                  <p className="mt-1 text-sm text-slate-700">
+                    <strong className="text-slate-900">Resumes often miss:</strong> one or more required tool terms,
+                    quantified outcomes, and domain verbs in top bullets.
+                  </p>
+                </div>
+                <Link
+                  href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                  className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white hover:bg-slate-800 transition"
+                >
+                  Scan my resume for keyword gaps
+                </Link>
+              </>
+            ) : null}
           </div>
         </div>
       </section>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
-        {optimizeCluster ? (
+        {optimizeCluster && !pageLayout.compactHero ? (
           <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={keywordsPublicPath} />
         ) : null}
 
-        {secondaryH2 ? (
+        {pageLayout.showSecondaryH2 && secondaryH2 ? (
           <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
             <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">{secondaryH2}</h2>
             <p className="mt-2 text-sm text-slate-700">
@@ -356,6 +425,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           </section>
         ) : null}
 
+        {pageLayout.showTopKeywordsSection ? (
         <section id="top-keywords" className="rounded-2xl border border-sky-200 bg-sky-50/50 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Quick copy: top {config.roleName.toLowerCase()} ATS keywords
@@ -393,7 +463,9 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             </p>
           </div>
         </section>
+        ) : null}
 
+        {pageLayout.showExampleBullets ? (
         <section id="example-bullets" className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             How to use these keywords in resume bullets
@@ -411,6 +483,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             ))}
           </ul>
         </section>
+        ) : null}
 
         {isDataAnalystKeywordsPage ? (
           <section className="rounded-2xl border border-violet-200 bg-violet-50/40 p-6 sm:p-8">
@@ -467,11 +540,13 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           </section>
         ) : null}
 
+        {pageLayout.showKeywordClusters ? (
         <RoleKeywordClustersSection
           roleName={config.roleName}
           title={clusterSectionTitle}
           roleContent={roleContent}
         />
+        ) : null}
 
         <section aria-labelledby="kw-categories-heading">
           <h2
@@ -485,14 +560,17 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             one-line summaries—use them as your master checklist before tailoring to a job description.
           </p>
           <ul className="mt-6 space-y-8 list-none p-0 m-0">
-            {ROLE_KEYWORD_INTENTS.map((intent: RoleKeywordIntent) => (
+            {pageLayout.categoryIntents.map((intent: RoleKeywordIntent) => (
               <RoleKeywordIntentHubBlock key={intent} role={roleSlug} intent={intent} />
             ))}
           </ul>
         </section>
 
+        {pageLayout.showKeywordApplicationModule ? (
         <KeywordApplicationModule keywordMistakes={roleContent.keywordMistakes} />
+        ) : null}
 
+        {pageLayout.showKeywordGapsSection ? (
         <section id="keyword-gaps" className="rounded-2xl border border-amber-200 bg-amber-50/40 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Top missing keywords we repeatedly see in {config.roleName} resumes
@@ -520,6 +598,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             measurable bullet.
           </p>
         </section>
+        ) : null}
 
         {isDataAnalystKeywordsPage ? (
           <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-6 sm:p-8">
@@ -573,12 +652,15 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
           </section>
         ) : null}
 
-        {optimizeCluster ? (
+        {optimizeCluster && !pageLayout.compactHero ? (
           <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={keywordsPublicPath} />
         ) : null}
 
+        {pageLayout.showRoleClusterNav ? (
         <RoleClusterNavSection currentPath={keywordsPublicPath} />
+        ) : null}
 
+        {pageLayout.showChecklistSection ? (
         <section id="checklist" className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             {config.roleName} ATS keyword checklist
@@ -638,7 +720,9 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             </div>
           ) : null}
         </section>
+        ) : null}
 
+        {pageLayout.showBottomResourceBlock ? (
         <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
             Check your {config.roleName} resume against real job descriptions
@@ -703,6 +787,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             </ul>
           </div>
         </section>
+        ) : null}
 
         <section id="faq">
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
@@ -724,6 +809,41 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             ))}
           </div>
         </section>
+
+        {pageLayout.compactHero ? (
+          <section className="rounded-2xl border border-slate-200 bg-slate-50/80 p-6 sm:p-8">
+            <h2 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
+              Check these {config.roleName.toLowerCase()} keywords against your job description
+            </h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Paste your resume and the posting to see which terms from this list are missing or weak in your
+              bullets—then tailor before you apply.
+            </p>
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="mt-5 inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              Compare resume to job description
+            </Link>
+            <p className="mt-4 text-xs leading-relaxed text-slate-500">
+              Narrow keyword gap list →{" "}
+              <Link
+                href={RESUME_KEYWORD_SCANNER_PATH}
+                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                Resume keyword scanner
+              </Link>
+              . ATS format and parsing →{" "}
+              <Link
+                href={ATS_RESUME_CHECKER_PATH}
+                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+              >
+                ATS resume checker
+              </Link>
+              .
+            </p>
+          </section>
+        ) : null}
       </div>
 
       <script

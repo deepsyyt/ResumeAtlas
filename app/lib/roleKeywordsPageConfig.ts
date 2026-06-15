@@ -1,5 +1,16 @@
 import type { RoleSlug } from "@/app/lib/seoPages";
 import { CONTENT_FRESHNESS_YEAR } from "@/app/lib/contentFreshness";
+import type { RoleKeywordIntent } from "@/app/lib/roleSeo";
+
+/** Mirror of `ROLE_KEYWORD_INTENTS` — local to avoid circular imports via `seoPages` → `searchIntentSeo`. */
+const ALL_ROLE_KEYWORD_CATEGORY_INTENTS = [
+  "core-keywords",
+  "technical-skills",
+  "tools-platforms",
+  "action-verbs",
+  "projects",
+  "summary",
+] as const satisfies readonly RoleKeywordIntent[];
 
 export type RoleKeywordsFaqItem = {
   question: string;
@@ -24,7 +35,208 @@ export const ROLE_KEYWORDS_PRIMARY_H2: Record<RoleSlug, string> = {
 export const ROLE_KEYWORDS_HERO_INTRO: Partial<Record<RoleSlug, string>> = {
   "data-scientist":
     "Copy-ready ATS keywords for data scientist resumes including Python, SQL, machine learning, experimentation, forecasting, feature engineering, and stakeholder communication.",
+  "frontend-developer":
+    "Copy-ready frontend developer resume keywords for ATS and recruiters. Use the lists below on a frontend developer resume—not generic web developer or software developer keyword dumps.",
+  "software-engineer":
+    "Software engineer resume keywords for generalist and product-engineering roles—copy the list below for software engineer or software developer titles. For UI-only, API-only, or platform-only JDs, use the dedicated frontend, backend, or DevOps keyword pages instead.",
 };
+
+/** Immediate answer block for `/frontend-developer-resume-keywords` (exact-match intent). */
+export const FRONTEND_DEVELOPER_TOP_RESUME_KEYWORDS = [
+  "React",
+  "TypeScript",
+  "JavaScript",
+  "Next.js",
+  "HTML",
+  "CSS",
+  "REST APIs",
+  "GraphQL",
+  "Accessibility",
+  "WCAG",
+  "Core Web Vitals",
+  "Responsive design",
+  "Storybook",
+  "Playwright",
+  "Jest",
+  "State management",
+  "Webpack",
+  "Performance optimization",
+  "Design systems",
+  "Cross-browser compatibility",
+  "Component library",
+  "Server-side rendering",
+  "Lazy loading",
+  "E2E testing",
+  "UI engineering",
+] as const;
+
+export const FRONTEND_DEVELOPER_TOP_TECHNICAL_SKILLS = [
+  "React",
+  "TypeScript",
+  "JavaScript",
+  "Next.js",
+  "HTML/CSS",
+  "Responsive design",
+  "Accessibility (WCAG)",
+  "State management",
+  "REST API integration",
+  "GraphQL clients",
+] as const;
+
+export const FRONTEND_DEVELOPER_TOP_ACTION_VERBS = [
+  "implemented",
+  "improved",
+  "optimized",
+  "instrumented",
+  "tested",
+  "shipped",
+  "refactored",
+  "hardened",
+] as const;
+
+/** Immediate answer block for `/software-engineer-resume-keywords` — one entity, not FE/BE/DevOps splits. */
+export const SOFTWARE_ENGINEER_TOP_RESUME_KEYWORDS = [
+  "Software engineer",
+  "Software developer",
+  "TypeScript",
+  "JavaScript",
+  "Java",
+  "Python",
+  "React",
+  "Node.js",
+  "REST APIs",
+  "GraphQL",
+  "PostgreSQL",
+  "AWS",
+  "Docker",
+  "CI/CD",
+  "Unit testing",
+  "Integration testing",
+  "System design",
+  "Microservices",
+  "API development",
+  "Code review",
+  "Git",
+  "Agile",
+  "Performance optimization",
+  "Cloud computing",
+  "Observability",
+] as const;
+
+export const SOFTWARE_ENGINEER_TOP_TECHNICAL_SKILLS = [
+  "TypeScript / JavaScript",
+  "System design",
+  "REST & GraphQL APIs",
+  "Relational databases",
+  "Cloud platforms (AWS/GCP)",
+  "CI/CD pipelines",
+  "Automated testing",
+  "Production debugging",
+] as const;
+
+export const SOFTWARE_ENGINEER_TOP_ACTION_VERBS = [
+  "shipped",
+  "scaled",
+  "refactored",
+  "optimized",
+  "designed",
+  "implemented",
+  "deployed",
+  "stabilized",
+] as const;
+
+export type RoleKeywordsHeroAnswer = {
+  primaryH2: string;
+  primaryKeywords: readonly string[];
+  technicalSkillsH2: string;
+  technicalSkills: readonly string[];
+  actionVerbsH2: string;
+  actionVerbs: readonly string[];
+};
+
+export type RoleKeywordsPageLayout = {
+  compactHero: boolean;
+  heroAnswer?: RoleKeywordsHeroAnswer;
+  categoryIntents: readonly RoleKeywordIntent[];
+  showKeywordClusters: boolean;
+  showKeywordApplicationModule: boolean;
+  showKeywordGapsSection: boolean;
+  showChecklistSection: boolean;
+  showRoleClusterNav: boolean;
+  showSecondaryH2: boolean;
+  showBottomResourceBlock: boolean;
+  showExampleBullets: boolean;
+  showTopKeywordsSection: boolean;
+  itemListSchemaName?: string;
+};
+
+const DEFAULT_KEYWORDS_PAGE_LAYOUT: RoleKeywordsPageLayout = {
+  compactHero: false,
+  categoryIntents: ALL_ROLE_KEYWORD_CATEGORY_INTENTS,
+  showKeywordClusters: true,
+  showKeywordApplicationModule: true,
+  showKeywordGapsSection: true,
+  showChecklistSection: true,
+  showRoleClusterNav: true,
+  showSecondaryH2: true,
+  showBottomResourceBlock: true,
+  showExampleBullets: true,
+  showTopKeywordsSection: true,
+};
+
+const ROLE_KEYWORDS_PAGE_LAYOUT: Partial<Record<RoleSlug, Partial<RoleKeywordsPageLayout>>> = {
+  /**
+   * Compact keyword pages: ~80% copy-ready keyword intent, ~20% tool funnel (one JD-match CTA +
+   * contextual scanner/checker links). No mini-hub navigation (example/template/resource blocks).
+   */
+  "frontend-developer": {
+    compactHero: true,
+    heroAnswer: {
+      primaryH2: `Top Frontend Developer Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
+      primaryKeywords: FRONTEND_DEVELOPER_TOP_RESUME_KEYWORDS,
+      technicalSkillsH2: "Top frontend developer technical skills",
+      technicalSkills: FRONTEND_DEVELOPER_TOP_TECHNICAL_SKILLS,
+      actionVerbsH2: "Top frontend developer action verbs",
+      actionVerbs: FRONTEND_DEVELOPER_TOP_ACTION_VERBS,
+    },
+    categoryIntents: ["core-keywords", "technical-skills", "tools-platforms", "action-verbs"],
+    showKeywordClusters: false,
+    showKeywordApplicationModule: false,
+    showKeywordGapsSection: false,
+    showChecklistSection: false,
+    showRoleClusterNav: false,
+    showSecondaryH2: false,
+    showBottomResourceBlock: false,
+    showTopKeywordsSection: false,
+    itemListSchemaName: "Frontend Developer Resume Keywords",
+  },
+  "software-engineer": {
+    compactHero: true,
+    heroAnswer: {
+      primaryH2: `Top Software Engineer Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
+      primaryKeywords: SOFTWARE_ENGINEER_TOP_RESUME_KEYWORDS,
+      technicalSkillsH2: "Top software engineer technical skills",
+      technicalSkills: SOFTWARE_ENGINEER_TOP_TECHNICAL_SKILLS,
+      actionVerbsH2: "Top software engineer action verbs",
+      actionVerbs: SOFTWARE_ENGINEER_TOP_ACTION_VERBS,
+    },
+    categoryIntents: ["core-keywords", "technical-skills", "tools-platforms", "action-verbs"],
+    showKeywordClusters: false,
+    showKeywordApplicationModule: false,
+    showKeywordGapsSection: false,
+    showChecklistSection: false,
+    showRoleClusterNav: false,
+    showSecondaryH2: false,
+    showBottomResourceBlock: false,
+    showTopKeywordsSection: false,
+    itemListSchemaName: "Software Engineer Resume Keywords",
+  },
+};
+
+export function getRoleKeywordsPageLayout(role: RoleSlug): RoleKeywordsPageLayout {
+  const override = ROLE_KEYWORDS_PAGE_LAYOUT[role];
+  return { ...DEFAULT_KEYWORDS_PAGE_LAYOUT, ...override };
+}
 
 /** Above-the-fold priority terms for `/data-analyst-resume-keywords` (GSC head terms). */
 export const DATA_ANALYST_HERO_KEYWORDS = [
@@ -99,11 +311,9 @@ export const ROLE_KEYWORDS_SECONDARY_H2: Partial<Record<RoleSlug, string>> = {
   "data-analyst": `Keywords for Data Analyst Resume (${CONTENT_FRESHNESS_YEAR} ATS Checklist)`,
   "data-scientist": `Data Scientist Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
   "machine-learning-engineer": `Machine Learning Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
-  "software-engineer": `Software Engineer Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR})`,
   "business-analyst": `Keywords for Business Analyst Resume (${CONTENT_FRESHNESS_YEAR})`,
   "devops-engineer": `DevOps Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR})`,
   "product-manager": `PM Resume Keywords (${CONTENT_FRESHNESS_YEAR} ATS List)`,
-  "frontend-developer": `Frontend Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR})`,
   "backend-developer": `Backend Resume Keywords for ATS (${CONTENT_FRESHNESS_YEAR})`,
   "full-stack-developer": `Full Stack Resume Keywords (${CONTENT_FRESHNESS_YEAR})`,
 };
@@ -182,7 +392,9 @@ export const ROLE_KEYWORDS_SCOPE_NOTE: Partial<Record<RoleSlug, string>> = {
   "full-stack-developer":
     "End-to-end web stack keywords—not backend-only or frontend-only resumes unless the posting is explicitly full-stack.",
   "software-engineer":
-    "Covers software engineer and software developer postings—mirror the job description’s exact title and stack (React, Java, Python, etc.).",
+    "Software engineer resume keywords only—not a split frontend, backend, or DevOps keyword page. Mirror the job title literally (software engineer, software developer, SDE). For UI-only JDs use /frontend-developer-resume-keywords; for API/services-only use /backend-developer-resume-keywords; for platform/SRE JDs use /devops-engineer-resume-keywords.",
+  "frontend-developer":
+    "Frontend developer resume keywords only—not generic web developer, software developer, or React-only skill lists. Mirror the job title literally (frontend developer, UI engineer, front-end engineer). For full-stack JDs use /full-stack-developer-resume-keywords; for general SWE use /software-engineer-resume-keywords.",
 };
 
 export const ROLE_KEYWORDS_FAQ: Record<RoleSlug, RoleKeywordsFaqItem[]> = {
@@ -232,24 +444,19 @@ export const ROLE_KEYWORDS_FAQ: Record<RoleSlug, RoleKeywordsFaqItem[]> = {
   ],
   "software-engineer": [
     {
-      question: "What are software engineer resume keywords for ATS?",
+      question: "What are the best software engineer resume keywords for ATS?",
       answer:
-        "Languages and frameworks from the posting, plus delivery terms: CI/CD, testing, APIs, system design, observability, and scale metrics. Mirror the stack in the JD (React, Node, Java, AWS, etc.).",
+        "TypeScript, JavaScript, system design, REST APIs, databases, cloud, CI/CD, testing, and delivery verbs (shipped, scaled, refactored)—placed in bullets on a software engineer resume, not as a tool dump split by frontend vs backend.",
     },
     {
-      question: "What are software engineer resume keywords for ATS in 2026?",
+      question: "Are software engineer resume keywords different from frontend or backend keywords?",
       answer:
-        "Common 2026 terms include TypeScript, cloud platforms, container tooling, on-call/reliability language, and security basics. Always prioritize the employer’s literal wording.",
+        "Yes. Software engineer postings are often generalist. Use this page when the title says software engineer or software developer. Use /frontend-developer-resume-keywords or /backend-developer-resume-keywords when the JD is stack-specific.",
     },
     {
-      question: "Should I list every programming language as a keyword?",
+      question: "Should a software engineer resume list DevOps keywords?",
       answer:
-        "List languages you can defend in interviews and support with project or work bullets. ATS match quality drops when skills never appear in experience.",
-    },
-    {
-      question: "How do I match my resume to a software engineer job description?",
-      answer:
-        "Use the JD comparison tool to extract missing hard skills and responsibility phrases, then add them to bullets where you have evidence—not in a keyword block alone.",
+        "Only when the posting expects platform or reliability ownership. Otherwise link out to /devops-engineer-resume-keywords and keep this page focused on product engineering delivery terms.",
     },
   ],
   "product-manager": [
@@ -303,24 +510,19 @@ export const ROLE_KEYWORDS_FAQ: Record<RoleSlug, RoleKeywordsFaqItem[]> = {
   ],
   "frontend-developer": [
     {
-      question: "What are frontend developer resume keywords for ATS?",
+      question: "What are the best frontend developer resume keywords?",
       answer:
-        "React, TypeScript, JavaScript, HTML/CSS, accessibility (WCAG), performance (Core Web Vitals), testing (Jest, Playwright), and design-system terms when relevant.",
+        "React, TypeScript, JavaScript, Next.js, HTML, CSS, accessibility (WCAG), Core Web Vitals, Storybook, Playwright, and REST APIs—placed in summary, skills, and impact bullets on a frontend developer resume, not as a standalone skills dump.",
     },
     {
-      question: "Should frontend resumes include backend keywords?",
+      question: "What are frontend developer ATS keywords?",
       answer:
-        "Only if the posting asks for full-stack or API work. Otherwise stay focused on UI, UX quality, and delivery metrics.",
+        "ATS scans frontend developer resumes for stack terms (React, TypeScript, Next.js), quality signals (Jest, Playwright, WCAG), and delivery verbs (implemented, optimized, instrumented) inside measurable bullets.",
     },
     {
-      question: "What frontend resume keywords matter in 2026?",
+      question: "Are web developer resume keywords the same as frontend developer keywords?",
       answer:
-        "Component architecture, SSR/Next.js, a11y compliance, and measurable UX or conversion improvements are high-signal.",
-    },
-    {
-      question: "How do I check missing keywords for a frontend role?",
-      answer:
-        "Run the job description and resume through the free matcher and add missing stack terms to bullets you can support.",
+        "Often overlapping, but job titles differ. Use this page when the posting says frontend developer or front-end engineer; mirror web developer wording only when that is the exact title in the job description.",
     },
   ],
   "backend-developer": [
