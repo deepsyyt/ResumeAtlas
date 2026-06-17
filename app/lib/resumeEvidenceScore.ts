@@ -1,5 +1,9 @@
 import type { ResumeDocument } from "@/app/lib/resumeDocument";
-import { resumeDocumentToPlainText } from "@/app/lib/resumeDocument";
+import {
+  resumeDocumentFromHeuristicParsed,
+  resumeDocumentToPlainText,
+} from "@/app/lib/resumeDocument";
+import { parseResumeToJSON } from "@/app/lib/resumeParser";
 import { resumeShowsSkillEvidence } from "@/app/lib/skillResumeEvidence";
 import { filterSkillGapPhrases } from "@/app/lib/skillGapRules";
 import {
@@ -9,6 +13,7 @@ import {
   seniorityMetricLabel,
   type JdRoleLevel,
 } from "@/app/lib/jdRoleLevel";
+import type { RoleFitRow } from "@/app/lib/roleFitArchetypes";
 
 export type EvidenceStrength = "gap" | "weak" | "medium" | "strong";
 
@@ -46,6 +51,10 @@ export type SeniorityAlignment = {
 export type EvidenceSnapshot = {
   evidenceMatch: number;
   impactCoverage: number;
+  /** Roles/companies where at least one bullet shows measurable outcomes. */
+  experiencesWithMetrics: number;
+  totalExperiences: number;
+  /** Legacy bullet counts (optimize diffs, internal). */
   bulletsWithMetrics: number;
   totalBullets: number;
   architectureSignal: number;
@@ -65,6 +74,10 @@ export type EvidenceDashboard = {
   skillProof: JdSkillEvidenceRow[];
   categories: EvidenceCategoryScore[];
   riskAreas: string[];
+  /** Career archetype fit — populated by LLM in /api/analyze. */
+  roleFit?: RoleFitRow[];
+  /** Bumped when role-fit prompt/calibration changes (invalidates stale cache). */
+  roleFitVersion?: number;
 };
 
 const METRIC_RE =
@@ -172,6 +185,92 @@ type BulletRecord = {
   hint?: string;
 };
 
+/** One employer/role block — metrics are scored per block, not per bullet. */
+export type ExperienceBlock = {
+  company: string;
+  role: string;
+  dates: string;
+  bullets: string[];
+  hint: string;
+};
+
+function experienceBlocksFromDocument(doc: ResumeDocument): ExperienceBlock[] {
+  return (doc.experience ?? [])
+    .map((exp) => {
+      const bullets = [
+        ...(exp.bullets ?? []),
+        ...(exp.projects ?? []).flatMap((p) => p.bullets ?? []),
+      ]
+        .map((b) => b?.trim())
+        .filter(Boolean) as string[];
+      const hint = [exp.role, exp.company].filter(Boolean).join(" @ ") || "Experience";
+      return {
+        company: exp.company ?? "",
+        role: exp.role ?? "",
+        dates: exp.dates ?? "",
+        bullets,
+        hint,
+      };
+    })
+    .filter((block) => block.bullets.length > 0);
+}
+
+function resolveStructuredResume(
+  resumeText: string,
+  structured?: ResumeDocument
+): ResumeDocument | undefined {
+  if (structured?.experience?.length) return structured;
+  const parsed = resumeDocumentFromHeuristicParsed(parseResumeToJSON(resumeText));
+  return parsed.experience?.length ? parsed : undefined;
+}
+
+/** Group work bullets by employer/role for experience-level evidence scoring. */
+export function collectExperienceBlocks(
+  resumeText: string,
+  structured?: ResumeDocument
+): ExperienceBlock[] {
+  const doc = resolveStructuredResume(resumeText, structured);
+  if (doc) {
+    const blocks = experienceBlocksFromDocument(doc);
+    if (blocks.length > 0) return blocks;
+  }
+
+  const fallbackBullets = collectBullets(resumeText, structured).filter(
+    (b) => b.location === "project" || b.location === "experience"
+  );
+  if (fallbackBullets.length === 0) return [];
+
+  return [
+    {
+      company: "",
+      role: "",
+      dates: "",
+      bullets: fallbackBullets.map((b) => b.text),
+      hint: "Experience",
+    },
+  ];
+}
+
+function experienceSignalScore(blocks: ExperienceBlock[], pattern: RegExp): number {
+  if (blocks.length === 0) return 0;
+  const hits = blocks.filter((block) => block.bullets.some((text) => pattern.test(text))).length;
+  return Math.round((hits / blocks.length) * 100);
+}
+
+function experienceImpactCoverage(blocks: ExperienceBlock[]): {
+  coverage: number;
+  experiencesWithMetrics: number;
+  totalExperiences: number;
+} {
+  const totalExperiences = blocks.length;
+  const experiencesWithMetrics = blocks.filter((block) =>
+    block.bullets.some((text) => bulletHasImpactEvidence(text))
+  ).length;
+  const coverage =
+    totalExperiences > 0 ? Math.round((experiencesWithMetrics / totalExperiences) * 100) : 0;
+  return { coverage, experiencesWithMetrics, totalExperiences };
+}
+
 function collectBullets(
   resumeText: string,
   structured?: ResumeDocument
@@ -277,13 +376,6 @@ function classifySkillEvidence(
   return { strength: "weak", mentionCount, evidenceLocation: "summary" };
 }
 
-function signalScore(bullets: BulletRecord[], pattern: RegExp): number {
-  const experienceBullets = bullets.filter((b) => b.location === "project" || b.location === "experience");
-  if (experienceBullets.length === 0) return 0;
-  const hits = experienceBullets.filter((b) => pattern.test(b.text)).length;
-  return Math.round((hits / experienceBullets.length) * 100);
-}
-
 function buildCategoryScores(resumeText: string, jobDescription: string): EvidenceCategoryScore[] {
   const jd = jobDescription.toLowerCase();
   const resume = resumeText.toLowerCase();
@@ -335,7 +427,7 @@ const INDICATOR_LABELS: Record<ScopeIndicator, string> = {
   collaboration: "Cross-functional collaboration stated",
   technical_proof: "JD skills proven in work narratives",
   architecture_scope: "Architecture or system design evidenced",
-  impact_outcomes: "Measurable outcomes in experience bullets",
+  impact_outcomes: "Measurable outcomes in role project bullets",
 };
 
 function expectedIndicatorsForLevel(level: JdRoleLevel): ScopeIndicator[] {
@@ -390,6 +482,7 @@ function detectScopeIndicators(args: {
   resumeText: string;
   structured?: ResumeDocument;
   bullets: BulletRecord[];
+  experienceBlocks: ExperienceBlock[];
   skillProof: JdSkillEvidenceRow[];
 }): Set<ScopeIndicator> {
   const blob = args.resumeText.toLowerCase();
@@ -417,10 +510,10 @@ function detectScopeIndicators(args: {
     found.add("technical_proof");
   }
 
-  if (experienceBullets.some((b) => ARCHITECTURE_RE.test(b.text))) {
+  if (args.experienceBlocks.some((block) => block.bullets.some((text) => ARCHITECTURE_RE.test(text)))) {
     found.add("architecture_scope");
   }
-  if (experienceBullets.some((b) => METRIC_RE.test(b.text))) {
+  if (args.experienceBlocks.some((block) => block.bullets.some((text) => bulletHasImpactEvidence(text)))) {
     found.add("impact_outcomes");
   }
 
@@ -432,10 +525,17 @@ function computeSeniorityAlignment(
   jobDescription: string,
   structured: ResumeDocument | undefined,
   bullets: BulletRecord[],
+  experienceBlocks: ExperienceBlock[],
   skillProof: JdSkillEvidenceRow[],
   roleLevel: JdRoleLevel
 ): SeniorityAlignment {
-  const found = detectScopeIndicators({ resumeText, structured, bullets, skillProof });
+  const found = detectScopeIndicators({
+    resumeText,
+    structured,
+    bullets,
+    experienceBlocks,
+    skillProof,
+  });
   const expected = expectedIndicatorsForLevel(roleLevel);
 
   const indicatorsFound = expected
@@ -505,7 +605,9 @@ function buildRiskAreas(
   }
 
   if (snapshot.impactCoverage < 55) {
-    risks.push("Impact coverage low: many bullets lack measurable outcomes from your existing work");
+    risks.push(
+      "Impact coverage low: many roles lack measurable outcomes in project bullets"
+    );
   }
 
   for (const gap of seniority.gaps.slice(0, 2)) {
@@ -530,15 +632,17 @@ function computeSnapshot(
   roleLevel: JdRoleLevel
 ): EvidenceSnapshot {
   const bullets = collectBullets(resumeText, structured);
+  const experienceBlocks = collectExperienceBlocks(resumeText, structured);
   const experienceBullets = bullets.filter((b) => b.location === "project" || b.location === "experience");
   const totalBullets = experienceBullets.length;
   const bulletsWithMetrics = experienceBullets.filter((b) => bulletHasImpactEvidence(b.text)).length;
-  const impactCoverage =
-    totalBullets > 0 ? Math.round((bulletsWithMetrics / totalBullets) * 100) : 0;
 
-  const architectureSignal = signalScore(bullets, ARCHITECTURE_RE);
-  const leadershipSignal = signalScore(bullets, LEADERSHIP_RE);
-  const deploymentSignal = signalScore(bullets, DEPLOYMENT_RE);
+  const impact = experienceImpactCoverage(experienceBlocks);
+  const impactCoverage = impact.coverage;
+
+  const architectureSignal = experienceSignalScore(experienceBlocks, ARCHITECTURE_RE);
+  const leadershipSignal = experienceSignalScore(experienceBlocks, LEADERSHIP_RE);
+  const deploymentSignal = experienceSignalScore(experienceBlocks, DEPLOYMENT_RE);
 
   const proved = skillProof.filter((s) => s.strength === "strong").length;
   const jdSkillsTotal = jdSkills.length;
@@ -558,6 +662,8 @@ function computeSnapshot(
   return {
     evidenceMatch: Math.min(100, evidenceMatch),
     impactCoverage,
+    experiencesWithMetrics: impact.experiencesWithMetrics,
+    totalExperiences: impact.totalExperiences,
     bulletsWithMetrics,
     totalBullets,
     architectureSignal,
@@ -587,6 +693,8 @@ export function buildEvidenceDashboard(args: {
       ? resumeDocumentToPlainText(args.structuredResume) || args.resumeText
       : args.resumeText;
 
+  const structuredResume = resolveStructuredResume(resumeText, args.structuredResume);
+
   const required = filterSkillGapPhrases(args.missingRequired ?? []);
   const preferred = filterSkillGapPhrases(args.missingPreferred ?? []);
   const missing = filterSkillGapPhrases(args.missingSkills ?? []);
@@ -597,7 +705,8 @@ export function buildEvidenceDashboard(args: {
     new Set([...matched, ...missing, ...required, ...preferred].map((s) => s.trim()).filter(Boolean))
   );
 
-  const bullets = collectBullets(resumeText, args.structuredResume);
+  const bullets = collectBullets(resumeText, structuredResume);
+  const experienceBlocks = collectExperienceBlocks(resumeText, structuredResume);
 
   const skillProof: JdSkillEvidenceRow[] = jdSkills.map((skill) => {
     const classified = classifySkillEvidence(skill, bullets, resumeText);
@@ -621,14 +730,15 @@ export function buildEvidenceDashboard(args: {
   const seniority = computeSeniorityAlignment(
     resumeText,
     args.jobDescription,
-    args.structuredResume,
+    structuredResume,
     bullets,
+    experienceBlocks,
     skillProof,
     roleLevel
   );
   const snapshot = computeSnapshot(
     resumeText,
-    args.structuredResume,
+    structuredResume,
     jdSkills,
     skillProof,
     seniority.score,

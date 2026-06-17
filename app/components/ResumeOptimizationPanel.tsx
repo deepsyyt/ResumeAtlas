@@ -280,16 +280,17 @@ export function ResumeOptimizationPanel({
               const rewriteStrengthened = rewriteStrengthenedByMetric[metric.key] ?? 0;
               const impactDelta =
                 before && metric.key === "impact"
-                  ? after.snapshot.bulletsWithMetrics - before.snapshot.bulletsWithMetrics
+                  ? after.snapshot.experiencesWithMetrics - before.snapshot.experiencesWithMetrics
                   : 0;
               const impactStrengthened = rewriteStrengthenedByMetric.impact ?? 0;
+              const roleWord = after.snapshot.totalExperiences === 1 ? "role" : "roles";
               const countLabel =
                 metric.key === "impact" && before
                   ? impactStrengthened > 0
-                    ? `${after.snapshot.bulletsWithMetrics} of ${after.snapshot.totalBullets} bullets with outcomes · ${impactStrengthened} strengthened in your rewrites`
+                    ? `${after.snapshot.experiencesWithMetrics} of ${after.snapshot.totalExperiences} ${roleWord} with outcomes · ${impactStrengthened} strengthened in your rewrites`
                     : impactDelta > 0
-                      ? `${after.snapshot.bulletsWithMetrics} of ${after.snapshot.totalBullets} bullets with outcomes (+${impactDelta} new from optimization)`
-                      : `${after.snapshot.bulletsWithMetrics} of ${after.snapshot.totalBullets} bullets with outcomes`
+                      ? `${after.snapshot.experiencesWithMetrics} of ${after.snapshot.totalExperiences} ${roleWord} with outcomes (+${impactDelta} new from optimization)`
+                      : `${after.snapshot.experiencesWithMetrics} of ${after.snapshot.totalExperiences} ${roleWord} with outcomes`
                   : metric.key !== "impact" && beforeValue != null
                     ? `Full resume: ${metric.value}% (was ${beforeValue}%)`
                     : undefined;

@@ -21,6 +21,7 @@ import { ResumeBulletLevelEmbed } from "@/app/components/ResumeBulletLevelEmbed"
 import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+  RESUME_KEYWORD_SCANNER_PATH,
 } from "@/app/lib/internalLinks";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 import { ResumeBulletPreviewCopyButton } from "@/app/components/ResumeBulletPreviewCopyButton";
@@ -317,7 +318,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
               Compare your resume with this job description
             </Link>
             <Link
-              href="/resume-keyword-scanner#ats-checker-form"
+              href={RESUME_KEYWORD_SCANNER_PATH}
               className="inline-flex items-center justify-center rounded-xl border border-amber-300/80 bg-white px-4 py-2.5 text-sm font-semibold text-amber-950 transition hover:bg-amber-50"
             >
               Find missing keywords in your {hub.roleName.toLowerCase()} resume

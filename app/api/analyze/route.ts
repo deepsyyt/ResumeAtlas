@@ -9,6 +9,7 @@ import {
 } from "@/app/lib/inputWordLimits";
 import { SKILL_GAP_LLM_RULES, filterSkillGapPhrases } from "@/app/lib/skillGapRules";
 import { buildEvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
+import { attachRoleFitToEvidenceDashboard } from "@/app/lib/roleFitLlm";
 import {
   assertAnalysisQuotaOrThrow,
   recordSuccessfulAnalysis,
@@ -258,6 +259,14 @@ export async function POST(request: Request) {
       resumeOnly: jdEmpty,
     });
 
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "ATS analysis is not configured" },
+        { status: 503 }
+      );
+    }
+
     const cached = await getCachedAnalysisResult(cacheKey);
     if (cached) {
       // Even if we reuse the cached ATS result, the user clicked "Analyze" and
@@ -297,8 +306,23 @@ export async function POST(request: Request) {
               }
             : undefined;
 
+      const cachedPayload = { ...cached };
+      if (cachedPayload.evidence_dashboard && !jdEmpty) {
+        const hadRoleFit = (cachedPayload.evidence_dashboard.roleFit?.length ?? 0) > 0;
+        cachedPayload.evidence_dashboard = await attachRoleFitToEvidenceDashboard({
+          dashboard: cachedPayload.evidence_dashboard,
+          apiKey,
+          modelCandidates,
+          resumeText,
+          jobDescription,
+        });
+        if (!hadRoleFit && (cachedPayload.evidence_dashboard.roleFit?.length ?? 0) > 0) {
+          await setCachedAnalysisResult(cacheKey, cachedPayload);
+        }
+      }
+
       return NextResponse.json({
-        ...cached,
+        ...cachedPayload,
         ...(quotaAfter && { quota: quotaAfter }),
       });
     }
@@ -313,15 +337,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: payload }, { status: 429 });
       }
       throw quotaErr;
-    }
-
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: "ATS analysis is not configured" },
-        { status: 503 }
-      );
     }
 
     const userContent = jdEmpty
@@ -496,7 +511,7 @@ ${jobDescription}`;
       normalized.missing_skills_required = undefined;
       normalized.missing_skills_preferred = undefined;
     } else {
-      normalized.evidence_dashboard = buildEvidenceDashboard({
+      const evidenceDashboard = buildEvidenceDashboard({
         resumeText,
         jobDescription,
         matchedSkills: matchedSkillsAfter,
@@ -505,6 +520,13 @@ ${jobDescription}`;
         missingPreferred: missingPreferredAfter,
         requiredYearsExperience: requiredYears,
         resumeYearsExperience: resumeYears,
+      });
+      normalized.evidence_dashboard = await attachRoleFitToEvidenceDashboard({
+        dashboard: evidenceDashboard,
+        apiKey,
+        modelCandidates,
+        resumeText,
+        jobDescription,
       });
     }
 

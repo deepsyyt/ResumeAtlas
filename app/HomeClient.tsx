@@ -1165,7 +1165,7 @@ export default function HomeClient({
   };
 
   const Root = isHome ? "main" : "div";
-  const useSplitPanels = !isHome;
+  const useSplitPanels = !isHome && !isKeywordScanner;
   const splitPanels = workbenchSplitPanelColors(analysisMode);
   const rootClassName =
     isHome && !hideMarketingHero
@@ -1315,7 +1315,9 @@ export default function HomeClient({
         <div className={isHome ? "mt-3 sm:mt-4" : "mt-0 sm:mt-0"}>
           <div
             className={
-              useSplitPanels
+              isKeywordScanner
+                ? "grid grid-cols-1 gap-4"
+                : useSplitPanels
                 ? "grid min-h-0 flex-1 grid-cols-1 gap-0 overflow-hidden rounded-2xl border border-slate-200/70 shadow-sm shadow-slate-900/[0.04] lg:grid-cols-3"
                 : "grid min-h-0 flex-1 grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3"
             }
@@ -1340,7 +1342,7 @@ export default function HomeClient({
                 analysisQuota={analysisQuota}
                 onLoginForMoreScans={handleStartGoogleAuthForQuota}
                 isLoggingInForMoreScans={isStartingGoogleAuth}
-                showShareFriendsCta={isToolOnly}
+                showShareFriendsCta={isToolOnly && !isKeywordScanner}
               />
             )}
           </div>
@@ -1372,7 +1374,7 @@ export default function HomeClient({
                   ? isAtsCompliance
                     ? "Paste your resume on the left and run a free ATS check. Job description is optional."
                     : isKeywordScanner
-                      ? "Paste resume and job description on the left, then scan for missing keywords."
+                      ? "Paste your resume and a job posting on the left, then scan for keyword gaps."
                       : "Paste resume and job description on the left, then run evidence match and optimization."
                   : undefined
               }

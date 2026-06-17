@@ -8,6 +8,8 @@ import {
   SignalMetricCard,
   ThemeCoverageRow,
 } from "@/app/components/EvidenceMetricBar";
+import { RoleFitVerdictSection } from "@/app/components/RoleFitVerdictSection";
+import { ShareRecruiterReportCta } from "@/app/components/ShareRecruiterReportCta";
 import { SkillProofMapSection } from "@/app/components/SkillProofMapSection";
 import {
   ATS_REFERENCE_SUBTITLE,
@@ -25,6 +27,7 @@ import {
   snapshotSummaryLine,
   type ExperienceAlignmentMetric,
 } from "@/app/lib/evidenceMetricCopy";
+import type { ShareRecruiterReportArgs } from "@/app/lib/shareRecruiterReport";
 import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
 import { getScoreStyle, getATSBadgeLabel } from "@/app/lib/scoreColors";
 
@@ -43,6 +46,8 @@ export type EvidenceIntelligenceSectionProps = {
   aboveSkillProof?: ReactNode;
   /** Opens optimizer from the score-row analysis card. */
   onOptimize?: () => void;
+  /** When set, shows share-with-recruiter CTA below the takeaway summary. */
+  shareReport?: ShareRecruiterReportArgs | null;
   /** Homepage hero: shorter slice of the dashboard (readable, not full scroll). */
   heroPreview?: boolean;
   /** `topics`: through theme coverage only (tool empty state). `toolScroll`: compact through topics, full below-fold. `full`: entire dashboard. */
@@ -59,6 +64,7 @@ export function EvidenceIntelligenceSection({
   aboveSkillProof,
   heroPreview = false,
   onOptimize,
+  shareReport,
   previewDepth,
 }: EvidenceIntelligenceSectionProps) {
   const depth = previewDepth ?? (heroPreview ? "hero" : "full");
@@ -126,6 +132,14 @@ export function EvidenceIntelligenceSection({
         </div>
       </div>
 
+      {shareReport && depth !== "hero" && depth !== "topics" ? (
+        <ShareRecruiterReportCta
+          report={shareReport}
+          compact={compact}
+          className={compact ? "mt-1.5" : "mt-2"}
+        />
+      ) : null}
+
       <div
         className={`rounded-lg border border-indigo-200/80 bg-gradient-to-br from-indigo-50/90 via-white to-violet-50/40 shadow-sm ${
           compact ? "mt-1.5 px-2 py-1.5" : "mt-2 px-2.5 py-2"
@@ -149,6 +163,9 @@ export function EvidenceIntelligenceSection({
             />
           ))}
         </div>
+        {!heroPreview && (dashboard.roleFit?.length ?? 0) > 0 ? (
+          <RoleFitVerdictSection rows={dashboard.roleFit ?? []} compact={compact} className="mt-2" />
+        ) : null}
         {!heroPreview && dashboard.categories.length > 0 ? (
           <div className="mt-2 border-t border-indigo-200/80 pt-2">
             <p className="text-[10px] font-bold uppercase tracking-wide text-indigo-950">

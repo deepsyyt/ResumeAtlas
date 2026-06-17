@@ -349,9 +349,9 @@ export const TOOL_CLUSTER_KEYWORD_SCANNER: ToolClusterPageConfig = {
   exampleJobRequires: "Machine learning, SQL, A/B testing, and stakeholder communication.",
   exampleResumeContains: "Python, data analysis, dashboards.",
   exampleMissing: "A/B testing language, SQL depth, and stakeholder terms.",
-  exampleScoreLine: "Keyword coverage estimate: 61% for the target posting.",
+  exampleScoreLine: "Keyword coverage: 61% for terms extracted from the posting.",
   exampleFixLine:
-    "Fix first: add concrete SQL + experiment bullets tied to project outcomes.",
+    "Fix first: add Kubernetes and SQL proof in bullets where you have real project work.",
   keywords: [
     "resume keyword scanner",
     "keyword scanner",
@@ -372,7 +372,7 @@ export const TOOL_CLUSTER_KEYWORD_SCANNER: ToolClusterPageConfig = {
     {
       question: "What is a resume keyword scanner?",
       answer:
-        "It analyzes your resume against a job description to surface missing or weak keywords that can affect ATS ranking and recruiter skim speed.",
+        "It extracts keywords from a job posting and checks your resume for missing or weak terms that can affect ATS ranking and recruiter skim speed.",
     },
     {
       question: "Why are keywords important in resumes?",
@@ -382,7 +382,7 @@ export const TOOL_CLUSTER_KEYWORD_SCANNER: ToolClusterPageConfig = {
     {
       question: "Is this keyword scanner free?",
       answer:
-        "Yes. Paste your resume and job description to get keyword insights instantly without signing up.",
+        "Yes. Paste your resume and a job posting to get keyword gap insights instantly without signing up.",
     },
     {
       question: "How do I add keywords naturally?",

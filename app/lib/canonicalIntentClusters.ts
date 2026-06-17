@@ -7,7 +7,7 @@
  * | Homepage discovery | `/` exposes **role-only** link clusters (`#browse-by-role`); product/tools stay in-page and nav, not separate “topics” columns. |
  * | Brand + category hub (AI/ATS checker, optimizer) | / |
  * | Resume ↔ JD compare / match / score | `/check-resume-against-job-description` |
- * | Keyword gap scan (missing terms vs posting) | `/resume-keyword-scanner` |
+ * | Keyword gap scan (missing terms vs posting) | `/resume-keyword-scanner` (SEO cluster → workbench) |
  * | ATS education (traffic door → workbench) | /ats-resume-checker |
  * | ATS layout guide | /ats-resume-template |
  * | Work history section | /resume-guides/resume-work-experience-examples |
@@ -90,27 +90,27 @@ export const CLUSTER_KEYWORD_SCANNER_TOOL_COPY = {
   titleAbsolute:
     `Resume Keyword Scanner | Find Missing ATS Keywords Free${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Scan your resume against a job description and discover missing keywords, weak coverage, and ATS-relevant term gaps. Free, instant, and no signup.",
+    "Extract keywords from a job posting and scan your resume for missing terms, weak coverage, and ATS skill gaps. Free, instant, no signup.",
   ogTitle:
     `Resume Keyword Scanner | Find Missing ATS Keywords Free${RESUME_ATLAS_TITLE_SUFFIX}`,
   ogDescription:
-    "Find missing resume keywords vs a real job posting — skill gaps and ATS keyword coverage, instantly.",
+    "Extract posting keywords and find gaps in your resume: missing terms, weak coverage, and skill gaps vs the job.",
   twitterTitle: "Resume Keyword Scanner | Find Missing ATS Keywords Free",
-  twitterDescription: "Keyword gaps vs a detailed JD, instant; works with long postings.",
-  h1: "Scan Your Resume for Missing ATS Keywords",
+  twitterDescription: "Keyword gaps vs a job posting: missing terms and weak coverage, instantly.",
+  h1: "Scan your resume for missing keywords",
   intro:
-    "Paste your resume and job description to find missing keywords, weak keyword coverage, and ATS skill gaps in seconds.",
-  topStripStrong: "Keyword gap scan: resume text vs the posting you paste.",
+    "Open the free checker to paste your resume and a job posting. We extract must-have terms from the posting and show missing keywords, weak coverage, and where your resume needs stronger proof.",
+  topStripStrong: "Keyword gap scan: posting terms vs your resume text.",
   webAppName: "Resume keyword scanner",
   webAppDescription:
-    "Detect missing and weak keywords in your resume compared to a target job description.",
-  differentiatorHeading: "Keyword gaps vs full resume-to-job-description matching",
+    "Extract keywords from a job posting and find missing or weak terms in your resume.",
+  differentiatorHeading: "Keyword gaps vs full resume evaluation",
   differentiatorBody: [
-    "This scan centers on coverage: skills, tools, and phrases from the job description that should show up clearly in your experience and skills if they reflect your real background. It is intentionally narrower than a full “does this resume win this role?” analysis.",
-    "When you also need fit narrative, section balance, and match-style scoring against the same posting, use the job description matcher. When formatting and parser risk dominate, use the ATS checker first.",
+    "This scan centers on keyword coverage: skills, tools, and phrases from the posting that should appear clearly in your experience if they reflect your real background. You get missing keywords, weak coverage areas, term frequency, and suggested terms to add truthfully.",
+    "When you also need evidence match, bullet optimization, and export for one posting, use the job description matcher. When formatting and parser risk dominate, use the ATS checker first.",
   ],
   serpVariantsParagraph:
-    "Queries include resume keywords scanner, scanning resumes for keywords, resume keyword checker, cv keyword scanner, keywords for resume scanners, missing keywords in resume, and job posting keyword gap. This page owns keyword gap detection vs a pasted posting.",
+    "Queries include resume keywords scanner, scanning resumes for keywords, scan my resume for keywords, resume keyword checker, cv keyword scanner, keywords for resume scanners, missing keywords in resume, and job posting keyword gap. This page owns keyword gap detection from a pasted posting.",
   howItWorksHeading: "How the keyword scan works",
   whyMatchHeading: "Why keyword coverage still matters for ATS and recruiters",
   resultsHeading: "What you see after scanning",

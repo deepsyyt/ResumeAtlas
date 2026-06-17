@@ -37,7 +37,7 @@ export function evidenceInterviewLikelihoodLine(score: number): string {
 
 export const SIGNALS_SECTION_TITLE = "What we measured";
 export const SIGNALS_SECTION_INTRO =
-  "Each score answers one question about how your resume fits this job posting.";
+  "Each score answers one question about how your resume fits this job posting — measured per role/company, not every bullet.";
 
 export const EXPERIENCE_ALIGNMENT_LABEL = "Experience vs JD";
 
@@ -90,7 +90,7 @@ export type EvidenceSignalKey =
 export function signalMetricLabel(key: EvidenceSignalKey, roleLevel: JdRoleLevel): string {
   switch (key) {
     case "impact":
-      return "Results in bullets";
+      return "Results in roles";
     case "architecture":
       return roleLevel === "junior" ? "Hands-on work" : "System & design scope";
     case "deployment":
@@ -115,21 +115,21 @@ export function signalMetricLabel(key: EvidenceSignalKey, roleLevel: JdRoleLevel
 export function signalMetricHint(key: EvidenceSignalKey, roleLevel: JdRoleLevel): string {
   switch (key) {
     case "impact":
-      return "Bullets with numbers or clear business outcomes (CTR, engagement, efficiency, etc.).";
+      return "% of roles where project bullets include numbers or clear business outcomes.";
     case "architecture":
       return roleLevel === "junior"
-        ? "% of bullets showing what you built, shipped, or delivered."
-        : "% of bullets describing design, architecture, or end-to-end ownership.";
+        ? "% of roles where bullets show what you built, shipped, or delivered."
+        : "% of roles where bullets describe design, architecture, or end-to-end ownership.";
     case "deployment":
-      return "% of bullets mentioning production, APIs, deployments, or live systems.";
+      return "% of roles where bullets mention production, APIs, deployments, or live systems.";
     case "leadership":
       if (roleLevel === "junior" || roleLevel === "mid") {
-        return "% of bullets naming teams, partners, or cross-functional work.";
+        return "% of roles where bullets name teams, partners, or cross-functional work.";
       }
       if (roleLevel === "senior_ic") {
-        return "% of bullets showing influence with stakeholders or partners.";
+        return "% of roles where bullets show influence with stakeholders or partners.";
       }
-      return "% of bullets showing team leadership, ownership, or stakeholder scope.";
+      return "% of roles where bullets show team leadership, ownership, or stakeholder scope.";
     case "seniority":
       if (roleLevel === "junior") {
         return "How well project bullets match an entry-level posting.";
@@ -219,5 +219,9 @@ export function buildSignalMetrics(
 
 export function snapshotSummaryLine(dashboard: EvidenceDashboard): string {
   const { snapshot, seniority } = dashboard;
-  return `This job reads as ${seniority.roleLevelLabel.toLowerCase()}. ${snapshot.jdSkillsProved} of ${snapshot.jdSkillsTotal} JD skills appear in work bullets. ${snapshot.bulletsWithMetrics} of ${snapshot.totalBullets} bullets include measurable results.`;
+  const rolesWithMetrics =
+    snapshot.experiencesWithMetrics ?? snapshot.bulletsWithMetrics ?? 0;
+  const totalRoles = snapshot.totalExperiences ?? snapshot.totalBullets ?? 0;
+  const roleWord = totalRoles === 1 ? "role" : "roles";
+  return `This job reads as ${seniority.roleLevelLabel.toLowerCase()}. ${snapshot.jdSkillsProved} of ${snapshot.jdSkillsTotal} JD skills appear in work bullets. ${rolesWithMetrics} of ${totalRoles} ${roleWord} include measurable results.`;
 }

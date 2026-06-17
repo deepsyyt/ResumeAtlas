@@ -24,7 +24,13 @@ import {
   getResumeQualityStyle,
 } from "@/app/lib/scoreColors";
 import { DEMO_EVIDENCE_BULLET_PREVIEW } from "@/app/lib/demoEvidenceDashboard";
+import { buildKeywordScannerResultsData } from "@/app/lib/keywordScannerResults";
+import { KeywordScannerResultsPanel } from "@/app/components/KeywordScannerResultsPanel";
 import { missingSkillsImprovementTip } from "@/app/lib/evidenceMetricCopy";
+import {
+  canShareRecruiterReport,
+  type ShareRecruiterReportArgs,
+} from "@/app/lib/shareRecruiterReport";
 import { EvidenceIntelligenceSection, ScoreBar } from "@/app/components/EvidenceIntelligenceSection";
 import type { OptimizationClickSurface } from "@/app/lib/analyticsEvents";
 import { AnimatedIntelligenceDashboardPreview } from "@/app/components/postingFit/AnimatedIntelligenceDashboardPreview";
@@ -158,14 +164,44 @@ export function IntelligencePanel({
       const hint =
         compactEmptyHint ??
         (compactHomeEmpty
-          ? "Paste on the left and run a check. Your scores replace the sample dashboard above."
+          ? "Paste on the left and run a check. Your scores replace the sample readout above."
           : emptyAts
             ? "Paste your resume on the left and run a free ATS check."
-            : "Paste resume and job description on the left, then run evidence match and optimization.");
+            : isKeywordScanner
+              ? "Paste your resume and a job posting, then scan for keyword gaps."
+              : "Paste resume and job description on the left, then run evidence match and optimization.");
+
+      if (isKeywordScanner) {
+        return (
+          <section
+            className="rounded-xl border border-dashed border-slate-200 bg-slate-50/90 px-4 py-8 text-center ring-1 ring-slate-900/[0.04] sm:px-6"
+            aria-label="Keyword scan results"
+          >
+            {isAnalyzing ? (
+              <>
+                <div
+                  className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-emerald-100 border-t-emerald-600"
+                  aria-hidden
+                />
+                <p className="mt-3 text-sm font-medium text-slate-800">Scanning for keyword gaps…</p>
+              </>
+            ) : (
+              <>
+                <p className="text-sm font-medium text-slate-800">Keyword gap results appear here</p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">{hint}</p>
+              </>
+            )}
+          </section>
+        );
+      }
 
       return (
         <section className={elevatedEmptyClass} aria-label={compactEmptyTitle}>
-          <AnimatedIntelligenceDashboardPreview hint={hint} isAnalyzing={isAnalyzing} />
+          <AnimatedIntelligenceDashboardPreview
+            hint={hint}
+            isAnalyzing={isAnalyzing}
+            previewVariant="fullDashboard"
+          />
         </section>
       );
     }
@@ -240,6 +276,10 @@ export function IntelligencePanel({
   const missingRequired = analyzeResult?.missing_skills_required ?? [];
   const missingPreferred = analyzeResult?.missing_skills_preferred ?? [];
   const hasRequiredPreferred = missingRequired.length > 0 || missingPreferred.length > 0;
+  const keywordScannerData =
+    isKeywordScanner && analyzeResult && analysisUsedJobDescription
+      ? buildKeywordScannerResultsData(analyzeResult)
+      : null;
 
   const atsStyle = getScoreStyle(atsScore);
   const atsRingHex = getATSRingHex(atsScore);
@@ -251,6 +291,23 @@ export function IntelligencePanel({
     resumeYearsExperience,
     experienceScore
   );
+  const experienceAlignmentSubtitle = buildExperienceAlignmentSubtitle({
+    requiredMin: requiredYearsExperience,
+    requiredMax: requiredYearsExperienceMax,
+    resumeYears: resumeYearsExperience,
+    verdictLabel: expAlignment.style.label,
+  });
+  const shareRecruiterReport: ShareRecruiterReportArgs | null =
+    analyzeResult &&
+    evidenceDashboard &&
+    canShareRecruiterReport(analyzeResult, evidenceDashboard, analysisUsedJobDescription)
+      ? {
+          analyzeResult,
+          evidenceDashboard,
+          experienceAlignmentSubtitle,
+          experienceAlignmentScore: experienceScore,
+        }
+      : null;
   const impactStyle = getImpactStyle(impactScore);
   const qualityStyle = getResumeQualityStyle(qualityScore);
   const totalKeywords = matchedSkills.length + missingSkills.length;
@@ -406,7 +463,7 @@ export function IntelligencePanel({
       );
     }
     improvementTips.push(
-      "For overall match scoring and deeper JD comparison, use the resume vs job description checker."
+      "Strengthen bullets where matched terms sit in your skills list only."
     );
   }
 
@@ -473,27 +530,8 @@ export function IntelligencePanel({
               </div>
 
               <div className="preview-panel-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 pb-2.5 pt-1.5 sm:px-3 sm:pb-3">
-                {isKeywordScanner ? (
-                  <div className="rounded-xl border border-violet-200 bg-violet-50/70 px-3 py-2.5">
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-violet-900">
-                      Keyword coverage vs this posting
-                    </p>
-                    <div className="mt-1.5 flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-3">
-                      <span className="text-2xl font-bold tabular-nums text-slate-900">
-                        {keywordNotApplicable ? "—" : `${keywordScore}%`}
-                      </span>
-                      <p className="min-w-0 flex-1 text-xs leading-snug text-slate-700">
-                        {analyzeResult?.summary}
-                      </p>
-                    </div>
-                    {missingSkills.length > 0 ? (
-                      <p className="mt-2 text-[11px] leading-snug text-slate-600">
-                        {missingSkills.length} missing keyword
-                        {missingSkills.length === 1 ? "" : "s"} — add a job-matched resume check for
-                        full evidence scoring.
-                      </p>
-                    ) : null}
-                  </div>
+                {isKeywordScanner && keywordScannerData ? (
+                  <KeywordScannerResultsPanel data={keywordScannerData} compact />
                 ) : evidenceDashboard && analysisUsedJobDescription ? (
                   <>
                     <EvidenceIntelligenceSection
@@ -506,13 +544,9 @@ export function IntelligencePanel({
                       }
                       experienceAlignment={{
                         score: experienceScore,
-                        subtitle: buildExperienceAlignmentSubtitle({
-                          requiredMin: requiredYearsExperience,
-                          requiredMax: requiredYearsExperienceMax,
-                          resumeYears: resumeYearsExperience,
-                          verdictLabel: expAlignment.style.label,
-                        }),
+                        subtitle: experienceAlignmentSubtitle,
                       }}
+                      shareReport={shareRecruiterReport}
                       takeawayHeadline={analyzeResult?.summary}
                       takeawaySubline={
                         evidenceDashboard.riskAreas[0] ??
@@ -681,7 +715,7 @@ export function IntelligencePanel({
           </h2>
           <p className="text-xs text-slate-600 truncate sm:truncate-none">
             {isKeywordScanner
-              ? "Missing skills and keyword gaps vs your job description (not a full ATS parse report)."
+              ? "Missing keywords, weak coverage, and term frequency vs your job posting."
               : analysisUsedJobDescription
                 ? "How much of this job your resume proves in real work, plus honest gaps."
                 : "ATS-focused scores from your resume text (no job description used)."}
@@ -692,23 +726,9 @@ export function IntelligencePanel({
         </span>
       </div>
 
-      {isKeywordScanner && analyzeResult ? (
-        <div className="mt-3 rounded-xl border border-violet-200 bg-violet-50/70 px-3 py-3 sm:px-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-violet-900">
-            Keyword coverage vs this posting
-          </p>
-          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4">
-            <span className="text-2xl sm:text-3xl font-bold text-slate-900 tabular-nums">
-              {keywordNotApplicable ? ", " : `${keywordScore}%`}
-            </span>
-            <p className="text-xs text-slate-700 leading-snug min-w-0 flex-1">
-              {analyzeResult.summary}
-            </p>
-          </div>
-          <p className="mt-2 text-[11px] text-slate-500 leading-snug">
-            Formatting and parsing: use the ATS compatibility checker. Overall score breakdown: use
-            the resume score checker.
-          </p>
+      {keywordScannerData ? (
+        <div className="mt-3">
+          <KeywordScannerResultsPanel data={keywordScannerData} />
         </div>
       ) : null}
 
@@ -721,13 +741,9 @@ export function IntelligencePanel({
           }
           experienceAlignment={{
             score: experienceScore,
-            subtitle: buildExperienceAlignmentSubtitle({
-              requiredMin: requiredYearsExperience,
-              requiredMax: requiredYearsExperienceMax,
-              resumeYears: resumeYearsExperience,
-              verdictLabel: expAlignment.style.label,
-            }),
+            subtitle: experienceAlignmentSubtitle,
           }}
+          shareReport={shareRecruiterReport}
           takeawayHeadline={analyzeResult?.summary}
           takeawaySubline={
             evidenceDashboard.riskAreas[0] ??
@@ -908,7 +924,7 @@ export function IntelligencePanel({
 
       {analysisUsedJobDescription || matchedSkills.length > 0 || missingSkills.length > 0 ? (
         <>
-          {!evidenceDashboard ? (
+          {!isKeywordScanner && !evidenceDashboard ? (
           <div className="mt-3 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
               Matched skills
@@ -931,7 +947,7 @@ export function IntelligencePanel({
           </div>
           ) : null}
 
-          {!evidenceDashboard ? (
+          {!isKeywordScanner && !evidenceDashboard ? (
           <div className="mt-2.5 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
               Missing skills (from JD)

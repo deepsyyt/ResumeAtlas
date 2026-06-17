@@ -21,7 +21,7 @@ export type InternalLink = { path: string; label: string };
 /** Primary free tool: AI resume checker, JD match, and optimizer (workbench). */
 export const CHECK_RESUME_AGAINST_JD_PATH = "/check-resume-against-job-description" as const;
 
-/** Keyword gap scan vs a pasted job description (missing terms, not full JD match narrative). */
+/** Keyword gap SEO cluster (missing terms vs a posting). Tool runs on {@link CHECK_RESUME_AGAINST_JD_PATH}. */
 export const RESUME_KEYWORD_SCANNER_PATH = "/resume-keyword-scanner" as const;
 
 /** Marketing homepage (funnel only; tool is {@link CHECK_RESUME_AGAINST_JD_PATH}). */
@@ -34,8 +34,8 @@ export const LEGACY_CHECK_RESUME_AGAINST_JD_PATH = CHECK_RESUME_AGAINST_JD_PATH;
 export const CHECK_RESUME_AGAINST_JD_FORM_HREF =
   `${CHECK_RESUME_AGAINST_JD_PATH}#ats-checker-form` as const;
 
-export const RESUME_KEYWORD_SCANNER_FORM_HREF =
-  `${RESUME_KEYWORD_SCANNER_PATH}#ats-checker-form` as const;
+/** Keyword scanner cluster CTA → JD workbench (no embedded form on `/resume-keyword-scanner`). */
+export const RESUME_KEYWORD_SCANNER_FORM_HREF = CHECK_RESUME_AGAINST_JD_FORM_HREF;
 
 /** Hub for optimize / tailor resume to job description intent (role spokes link here). */
 export const OPTIMIZE_RESUME_FOR_JD_PATH =
@@ -222,10 +222,11 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     CHECK_RESUME_AGAINST_JD_PATH,
     "/ats-resume-checker",
     "/resume-keywords",
-    "/resume-examples",
-    ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/data-analyst-resume-keywords",
-    "/problems/ats-rejecting-my-resume",
+    "/software-engineer-resume-keywords",
+    "/product-manager-resume-keywords",
+    "/data-scientist-resume-keywords",
+    "/business-analyst-resume-keywords",
   ],
   [ATS_RESUME_TEMPLATE_GUIDE_PATH]: [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -442,15 +443,72 @@ function hashString(s: string): number {
 
 const DEFAULT_RELATED_COUNT = 8;
 
+const TOOL_CLUSTER_PATHS = new Set<string>([
+  CHECK_RESUME_AGAINST_JD_PATH,
+  RESUME_KEYWORD_SCANNER_PATH,
+  ATS_RESUME_CHECKER_PATH,
+  "/resume-score-checker",
+  "/ats-compatibility-check",
+]);
+
+export type RelatedLinkScope = "all" | "toolsAndKeywords";
+
+function normalizeInternalPath(path: string): string {
+  return path.replace(/\/$/, "") || "/";
+}
+
+function isKeywordPagePath(path: string): boolean {
+  const n = normalizeInternalPath(path);
+  if (n === "/resume-keywords") return true;
+  if (n.endsWith("-resume-keywords")) return true;
+  return isAltRoleKeywordPath(n) != null || isPilotKeywordPath(n) != null;
+}
+
+function isToolPagePath(path: string): boolean {
+  return TOOL_CLUSTER_PATHS.has(normalizeInternalPath(path));
+}
+
+function isToolsAndKeywordsPath(path: string): boolean {
+  return isToolPagePath(path) || isKeywordPagePath(path);
+}
+
+function filterToolsAndKeywordsLinks(links: InternalLink[], currentPath: string): InternalLink[] {
+  const normalized = normalizeInternalPath(currentPath);
+  const seen = new Set<string>();
+  const out: InternalLink[] = [];
+  for (const link of links) {
+    const p = normalizeInternalPath(link.path);
+    if (p === normalized || seen.has(p) || !isToolsAndKeywordsPath(p)) continue;
+    seen.add(p);
+    out.push(link);
+  }
+  return out;
+}
+
+const TOOL_AND_KEYWORD_FILL_LINKS: InternalLink[] = [
+  { path: CHECK_RESUME_AGAINST_JD_PATH, label: "Compare resume to job description" },
+  { path: RESUME_KEYWORD_SCANNER_PATH, label: "Resume keyword scanner" },
+  { path: ATS_RESUME_CHECKER_PATH, label: "ATS resume checker" },
+  { path: "/resume-keywords", label: "Resume keywords by role" },
+  ...ROLE_KEYWORD_HUB_LINKS,
+  ...ALT_ROLE_KEYWORD_HUB_LINKS,
+  ...PILOT_KEYWORD_HUB_LINKS,
+];
+
 /**
  * Returns 5-8 related internal links for the given page path (dense semantic linking for topical authority).
  * Uses topic-based recommendations when available, then fills with rotated links. Excludes current page.
  */
 export function getRelatedResumeGuides(
   currentPath: string,
-  count: number = DEFAULT_RELATED_COUNT
+  count: number = DEFAULT_RELATED_COUNT,
+  scope: RelatedLinkScope = "all"
 ): InternalLink[] {
-  const normalized = currentPath.replace(/\/$/, "") || "/";
+  const normalized = normalizeInternalPath(currentPath);
+
+  if (scope === "toolsAndKeywords" && resolveRoleClusterKeyFromPath(normalized)) {
+    return filterToolsAndKeywordsLinks(getRoleClusterNavLinks(normalized), normalized).slice(0, count);
+  }
 
   if (resolveRoleClusterKeyFromPath(normalized)) {
     return getRoleClusterNavLinks(normalized).slice(0, count);
@@ -464,6 +522,7 @@ export function getRelatedResumeGuides(
     const p = semanticPaths[i];
     const link = PATH_BY_PATH[p];
     if (link && !seen.has(p)) {
+      if (scope === "toolsAndKeywords" && !isToolsAndKeywordsPath(p)) continue;
       seen.add(p);
       out.push(link);
     }
@@ -471,8 +530,13 @@ export function getRelatedResumeGuides(
 
   if (out.length >= count) return out;
 
-  const others = ALL_SEO_LINKS.filter((l) => {
-    const p = l.path.replace(/\/$/, "") || "/";
+  const pool =
+    scope === "toolsAndKeywords"
+      ? TOOL_AND_KEYWORD_FILL_LINKS
+      : ALL_SEO_LINKS;
+
+  const others = pool.filter((l) => {
+    const p = normalizeInternalPath(l.path);
     return p !== normalized && !seen.has(p);
   });
 

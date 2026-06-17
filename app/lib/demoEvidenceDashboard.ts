@@ -5,7 +5,9 @@ export const DEMO_EVIDENCE_DASHBOARD: EvidenceDashboard = {
   evidenceMatch: 76,
   snapshot: {
     evidenceMatch: 76,
-    impactCoverage: 58,
+    impactCoverage: 67,
+    experiencesWithMetrics: 2,
+    totalExperiences: 3,
     bulletsWithMetrics: 9,
     totalBullets: 22,
     architectureSignal: 72,
@@ -103,8 +105,22 @@ export const DEMO_EVIDENCE_DASHBOARD: EvidenceDashboard = {
   riskAreas: [
     "AWS: only listed in skills, not proven in project bullets",
     "LangChain: required in JD, not evidenced in resume (not invented)",
-    "Impact coverage low: many bullets lack measurable outcomes from your existing work",
+    "Impact coverage low: many roles lack measurable outcomes in project bullets",
   ],
+  roleFit: [
+    { role: "Head of AI", verdict: "strong", verdictLabel: "High chance of clearing" },
+    { role: "Director of GenAI", verdict: "strong", verdictLabel: "High chance of clearing" },
+    { role: "Applied AI Engineering Leader", verdict: "strong", verdictLabel: "High chance of clearing" },
+    { role: "GenAI Platform Architect", verdict: "strong", verdictLabel: "High chance of clearing" },
+    { role: "Principal AI Engineer", verdict: "good", verdictLabel: "Good" },
+    { role: "Senior Staff GenAI Engineer", verdict: "moderate", verdictLabel: "Moderate" },
+    {
+      role: "Hands-on LLM Engineer",
+      verdict: "needs_depth",
+      verdictLabel: "Needs more implementation depth",
+    },
+  ],
+  roleFitVersion: 2,
 };
 
 export const DEMO_EVIDENCE_BULLET_PREVIEW = {

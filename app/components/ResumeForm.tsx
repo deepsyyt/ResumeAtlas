@@ -561,7 +561,7 @@ export function ResumeForm({
                   2
                 </span>
                 <h3 className={stepTitleClass}>
-                  {isAtsCompliance ? "Job description (optional)" : "Job description"}
+                  {isKeywordScanner ? "Job posting" : isAtsCompliance ? "Job description (optional)" : "Job description"}
                 </h3>
               </div>
               <span className={`text-[10px] font-semibold sm:text-[11px] ${accent.pasteHint2}`}>
@@ -577,7 +577,7 @@ export function ResumeForm({
             ) : null}
             {isKeywordScanner ? (
               <p className="mb-2 text-[11px] leading-snug text-slate-600 sm:text-xs">
-                Keywords and skills are compared against this posting text.
+                We extract keywords from this posting and flag gaps in your resume.
               </p>
             ) : null}
             <Controller
@@ -597,7 +597,7 @@ export function ResumeForm({
                         isAtsCompliance
                           ? "Optional — add a job description for keyword alignment"
                           : isKeywordScanner
-                            ? "Paste the full job description…"
+                            ? "Paste the full job posting…"
                             : "Paste the job description you're targeting…"
                       }
                       disabled={isGenerating}

@@ -127,12 +127,12 @@ export function evidenceMatchWeights(level: JdRoleLevel): {
       };
     case "leadership":
       return {
-        jdSkillProof: 0.24,
-        impactCoverage: 0.16,
-        architectureSignal: 0.1,
-        leadershipSignal: 0.14,
-        deploymentSignal: 0.12,
-        seniorityAlignment: 0.24,
+        jdSkillProof: 0.32,
+        impactCoverage: 0.14,
+        architectureSignal: 0.09,
+        leadershipSignal: 0.13,
+        deploymentSignal: 0.11,
+        seniorityAlignment: 0.21,
       };
   }
 }

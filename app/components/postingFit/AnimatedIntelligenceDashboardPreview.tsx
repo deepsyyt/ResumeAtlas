@@ -1,17 +1,26 @@
 "use client";
 
 import { HeroDashboardPreview } from "@/app/components/postingFit/HeroDashboardPreview";
+import { HeroKeywordScannerPreview } from "@/app/components/postingFit/HeroKeywordScannerPreview";
 import { TypewriterStatus } from "@/app/components/postingFit/TypewriterStatus";
 
 type Props = {
   hint?: string;
   isAnalyzing?: boolean;
+  previewVariant?: "fullDashboard" | "keywordScanner";
 };
 
 /**
- * Tool-page empty preview — full sample dashboard with intro typewriter above the demo.
+ * Tool-page empty preview — sample readout with intro typewriter above the demo.
  */
-export function AnimatedIntelligenceDashboardPreview({ hint, isAnalyzing = false }: Props) {
+export function AnimatedIntelligenceDashboardPreview({
+  hint,
+  isAnalyzing = false,
+  previewVariant = "fullDashboard",
+}: Props) {
+  const Preview =
+    previewVariant === "keywordScanner" ? HeroKeywordScannerPreview : HeroDashboardPreview;
+
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="relative flex min-h-0 flex-1 flex-col px-3 py-3 sm:px-4 sm:py-4">
@@ -38,7 +47,7 @@ export function AnimatedIntelligenceDashboardPreview({ hint, isAnalyzing = false
               isAnalyzing ? "scale-[1.01] opacity-100" : "opacity-[0.95]"
             }`}
           >
-            <HeroDashboardPreview variant="tool" />
+            <Preview variant="tool" />
           </div>
 
           <div

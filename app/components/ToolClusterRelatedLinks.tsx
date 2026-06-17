@@ -37,13 +37,13 @@ export function ToolClusterRelatedLinks({ currentPath }: Props) {
       <p className="mt-2 text-sm text-slate-600">
         {isKeywordScanner ? (
           <>
-            This page focuses on <strong className="text-slate-800">missing keywords</strong> vs one
-            posting. For full match scoring and AI optimization, use{" "}
+            This page extracts <strong className="text-slate-800">keywords from a job posting</strong> and
+            flags gaps in your resume. For evidence match and optimization, use the{" "}
             <Link
               href={CHECK_RESUME_AGAINST_JD_PATH}
               className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
             >
-              compare resume to job description
+              job description matcher
             </Link>
             . For parser and formatting risk, use the ATS checker.
           </>
