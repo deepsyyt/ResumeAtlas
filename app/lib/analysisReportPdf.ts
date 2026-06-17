@@ -10,7 +10,7 @@ import {
   SIGNALS_SECTION_TITLE,
   snapshotSummaryLine,
 } from "@/app/lib/evidenceMetricCopy";
-import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
+import type { EvidenceCategoryScore, EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
 import {
   ROLE_FIT_SECTION_INTRO,
   ROLE_FIT_SECTION_TITLE,
@@ -38,6 +38,8 @@ const FOOTER_H = 28;
 const FOOTER_Y = PAGE_H - MARGIN - FOOTER_H;
 
 export const PDF_AREAS_TO_STRENGTHEN_TITLE = "Areas to strengthen";
+const JD_TOPICS_SECTION_TITLE = "Topics this job cares about";
+const JD_TOPICS_SECTION_INTRO = "How much your resume talks about each theme the JD mentions.";
 
 const COLORS = {
   indigo900: "#312e81",
@@ -297,6 +299,56 @@ function drawSkillPills(d: PdfDoc, x: number, y: number, w: number, skills: stri
   return cy + pillH;
 }
 
+function drawJdTopicsGrid(
+  d: PdfDoc,
+  x: number,
+  y: number,
+  w: number,
+  categories: EvidenceCategoryScore[]
+): number {
+  const cols = Math.min(4, Math.max(1, categories.length));
+  const gap = 6;
+  const cardW = (w - gap * (cols - 1)) / cols;
+  const cardH = 40;
+  const rows = Math.ceil(categories.length / cols);
+  let cursorY = y;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const index = row * cols + col;
+      if (index >= categories.length) break;
+
+      const cat = categories[index];
+      const style = getScoreStyle(cat.score);
+      const cx = x + col * (cardW + gap);
+      const cy = cursorY;
+
+      d.save();
+      d.roundedRect(cx, cy, cardW, cardH, 4).fill(COLORS.white);
+      d.roundedRect(cx, cy, cardW, cardH, 4).lineWidth(0.5).strokeColor(COLORS.indigo100).stroke();
+      d.restore();
+
+      d.font("Helvetica-Bold").fontSize(6.5).fillColor(COLORS.indigo900);
+      d.text(cat.category, cx + 5, cy + 4, { width: cardW - 10, align: "center", lineGap: 0 });
+
+      d.font("Helvetica-Bold").fontSize(9).fillColor(style.hex);
+      d.text(`${cat.score}%`, cx + 5, cy + 13, { width: cardW - 10, align: "center", lineGap: 0 });
+
+      drawMiniBar(d, cx + 6, cy + 24, cardW - 12, cat.score, style.hex, 3);
+
+      d.font("Helvetica").fontSize(5).fillColor(COLORS.slate500);
+      d.text(truncateText(cat.detail, 55), cx + 4, cy + 29, {
+        width: cardW - 8,
+        align: "center",
+        lineGap: 0,
+      });
+    }
+    cursorY += cardH + gap;
+  }
+
+  return cursorY;
+}
+
 export function renderAnalysisReportPdf(input: AnalysisReportPdfInput): Promise<Buffer> {
   const { analyzeResult: r, evidenceDashboard: dash } = input;
   const evidenceStyle = getScoreStyle(dash.evidenceMatch);
@@ -399,18 +451,22 @@ export function renderAnalysisReportPdf(input: AnalysisReportPdfInput): Promise<
   const roleFitRows = dash.roleFit ?? [];
   const riskAreas = dash.riskAreas ?? [];
   const matchedSkills = r.matched_skills ?? [];
+  const jdTopics = dash.categories ?? [];
 
   const metricRows = Math.ceil(metrics.length / 2);
   const roleFitRowH = roleFitRows.length > 0 ? 16 : 0;
   const areasCount = Math.max(riskAreas.length, 1);
   const hasSkills = matchedSkills.length > 0;
+  const hasTopics = jdTopics.length > 0;
+  const topicCols = Math.min(4, Math.max(1, jdTopics.length));
+  const topicRows = hasTopics ? Math.ceil(jdTopics.length / topicCols) : 0;
   const skillsPerRow = Math.max(4, Math.floor(w / 72));
   const skillRowCount = hasSkills ? Math.ceil(matchedSkills.length / skillsPerRow) : 0;
   const skillPillRowH = matchedSkills.length > 18 ? 17 : 21;
 
   const bottomSectionsH =
-    15 +
-    (riskAreas.length > 0 ? 20 + areasCount * 14 + 24 : 0) +
+    (hasTopics ? 15 + 10 + topicRows * 46 + 10 : 0) +
+    (riskAreas.length > 0 ? 15 + 20 + areasCount * 14 + 24 : 0) +
     (hasSkills ? 15 + skillRowCount * skillPillRowH : 0) +
     8;
   const metricsAvailableH = FOOTER_Y - bodyTop - bottomSectionsH - (roleFitRows.length > 0 ? 30 + 16 + roleFitRows.length * roleFitRowH : 40);
@@ -441,6 +497,14 @@ export function renderAnalysisReportPdf(input: AnalysisReportPdfInput): Promise<
   }
 
   let contentY = Math.max(leftY, rightY) + 10;
+
+  if (hasTopics) {
+    contentY = drawSectionLabel(doc, left, contentY, w, JD_TOPICS_SECTION_TITLE) + 2;
+    doc.font("Helvetica").fontSize(6).fillColor(COLORS.slate500);
+    doc.text(JD_TOPICS_SECTION_INTRO, left, contentY, { width: w, lineGap: 0.5 });
+    contentY += doc.heightOfString(JD_TOPICS_SECTION_INTRO, { width: w, lineGap: 0.5 }) + 6;
+    contentY = drawJdTopicsGrid(doc, left, contentY, w, jdTopics) + 8;
+  }
 
   if (riskAreas.length > 0) {
     contentY = drawSectionLabel(doc, left, contentY, w, PDF_AREAS_TO_STRENGTHEN_TITLE) + 4;
