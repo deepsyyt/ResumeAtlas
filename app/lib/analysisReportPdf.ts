@@ -10,6 +10,7 @@ import {
   snapshotSummaryLine,
 } from "@/app/lib/evidenceMetricCopy";
 import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
+import { recommendedFixActionLabel, resolveDashboardRecommendedFixes } from "@/app/lib/recommendedFixes";
 import {
   ROLE_FIT_SECTION_INTRO,
   ROLE_FIT_SECTION_TITLE,
@@ -355,7 +356,9 @@ export function renderAnalysisReportPdf(input: AnalysisReportPdfInput): Promise<
 
   const roleFitRows = dash.roleFit ?? [];
   const mostMissingEvidence = dash.mostMissingEvidence ?? [];
-  const riskAreas = dash.riskAreas ?? [];
+  const riskAreas = resolveDashboardRecommendedFixes(dash.riskAreas).map((fix) =>
+    recommendedFixActionLabel(fix)
+  );
   const matchedSkills = r.matched_skills ?? [];
   const hasSkills = matchedSkills.length > 0;
 

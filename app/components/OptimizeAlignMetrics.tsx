@@ -27,12 +27,13 @@ export function OptimizeAlignMetrics({
   const gradientId = useId().replace(/:/g, "");
   const trackId = useId().replace(/:/g, "");
   const pct = Math.max(0, Math.min(100, Math.round(projectedPct)));
-  const [animatedPct, setAnimatedPct] = useState(0);
+  const [animatedPct, setAnimatedPct] = useState(pct);
 
   useEffect(() => {
+    if (animatedPct === pct) return;
     const timer = window.setTimeout(() => setAnimatedPct(pct), 80);
     return () => window.clearTimeout(timer);
-  }, [pct]);
+  }, [animatedPct, pct]);
 
   const cx = 140;
   const cy = 118;

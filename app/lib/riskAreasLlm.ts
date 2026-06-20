@@ -2,11 +2,19 @@ import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
 import { resolveSkillProofRow } from "@/app/lib/jdSkillProofStatus";
 import { parseAnthropicErrorType } from "@/app/lib/anthropicModels";
 import { inferRiskAreasHeuristic } from "@/app/lib/resumeEvidenceScore";
+import {
+  dedupeRecommendedFixes,
+  extractResumePlacementTargets,
+  isStructuredRecommendedFixes,
+  normalizeRecommendedFix,
+  type RecommendedFix,
+  validateRecommendedFixTargets,
+} from "@/app/lib/recommendedFixes";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 
 /** Bump when prompt/calibration changes — forces refresh of cached fix recommendations. */
-export const RISK_AREAS_VERSION = 1;
+export const RISK_AREAS_VERSION = 3;
 
 export const RISK_AREAS_MIN = 3;
 export const RISK_AREAS_MAX = 5;
@@ -18,20 +26,30 @@ Return ONLY valid JSON. No markdown, no explanation outside JSON.
 Output format:
 {
   "recommended_fixes": [
-    "Surface AWS in a project bullet with a shipped outcome if you used it — skills-list only reads weak for this JD",
-    "Add one quantified result to your top GenAI bullet (latency, accuracy, adoption, or revenue impact you can defend)"
+    {
+      "action": "Add Kubernetes deployment proof with a shipped outcome",
+      "target": "Conde Nast",
+      "section": "experience",
+      "detail": "JD requires deep cloud-native delivery; surface orchestration or pipeline work you can defend"
+    },
+    {
+      "action": "Quantify GenAI impact in your strongest ML bullet",
+      "target": "Senior Data Scientist",
+      "section": "experience",
+      "detail": "Add latency, accuracy, adoption, or revenue impact you can defend"
+    }
   ]
 }
 
 Rules:
 - Return ${RISK_AREAS_MIN} to ${RISK_AREAS_MAX} items, ordered by impact on shortlist odds for THIS role.
-- Each item is one actionable resume edit the candidate can make before applying.
-- Write as imperative coaching: what to change in the resume and why it helps for THIS JD.
+- "action": imperative coaching — what to change (max 110 chars). Do NOT repeat the company name if "target" is set.
+- "target": MUST be an exact company, role title, or project name from the RESUME ROLES list in the user message. Omit or null if the fix applies to summary/skills only.
+- "section": one of "experience" | "summary" | "skills" | "projects".
+- "detail": optional one-line why for this JD (max 90 chars).
 - Base fixes only on gaps between the resume and job description — never invent skills, tools, or experience.
-- Prefer: move skills into bullets, add metrics to existing work, surface indirect proof, align summary/title, strengthen thin topic proof.
+- Each fix must target a different gap. Never repeat the same theme twice.
 - Do NOT repeat generic ATS advice ("improve formatting", "use keywords").
-- Do NOT duplicate top rejection risks verbatim — fixes should tell them what TO DO, not only what is missing.
-- Max 140 characters per item.
 - Forbidden: inventing credentials, claiming experience they do not have, vague "improve your resume".`;
 
 function extractJson(raw: string): string {
@@ -43,20 +61,7 @@ function extractJson(raw: string): string {
   return str.slice(start, end);
 }
 
-function normalizeFixItem(raw: string): string | null {
-  let item = String(raw ?? "")
-    .replace(/^\s*\d+[.)]\s*/, "")
-    .replace(/^[-•*]\s*/, "")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (!item || item.length < 12) return null;
-  if (item.length > 140) item = `${item.slice(0, 137).trim()}…`;
-  if (/^(required|preferred|qualifications?|responsibilities?)\b/i.test(item)) return null;
-  return item;
-}
-
-export function parseRecommendedFixes(payload: unknown): string[] {
+export function parseRecommendedFixes(payload: unknown): RecommendedFix[] {
   if (!payload || typeof payload !== "object") return [];
   const obj = payload as {
     recommended_fixes?: unknown;
@@ -71,18 +76,20 @@ export function parseRecommendedFixes(payload: unknown): string[] {
         ? obj.fixes
         : [];
 
+  const out: RecommendedFix[] = [];
   const seen = new Set<string>();
-  const out: string[] = [];
+
   for (const item of raw) {
-    const clean = normalizeFixItem(String(item ?? ""));
-    if (!clean) continue;
-    const key = clean.toLowerCase();
+    const fix = normalizeRecommendedFix(item);
+    if (!fix) continue;
+    const key = `${fix.action}::${fix.target ?? ""}`.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
-    out.push(clean);
+    out.push(fix);
     if (out.length >= RISK_AREAS_MAX) break;
   }
-  return out;
+
+  return dedupeRecommendedFixes(out);
 }
 
 function buildUserContent(args: {
@@ -91,6 +98,7 @@ function buildUserContent(args: {
   jobDescription: string;
   targetRoleTitle?: string;
   missingSkills: string[];
+  resumeRoles: string[];
 }): string {
   const skillRows = args.dashboard.skillProofAll ?? args.dashboard.skillProof;
   const weakSkills = skillRows
@@ -102,7 +110,8 @@ function buildUserContent(args: {
     .map((row) => {
       const { proofStatus } = resolveSkillProofRow(row);
       const why = row.whyDetail?.trim();
-      return `- ${row.skill}: ${proofStatus}${why ? ` — ${why}` : ""}`;
+      const hint = row.evidenceHint?.trim();
+      return `- ${row.skill}: ${proofStatus}${hint ? ` @ ${hint}` : ""}${why ? ` — ${why}` : ""}`;
     })
     .join("\n");
 
@@ -111,12 +120,20 @@ function buildUserContent(args: {
     .map((r) => `- ${r}`)
     .join("\n");
 
+  const resumeRoles =
+    args.resumeRoles.length > 0
+      ? args.resumeRoles.map((r) => `- ${r}`).join("\n")
+      : "(parse from resume text)";
+
   return `TARGET ROLE: ${args.targetRoleTitle?.trim() || "(from job description)"}
 
 EVIDENCE MATCH: ${args.dashboard.evidenceMatch}%
 - JD skills in bullets: ${args.dashboard.snapshot.jdSkillProof}%
 - Impact coverage: ${args.dashboard.snapshot.impactCoverage}%
 - Seniority alignment: ${args.dashboard.seniority.score}%
+
+RESUME ROLES (use ONLY these for "target"):
+${resumeRoles}
 
 WEAK / MISSING KEYWORDS (fix opportunities):
 ${weakSkills || "(none flagged)"}
@@ -142,7 +159,8 @@ export async function fetchRecommendedFixesLlm(args: {
   dashboard: EvidenceDashboard;
   missingSkills: string[];
   targetRoleTitle?: string;
-}): Promise<string[]> {
+  resumeRoles: string[];
+}): Promise<RecommendedFix[]> {
   const userContent = buildUserContent(args);
 
   let response: Response | null = null;
@@ -158,7 +176,7 @@ export async function fetchRecommendedFixesLlm(args: {
       },
       body: JSON.stringify({
         model: candidateModel,
-        max_tokens: 500,
+        max_tokens: 700,
         temperature: 0,
         system: SYSTEM_PROMPT,
         messages: [{ role: "user" as const, content: userContent }],
@@ -181,7 +199,7 @@ export async function fetchRecommendedFixesLlm(args: {
 
   if (!response?.ok) {
     console.error("[risk-areas] LLM call failed; using heuristic fallback");
-    return inferRiskAreasHeuristic(args.dashboard);
+    return inferRiskAreasHeuristic(args.dashboard, args.resumeText);
   }
 
   try {
@@ -194,19 +212,23 @@ export async function fetchRecommendedFixesLlm(args: {
           | undefined
       )?.text?.trim() ?? "";
     const parsed = JSON.parse(extractJson(text));
-    const items = parseRecommendedFixes(parsed);
+    let items = validateRecommendedFixTargets(parseRecommendedFixes(parsed), args.resumeText);
+
     if (items.length >= RISK_AREAS_MIN) return items;
 
-    const fallback = inferRiskAreasHeuristic(args.dashboard);
+    const fallback = inferRiskAreasHeuristic(args.dashboard, args.resumeText);
     for (const item of fallback) {
       if (items.length >= RISK_AREAS_MAX) break;
-      if (!items.some((x) => x.toLowerCase() === item.toLowerCase())) items.push(item);
+      const key = `${item.action}::${item.target ?? ""}`.toLowerCase();
+      if (!items.some((x) => `${x.action}::${x.target ?? ""}`.toLowerCase() === key)) {
+        items.push(item);
+      }
     }
-    return items.slice(0, RISK_AREAS_MAX);
+    return dedupeRecommendedFixes(items).slice(0, RISK_AREAS_MAX);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[risk-areas] Failed to parse LLM JSON", msg);
-    return inferRiskAreasHeuristic(args.dashboard);
+    return inferRiskAreasHeuristic(args.dashboard, args.resumeText);
   }
 }
 
@@ -222,12 +244,20 @@ export async function attachRiskAreasToEvidenceDashboard(args: {
   if (
     Array.isArray(args.dashboard.riskAreas) &&
     args.dashboard.riskAreas.length > 0 &&
-    args.dashboard.riskAreasVersion === RISK_AREAS_VERSION
+    args.dashboard.riskAreasVersion === RISK_AREAS_VERSION &&
+    isStructuredRecommendedFixes(args.dashboard.riskAreas)
   ) {
     return args.dashboard;
   }
 
-  const riskAreas = await fetchRecommendedFixesLlm(args);
+  const resumeRoles = extractResumePlacementTargets(args.resumeText);
+
+  const riskAreas = dedupeRecommendedFixes(
+    await fetchRecommendedFixesLlm({
+      ...args,
+      resumeRoles,
+    })
+  );
 
   return {
     ...args.dashboard,

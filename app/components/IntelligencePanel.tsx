@@ -25,6 +25,7 @@ import {
 import { buildKeywordCoverageMetricInput } from "@/app/lib/evidenceMetricCopy";
 import { buildKeywordCoverageMetricFromSkillProof } from "@/app/lib/skillProofLlm";
 import { EvidenceIntelligenceSection } from "@/app/components/EvidenceIntelligenceSection";
+import type { RecommendedFix } from "@/app/lib/recommendedFixes";
 import type { OptimizationClickSurface } from "@/app/lib/analyticsEvents";
 import { AnalysisPreviewIntroBanner } from "@/app/components/postingFit/AnalysisPreviewIntroBanner";
 import { AnimatedIntelligenceDashboardPreview } from "@/app/components/postingFit/AnimatedIntelligenceDashboardPreview";
@@ -56,8 +57,8 @@ type IntelligencePanelProps = {
   isAnalyzing?: boolean;
   /** Tool workbench: compact, non-scrolling result preview with optimize CTA above. */
   compactToolResult?: boolean;
-  selectedRecommendedFixes?: string[];
-  onSelectedRecommendedFixesChange?: (fixes: string[]) => void;
+  selectedRecommendedFixes?: RecommendedFix[];
+  onSelectedRecommendedFixesChange?: (fixes: RecommendedFix[]) => void;
   optimizeDisabled?: boolean;
   optimizeBusy?: boolean;
 };

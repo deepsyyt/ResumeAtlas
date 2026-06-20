@@ -26,6 +26,8 @@ type OptimizeCtaProps = {
   disabled?: boolean;
   variant?: "green" | "purple";
   showSparkle?: boolean;
+  /** Live dashboard: disable infinite chevron nudge (reduces perceived layout jitter). */
+  steadyChevrons?: boolean;
 };
 
 export function OptimizeCta({
@@ -36,6 +38,7 @@ export function OptimizeCta({
   disabled = false,
   variant = "green",
   showSparkle = false,
+  steadyChevrons = false,
 }: OptimizeCtaProps) {
   return (
     <button
@@ -44,7 +47,7 @@ export function OptimizeCta({
       disabled={disabled}
       className={`optimize-cta optimize-cta-${size} ${
         variant === "purple" ? "optimize-cta-purple" : ""
-      } ${className}`}
+      } ${steadyChevrons ? "optimize-cta--steady" : ""} ${className}`}
     >
       <span className="optimize-cta-label">
         {showSparkle ? <span className="optimize-cta-sparkle" aria-hidden>✨ </span> : null}

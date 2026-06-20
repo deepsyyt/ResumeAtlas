@@ -24,8 +24,11 @@ export type OptimizeBenefitItem = {
   featured?: boolean;
 };
 
-export function recommendedFixShortTitle(fix: string, maxLen = 52): string {
-  const trimmed = fix.trim();
+import type { RecommendedFix } from "@/app/lib/recommendedFixes";
+
+export function recommendedFixShortTitle(fix: RecommendedFix | string, maxLen = 52): string {
+  const trimmed =
+    typeof fix === "string" ? fix.trim() : fix.action.trim();
   const dashSplit = trimmed.split(/\s*[—–-]\s+/);
   const head = (dashSplit[0] ?? trimmed).trim();
   if (head.length <= maxLen) return head;

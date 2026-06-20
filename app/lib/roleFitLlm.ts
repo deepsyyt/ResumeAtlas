@@ -1,4 +1,5 @@
 import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
+import { recommendedFixActionLabel, resolveDashboardRecommendedFixes } from "@/app/lib/recommendedFixes";
 import { parseAnthropicErrorType } from "@/app/lib/anthropicModels";
 import {
   PARALLEL_ROLE_COUNT,
@@ -356,7 +357,7 @@ function buildEvidenceContext(dashboard: EvidenceDashboard): string {
 - Leadership scope fit: ${s.seniorityAlignment}% (${sen.roleLevelLabel})
 - JD skills in bullets: ${s.jdSkillProof}% (${s.jdSkillsProved}/${s.jdSkillsTotal} skills)
 - Evidence match overall: ${dashboard.evidenceMatch}%
-${dashboard.riskAreas.length > 0 ? `- Key gaps: ${dashboard.riskAreas.slice(0, 3).join("; ")}` : ""}`;
+${resolveDashboardRecommendedFixes(dashboard.riskAreas).length > 0 ? `- Key gaps: ${resolveDashboardRecommendedFixes(dashboard.riskAreas).slice(0, 3).map((fix) => recommendedFixActionLabel(fix)).join("; ")}` : ""}`;
 }
 
 export async function fetchRoleFitVerdictsLlm(args: {

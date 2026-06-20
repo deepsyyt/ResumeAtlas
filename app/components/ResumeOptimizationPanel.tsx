@@ -21,6 +21,10 @@ import { extractFixHighlightKeywords } from "@/app/lib/recommendedFixes";
 
 import { describeJdGapEvidence, type JdGapDetail } from "@/app/lib/skillGapRules";
 import type { OptimizedSkillProofRow } from "@/app/lib/resumeEvidenceScore";
+import {
+  recommendedFixToOptimizeText,
+  type RecommendedFix,
+} from "@/app/lib/recommendedFixes";
 
 export type ResumeOptimizationPanelProps = {
   surfacedKeywords: string[];
@@ -34,10 +38,10 @@ export type ResumeOptimizationPanelProps = {
   evidenceMatchDelta?: number;
   atsScoreReference?: number;
   weakKeywordsStrengthened?: number;
-  /** Recommended fixes the user selected before optimize. */
+  /** Recommended fixes the user selected before optimize (optimize text lines). */
   selectedFixes?: string[];
   /** All recommended fixes from analyze (for unselected count). */
-  availableRecommendedFixes?: string[];
+  availableRecommendedFixes?: RecommendedFix[];
   onDownloadPdf: () => void;
   onDownloadDocx: () => void;
   onScrollToPreview?: () => void;
@@ -218,7 +222,7 @@ export function ResumeOptimizationPanel({
   const kwCount = surfacedKeywords.length;
   const selectedSet = new Set(selectedFixes.map((f) => f.trim().toLowerCase()));
   const unselectedFixes = availableRecommendedFixes.filter(
-    (f) => !selectedSet.has(f.trim().toLowerCase())
+    (fix) => !selectedSet.has(recommendedFixToOptimizeText(fix).trim().toLowerCase())
   );
 
   const benefits = buildOptimizeBenefitItems({

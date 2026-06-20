@@ -159,7 +159,8 @@
     .analysis-report-cta,
     .analysis-report-cta-shine,
     .optimize-cta,
-    .optimize-cta-chevrons {
+    .optimize-cta-chevrons,
+    .optimize-cta--steady .optimize-cta-chevrons {
       animation: none;
     }
   }
@@ -295,6 +296,16 @@
     filter: drop-shadow(0 1px 0 rgba(0, 70, 28, 0.2));
     transition: transform 0.22s ease;
     animation: optimize-cta-chevron-nudge 1.6s ease-in-out infinite;
+  }
+
+  .optimize-cta--steady .optimize-cta-chevrons {
+    animation: none;
+  }
+
+  .dashboard-live-stable .optimize-align-panel-in,
+  .dashboard-live-stable .optimize-align-preview-in,
+  .dashboard-live-stable .optimize-align-pill-in {
+    animation: none;
   }
 
   .optimize-cta-chevron-svg {

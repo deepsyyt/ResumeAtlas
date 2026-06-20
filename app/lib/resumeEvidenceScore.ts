@@ -18,6 +18,8 @@ import { classifyJdDomain } from "@/app/lib/jdDomainClass";
 import type { ApplicationVerdictLlm } from "@/app/lib/applicationVerdictLlm";
 import type { KeywordCoverageVerdict } from "@/app/lib/skillProofLlm";
 import type { RoleFitRow } from "@/app/lib/roleFitArchetypes";
+import type { RecommendedFix } from "@/app/lib/recommendedFixes";
+import { validateRecommendedFixTargets } from "@/app/lib/recommendedFixes";
 import type {
   JdSkillProofStatus,
   SkillOptimizeAction,
@@ -93,7 +95,7 @@ export type EvidenceDashboard = {
   jdDomain?: JdDomain;
   /** JD-specific topic coverage — populated by LLM in /api/analyze. */
   jdTopicsVersion?: number;
-  riskAreas: string[];
+  riskAreas: RecommendedFix[];
   /** Bumped when fix-before-apply prompt/calibration changes. */
   riskAreasVersion?: number;
   /** Top rejection risks for this posting — populated by LLM in /api/analyze. */
@@ -688,8 +690,8 @@ function buildRiskAreas(
   skillProof: JdSkillEvidenceRow[],
   snapshot: EvidenceSnapshot,
   seniority: SeniorityAlignment
-): string[] {
-  const risks: string[] = [];
+): RecommendedFix[] {
+  const risks: RecommendedFix[] = [];
   const level = seniority.roleLevel;
 
   const weakRequired = skillProof.filter(
@@ -700,43 +702,87 @@ function buildRiskAreas(
         s.proofStatus === "implied")
   );
   for (const s of weakRequired.slice(0, 3)) {
+    const target = s.evidenceHint?.trim() || null;
+    const section =
+      s.evidenceLocation === "summary"
+        ? "summary"
+        : s.evidenceLocation === "skills_only"
+          ? "skills"
+          : "experience";
+
     if (s.proofStatus === "missing") {
-      risks.push(`${s.skill}: required in JD, not evidenced in resume (not invented)`);
+      risks.push({
+        action: `Strengthen ${s.skill} proof in a work bullet (required for this JD)`,
+        target,
+        section,
+        detail: "Not evidenced in resume — do not invent experience",
+      });
     } else if (s.proofStatus === "implied") {
-      risks.push(`${s.skill}: indirect evidence only, surface in work bullets`);
+      risks.push({
+        action: `Surface ${s.skill} in a project bullet with a concrete outcome`,
+        target,
+        section: "experience",
+        detail: "Only indirect evidence found today",
+      });
     } else if (s.evidenceLocation === "skills_only") {
-      risks.push(`${s.skill}: only listed in skills, not proven in project bullets`);
+      risks.push({
+        action: `Move ${s.skill} from your skills list into a work bullet`,
+        target,
+        section: "experience",
+        detail: "Skills-list-only reads weak for this posting",
+      });
     } else {
-      risks.push(`${s.skill}: only in summary, not proven in work bullets`);
+      risks.push({
+        action: `Prove ${s.skill} in a work bullet, not only in summary text`,
+        target,
+        section: "experience",
+      });
     }
   }
 
   if (snapshot.impactCoverage < 55) {
-    risks.push(
-      "Impact coverage low: many project bullets lack measurable outcomes or clear business results"
-    );
+    risks.push({
+      action: "Add measurable outcomes to thin project bullets",
+      section: "experience",
+      detail: "Impact coverage is low for this posting",
+    });
   }
 
   for (const gap of seniority.gaps.slice(0, 2)) {
-    risks.push(gap);
+    risks.push({
+      action: gap.replace(/^Add:\s*/i, "Add ").trim(),
+      section: "experience",
+    });
   }
 
   if (level !== "leadership" && snapshot.deploymentSignal < 45 && snapshot.deploymentSignal > 0) {
-    risks.push("Production or delivery signal weak: surface shipped work, tools, or outcomes from real projects");
+    risks.push({
+      action: "Surface shipped work, tools, or delivery outcomes from real projects",
+      section: "experience",
+      detail: "Production or delivery signal is weak",
+    });
   } else if (level === "leadership" && snapshot.deploymentSignal < 35) {
-    risks.push("Delivery outcomes weak: quantify program or team results where truthful");
+    risks.push({
+      action: "Quantify program or team delivery results where truthful",
+      section: "experience",
+    });
   }
 
   return risks.slice(0, 5);
 }
 
 /** Heuristic fallback for recommended fixes when LLM is unavailable. */
-export function inferRiskAreasHeuristic(dashboard: EvidenceDashboard): string[] {
-  return buildRiskAreas(
+export function inferRiskAreasHeuristic(
+  dashboard: EvidenceDashboard,
+  resumeText = ""
+): RecommendedFix[] {
+  const fixes = buildRiskAreas(
     dashboard.skillProofAll ?? dashboard.skillProof,
     dashboard.snapshot,
     dashboard.seniority
   );
+  if (!resumeText.trim()) return fixes;
+  return validateRecommendedFixTargets(fixes, resumeText);
 }
 
 function computeSnapshot(

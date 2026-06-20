@@ -6,6 +6,7 @@ import {
 } from "@/app/components/OptimizeAlignCard";
 import { OptimizeCta } from "@/app/components/EvidenceMetricBar";
 import type { ApplicationVerdict } from "@/app/lib/applicationVerdict";
+import type { RecommendedFix } from "@/app/lib/recommendedFixes";
 import { OPTIMIZE_ALIGN_CARD_TITLE, OPTIMIZE_CTA_LABEL_HERO } from "@/app/lib/evidenceMetricCopy";
 
 export type OptimizeDashboardNudgeModalProps = {
@@ -13,8 +14,8 @@ export type OptimizeDashboardNudgeModalProps = {
   onDismiss: () => void;
   onOptimize: () => void | Promise<void>;
   verdict: ApplicationVerdict;
-  selectedFixes: string[];
-  allFixes: string[];
+  selectedFixes: RecommendedFix[];
+  allFixes: RecommendedFix[];
   bulletPreview?: AlignBulletPreview | null;
   isBusy?: boolean;
   /** Shown after a paid scan when 1 credit was deducted at dashboard generation. */

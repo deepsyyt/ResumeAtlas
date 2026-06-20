@@ -29,22 +29,22 @@ export const ANALYSIS_REPORT_SUBTITLE =
 
 export const OPTIMIZE_CTA_LABEL = "Increase shortlist odds";
 export const OPTIMIZE_CTA_LABEL_HERO = "Optimize Now";
-export const OPTIMIZE_CTA_SUBLINE = "Critical gaps can be improved";
+export const OPTIMIZE_CTA_SUBLINE = "Strengthen proof before you apply";
 export const OPTIMIZE_ALIGN_PRIVACY_NOTE = "Your data is private and secure.";
 
 export const OPTIMIZE_ALIGN_CARD_TITLE = "Align before you apply";
 export const OPTIMIZE_ALIGN_CARD_BODY =
-  "Recommended fixes are pre-selected for this role. Optimize to strengthen proof before you apply.";
+  "Your selected fixes become sharper bullets and clearer proof for this job—targeted edits, nothing invented.";
 export const OPTIMIZE_ALIGN_CARD_HINT =
   "Select at least one recommended fix on the left.";
 export const OPTIMIZE_ALIGN_CARD_DEMO_HINT =
   "Run a check to see recommended fixes pre-selected here.";
-export const OPTIMIZE_ALIGN_BENEFITS_TITLE = "What you'll get after optimize";
+export const OPTIMIZE_ALIGN_BENEFITS_TITLE = "What you get when you optimize";
 export const OPTIMIZE_ALIGN_BENEFITS = [
-  "Critical skill representation improved in your bullets",
-  "One impact-focused bullet refined per project (not every line)",
-  "Weak keyword skills strengthened where evidence already exists",
-  "Missing skills are never invented — gaps stay honest",
+  "Skills moved from your list into your bullets",
+  "One stronger bullet per role: focused edits, not a full rewrite",
+  "Thin proof strengthened only where your resume already supports it",
+  "Rejection risks from your scan addressed in the right bullets",
 ] as const;
 export const OPTIMIZE_ALIGN_SELECTION_TITLE = "Recommended fixes";
 export const OPTIMIZE_ALIGN_PREVIEW_TITLE = "Bullet preview";

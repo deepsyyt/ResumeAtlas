@@ -8,20 +8,39 @@ import {
 } from "@/app/lib/evidenceMetricCopy";
 import {
   distributeFixUplift,
-  recommendedFixChipLabel,
+  recommendedFixActionLabel,
   recommendedFixKey,
+  recommendedFixPlacementLabel,
+  type RecommendedFix,
   selectedFixUpliftTotal,
 } from "@/app/lib/recommendedFixes";
 
 type RecommendedFixesSectionProps = {
-  fixes: string[];
+  fixes: RecommendedFix[];
   verdict: ApplicationVerdict;
   className?: string;
-  selectedFixes?: string[];
-  onSelectionChange?: (fixes: string[]) => void;
+  selectedFixes?: RecommendedFix[];
+  onSelectionChange?: (fixes: RecommendedFix[]) => void;
   /** Sample dashboard: all fixes appear selected without parent state. */
   demo?: boolean;
 };
+
+function FixPlacementTooltip({ fix }: { fix: RecommendedFix }) {
+  const placement = recommendedFixPlacementLabel(fix);
+  const detail = fix.detail?.trim();
+
+  return (
+    <span
+      className="pointer-events-none absolute left-0 top-full z-20 mt-1 hidden w-[min(100%,16rem)] rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-left shadow-lg group-hover/fix:block group-focus-within/fix:block"
+      role="tooltip"
+    >
+      <span className="block text-[10px] font-semibold leading-snug text-slate-900">{placement}</span>
+      {detail ? (
+        <span className="mt-1 block text-[10px] leading-snug text-slate-600">{detail}</span>
+      ) : null}
+    </span>
+  );
+}
 
 export function RecommendedFixesSection({
   fixes,
@@ -31,7 +50,7 @@ export function RecommendedFixesSection({
   onSelectionChange,
   demo = false,
 }: RecommendedFixesSectionProps) {
-  const fixesKey = useMemo(() => fixes.join("\0"), [fixes]);
+  const fixesKey = useMemo(() => fixes.map(recommendedFixKey).join("\0"), [fixes]);
   const [internalSelected, setInternalSelected] = useState<Set<string>>(() => new Set());
 
   const isControlled = onSelectionChange != null;
@@ -54,12 +73,13 @@ export function RecommendedFixesSection({
     [fixes.length, verdict.shortlistUplift]
   );
 
+  const selectedList = fixes.filter((f) => selectedSet.has(recommendedFixKey(f)));
   const projectedUplift = demo
     ? verdict.shortlistUplift
-    : selectedFixUpliftTotal(fixes, fixes.filter((f) => selectedSet.has(recommendedFixKey(f))), verdict);
+    : selectedFixUpliftTotal(fixes, selectedList, verdict);
 
   const toggleFix = useCallback(
-    (fix: string) => {
+    (fix: RecommendedFix) => {
       if (demo) return;
       const key = recommendedFixKey(fix);
       const next = new Set(selectedSet);
@@ -102,38 +122,40 @@ export function RecommendedFixesSection({
           const checked = selectedSet.has(recommendedFixKey(fix));
           const uplift = uplifts[index] ?? 0;
           return (
-            <button
-              key={fix}
-              type="button"
-              disabled={demo}
-              onClick={() => toggleFix(fix)}
-              title={fix}
-              className={`recommended-fix-toggle flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-left transition ${
-                checked
-                  ? "bg-emerald-50/90 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
-                  : "bg-slate-50/80 hover:bg-slate-100/80"
-              }`}
-              aria-pressed={checked}
-            >
-              <span
-                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px] font-bold ${
+            <div key={`${index}-${recommendedFixKey(fix)}`} className="group/fix relative">
+              <button
+                type="button"
+                disabled={demo}
+                onClick={() => toggleFix(fix)}
+                aria-label={`${recommendedFixActionLabel(fix)}. ${recommendedFixPlacementLabel(fix)}`}
+                className={`recommended-fix-toggle flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-left transition ${
                   checked
-                    ? "border-emerald-500 bg-emerald-500 text-white"
-                    : "border-slate-300 bg-white text-transparent"
+                    ? "bg-emerald-50/90 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                    : "bg-slate-50/80 hover:bg-slate-100/80"
                 }`}
-                aria-hidden
+                aria-pressed={checked}
               >
-                ✓
-              </span>
-              <span className="min-w-0 flex-1 text-[11px] font-medium leading-snug text-slate-800">
-                {recommendedFixChipLabel(fix, index)}
-              </span>
-              {uplift > 0 ? (
-                <span className="shrink-0 text-[10px] font-semibold tabular-nums text-emerald-700">
-                  (+{uplift}%)
+                <span
+                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px] font-bold ${
+                    checked
+                      ? "border-emerald-500 bg-emerald-500 text-white"
+                      : "border-slate-300 bg-white text-transparent"
+                  }`}
+                  aria-hidden
+                >
+                  ✓
                 </span>
-              ) : null}
-            </button>
+                <span className="min-w-0 flex-1 text-[11px] font-medium leading-snug text-slate-800">
+                  {recommendedFixActionLabel(fix)}
+                </span>
+                {uplift > 0 ? (
+                  <span className="shrink-0 text-[10px] font-semibold tabular-nums text-emerald-700">
+                    (+{uplift}%)
+                  </span>
+                ) : null}
+              </button>
+              <FixPlacementTooltip fix={fix} />
+            </div>
           );
         })}
       </div>

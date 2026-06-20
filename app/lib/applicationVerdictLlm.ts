@@ -1,4 +1,5 @@
 import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
+import { recommendedFixActionLabel, resolveDashboardRecommendedFixes } from "@/app/lib/recommendedFixes";
 import { resolveSkillProofRow } from "@/app/lib/jdSkillProofStatus";
 import { parseAnthropicErrorType } from "@/app/lib/anthropicModels";
 import type { ApplicationVerdictTier } from "@/app/lib/applicationVerdict";
@@ -151,7 +152,10 @@ TOP REJECTION RISKS:
 ${(args.dashboard.mostMissingEvidence ?? []).slice(0, 5).join("; ") || "(none)"}
 
 RECOMMENDED FIXES:
-${(args.dashboard.riskAreas ?? []).slice(0, 4).join("; ") || "(none)"}
+${(resolveDashboardRecommendedFixes(args.dashboard.riskAreas ?? []) ?? [])
+  .slice(0, 4)
+  .map((fix) => recommendedFixActionLabel(fix))
+  .join("; ") || "(none)"}
 
 MISSING JD KEYWORDS:
 ${args.missingSkills.slice(0, 10).join(", ") || "(none)"}

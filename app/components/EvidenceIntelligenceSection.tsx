@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useMemo } from "react";
 import {
   ApplicationVerdictCard,
   AnimatedScoreBar,
@@ -19,6 +20,7 @@ import { resolveKeywordCoverageVerdict } from "@/app/lib/skillProofLlm";
 import type { ShareRecruiterReportArgs } from "@/app/lib/shareRecruiterReport";
 import type { BulletPreview } from "@/app/lib/atsAnalyze";
 import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
+import { dedupeRecommendedFixes, resolveDashboardRecommendedFixes, type RecommendedFix } from "@/app/lib/recommendedFixes";
 
 function ScoreBar({ score, hex }: { score: number; hex: string }) {
   return <AnimatedScoreBar value={score} colorHex={hex} heightClass="h-1" className="mt-1" />;
@@ -40,8 +42,8 @@ export type EvidenceIntelligenceSectionProps = {
   /** Tighter spacing and row limits for sample/workbench previews. */
   previewCompact?: boolean;
   /** Recommended fixes checked for optimization (live report only). */
-  selectedRecommendedFixes?: string[];
-  onSelectedRecommendedFixesChange?: (fixes: string[]) => void;
+  selectedRecommendedFixes?: RecommendedFix[];
+  onSelectedRecommendedFixesChange?: (fixes: RecommendedFix[]) => void;
   onOptimize?: () => void;
   optimizeDisabled?: boolean;
   optimizeBusy?: boolean;
@@ -72,6 +74,10 @@ export function EvidenceIntelligenceSection({
   const depth = previewDepth ?? (heroPreview ? "hero" : "full");
   const compact = previewCompact || depth === "topics" || depth === "toolScroll";
   const applicationVerdict = computeApplicationVerdict(dashboard);
+  const recommendedFixes = useMemo(
+    () => resolveDashboardRecommendedFixes(dashboard.riskAreas),
+    [dashboard.riskAreas]
+  );
   const headline = takeawayHeadline ?? applicationVerdict.headline;
   const subline = takeawaySubline;
   const showAtsCard = keywordCoverage != null;
@@ -89,11 +95,11 @@ export function EvidenceIntelligenceSection({
 
   const hasRejectionRisks = (dashboard.mostMissingEvidence?.length ?? 0) > 0;
   const hasSkillProof = dashboard.skillProof.length > 0;
-  const hasRecommendedFixes = dashboard.riskAreas.length > 0;
+  const hasRecommendedFixes = recommendedFixes.length > 0;
   const showOptimizeCard = isDemo || !!onOptimize;
   const useLiveActionLayout = !previewCompact;
 
-  const demoFixes = isDemo ? dashboard.riskAreas : (selectedRecommendedFixes ?? []);
+  const demoFixes = isDemo ? recommendedFixes : (selectedRecommendedFixes ?? []);
 
   const rejectionRisksSection = hasRejectionRisks ? (
     <TopRejectionRisksSection
@@ -107,7 +113,7 @@ export function EvidenceIntelligenceSection({
 
   const recommendedFixesSection = hasRecommendedFixes ? (
     <RecommendedFixesSection
-      fixes={dashboard.riskAreas}
+      fixes={recommendedFixes}
       verdict={applicationVerdict}
       selectedFixes={isDemo ? undefined : (selectedRecommendedFixes ?? [])}
       onSelectionChange={isDemo ? undefined : onSelectedRecommendedFixesChange}
@@ -135,13 +141,14 @@ export function EvidenceIntelligenceSection({
     <OptimizeAlignCard
       verdict={applicationVerdict}
       selectedFixes={demoFixes}
-      allFixes={dashboard.riskAreas}
+      allFixes={recommendedFixes}
       bulletPreview={isDemo ? undefined : bulletPreview}
       onOptimize={isDemo ? undefined : onOptimize}
       disabled={isDemo ? true : optimizeDisabled}
       busy={optimizeBusy}
       demo={isDemo}
       heroLayout={useLiveActionLayout}
+      liveDashboard={useLiveActionLayout && !isDemo}
       className="min-w-0"
     />
   ) : null;
@@ -202,7 +209,11 @@ export function EvidenceIntelligenceSection({
     ) : null;
 
   return (
-    <div className={previewCompact ? "preview-dashboard-compact" : undefined}>
+    <div
+      className={`${previewCompact ? "preview-dashboard-compact" : ""} ${
+        useLiveActionLayout && !isDemo ? "dashboard-live-stable" : ""
+      }`.trim() || undefined}
+    >
       <div
         className={`grid grid-cols-1 gap-2.5 ${scoreGridCols} items-stretch ${
           compact ? "mt-1.5" : "mt-2"

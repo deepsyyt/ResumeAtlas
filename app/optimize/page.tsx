@@ -27,7 +27,7 @@ import { DownloadPaymentSuccessModal } from "@/app/components/DownloadPaymentSuc
 import { buildRefinementEvidence } from "@/app/lib/resumeFactualAudit";
 import { makeExperienceBulletKey, countRefinedScopesFromBulletKeys } from "@/app/lib/optimizeExperience";
 import { buildBulletEvidenceMaps } from "@/app/lib/optimizeBulletEvidence";
-import { extractFixHighlightKeywords } from "@/app/lib/recommendedFixes";
+import { extractFixHighlightKeywords, resolveDashboardRecommendedFixes } from "@/app/lib/recommendedFixes";
 
 const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
 const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
@@ -972,9 +972,9 @@ export default function OptimizePage() {
               jdGapDetails={jdGapDetails}
               weakKeywordsStrengthened={strengthenedWeakKeywords.length}
               selectedFixes={selectedRejectionRisks}
-              availableRecommendedFixes={
+              availableRecommendedFixes={resolveDashboardRecommendedFixes(
                 input.analyzeResult.evidence_dashboard?.riskAreas ?? []
-              }
+              )}
               improvedSkillProof={result.improvedSkillProof}
               evidenceMatchDelta={result.evidenceMatchDelta}
               atsScoreReference={

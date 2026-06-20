@@ -7,6 +7,7 @@ import {
 } from "@/app/lib/evidenceMetricCopy";
 import { getATSBadgeLabel } from "@/app/lib/scoreColors";
 import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
+import { recommendedFixActionLabel, resolveDashboardRecommendedFixes } from "@/app/lib/recommendedFixes";
 import { ROLE_FIT_SECTION_TITLE, verdictLabelFor } from "@/app/lib/roleFitArchetypes";
 
 export const SHARE_RECRUITER_CTA_HINT =
@@ -157,8 +158,8 @@ export function buildShareRecruiterReportText(args: ShareRecruiterReportArgs): s
   if (dash.riskAreas.length > 0) {
     lines.push("");
     lines.push("Areas to strengthen in the résumé narrative");
-    for (const risk of dash.riskAreas.slice(0, 3)) {
-      lines.push(`• ${risk}`);
+    for (const risk of resolveDashboardRecommendedFixes(dash.riskAreas).slice(0, 3)) {
+      lines.push(`• ${recommendedFixActionLabel(risk)}`);
     }
   }
   if (dash.roleFit && dash.roleFit.length > 0) {

@@ -22,12 +22,13 @@ export function OptimizeHubVisual({
 }: OptimizeHubVisualProps) {
   const gradientId = useId().replace(/:/g, "");
   const pct = Math.max(0, Math.min(100, Math.round(value)));
-  const [animatedPct, setAnimatedPct] = useState(0);
+  const [animatedPct, setAnimatedPct] = useState(pct);
 
   useEffect(() => {
+    if (animatedPct === pct) return;
     const timer = window.setTimeout(() => setAnimatedPct(pct), 80);
     return () => window.clearTimeout(timer);
-  }, [pct]);
+  }, [animatedPct, pct]);
 
   const cx = 70;
   const cy = 70;

@@ -30,6 +30,11 @@ import { scanATS, type ATSScanResult } from "@/app/lib/atsScan";
 import type { JDAnalysisResult } from "@/app/lib/jdAnalysis";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import { computeApplicationVerdict } from "@/app/lib/applicationVerdict";
+import {
+  resolveDashboardRecommendedFixes,
+  recommendedFixToOptimizeText,
+  type RecommendedFix,
+} from "@/app/lib/recommendedFixes";
 import type { AnalysisQuotaStatus } from "@/app/lib/quota";
 import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
 import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
@@ -270,7 +275,7 @@ export default function HomeClient({
   const [evidenceGaps, setEvidenceGaps] = useState<string[]>([]);
   const [atsResult, setAtsResult] = useState<ATSScanResult | null>(null);
   const [analyzeResult, setAnalyzeResult] = useState<ATSAnalyzeResult | null>(null);
-  const [selectedRecommendedFixes, setSelectedRecommendedFixes] = useState<string[]>([]);
+  const [selectedRecommendedFixes, setSelectedRecommendedFixes] = useState<RecommendedFix[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLaunchingOptimize, setIsLaunchingOptimize] = useState(false);
@@ -764,7 +769,9 @@ export default function HomeClient({
           application?: { creditUsed?: boolean; source?: "free" | "pack" };
         };
         setAnalyzeResult(result);
-        setSelectedRecommendedFixes(result.evidence_dashboard?.riskAreas ?? []);
+        setSelectedRecommendedFixes(
+          resolveDashboardRecommendedFixes(result.evidence_dashboard?.riskAreas ?? [])
+        );
         if (result.application?.creditUsed) {
           setScanCreditNotice(
             "1 credit used. Tap Optimize next, or you won't get an application-ready ATS downloadable resume."
@@ -931,7 +938,7 @@ export default function HomeClient({
             analyzeResult,
             funnelId: activeFunnelId ?? undefined,
             selectedSkills: [],
-            selectedRejectionRisks: selectedRecommendedFixes,
+            selectedRejectionRisks: selectedRecommendedFixes.map(recommendedFixToOptimizeText),
           });
           window.sessionStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
           window.localStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
@@ -1541,7 +1548,7 @@ export default function HomeClient({
                 isBusy={isLaunchingOptimize}
                 verdict={computeApplicationVerdict(analyzeResult.evidence_dashboard)}
                 selectedFixes={selectedRecommendedFixes}
-                allFixes={analyzeResult.evidence_dashboard.riskAreas}
+                allFixes={resolveDashboardRecommendedFixes(analyzeResult.evidence_dashboard.riskAreas)}
                 bulletPreview={analyzeResult.bullet_preview ?? null}
                 creditNotice={scanCreditNotice}
               />

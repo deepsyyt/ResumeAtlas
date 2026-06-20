@@ -132,11 +132,26 @@ export const DEMO_EVIDENCE_DASHBOARD: EvidenceDashboard = {
     reason: "AWS is skills-list only; LangChain not found in resume.",
   },
   riskAreas: [
-    "Surface AWS in a project bullet with a shipped outcome if you used it — skills-list only reads weak for this JD",
-    "Add one quantified result to your top GenAI bullet (latency, accuracy, or adoption you can defend)",
-    "Strengthen experiment-evaluation proof in a bullet if you ran offline or online evals",
+    {
+      action: "Move AWS from your skills list into a project bullet with a shipped outcome",
+      target: null,
+      section: "experience",
+      detail: "Skills-list-only reads weak for this JD",
+    },
+    {
+      action: "Add one quantified result to your top GenAI bullet",
+      target: null,
+      section: "experience",
+      detail: "Latency, accuracy, adoption, or revenue impact you can defend",
+    },
+    {
+      action: "Strengthen experiment-evaluation proof in a work bullet",
+      target: null,
+      section: "experience",
+      detail: "Surface offline or online eval metrics if you ran them",
+    },
   ],
-  riskAreasVersion: 1,
+  riskAreasVersion: 3,
   mostMissingEvidence: [
     "AWS mentioned but not proven",
     "GenAI impact not quantified",

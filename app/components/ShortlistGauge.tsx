@@ -26,12 +26,13 @@ export function ShortlistGauge({
   const endX = cx + radius;
   const pathD = `M ${startX} ${cy} A ${radius} ${radius} 0 0 1 ${endX} ${cy}`;
   const arcLength = Math.PI * radius;
-  const [animatedPct, setAnimatedPct] = useState(0);
+  const [animatedPct, setAnimatedPct] = useState(pct);
 
   useEffect(() => {
+    if (animatedPct === pct) return;
     const timer = window.setTimeout(() => setAnimatedPct(pct), 60);
     return () => window.clearTimeout(timer);
-  }, [pct]);
+  }, [animatedPct, pct]);
 
   const progress = (animatedPct / 100) * arcLength;
 

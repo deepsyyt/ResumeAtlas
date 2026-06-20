@@ -24,7 +24,11 @@ import {
   OPTIMIZE_CTA_SUBLINE,
 } from "@/app/lib/evidenceMetricCopy";
 import {
-  recommendedFixChipLabel,
+  extractFixHighlightKeywords,
+  recommendedFixActionLabel,
+  recommendedFixKey,
+  recommendedFixToOptimizeText,
+  type RecommendedFix,
   selectedFixUpliftTotal,
 } from "@/app/lib/recommendedFixes";
 
@@ -36,8 +40,8 @@ export type AlignBulletPreview = {
 
 type OptimizeAlignCardProps = {
   verdict: ApplicationVerdict;
-  selectedFixes?: string[];
-  allFixes?: string[];
+  selectedFixes?: RecommendedFix[];
+  allFixes?: RecommendedFix[];
   bulletPreview?: AlignBulletPreview | null;
   onOptimize?: () => void;
   disabled?: boolean;
@@ -47,6 +51,8 @@ type OptimizeAlignCardProps = {
   heroLayout?: boolean;
   /** Nudge modal: tighter layout, no in-card CTA (parent renders actions). */
   embedInModal?: boolean;
+  /** Live post-scan dashboard: no entry motion or CTA nudge loops. */
+  liveDashboard?: boolean;
 };
 
 function truncateLine(text: string, max = 120): string {
@@ -59,29 +65,14 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function highlightsFromFixes(fixes: string[]): string[] {
-  const tokens = new Set<string>();
-  fixes.forEach((fix, index) => {
-    const chip = recommendedFixChipLabel(fix, index);
-    const lower = chip.toLowerCase();
-    if (lower.includes("aws")) {
-      tokens.add("AWS");
-      tokens.add("AWS solutions");
-    }
-    if (lower.includes("genai")) tokens.add("GenAI");
-    if (lower.includes("eval")) tokens.add("evaluation metrics");
-    if (lower.includes("langchain")) tokens.add("LangChain");
-    if (lower.includes("bedrock")) tokens.add("Bedrock");
-    const percent = chip.match(/\d+%/);
-    if (percent) tokens.add(percent[0]);
-  });
-  return Array.from(tokens);
+function highlightsFromFixes(fixes: RecommendedFix[]): string[] {
+  return extractFixHighlightKeywords(fixes);
 }
 
-function buildSyntheticPreview(fixes: string[]): AlignBulletPreview | null {
+function buildSyntheticPreview(fixes: RecommendedFix[]): AlignBulletPreview | null {
   if (fixes.length === 0) return null;
   const highlights = highlightsFromFixes(fixes);
-  const lower = fixes.join(" ").toLowerCase();
+  const lower = fixes.map(recommendedFixToOptimizeText).join(" ").toLowerCase();
   const parts: string[] = ["Led cross-functional delivery"];
 
   if (lower.includes("aws")) {
@@ -89,7 +80,7 @@ function buildSyntheticPreview(fixes: string[]): AlignBulletPreview | null {
   } else if (lower.includes("genai") || lower.includes("llm")) {
     parts.push("delivered measurable GenAI outcomes with 32% efficiency gains");
   } else {
-    parts.push(`${recommendedFixChipLabel(fixes[0]!, 0).toLowerCase()} with measurable outcomes`);
+    parts.push(`${recommendedFixActionLabel(fixes[0]!).toLowerCase()} with measurable outcomes`);
   }
 
   if (lower.includes("eval")) {
@@ -173,6 +164,7 @@ export function OptimizeAlignCard({
   demo = false,
   heroLayout = false,
   embedInModal = false,
+  liveDashboard = false,
 }: OptimizeAlignCardProps) {
   const { shortlistPct, shortlistUplift } = verdict;
   const ctaDisabled = demo || disabled || busy || !onOptimize;
@@ -204,8 +196,8 @@ export function OptimizeAlignCard({
   const selectionPills = useMemo(
     () =>
       selectedFixes.map((fix, index) => ({
-        key: fix,
-        label: recommendedFixChipLabel(fix, index),
+        key: recommendedFixKey(fix),
+        label: recommendedFixActionLabel(fix),
       })),
     [selectedFixes]
   );
@@ -259,6 +251,9 @@ export function OptimizeAlignCard({
       >
         {OPTIMIZE_ALIGN_CARD_TITLE}
       </p>
+      {heroLayout && embedInModal ? (
+        <p className="mt-1 text-[11px] leading-snug text-slate-600">{OPTIMIZE_ALIGN_CARD_BODY}</p>
+      ) : null}
       {!heroLayout ? (
         <p className="mt-1 text-[11px] leading-snug text-indigo-950/90">{OPTIMIZE_ALIGN_CARD_BODY}</p>
       ) : null}
@@ -282,7 +277,7 @@ export function OptimizeAlignCard({
         <div
           className={`optimize-align-selection-panel min-w-0 flex-1 ${innerPanelClass} ${
             hasSelection ? "optimize-align-selection-panel--active" : ""
-          } ${panelEnter ? "optimize-align-panel-in" : ""} ${heroLayout ? "w-full" : ""}`}
+          } ${panelEnter && !liveDashboard ? "optimize-align-panel-in" : ""} ${heroLayout ? "w-full" : ""}`}
         >
           {heroLayout ? (
             <>
@@ -343,7 +338,7 @@ export function OptimizeAlignCard({
         {showPreview && preview ? (
           <div
             key={`${preview.before}:${preview.after}`}
-            className={`optimize-align-preview-in ${embedInModal ? "mt-1 space-y-1" : "mt-2 space-y-2"}`}
+            className={`${liveDashboard ? "" : "optimize-align-preview-in"} ${embedInModal ? "mt-1 space-y-1" : "mt-2 space-y-2"}`}
           >
             <div>
               <p
@@ -418,6 +413,7 @@ export function OptimizeAlignCard({
             className="w-full"
             variant={heroLayout ? "purple" : "green"}
             showSparkle={heroLayout}
+            steadyChevrons={liveDashboard}
           >
             {busy ? "Starting…" : heroLayout ? OPTIMIZE_CTA_LABEL_HERO : OPTIMIZE_CTA_LABEL}
           </OptimizeCta>
