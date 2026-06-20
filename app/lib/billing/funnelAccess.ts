@@ -4,6 +4,7 @@ import {
   startApplication,
   type ApplicationSource,
 } from "@/app/lib/billing/funnelServer";
+import { getSupabaseAdmin } from "@/app/lib/supabase/server";
 import {
   getAnalysisQuotaStatus,
   recordSuccessfulAnalysis,
@@ -12,6 +13,9 @@ import {
   type AnalysisQuotaStatus,
   type QuotaExceededPayload,
 } from "@/app/lib/quota";
+import { ANALYSIS_QUOTA_WINDOW_MS } from "@/app/lib/quota/constants";
+import { hashText } from "@/app/lib/quota/hash";
+import { getOrCreateAnonymousAnalysisIdentity } from "@/app/lib/quota/identity";
 
 export type AnalysisAccessSource = "free" | "pack";
 
@@ -33,9 +37,9 @@ export type IncompleteFunnelPayload = {
 };
 
 const FREE_EXHAUSTED_MESSAGE =
-  "You've used your free scan for this month. Get 5 credits for $2.99 — check, optimize, and download for five jobs.";
+  "You've used your free scan for this month. Get 5 job credits for $2.99: check, optimize, and download for five jobs.";
 const ANON_EXHAUSTED_MESSAGE =
-  "You've used your free scan for this month. Sign in to get 5 credits for $2.99.";
+  "You've used your free scan for this month. Sign in to get 5 job credits for $2.99.";
 const INCOMPLETE_APPLICATION_MESSAGE =
   "Finish optimizing and downloading this resume before you check another job.";
 
@@ -152,6 +156,57 @@ export async function commitAnalysisApplication(
   };
 }
 
+async function hasClaimableAnonymousScan(
+  anonymousId: string,
+  resumeText: string,
+  jobDescription: string
+): Promise<boolean> {
+  const supabase = getSupabaseAdmin();
+  const since = new Date(Date.now() - ANALYSIS_QUOTA_WINDOW_MS.anonymous).toISOString();
+  const resumeHash = resumeText ? hashText(resumeText).slice(0, 32) : null;
+  const jdHash = jobDescription ? hashText(jobDescription).slice(0, 32) : null;
+
+  let query = supabase
+    .from("analysis_usage")
+    .select("id", { count: "exact", head: true })
+    .is("user_id", null)
+    .eq("anonymous_id", anonymousId)
+    .gte("created_at", since);
+
+  if (resumeHash) query = query.eq("resume_hash", resumeHash);
+  if (jdHash) query = query.eq("jd_hash", jdHash);
+
+  const { count, error } = await query;
+  if (error) {
+    console.error("[application] hasClaimableAnonymousScan failed", error.message);
+    return false;
+  }
+  return (count ?? 0) > 0;
+}
+
+async function startApplicationFromAnalysis(
+  userId: string,
+  resumeText: string,
+  jobDescription: string,
+  analysisResult: unknown
+): Promise<{ ok: true } | { ok: false; code: string; message: string }> {
+  const started = await startApplication(
+    userId,
+    resumeText,
+    jobDescription,
+    "free",
+    analysisResult
+  );
+  if (!started.ok) {
+    return {
+      ok: false,
+      code: started.code,
+      message: "Something went wrong saving your job check. Please try again.",
+    };
+  }
+  return { ok: true };
+}
+
 /** Resume a free scan after sign-in (anonymous analyzed first). */
 export async function ensureApplicationForOptimize(
   userId: string,
@@ -189,27 +244,38 @@ export async function ensureApplicationForOptimize(
 
   if (quotaStatus.allowed) {
     await recordSuccessfulAnalysis(actor, resumeText, jobDescription);
+    return startApplicationFromAnalysis(userId, resumeText, jobDescription, analysisResult);
+  }
+
+  // Anonymous scan → sign-in → optimize: link the existing scan without a second job check.
+  const { anonymousId } = await getOrCreateAnonymousAnalysisIdentity();
+  if (
+    anonymousId &&
+    (await hasClaimableAnonymousScan(anonymousId, resumeText, jobDescription))
+  ) {
+    return startApplicationFromAnalysis(userId, resumeText, jobDescription, analysisResult);
+  }
+
+  if ((wallet.creditsRemaining ?? 0) > 0) {
     const started = await startApplication(
       userId,
       resumeText,
       jobDescription,
-      "free",
+      "pack",
       analysisResult
     );
-    if (!started.ok) {
-      return {
-        ok: false,
-        code: started.code,
-        message: "Something went wrong saving your job check. Please try again.",
-      };
+    if (started.ok) {
+      return { ok: true };
     }
-    return { ok: true };
   }
 
   return {
     ok: false,
     code: "APPLICATION_REQUIRED",
-    message: "Run a job check first, then optimize your resume.",
+    message:
+      quotaStatus.remaining <= 0
+        ? FREE_EXHAUSTED_MESSAGE
+        : "Run a job check first, then optimize your resume.",
   };
 }
 

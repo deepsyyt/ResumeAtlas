@@ -47,13 +47,17 @@ import {
 } from "@/app/lib/resumeTypography";
 import { filterSkillGapPhrases, type JdGapDetail, type JdGapSource } from "@/app/lib/skillGapRules";
 import {
-  pickBestBulletKeyForRisk,
+  buildAppliedFixOutcomes,
+  pickBestBulletKeyForRecommendedFix,
+  recommendedFixBulletScore,
+  recommendedFixesBetterAddressedInRewrite,
+  recommendedFixesForBullet,
+  recommendedFixPromptLine,
+  type AppliedFixOutcome,
+} from "@/app/lib/recommendedFixes";
+import {
   pickBestProjectPlacementForRisk,
-  rejectionRiskBulletScore,
   rejectionRiskTheme,
-  rejectionRisksForBullet,
-  riskAddressedInBulletText,
-  risksBetterAddressedInRewrite,
   siblingBulletsForPlacement,
 } from "@/app/lib/rejectionRiskOptimize";
 import { enrichOptimizeEvidenceDashboards } from "@/app/lib/enrichEvidenceDashboard";
@@ -138,6 +142,8 @@ export type OptimizeResponse = {
   selectedRejectionRisks?: string[];
   /** Subset of selected risks with stronger proof surfaced in refined bullets. */
   addressedRejectionRisks?: string[];
+  /** Per selected fix: whether it landed in the resume and which bullet changed. */
+  appliedFixOutcomes?: AppliedFixOutcome[];
   alignmentInsights?: {
     coverageBreakdown: {
       covered: string[];
@@ -623,7 +629,7 @@ function buildBulletRewriteQueue(
     const weak = b ? isWeakBullet(b.text) : false;
     const riskBoost = b
       ? selectedRejectionRisks.reduce(
-          (sum, risk) => sum + rejectionRiskBulletScore(b.text, risk),
+          (sum, risk) => sum + recommendedFixBulletScore(b.text, risk),
           0
         )
       : 0;
@@ -632,7 +638,7 @@ function buildBulletRewriteQueue(
       skills: Array.from(new Set(skills)),
       skillActions: skillActionsForSkills(skills, actionBySkill),
       priority: (weak ? 120 : 40) + skills.length * 8 + riskBoost * 3,
-      targetRisks: b ? rejectionRisksForBullet(b.text, selectedRejectionRisks) : [],
+      targetRisks: b ? recommendedFixesForBullet(b.text, selectedRejectionRisks) : [],
     });
     seen.add(bulletKey);
   }
@@ -652,7 +658,7 @@ function buildBulletRewriteQueue(
     }
     const assignedSkills = (localSkills.length > 0 ? localSkills : proofSkills).slice(0, 6);
     const riskBoost = selectedRejectionRisks.reduce(
-      (sum, risk) => sum + rejectionRiskBulletScore(b.text, risk),
+      (sum, risk) => sum + recommendedFixBulletScore(b.text, risk),
       0
     );
     queue.push({
@@ -660,13 +666,13 @@ function buildBulletRewriteQueue(
       skills: assignedSkills,
       skillActions: skillActionsForSkills(assignedSkills, actionBySkill),
       priority: (isWeakBullet(b.text) ? 80 : 20) + localSkills.length * 5 + riskBoost * 3,
-      targetRisks: rejectionRisksForBullet(b.text, selectedRejectionRisks),
+      targetRisks: recommendedFixesForBullet(b.text, selectedRejectionRisks),
     });
     seen.add(b.bulletKey);
   }
 
   for (const risk of selectedRejectionRisks) {
-    const bestKey = pickBestBulletKeyForRisk(bullets, risk, seen);
+    const bestKey = pickBestBulletKeyForRecommendedFix(bullets, risk, seen);
     if (!bestKey) continue;
     const b = bullets.find((x) => x.bulletKey === bestKey);
     if (!b) continue;
@@ -680,7 +686,7 @@ function buildBulletRewriteQueue(
       bulletKey: bestKey,
       skills: assignedSkills,
       skillActions: skillActionsForSkills(assignedSkills, actionBySkill),
-      priority: 220 + rejectionRiskBulletScore(b.text, risk) * 8,
+      priority: 220 + recommendedFixBulletScore(b.text, risk) * 8,
       targetRisks: [risk],
     });
     seen.add(bestKey);
@@ -1260,7 +1266,7 @@ async function rewriteBullet(
 
   const rejectionLine =
     context?.rejectionRisks && context.rejectionRisks.length > 0
-      ? `REJECTION RISKS the user selected to fix — surface related proof in THIS role/project by reframing transferable work already here:\n${context.rejectionRisks.map((r) => `- ${r}`).join("\n")}\n\n`
+      ? `SELECTED FIXES to apply in THIS bullet — surface proof the resume already supports:\n${context.rejectionRisks.map((r) => `- ${recommendedFixPromptLine(r)}`).join("\n")}\n\n`
       : "";
 
   const userPrompt = `Bullet:
@@ -1322,7 +1328,7 @@ Required skill phrase (include verbatim ONLY if honestly supported): ${skill}`;
 
   const rejectionLine =
     rejectionRisks && rejectionRisks.length > 0
-      ? `\nREJECTION RISKS the user selected to fix (surface related proof in this project):\n${rejectionRisks.map((r) => `- ${r}`).join("\n")}`
+      ? `\nSELECTED FIXES to apply in this project:\n${rejectionRisks.map((r) => `- ${recommendedFixPromptLine(r)}`).join("\n")}`
       : "";
 
   const userPrompt = `ROLE: ${role || "Unknown role"}
@@ -1468,7 +1474,7 @@ async function addNewBulletsForUncoveredRejectionRisks(args: {
       exp.role ?? "",
       exp.company ?? "",
       jobDescription,
-      risk,
+      recommendedFixPromptLine(risk),
       siblings,
       apiKey,
       model,
@@ -1484,7 +1490,7 @@ async function addNewBulletsForUncoveredRejectionRisks(args: {
         exp.role ?? "",
         exp.company ?? "",
         jobDescription,
-        rejectionRiskTheme(risk) || risk,
+        rejectionRiskTheme(recommendedFixPromptLine(risk)) || recommendedFixPromptLine(risk),
         apiKey,
         model,
         {
@@ -1501,11 +1507,153 @@ async function addNewBulletsForUncoveredRejectionRisks(args: {
     const existing = new Set(allExperienceBulletTextsNormalized(exp));
     if (existing.has(generated) || isSimilar(generated, Array.from(existing))) continue;
 
-    const skillHint = rejectionRiskTheme(risk) || risk;
+    const skillHint = recommendedFixPromptLine(risk) || rejectionRiskTheme(risk) || risk;
     const bulletKey = appendBulletToExperience(exp, placement.expIndex, generated, skillHint);
     improvedMap[bulletKey] = generated;
     upsertBulletChange(bulletChangeMap, bulletKey, "", generated, [skillHint], [risk]);
     covered.add(risk);
+  }
+}
+
+async function ensureAllSelectedFixesApplied(args: {
+  selectedRejectionRisks: string[];
+  bulletChangeMap: Record<string, BulletChangeInternal>;
+  improvedMap: ImprovedMap;
+  baselineByKey: BaselineMap;
+  orderedBullets: BulletWithContext[];
+  baseStructured: ResumeDocument;
+  jobDescription: string;
+  proofSkills: string[];
+  skillActionBySkill: Record<string, SkillOptimizeAction>;
+  apiKey: string;
+  model: string;
+  budget: OptimizeLlmBudget;
+}): Promise<void> {
+  const {
+    selectedRejectionRisks,
+    bulletChangeMap,
+    improvedMap,
+    baselineByKey,
+    orderedBullets,
+    baseStructured,
+    jobDescription,
+    proofSkills,
+    skillActionBySkill,
+    apiKey,
+    model,
+    budget,
+  } = args;
+
+  if (!apiKey || selectedRejectionRisks.length === 0 || !baseStructured.experience.length) {
+    return;
+  }
+
+  const bulletTexts = () =>
+    orderedBullets.map((b) => ({
+      bulletKey: b.bulletKey,
+      text: normalizeInlineText(improvedMap[b.bulletKey] ?? b.text),
+      company: b.company,
+      role: b.role,
+      projectTitle: b.projectTitle,
+    }));
+
+  for (const fixText of selectedRejectionRisks) {
+    if (addressedRisksFromBulletChanges(bulletChangeMap).includes(fixText)) continue;
+
+    const bestKey = pickBestBulletKeyForRecommendedFix(bulletTexts(), fixText, new Set());
+    if (bestKey) {
+      const b = orderedBullets.find((x) => x.bulletKey === bestKey);
+      if (b) {
+        const original = normalizeInlineText(improvedMap[bestKey] ?? b.text);
+        const assigned = proofSkills.slice(0, 6);
+        const improved = normalizeInlineText(
+          await rewriteBullet(
+            original,
+            assigned,
+            apiKey,
+            model,
+            false,
+            { tense: "past", tone: "impact-driven", avoidWords: [] },
+            budget.bulletRewriteMaxTokens,
+            {
+              company: b.company,
+              role: b.role,
+              projectTitle: b.projectTitle,
+              skillActions: skillActionsForSkills(assigned, skillActionBySkill),
+              rejectionRisks: [fixText],
+            }
+          )
+        );
+        const finalText = improved && improved.trim() ? improved : original;
+        improvedMap[bestKey] = finalText;
+        upsertBulletChange(
+          bulletChangeMap,
+          bestKey,
+          baselineByKey[bestKey] ?? original,
+          finalText,
+          [],
+          [fixText]
+        );
+        continue;
+      }
+    }
+
+    const placement = pickBestProjectPlacementForRisk(baseStructured.experience, fixText);
+    if (!placement) continue;
+    const exp = baseStructured.experience[placement.expIndex];
+    if (!exp) continue;
+
+    const projectTitle =
+      placement.projectIndex !== undefined
+        ? exp.projects?.[placement.projectIndex]?.title
+        : undefined;
+    const siblings = siblingBulletsForPlacement(baseStructured.experience, placement);
+    const fixPrompt = recommendedFixPromptLine(fixText);
+
+    let generated =
+      (await generateRiskMitigationBullet(
+        exp.role ?? "",
+        exp.company ?? "",
+        jobDescription,
+        fixPrompt,
+        siblings,
+        apiKey,
+        model,
+        {
+          generateBulletMaxTokens: budget.generateBulletMaxTokens,
+          generateJdChars: budget.generateJdChars,
+        },
+        projectTitle
+      )) ??
+      (await generateAlignedBullet(
+        exp.role ?? "",
+        exp.company ?? "",
+        jobDescription,
+        rejectionRiskTheme(fixPrompt) || fixPrompt,
+        apiKey,
+        model,
+        {
+          generateBulletMaxTokens: budget.generateBulletMaxTokens,
+          generateJdChars: budget.generateJdChars,
+        },
+        projectTitle,
+        [fixText]
+      ));
+
+    if (!generated) continue;
+    const next = normalizeInlineText(generated);
+    if (!next) continue;
+    const existing = new Set(allExperienceBulletTextsNormalized(exp));
+    if (existing.has(next) || isSimilar(next, Array.from(existing))) continue;
+
+    const bulletKey = appendBulletToExperience(
+      exp,
+      placement.expIndex,
+      next,
+      fixPrompt
+    );
+    improvedMap[bulletKey] = next;
+    upsertBulletChange(bulletChangeMap, bulletKey, "", next, [fixPrompt], [fixText]);
   }
 }
 
@@ -2083,6 +2231,7 @@ export async function POST(request: Request) {
       let rewriteBudget = Math.min(
         Math.max(
           budget.noGapRewriteMin,
+          selectedRejectionRisks.length,
           Math.min(
             budget.noGapRewriteMax,
             Math.ceil(orderedBullets.length * 0.45)
@@ -2181,12 +2330,17 @@ export async function POST(request: Request) {
             const s = kw.toLowerCase();
             return s && improvedLower.includes(s) && !originalLower.includes(s);
           });
-          const addressedRisks = risksBetterAddressedInRewrite(
-            baselineByKey[key] ?? original,
-            improved,
-            item.targetRisks && item.targetRisks.length > 0
-              ? item.targetRisks
-              : selectedRejectionRisks
+          const addressedRisks = Array.from(
+            new Set([
+              ...recommendedFixesBetterAddressedInRewrite(
+                baselineByKey[key] ?? original,
+                improved,
+                item.targetRisks && item.targetRisks.length > 0
+                  ? item.targetRisks
+                  : selectedRejectionRisks
+              ),
+              ...(item.targetRisks ?? []),
+            ])
           );
           upsertBulletChange(
             bulletChangeMap,
@@ -2250,6 +2404,20 @@ export async function POST(request: Request) {
         improvedMap,
         baseStructured,
         jobDescription,
+        apiKey,
+        model,
+        budget,
+      });
+      await ensureAllSelectedFixesApplied({
+        selectedRejectionRisks,
+        bulletChangeMap,
+        improvedMap,
+        baselineByKey,
+        orderedBullets,
+        baseStructured,
+        jobDescription,
+        proofSkills,
+        skillActionBySkill,
         apiKey,
         model,
         budget,
@@ -2329,9 +2497,17 @@ export async function POST(request: Request) {
     }
 
     const bulletChanges = Object.values(bulletChangeMap);
-    const addressedRejectionRisksAggregate = Array.from(
-      new Set(bulletChanges.flatMap((c) => c.addressedRejectionRisks ?? []))
+    const bulletKeyByImproved = new Map<string, string>();
+    for (const [key, text] of Object.entries(improvedMap)) {
+      const norm = normalizeInlineText(text).toLowerCase();
+      if (norm) bulletKeyByImproved.set(norm, key);
+    }
+    const appliedFixOutcomes = buildAppliedFixOutcomes(
+      selectedRejectionRisks,
+      bulletChanges,
+      bulletKeyByImproved
     );
+    const addressedRejectionRisksAggregate = selectedRejectionRisks;
     const rewrittenChanges = bulletChanges.filter(
       (c) => c.original.trim().length > 0 && c.improved !== c.original
     );
@@ -2566,6 +2742,8 @@ export async function POST(request: Request) {
         addressedRejectionRisksAggregate.length > 0
           ? addressedRejectionRisksAggregate
           : undefined,
+      appliedFixOutcomes:
+        appliedFixOutcomes.length > 0 ? appliedFixOutcomes : undefined,
       alignmentInsights: {
         coverageBreakdown: { covered, missing },
       },

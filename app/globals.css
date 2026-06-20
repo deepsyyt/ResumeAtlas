@@ -163,6 +163,13 @@
     .optimize-cta--steady .optimize-cta-chevrons {
       animation: none;
     }
+
+    .payment-cta-shell::before,
+    .payment-cta-shell::after,
+    .payment-glow-shell::before,
+    .payment-glow-shell::after {
+      animation: none;
+    }
   }
 
   .analysis-report-card {
@@ -824,7 +831,39 @@
   }
 
   .optimize-nudge-modal {
-    max-height: min(96dvh, 40rem);
+    display: flex;
+    flex-direction: column;
+    max-height: min(calc(100dvh - 1.5rem), 36rem);
+    overflow: hidden;
+  }
+
+  .optimize-nudge-modal__body {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .optimize-nudge-modal__footer {
+    flex-shrink: 0;
+  }
+
+  .nudge-modal-panel {
+    display: flex;
+    flex-direction: column;
+    width: min(100%, 22.5rem);
+    max-height: min(calc(100dvh - 1.5rem), 36rem);
+    overflow: hidden;
+    margin-inline: auto;
+  }
+
+  .nudge-modal-panel__body {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .nudge-modal-panel__footer {
+    flex-shrink: 0;
   }
 
   .skill-proof-live-table tbody tr {
@@ -1520,5 +1559,134 @@
   100% {
     transform: translateY(320%);
     opacity: 0;
+  }
+}
+
+/* Animated gradient border (payment CTAs + premium dark cards) */
+.payment-glow-shell {
+  position: relative;
+  display: block;
+  padding: 2px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.payment-glow-shell::before {
+  content: "";
+  position: absolute;
+  inset: -120%;
+  background: conic-gradient(
+    from 0deg,
+    #312e81 0deg,
+    #4338ca 55deg,
+    #6366f1 110deg,
+    #a855f7 165deg,
+    #ec4899 220deg,
+    #818cf8 280deg,
+    #312e81 360deg
+  );
+  animation: payment-cta-border-spin 2.75s linear infinite;
+}
+
+.payment-glow-shell::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  box-shadow:
+    0 0 18px rgba(99, 102, 241, 0.42),
+    0 0 34px rgba(168, 85, 247, 0.28),
+    0 0 48px rgba(236, 72, 153, 0.16);
+  animation: payment-cta-glow-pulse 2.75s ease-in-out infinite;
+}
+
+.payment-glow-card {
+  border-radius: 0.75rem;
+}
+
+.payment-glow-card-inner {
+  position: relative;
+  z-index: 1;
+  border-radius: calc(0.75rem - 2px);
+}
+
+.payment-cta-shell {
+  width: 100%;
+  border-radius: 9999px;
+}
+
+.payment-cta-button {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 9999px;
+  background: #0f172a;
+  color: #ffffff;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    color 0.15s ease;
+}
+
+.payment-cta-shell--lg .payment-cta-button {
+  padding: 0.95rem 1.25rem;
+  font-size: 0.9375rem;
+}
+
+@media (min-width: 640px) {
+  .payment-cta-shell--lg .payment-cta-button {
+    font-size: 1rem;
+  }
+}
+
+.payment-cta-shell--md .payment-cta-button {
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+}
+
+.payment-cta-button:hover:not(:disabled) {
+  background: #1e293b;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.45);
+}
+
+.payment-cta-button:active:not(:disabled) {
+  transform: translateY(0);
+  background: #0f172a;
+}
+
+.payment-cta-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.payment-cta-button:focus-visible {
+  outline: 2px solid #c084fc;
+  outline-offset: 2px;
+}
+
+@keyframes payment-cta-border-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes payment-cta-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 1;
   }
 }

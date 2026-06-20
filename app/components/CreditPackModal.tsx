@@ -2,12 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/app/lib/supabase/client";
-import { StructuredResume } from "@/app/components/StructuredResume";
-import {
-  DEMO_OPTIMIZED_RESUME,
-  DEMO_OPTIMIZED_RESUME_HIGHLIGHTS,
-} from "@/app/lib/demoOptimizedResumePreview";
-import { ResumeOptimizationPanel } from "@/app/components/ResumeOptimizationPanel";
 import {
   formatCreditPackPrice,
   getCreditPackage,
@@ -17,6 +11,16 @@ import {
 import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import { logBillingEvent } from "@/app/lib/billing/billingEventsClient";
 import type { CreditModalOptimizationEntryPoint } from "@/app/lib/analyticsEvents";
+import {
+  CREDIT_PACK_BENEFITS,
+  CREDIT_PACK_CTA,
+  CREDIT_PACK_EXHAUSTED_HEADLINE,
+  CREDIT_PACK_EXHAUSTED_SUBHEAD,
+  CREDIT_PACK_FREE_SCAN_HEADLINE,
+  CREDIT_PACK_OFFER_HEADLINE,
+  CREDIT_PACK_OFFER_SUBHEAD,
+} from "@/app/lib/evidenceMetricCopy";
+import { PaymentCtaButton } from "@/app/components/PaymentCtaButton";
 
 export type CreditPackModalProps = {
   open: boolean;
@@ -177,11 +181,6 @@ export function CreditPackModal({
   const showStart = isLoggedIn && creditsRemaining > 0;
   const showPurchasePacks = !checkoutSuccess;
   const busy = isBusy || checkoutLoading !== null || isStartingGoogleAuth;
-  const previewKeywords = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.keywords];
-  const previewRewritten = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.rewritten];
-  const previewNewBullets = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.newBullets];
-  const previewKeywordBullets = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.keywordBullets];
-  const previewQuantified = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.quantified];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -196,19 +195,19 @@ export function CreditPackModal({
         aria-hidden
       />
       <div
-        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl border border-slate-200"
+        className="nudge-modal-panel relative rounded-2xl bg-white p-3.5 shadow-xl border border-slate-200 sm:p-4"
         role="dialog"
         aria-labelledby="credit-pack-title"
         aria-modal="true"
       >
-        <h2 id="credit-pack-title" className="text-xl font-semibold text-slate-900">
+        <h2 id="credit-pack-title" className="pr-16 text-lg font-semibold text-slate-900 sm:text-xl">
           {checkoutSuccess
             ? "Payment successful"
             : showStart
               ? "Continue where you left off"
-              : "You've used your free scan"}
+              : CREDIT_PACK_EXHAUSTED_HEADLINE}
         </h2>
-        <div className="absolute right-6 top-6">
+        <div className="absolute right-4 top-4 sm:right-5 sm:top-5">
           <button
             type="button"
             onClick={onClose}
@@ -300,49 +299,53 @@ export function CreditPackModal({
         )}
 
         {!checkoutSuccess && showPurchasePacks && (
-        <div className={showStart ? "mt-8 border-t border-slate-200 pt-6" : "mt-6"}>
-          <h2 className="text-2xl font-semibold text-center mb-2">
+        <div className={showStart ? "mt-5 border-t border-slate-200 pt-4" : "mt-3"}>
+          {!showStart ? (
+            <p className="text-xs text-slate-600 leading-snug sm:text-sm">{CREDIT_PACK_EXHAUSTED_SUBHEAD}</p>
+          ) : null}
+          <h3 className={`text-xl font-semibold text-center ${showStart ? "mb-1.5 mt-4" : "mb-1.5 mt-3"}`}>
             {showStart
               ? "Buy 5 more credits"
-              : "Get 5 job checks for $2.99"}
-          </h2>
-          <p className="text-center text-gray-600 mb-6">
+              : starterPack
+                ? CREDIT_PACK_OFFER_HEADLINE(
+                    formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)
+                  )
+                : CREDIT_PACK_FREE_SCAN_HEADLINE}
+          </h3>
+          <p className="text-center text-xs text-gray-600 mb-4 sm:text-sm">
             {showStart
-              ? `You have ${creditsRemaining} credit${creditsRemaining === 1 ? "" : "s"} left. Buy 5 more anytime — they add to your balance.`
-              : "For each job: check your resume against the posting, optimize it, then download. Five jobs, one price."}
+              ? `You have ${creditsRemaining} credit${creditsRemaining === 1 ? "" : "s"} left. Buy 5 more anytime. They add to your balance.`
+              : CREDIT_PACK_OFFER_SUBHEAD}
           </p>
 
           {starterPack ? (
-            <div className="border rounded-2xl p-6 shadow-sm max-w-md mx-auto bg-white">
-              <div className="text-sm text-gray-500 mb-1">Best value</div>
+            <div className="border border-emerald-200/80 rounded-2xl p-4 shadow-sm max-w-md mx-auto bg-gradient-to-br from-emerald-50/40 via-white to-indigo-50/30">
+              <div className="text-sm text-emerald-800 font-semibold mb-1">Best value</div>
               <div className="text-3xl font-bold mb-1">
                 {formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)}
               </div>
               <div className="text-gray-600 mb-4">
-                {starterPack.credits} credits — check, optimize, and download for {starterPack.credits} jobs
+                {starterPack.credits} job credits: check, optimize, and download for {starterPack.credits} roles
               </div>
 
-              <ul className="space-y-2 text-sm mb-6">
-                <li>✔ See how your resume matches the job</li>
-                <li>✔ Optimize summary and bullets for that posting</li>
-                <li>✔ Summary, bullets, and fixes tailored to each job</li>
-                <li>✔ Download PDF + editable file when ready</li>
+              <ul className="space-y-1.5 text-xs mb-4 sm:text-sm">
+                {CREDIT_PACK_BENEFITS.map((benefit) => (
+                  <li key={benefit}>✔ {benefit}</li>
+                ))}
               </ul>
 
-              <button
-                type="button"
+              <PaymentCtaButton
                 disabled={busy && checkoutLoading !== "starter"}
-              onClick={() => handlePackageClick("starter")}
-                className="w-full bg-black text-white rounded-xl py-3 font-medium disabled:opacity-60"
+                onClick={() => handlePackageClick("starter")}
               >
                 {checkoutLoading === "starter"
                   ? "Opening checkout…"
                   : isStartingGoogleAuth
                     ? "Signing in…"
                     : showStart
-                      ? `Add 5 more — ${formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)}`
-                      : `Get ${starterPack.credits} credits`}
-              </button>
+                      ? `Add 5 more for ${formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)}`
+                      : CREDIT_PACK_CTA(formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency))}
+              </PaymentCtaButton>
 
               <p className="text-xs text-center text-gray-500 mt-3">
                 One-time payment • Secure checkout • No subscription
@@ -374,18 +377,17 @@ export function CreditPackModal({
                       <p className="text-sm text-gray-600 mb-4">
                         Best for active job search
                       </p>
-                      <button
-                        type="button"
+                      <PaymentCtaButton
+                        size="md"
                         disabled={busy && checkoutLoading !== "jobseeker"}
                         onClick={() => handlePackageClick("jobseeker")}
-                        className="w-full rounded-lg bg-slate-900 py-2 text-white hover:bg-slate-800 transition disabled:opacity-60"
                       >
                         {checkoutLoading === "jobseeker"
                           ? "Opening checkout…"
                           : isStartingGoogleAuth
                             ? "Signing in…"
                             : `Get ${fivePack.credits} credits`}
-                      </button>
+                      </PaymentCtaButton>
                     </div>
                   ) : null}
 
@@ -398,18 +400,17 @@ export function CreditPackModal({
                       <p className="text-sm text-gray-600 mb-4">
                         For multiple roles &amp; iterations
                       </p>
-                      <button
-                        type="button"
+                      <PaymentCtaButton
+                        size="md"
                         disabled={busy && checkoutLoading !== "power"}
                         onClick={() => handlePackageClick("power")}
-                        className="w-full rounded-lg bg-slate-900 py-2 text-white hover:bg-slate-800 transition disabled:opacity-60"
                       >
                         {checkoutLoading === "power"
                           ? "Opening checkout…"
                           : isStartingGoogleAuth
                             ? "Signing in…"
                             : `Get ${fifteenPack.credits} credits`}
-                      </button>
+                      </PaymentCtaButton>
                     </div>
                   ) : null}
                 </div>
@@ -417,71 +418,6 @@ export function CreditPackModal({
             </>
           )}
         </div>
-        )}
-
-        {!checkoutSuccess && (
-          <section className="mt-6 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
-            <h3 className="text-sm font-semibold text-slate-900">What you unlock with optimization</h3>
-            <p className="mt-1 text-xs text-slate-600">
-              Before checkout, here is what the optimization step does for this exact job description.
-            </p>
-
-            <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
-              <p className="rounded-md border border-violet-200 bg-violet-50 px-2.5 py-2 text-violet-900">
-                Rewrites weak bullets for role alignment and measurable impact.
-              </p>
-              <p className="rounded-md border border-amber-200 bg-amber-50 px-2.5 py-2 text-amber-900">
-                Adds new bullets where your real experience supports missing JD requirements.
-              </p>
-              <p className="rounded-md border border-indigo-200 bg-indigo-50 px-2.5 py-2 text-indigo-900">
-                Rewrites summary to align with the target role and posting language.
-              </p>
-              <p className="rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-2 text-emerald-900">
-                Lets you edit everything before download (ATS-friendly PDF or DOCX).
-              </p>
-            </div>
-
-            <div className="mt-4 rounded-lg border border-slate-200 bg-white p-3">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
-                Real output preview sample
-              </p>
-              <div className="mt-2 page-split-grid">
-                <div className="space-y-2">
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-semibold text-slate-700">Optimized resume preview</h4>
-                  </div>
-                  <div className="rounded-xl border border-slate-200 bg-white p-3 [&_button]:pointer-events-none [&_button]:opacity-60 [&_button]:cursor-not-allowed">
-                    <StructuredResume
-                      resume={DEMO_OPTIMIZED_RESUME}
-                      highlightKeywords={previewKeywords}
-                      quantifiedBullets={previewQuantified}
-                      highlightedBullets={previewRewritten}
-                      keywordBullets={previewKeywordBullets}
-                      newBullets={previewNewBullets}
-                      highlightOptimizedSummary
-                      showJdAlignedSummaryBadge
-                      scrollable
-                      editable
-                    />
-                  </div>
-                </div>
-                <ResumeOptimizationPanel
-                  surfacedKeywords={previewKeywords}
-                  bulletsRefined={6}
-                  summaryTailored
-                  jdGapsRemaining={3}
-                  evidenceMatchDelta={8}
-                  atsScoreReference={90}
-                  onDownloadPdf={() => {
-                    /* preview only */
-                  }}
-                  onDownloadDocx={() => {
-                    /* preview only */
-                  }}
-                />
-              </div>
-            </div>
-          </section>
         )}
 
         {!checkoutSuccess && !isLoggedIn && (

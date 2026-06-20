@@ -1,113 +1,101 @@
 "use client";
 
+import {
+  OptimizeAlignCard,
+  type AlignBulletPreview,
+} from "@/app/components/OptimizeAlignCard";
+import { OptimizeCta } from "@/app/components/EvidenceMetricBar";
+import type { ApplicationVerdict } from "@/app/lib/applicationVerdict";
+import type { RecommendedFix } from "@/app/lib/recommendedFixes";
+import { LOGIN_NUDGE_BANNER, LOGIN_NUDGE_HEADLINE, OPTIMIZE_CTA_LABEL_HERO } from "@/app/lib/evidenceMetricCopy";
+
 export type OptimizeOAuthResumeModalProps = {
   open: boolean;
   /** User chose not to optimize right now */
   onDismiss: () => void;
   /** User confirms optimization after sign-in */
   onStartOptimization: () => void | Promise<void>;
+  verdict: ApplicationVerdict;
+  selectedFixes: RecommendedFix[];
+  allFixes: RecommendedFix[];
+  bulletPreview?: AlignBulletPreview | null;
   isBusy?: boolean;
 };
 
-function ReadyGlyph() {
-  return (
-    <div
-      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 shadow-[0_12px_40px_-12px_rgba(79,70,229,0.45)] ring-4 ring-sky-100 sm:h-20 sm:w-20"
-      aria-hidden
-    >
-      <svg
-        className="h-8 w-8 text-white drop-shadow-sm sm:h-10 sm:w-10"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.847a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.847.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"
-        />
-      </svg>
-    </div>
-  );
-}
-
+/**
+ * Post-OAuth modal — same compact align card as the dashboard nudge.
+ */
 export function OptimizeOAuthResumeModal({
   open,
   onDismiss,
   onStartOptimization,
+  verdict,
+  selectedFixes,
+  allFixes,
+  bulletPreview = null,
   isBusy = false,
 }: OptimizeOAuthResumeModalProps) {
   if (!open) return null;
 
+  const ctaDisabled = isBusy || selectedFixes.length === 0;
+
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-[62] flex items-end justify-center p-3 sm:items-center sm:p-4">
       <button
         type="button"
-        className="absolute inset-0 bg-slate-950/45 backdrop-blur-[2px] transition-colors"
-        aria-label="Close dialog"
+        className="absolute inset-0 bg-slate-950/50 backdrop-blur-[3px] transition-colors"
+        aria-label="Dismiss"
         onClick={() => {
           if (!isBusy) onDismiss();
         }}
       />
       <div
-        className="relative w-full max-w-lg sm:max-w-2xl overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-[0_25px_80px_-12px_rgba(15,23,42,0.35)]"
+        className="optimize-nudge-modal relative flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_24px_64px_-16px_rgba(15,23,42,0.45)]"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="oauth-resume-title"
-        aria-describedby="oauth-resume-desc"
+        aria-labelledby="oauth-resume-align-title"
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-sky-50/90 to-transparent" />
-        <div className="relative px-8 pb-10 pt-10 sm:px-12 sm:pb-12 sm:pt-12">
-          <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-            <ReadyGlyph />
-            <p
-              className="mt-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-600 sm:text-xs"
-              id="oauth-resume-eyebrow"
-            >
-              All set
-            </p>
-            <h2
-              id="oauth-resume-title"
-              className="mt-2 max-w-xl text-pretty text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl sm:leading-snug md:text-[2rem]"
-            >
-              {"You're signed in"}
-            </h2>
-            <p
-              id="oauth-resume-desc"
-              className="mt-4 max-w-xl text-pretty text-base leading-relaxed text-slate-600 sm:text-lg"
-            >
-              Now start the optimizer to align your resume with the job you pasted.
-            </p>
-          </div>
-
-          <div className="mt-10 flex flex-col gap-3 sm:mt-12 sm:flex-row sm:flex-nowrap sm:items-stretch sm:gap-3 md:gap-4">
+        <h2 id="oauth-resume-align-title" className="sr-only">
+          {LOGIN_NUDGE_HEADLINE}
+        </h2>
+        <div className="optimize-nudge-modal__body px-3 py-2 sm:px-3.5 sm:py-2.5">
+          <p className="mb-2 rounded-lg border border-indigo-200/90 bg-indigo-50/90 px-2.5 py-1.5 text-[11px] leading-snug text-indigo-950 sm:text-xs">
+            {LOGIN_NUDGE_BANNER}
+          </p>
+          <OptimizeAlignCard
+            verdict={verdict}
+            selectedFixes={selectedFixes}
+            allFixes={allFixes}
+            bulletPreview={bulletPreview}
+            disabled={selectedFixes.length === 0}
+            busy={isBusy}
+            heroLayout
+            embedInModal
+            liveDashboard
+            alignModalVariant="post_login"
+            className="!static min-w-0 border-0 bg-transparent p-0 shadow-none ring-0 lg:!static"
+          />
+        </div>
+        <div className="optimize-nudge-modal__footer shrink-0 border-t border-slate-200/80 bg-slate-50/70 px-3 py-2 sm:px-3.5">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
             <button
               type="button"
               disabled={isBusy}
               onClick={() => onDismiss()}
-              className="w-full shrink-0 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-base font-medium text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 sm:w-[min(100%,10rem)] sm:px-6"
+              className="w-full shrink-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 sm:min-w-[6.5rem] sm:w-auto"
             >
               Not now
             </button>
-            <button
-              type="button"
-              disabled={isBusy}
+            <OptimizeCta
               onClick={() => void onStartOptimization()}
-              className="inline-flex w-full min-w-0 flex-1 items-center justify-center gap-2.5 rounded-2xl bg-slate-900 px-6 py-4 text-base font-semibold text-white shadow-[0_14px_40px_-14px_rgba(15,23,42,0.65)] transition hover:bg-slate-800 disabled:opacity-60 md:px-8"
+              size="lg"
+              disabled={ctaDisabled}
+              className="w-full min-w-0 flex-1"
+              variant="purple"
+              showSparkle
             >
-              {isBusy ? (
-                <>
-                  <span
-                    className="h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-white/30 border-t-white"
-                    aria-hidden
-                  />
-                  Starting…
-                </>
-              ) : (
-                "Start optimization"
-              )}
-            </button>
+              {isBusy ? "Starting…" : OPTIMIZE_CTA_LABEL_HERO}
+            </OptimizeCta>
           </div>
         </div>
       </div>

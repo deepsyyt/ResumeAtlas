@@ -22,6 +22,12 @@ import {
   OPTIMIZE_CTA_LABEL,
   OPTIMIZE_CTA_LABEL_HERO,
   OPTIMIZE_CTA_SUBLINE,
+  LOGIN_NUDGE_HEADLINE,
+  LOGIN_NUDGE_SUBHEAD,
+  OPTIMIZE_NUDGE_EYEBROW,
+  OPTIMIZE_NUDGE_HEADLINE,
+  OPTIMIZE_NUDGE_SUBHEAD,
+  OPTIMIZE_NUDGE_URGENCY,
 } from "@/app/lib/evidenceMetricCopy";
 import {
   extractFixHighlightKeywords,
@@ -53,6 +59,8 @@ type OptimizeAlignCardProps = {
   embedInModal?: boolean;
   /** Live post-scan dashboard: no entry motion or CTA nudge loops. */
   liveDashboard?: boolean;
+  /** Modal copy variant for post-analysis vs post-login OAuth resume. */
+  alignModalVariant?: "post_analysis" | "post_login";
 };
 
 function truncateLine(text: string, max = 120): string {
@@ -165,6 +173,7 @@ export function OptimizeAlignCard({
   heroLayout = false,
   embedInModal = false,
   liveDashboard = false,
+  alignModalVariant = "post_analysis",
 }: OptimizeAlignCardProps) {
   const { shortlistPct, shortlistUplift } = verdict;
   const ctaDisabled = demo || disabled || busy || !onOptimize;
@@ -238,21 +247,35 @@ export function OptimizeAlignCard({
           : "border-slate-200/70 bg-slate-50/50"
       }`;
 
+  const modalHeadline =
+    embedInModal && alignModalVariant === "post_login"
+      ? LOGIN_NUDGE_HEADLINE
+      : OPTIMIZE_NUDGE_HEADLINE;
+  const modalSubhead =
+    embedInModal && alignModalVariant === "post_login"
+      ? LOGIN_NUDGE_SUBHEAD
+      : OPTIMIZE_NUDGE_SUBHEAD;
+
   return (
     <div className={shellClass}>
+        {heroLayout && embedInModal && alignModalVariant === "post_analysis" ? (
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-indigo-700">
+            {OPTIMIZE_NUDGE_EYEBROW}
+          </p>
+        ) : null}
         <p
         className={`font-bold text-slate-900 ${
           embedInModal
-            ? "text-xs"
+            ? "text-sm sm:text-base"
             : heroLayout
               ? "text-sm"
               : "text-[10px] uppercase tracking-[0.14em] text-indigo-950"
         }`}
       >
-        {heroLayout && embedInModal ? OPTIMIZE_ALIGN_BENEFITS_TITLE : OPTIMIZE_ALIGN_CARD_TITLE}
+        {heroLayout && embedInModal ? modalHeadline : OPTIMIZE_ALIGN_CARD_TITLE}
       </p>
       {heroLayout && embedInModal ? (
-        <p className="mt-1 text-[11px] leading-snug text-slate-600">{OPTIMIZE_ALIGN_CARD_BODY}</p>
+        <p className="mt-1 text-[11px] leading-snug text-slate-600 sm:text-xs">{modalSubhead}</p>
       ) : null}
       {!heroLayout ? (
         <p className="mt-1 text-[11px] leading-snug text-indigo-950/90">{OPTIMIZE_ALIGN_CARD_BODY}</p>
@@ -285,13 +308,17 @@ export function OptimizeAlignCard({
                 <p className={`font-bold text-slate-900 ${embedInModal ? "text-[11px]" : "text-xs"}`}>
                   {OPTIMIZE_ALIGN_BENEFITS_TITLE}
                 </p>
-              ) : null}
+              ) : (
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-700">
+                  {OPTIMIZE_ALIGN_BENEFITS_TITLE}
+                </p>
+              )}
               <ul className={embedInModal ? "mt-1 space-y-1" : "mt-2.5 space-y-2"}>
                 {OPTIMIZE_ALIGN_BENEFITS.map((benefit) => (
                   <li
                     key={benefit}
                     className={`flex items-start gap-1.5 leading-snug text-slate-800 ${
-                      embedInModal ? "text-[10px]" : "text-[11px]"
+                      embedInModal ? "text-[10px] sm:text-[11px]" : "text-[11px]"
                     }`}
                   >
                     <BenefitCheckIcon compact={embedInModal} />
@@ -299,6 +326,11 @@ export function OptimizeAlignCard({
                   </li>
                 ))}
               </ul>
+              {heroLayout && embedInModal && alignModalVariant === "post_analysis" ? (
+                <p className="mt-2 rounded-lg border border-amber-200/90 bg-amber-50/90 px-2.5 py-2 text-[10px] leading-snug text-amber-950 sm:text-[11px]">
+                  {OPTIMIZE_NUDGE_URGENCY}
+                </p>
+              ) : null}
             </>
           ) : (
             <>
@@ -329,6 +361,7 @@ export function OptimizeAlignCard({
         </div>
       </div>
 
+      {!(heroLayout && embedInModal) ? (
       <div className={previewShellClass}>
         <p
           className={`font-bold text-slate-900 ${
@@ -385,6 +418,7 @@ export function OptimizeAlignCard({
           </p>
         )}
       </div>
+      ) : null}
 
       {!embedInModal ? (
         <div

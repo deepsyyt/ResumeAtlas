@@ -28,24 +28,106 @@ export const ANALYSIS_REPORT_SUBTITLE =
   "Tailor project bullets to this posting with evidence-first rewrites.";
 
 export const OPTIMIZE_CTA_LABEL = "Increase shortlist odds";
-export const OPTIMIZE_CTA_LABEL_HERO = "Optimize Now";
+export const OPTIMIZE_CTA_LABEL_HERO = "Optimize for this job";
 export const OPTIMIZE_CTA_SUBLINE = "Strengthen proof before you apply";
-export const OPTIMIZE_ALIGN_PRIVACY_NOTE = "Your data is private and secure.";
+export const OPTIMIZE_ALIGN_PRIVACY_NOTE = "Your data stays private. Nothing is shared with employers.";
+
+export const OPTIMIZE_NUDGE_EYEBROW = "Your gaps are clear. Now close them.";
+export const OPTIMIZE_NUDGE_HEADLINE = "Turn this check into a shortlist-ready resume";
+export const OPTIMIZE_NUDGE_SUBHEAD =
+  "Recruiters skim in seconds. A generic resume gets filtered out. Optimize for this job so your proof shows up where it matters.";
+export const OPTIMIZE_NUDGE_URGENCY =
+  "Applying to 20 jobs with one resume burns time. Aligning per job is how you land interviews.";
+
+export const LOGIN_NUDGE_BANNER = "You're signed in. Your scan is saved.";
+export const LOGIN_NUDGE_HEADLINE = "Pick up where you left off";
+export const LOGIN_NUDGE_SUBHEAD =
+  "Your job match and recommended fixes are ready. Optimize now to turn this analysis into a resume you'd confidently send to an interview.";
 
 export const OPTIMIZE_ALIGN_CARD_TITLE = "Align before you apply";
-export const OPTIMIZE_ALIGN_CARD_BODY =
-  "Your selected fixes applied—summary, bullets, and proof aligned to this job.";
+export const OPTIMIZE_ALIGN_CARD_BODY = OPTIMIZE_NUDGE_SUBHEAD;
 export const OPTIMIZE_ALIGN_CARD_HINT =
   "Select at least one recommended fix on the left.";
 export const OPTIMIZE_ALIGN_CARD_DEMO_HINT =
   "Run a check to see recommended fixes pre-selected here.";
-export const OPTIMIZE_ALIGN_BENEFITS_TITLE = "What you get after you optimize";
+export const OPTIMIZE_ALIGN_BENEFITS_TITLE = "What you get when you optimize";
 export const OPTIMIZE_ALIGN_BENEFITS = [
-  "Summary and title aligned to this job",
-  "Selected fixes refined or added in the best-matching job",
-  "Weak keywords strengthened in your experience bullets",
-  "Thin bullets polished with clearer results and metrics",
+  "Summary and title rewritten for this role",
+  "Selected fixes applied to your strongest bullets",
+  "JD keywords surfaced with evidence, not keyword stuffing",
+  "ATS-friendly layout recruiters and systems can parse",
 ] as const;
+
+export const OPTIMIZE_NUDGE_CREDIT_NOTICE =
+  "1 credit applied. Next step: optimize so this resume is interview-ready for this posting.";
+
+export const DOWNLOAD_UNLOCK_EYEBROW = "Ready to apply?";
+export const DOWNLOAD_UNLOCK_TITLE = "Download your interview-ready resume";
+export const DOWNLOAD_UNLOCK_BODY =
+  "You have already aligned this resume to the job. Unlock the file you send, plus 5 full job runs to repeat the process without starting over.";
+export const DOWNLOAD_UNLOCK_BENEFITS_TITLE = "What $2.99 unlocks";
+export const DOWNLOAD_UNLOCK_BENEFITS = [
+  "PDF and editable file for this optimized resume",
+  "5 job credits included: check, optimize, and download per role",
+  "ATS-friendly export built for screening systems",
+  "Stop spray-and-pray. Align each application instead of mass-applying and burning out",
+] as const;
+export const DOWNLOAD_UNLOCK_OUTCOME =
+  "Get shortlisted for roles you fit, not exhausted applying to ones you don't.";
+export const DOWNLOAD_UNLOCK_PRICE_HEADLINE = "5 aligned resumes. One price.";
+export const DOWNLOAD_UNLOCK_PRICE_SUBLINE = (price: string, credits: number) =>
+  `${price} · ${credits} jobs end-to-end (scan, optimize, download)`;
+export const DOWNLOAD_UNLOCK_CTA = (price: string) => `Unlock download for ${price}`;
+
+export const DOWNLOAD_SUCCESS_EYEBROW = "Payment successful";
+export const DOWNLOAD_SUCCESS_TITLE = "Your interview-ready resume is unlocked";
+export const DOWNLOAD_SUCCESS_BODY =
+  "Download this job now. Each credit covers one full run: check fit, optimize, and export an ATS-friendly resume.";
+export function downloadSuccessCreditsLine(creditsGranted: number, creditsRemaining: number): string {
+  const grantedLabel = `${creditsGranted} job credit${creditsGranted === 1 ? "" : "s"} added`;
+  const balanceLabel = `${creditsRemaining} left for your next roles`;
+  return `${grantedLabel} · ${balanceLabel}`;
+}
+export const DOWNLOAD_SUCCESS_THIS_JOB = "This job: PDF + editable file ready to download";
+export const DOWNLOAD_SUCCESS_NEXT_JOBS = "Use remaining credits to align resumes for other postings";
+
+export const CONVERSION_MODAL_HEADLINE = "Align this resume before you apply";
+export const CONVERSION_MODAL_SUBHEAD =
+  "This job needs its own version of your resume. Unlock optimization plus 5 job credits to check, tailor, and download for the roles you actually want.";
+export const CONVERSION_MODAL_BENEFITS_TITLE = "Why alignment beats volume";
+export const CONVERSION_MODAL_BENEFITS = [
+  "Recruiters shortlist proof, not copy-paste resumes",
+  "Fix gaps this posting flagged",
+  "ATS-friendly output per job",
+  "Apply smarter: fewer apps, better callbacks",
+] as const;
+export const CONVERSION_MODAL_PRICE_LABEL = "One-time unlock";
+export const CONVERSION_MODAL_PRICE_HEADLINE = (price: string) => `${price} · 5 jobs`;
+export const CONVERSION_MODAL_PRICE_SUBLINE = "Check, optimize, download for each role";
+export const CONVERSION_MODAL_CTA = (price: string) => `Unlock optimization for ${price}`;
+
+export const CREDIT_PACK_EXHAUSTED_HEADLINE = "Keep landing interviews. Don't stop at one job.";
+export const CREDIT_PACK_EXHAUSTED_SUBHEAD =
+  "You have used this run. Get 5 more full job credits: match check, optimize, and ATS-ready download for each posting.";
+export const CREDIT_PACK_OFFER_HEADLINE = (price: string) => `5 aligned applications · ${price}`;
+export const CREDIT_PACK_OFFER_SUBHEAD = "Less time applying. More time interviewing.";
+export const CREDIT_PACK_BENEFITS = [
+  "Match score and gap list for each job",
+  "Optimize summary, bullets, and fixes per posting",
+  "Download PDF and editable file when ready",
+  "Built for shortlists, not generic mass applications",
+] as const;
+export const CREDIT_PACK_CTA = (price: string) => `Get 5 job credits for ${price}`;
+export const CREDIT_PACK_FREE_SCAN_HEADLINE = "You've used your free scan";
+
+export const LIMIT_MODAL_ANON_HEADLINE = "You've used your free scan";
+export const LIMIT_MODAL_ANON_SUBHEAD =
+  "Sign in to save your work and unlock 5 job credits: check fit, optimize, and download an interview-ready resume for each role you target.";
+export const LIMIT_MODAL_ANON_BODY =
+  "Don't keep applying with one resume. Align per job so you spend time on roles where you can actually get shortlisted.";
+export const LIMIT_MODAL_ANON_CTA = "Sign in with Google";
+export const LIMIT_MODAL_ANON_FOOTNOTE = "Free scan resets 30 days after use.";
+export const LIMIT_MODAL_USER_FOOTNOTE = "Free scan resets 30 days after use, same as guest users.";
 export const OPTIMIZE_ALIGN_SELECTION_TITLE = "Recommended fixes";
 export const OPTIMIZE_ALIGN_PREVIEW_TITLE = "Bullet preview";
 export const OPTIMIZE_ALIGN_BEFORE_LABEL = "Before";

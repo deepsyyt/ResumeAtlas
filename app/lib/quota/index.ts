@@ -20,9 +20,9 @@ export type QuotaExceededPayload = {
 };
 
 const ANON_MESSAGE =
-  "You've used your free scan for this month. Sign in to get 5 credits for $2.99.";
+  "You've used your free scan for this month. Sign in to get 5 job credits for $2.99.";
 const USER_MESSAGE =
-  "You've used your free scan for this month. Get 5 credits for $2.99.";
+  "You've used your free scan for this month. Get 5 job credits for $2.99.";
 
 /**
  * Resolves the actor for quota: signed-in user takes precedence; otherwise anonymous.

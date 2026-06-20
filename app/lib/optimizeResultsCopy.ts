@@ -99,7 +99,7 @@ export function buildOptimizeBenefitItems(args: {
       id: "fixes",
       icon: "fixes",
       title: `All ${args.selectedFixCount} fix${args.selectedFixCount === 1 ? "" : "es"} you selected are in your resume`,
-      detail: "Each recommended fix is reflected in a refined or new project bullet.",
+      detail: "Each fix is highlighted in green in the preview.",
     });
   }
 
@@ -158,7 +158,7 @@ export function buildOptimizeBenefitItems(args: {
 
 export const OPTIMIZE_FIXES_SECTION_TITLE = "Fixes you selected";
 export const OPTIMIZE_FIXES_SECTION_SUBTITLE =
-  "Green highlights in the preview mark each fix and the keywords it added.";
+  "Green highlights in the preview mark each fix in your resume.";
 
 export const OPTIMIZE_KEYWORDS_SECTION_TITLE = "Keywords recruiters scan for";
 export const OPTIMIZE_GAPS_SECTION_TITLE = "Still missing from this job";

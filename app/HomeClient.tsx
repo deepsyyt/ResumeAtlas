@@ -13,6 +13,7 @@ import { CreditPackModal } from "@/app/components/CreditPackModal";
 import { OptimizeConversionModal } from "@/app/components/OptimizeConversionModal";
 import { OptimizeOAuthResumeModal } from "@/app/components/OptimizeOAuthResumeModal";
 import { OptimizeDashboardNudgeModal } from "@/app/components/OptimizeDashboardNudgeModal";
+import { OPTIMIZE_NUDGE_CREDIT_NOTICE } from "@/app/lib/evidenceMetricCopy";
 import { getCreditPackage, type CreditPackageId } from "@/app/lib/billing/packages";
 import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import {
@@ -185,6 +186,7 @@ type AnalyzerStoredState = {
   analyzeResult: ATSAnalyzeResult;
   savedAt: number;
   funnelId?: string;
+  selectedRecommendedFixes?: RecommendedFix[];
 };
 
 function writePostOauthAnalyzerSnapshot(state: AnalyzerStoredState) {
@@ -511,6 +513,13 @@ export default function HomeClient({
               setLastAnalysisUsedJd(!!(li.jobDescription ?? "").trim());
               if (arl) setLastRoleLevel(arl);
               setAnalyzeResult(ar);
+              if (Array.isArray(parsed.selectedRecommendedFixes) && parsed.selectedRecommendedFixes.length > 0) {
+                setSelectedRecommendedFixes(parsed.selectedRecommendedFixes);
+              } else {
+                setSelectedRecommendedFixes(
+                  resolveDashboardRecommendedFixes(ar.evidence_dashboard?.riskAreas ?? [])
+                );
+              }
               if (fid) {
                 setActiveFunnelId(fid);
                 setActiveFunnelIdState(fid);
@@ -773,13 +782,11 @@ export default function HomeClient({
           resolveDashboardRecommendedFixes(result.evidence_dashboard?.riskAreas ?? [])
         );
         if (result.application?.creditUsed) {
-          setScanCreditNotice(
-            "1 credit used. Tap Optimize next, or you won't get an application-ready ATS downloadable resume."
-          );
+          setScanCreditNotice(OPTIMIZE_NUDGE_CREDIT_NOTICE);
           void refreshUsage();
         } else if (result.application?.source === "free") {
           setScanCreditNotice(
-            "Your free job check is done. Next: optimize your resume for this posting."
+            "Your free job check is done. Next, optimize for this posting to get interview-ready."
           );
         } else {
           setScanCreditNotice(null);
@@ -887,6 +894,7 @@ export default function HomeClient({
           analyzeResult,
           savedAt: Date.now(),
           funnelId: activeFunnelId ?? undefined,
+          selectedRecommendedFixes,
         });
       }
       const redirectTo = buildAuthCallbackRedirectTo(
@@ -908,7 +916,7 @@ export default function HomeClient({
       setIsStartingGoogleAuth(false);
       setAuthStartSource(null);
     }
-  }, [lastInputs, analyzeResult, activeFunnelId, lastJD, lastRoleLevel]);
+  }, [lastInputs, analyzeResult, activeFunnelId, lastJD, lastRoleLevel, selectedRecommendedFixes]);
 
   const launchOptimizerFlow = useCallback(async () => {
     if (!lastInputs || !analyzeResult) return;
@@ -1055,6 +1063,7 @@ export default function HomeClient({
             analyzeResult,
             savedAt: Date.now(),
             funnelId: activeFunnelId ?? undefined,
+            selectedRecommendedFixes,
           });
         }
         const redirectTo = buildAuthCallbackRedirectTo(
@@ -1534,12 +1543,18 @@ export default function HomeClient({
               isStartingGoogleAuth={isStartingGoogleAuth}
               localError={conversionModalError}
             />
-            <OptimizeOAuthResumeModal
-              open={optimizeOauthResumeModalOpen}
-              onDismiss={dismissOptimizeOAuthResumeModal}
-              onStartOptimization={startOptimizationAfterOAuthReturn}
-              isBusy={isLaunchingOptimize}
-            />
+            {analyzeResult?.evidence_dashboard ? (
+              <OptimizeOAuthResumeModal
+                open={optimizeOauthResumeModalOpen}
+                onDismiss={dismissOptimizeOAuthResumeModal}
+                onStartOptimization={startOptimizationAfterOAuthReturn}
+                isBusy={isLaunchingOptimize}
+                verdict={computeApplicationVerdict(analyzeResult.evidence_dashboard)}
+                selectedFixes={selectedRecommendedFixes}
+                allFixes={resolveDashboardRecommendedFixes(analyzeResult.evidence_dashboard.riskAreas)}
+                bulletPreview={analyzeResult.bullet_preview ?? null}
+              />
+            ) : null}
             {analyzeResult?.evidence_dashboard ? (
               <OptimizeDashboardNudgeModal
                 open={optimizeDashboardNudgeOpen}

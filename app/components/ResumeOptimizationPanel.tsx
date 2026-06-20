@@ -17,14 +17,16 @@ import {
   recommendedFixShortTitle,
   type OptimizeBenefitItem,
 } from "@/app/lib/optimizeResultsCopy";
-import { extractFixHighlightKeywords } from "@/app/lib/recommendedFixes";
-
-import { describeJdGapEvidence, type JdGapDetail } from "@/app/lib/skillGapRules";
-import type { OptimizedSkillProofRow } from "@/app/lib/resumeEvidenceScore";
+import type { AppliedFixOutcome } from "@/app/lib/recommendedFixes";
 import {
+  extractFixDisplayChips,
+  recommendedFixActionLabel,
   recommendedFixToOptimizeText,
+  resolveRecommendedFixInput,
   type RecommendedFix,
 } from "@/app/lib/recommendedFixes";
+import { describeJdGapEvidence, type JdGapDetail } from "@/app/lib/skillGapRules";
+import type { OptimizedSkillProofRow } from "@/app/lib/resumeEvidenceScore";
 
 export type ResumeOptimizationPanelProps = {
   surfacedKeywords: string[];
@@ -38,7 +40,9 @@ export type ResumeOptimizationPanelProps = {
   evidenceMatchDelta?: number;
   atsScoreReference?: number;
   weakKeywordsStrengthened?: number;
-  /** Recommended fixes the user selected before optimize (optimize text lines). */
+  /** Per-fix outcomes after optimize (preferred). */
+  appliedFixOutcomes?: AppliedFixOutcome[];
+  /** @deprecated Use appliedFixOutcomes — legacy optimize text lines. */
   selectedFixes?: string[];
   /** All recommended fixes from analyze (for unselected count). */
   availableRecommendedFixes?: RecommendedFix[];
@@ -213,17 +217,26 @@ export function ResumeOptimizationPanel({
   evidenceMatchDelta,
   atsScoreReference,
   weakKeywordsStrengthened = 0,
+  appliedFixOutcomes = [],
   selectedFixes = [],
   availableRecommendedFixes = [],
   onDownloadPdf,
   onDownloadDocx,
   onScrollToPreview,
 }: ResumeOptimizationPanelProps) {
-  const kwCount = surfacedKeywords.length;
+  const fixOutcomes: AppliedFixOutcome[] =
+    appliedFixOutcomes.length > 0
+      ? appliedFixOutcomes
+      : selectedFixes.map((fixText) => ({
+          fixText,
+          action: recommendedFixShortTitle(fixText),
+          applied: true,
+        }));
   const selectedSet = new Set(selectedFixes.map((f) => f.trim().toLowerCase()));
   const unselectedFixes = availableRecommendedFixes.filter(
     (fix) => !selectedSet.has(recommendedFixToOptimizeText(fix).trim().toLowerCase())
   );
+  const kwCount = surfacedKeywords.length;
 
   const benefits = buildOptimizeBenefitItems({
     atsScore: atsScoreReference,
@@ -231,7 +244,7 @@ export function ResumeOptimizationPanel({
     bulletsRefined,
     bulletsAdded,
     projectsRefined,
-    selectedFixCount: selectedFixes.length,
+    selectedFixCount: fixOutcomes.length,
     unselectedFixCount: unselectedFixes.length,
     keywordCount: kwCount,
     evidenceMatchDelta,
@@ -241,31 +254,33 @@ export function ResumeOptimizationPanel({
   return (
     <div className="flex flex-col gap-3">
       {/* Hero + download */}
-      <section className="rounded-xl border border-slate-900 bg-gradient-to-br from-slate-900 to-slate-800 p-4 text-white shadow-md">
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div className="min-w-0">
-            <h3 className="text-base font-bold tracking-tight">{OPTIMIZE_HERO_TITLE}</h3>
-            <p className="mt-1 text-xs leading-relaxed text-slate-300">{OPTIMIZE_HERO_SUBTITLE}</p>
+      <div className="payment-glow-shell payment-glow-card shadow-md">
+        <section className="payment-glow-card-inner bg-gradient-to-br from-slate-900 to-slate-800 p-4 text-white">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div className="min-w-0">
+              <h3 className="text-base font-bold tracking-tight">{OPTIMIZE_HERO_TITLE}</h3>
+              <p className="mt-1 text-xs leading-relaxed text-slate-300">{OPTIMIZE_HERO_SUBTITLE}</p>
+            </div>
+            <AtsBadge score={atsScoreReference} />
           </div>
-          <AtsBadge score={atsScoreReference} />
-        </div>
-        <div className="mt-3 flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={onDownloadPdf}
-            className="inline-flex flex-1 items-center justify-center rounded-lg bg-white px-3 py-2.5 text-xs font-semibold text-slate-900 shadow-sm transition hover:bg-slate-100"
-          >
-            Download PDF
-          </button>
-          <button
-            type="button"
-            onClick={onDownloadDocx}
-            className="inline-flex flex-1 items-center justify-center rounded-lg border border-white/25 bg-white/5 px-3 py-2.5 text-xs font-semibold text-white transition hover:bg-white/10"
-          >
-            Download editable file
-          </button>
-        </div>
-      </section>
+          <div className="mt-3 flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={onDownloadPdf}
+              className="inline-flex flex-1 items-center justify-center rounded-lg bg-white px-3 py-2.5 text-xs font-semibold text-slate-900 shadow-sm transition hover:bg-slate-100"
+            >
+              Download PDF
+            </button>
+            <button
+              type="button"
+              onClick={onDownloadDocx}
+              className="inline-flex flex-1 items-center justify-center rounded-lg border border-white/25 bg-white/5 px-3 py-2.5 text-xs font-semibold text-white transition hover:bg-white/10"
+            >
+              Download editable file
+            </button>
+          </div>
+        </section>
+      </div>
 
       {/* Benefits */}
       <section className="rounded-xl border border-slate-200/90 bg-gradient-to-b from-white to-slate-50/40 p-4 shadow-sm">
@@ -289,13 +304,13 @@ export function ResumeOptimizationPanel({
       </section>
 
       {/* Selected fixes */}
-      {selectedFixes.length > 0 ? (
+      {fixOutcomes.length > 0 ? (
         <section className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
           <div className="flex items-start justify-between gap-2">
             <div>
               <h3 className="text-sm font-semibold text-slate-900">
                 {OPTIMIZE_FIXES_SECTION_TITLE}{" "}
-                <span className="font-normal text-emerald-600">({selectedFixes.length} applied)</span>
+                <span className="font-normal text-emerald-600">({fixOutcomes.length} applied)</span>
               </h3>
               <p className="mt-0.5 text-[11px] leading-snug text-slate-500">
                 {OPTIMIZE_FIXES_SECTION_SUBTITLE}
@@ -312,48 +327,51 @@ export function ResumeOptimizationPanel({
             ) : null}
           </div>
           <ul className="mt-2.5 space-y-2">
-            {selectedFixes.map((fix) => {
-              const fixKeywords = extractFixHighlightKeywords([fix]).slice(0, 4);
+            {fixOutcomes.map((outcome) => {
+              const parsedFix = resolveRecommendedFixInput(outcome.fixText);
+              const fixKeywords = extractFixDisplayChips(
+                parsedFix ?? outcome.fixText,
+                4
+              );
               return (
-              <li
-                key={fix}
-                className="rounded-lg border border-slate-100 bg-white px-2.5 py-2 shadow-sm"
-              >
-                <div className="flex gap-2">
-                  <span
-                    className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[9px] font-bold text-white"
-                    aria-hidden
-                  >
-                    ✓
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold text-slate-900">
-                      {recommendedFixShortTitle(fix)}
-                    </p>
-                    {fixKeywords.length > 0 ? (
-                      <p className="mt-1 flex flex-wrap gap-1">
-                        {fixKeywords.map((kw) => (
-                          <span
-                            key={`${fix}-${kw}`}
-                            className="inline-flex rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-900 ring-1 ring-emerald-100"
-                          >
-                            {kw}
-                          </span>
-                        ))}
+                <li
+                  key={outcome.fixText}
+                  className="rounded-lg border border-slate-100 bg-white px-2.5 py-2 shadow-sm"
+                >
+                  <div className="flex gap-2">
+                    <span
+                      className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[9px] font-bold text-white"
+                      aria-hidden
+                    >
+                      ✓
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-semibold leading-snug text-slate-900">
+                        {parsedFix
+                          ? recommendedFixActionLabel(parsedFix)
+                          : recommendedFixActionLabel({
+                              action: outcome.action,
+                              target: null,
+                              section: null,
+                              detail: null,
+                            })}
                       </p>
-                    ) : null}
-                    {fix.length > 55 ? (
-                      <details className="mt-1">
-                        <summary className="cursor-pointer text-[10px] font-medium text-slate-500 hover:text-slate-700">
-                          Full recommendation
-                        </summary>
-                        <p className="mt-1 text-[10px] leading-snug text-slate-600">{fix}</p>
-                      </details>
-                    ) : null}
+                      {fixKeywords.length > 0 ? (
+                        <p className="mt-1.5 flex flex-wrap gap-1">
+                          {fixKeywords.map((kw) => (
+                            <span
+                              key={`${outcome.fixText}-${kw}`}
+                              className="inline-flex rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-900 ring-1 ring-emerald-100"
+                            >
+                              {kw}
+                            </span>
+                          ))}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-              </li>
-            );
+                </li>
+              );
             })}
           </ul>
         </section>

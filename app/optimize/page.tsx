@@ -23,11 +23,12 @@ import {
   trackOptimizationCompleted,
   trackOptimizationPdfDownloaded,
 } from "@/app/lib/analyticsFunnel";
+import { DownloadPaymentModal } from "@/app/components/DownloadPaymentModal";
 import { DownloadPaymentSuccessModal } from "@/app/components/DownloadPaymentSuccessModal";
 import { buildRefinementEvidence } from "@/app/lib/resumeFactualAudit";
 import { makeExperienceBulletKey, countRefinedScopesFromBulletKeys } from "@/app/lib/optimizeExperience";
 import { buildBulletEvidenceMaps } from "@/app/lib/optimizeBulletEvidence";
-import { extractFixHighlightKeywords, resolveDashboardRecommendedFixes } from "@/app/lib/recommendedFixes";
+import { extractFixHighlightKeywords, resolveDashboardRecommendedFixes, type AppliedFixOutcome } from "@/app/lib/recommendedFixes";
 
 const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
 const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
@@ -76,6 +77,7 @@ type OptimizeResult = {
   }[];
   selectedRejectionRisks?: string[];
   addressedRejectionRisks?: string[];
+  appliedFixOutcomes?: AppliedFixOutcome[];
   insights?: {
     strongMatches?: string[];
     missingCritical?: string[];
@@ -133,6 +135,14 @@ export default function OptimizePage() {
   const [isUnlockingDownload, setIsUnlockingDownload] = useState(false);
   const [downloadPassToken, setDownloadPassToken] = useState<string | null>(null);
   const [downloadPaidSuccessOpen, setDownloadPaidSuccessOpen] = useState(false);
+  const [downloadPaymentModalOpen, setDownloadPaymentModalOpen] = useState(false);
+  const [downloadCheckoutLoading, setDownloadCheckoutLoading] = useState(false);
+  const [downloadCheckoutError, setDownloadCheckoutError] = useState<string | null>(null);
+  const [downloadGateCreditsRemaining, setDownloadGateCreditsRemaining] = useState(0);
+  const [downloadPaymentReceipt, setDownloadPaymentReceipt] = useState<{
+    creditsGranted: number;
+    creditsRemaining: number;
+  } | null>(null);
   const lastPdfDownloadAtRef = useRef(0);
   const lastEditableDownloadAtRef = useRef(0);
 
@@ -415,11 +425,11 @@ export default function OptimizePage() {
   }, []);
 
   type DownloadGateResult =
-    | { ok: true; justPaidForDownload: false }
-    | { ok: true; justPaidForDownload: true }
+    | { ok: true; paymentRequired: false }
+    | { ok: true; paymentRequired: true; creditsRemaining: number }
     | { ok: false };
 
-  const resolveDownloadGate = useCallback(async (): Promise<DownloadGateResult> => {
+  const checkDownloadGate = useCallback(async (): Promise<DownloadGateResult> => {
     const supabase = createClient();
     const {
       data: { session },
@@ -451,9 +461,32 @@ export default function OptimizePage() {
     }
 
     if (usageJson.downloadPaymentRequired) {
+      return {
+        ok: true,
+        paymentRequired: true,
+        creditsRemaining: usageJson.creditsRemaining ?? 0,
+      };
+    }
+
+    return { ok: true, paymentRequired: false };
+  }, []);
+
+  const runDownloadCheckout = useCallback(async () => {
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      setDownloadCheckoutError("Please sign in again to continue.");
+      return;
+    }
+
+    setDownloadCheckoutLoading(true);
+    setDownloadCheckoutError(null);
+    try {
       const checkout = await openRazorpayPackCheckout({
         packageId: "starter",
-        creditsRemaining: usageJson.creditsRemaining ?? 0,
+        creditsRemaining: downloadGateCreditsRemaining,
         isLoggedIn: true,
         getAuthHeaders: async () => ({
           "Content-Type": "application/json",
@@ -463,21 +496,32 @@ export default function OptimizePage() {
         onRefreshBalance: refreshDownloadWallet,
       });
       if (checkout.status === "error") {
-        setError(checkout.message);
-        return { ok: false };
+        setDownloadCheckoutError(checkout.message);
+        return;
       }
       if (checkout.status === "dismissed") {
-        return { ok: false };
+        return;
       }
       if (checkout.status !== "paid") {
-        return { ok: false };
+        return;
       }
       await refreshDownloadWallet();
-      return { ok: true, justPaidForDownload: true };
+      setDownloadPaymentReceipt({
+        creditsGranted: checkout.creditsGranted,
+        creditsRemaining: checkout.creditsRemaining,
+      });
+      setDownloadPaymentModalOpen(false);
+      setDownloadPaidSuccessOpen(true);
+    } finally {
+      setDownloadCheckoutLoading(false);
     }
+  }, [downloadGateCreditsRemaining, refreshDownloadWallet]);
 
-    return { ok: true, justPaidForDownload: false };
-  }, [refreshDownloadWallet]);
+  const promptDownloadPayment = useCallback((creditsRemaining: number) => {
+    setDownloadGateCreditsRemaining(creditsRemaining);
+    setDownloadCheckoutError(null);
+    setDownloadPaymentModalOpen(true);
+  }, []);
 
   type DownloadSurface = "optimize_panel" | "payment_success_modal";
 
@@ -490,11 +534,11 @@ export default function OptimizePage() {
       }
       setIsUnlockingDownload(true);
       const gate: DownloadGateResult = downloadPassToken
-        ? { ok: true, justPaidForDownload: false }
-        : await resolveDownloadGate();
+        ? { ok: true, paymentRequired: false }
+        : await checkDownloadGate();
       if (!gate.ok) return;
-      if (gate.justPaidForDownload) {
-        setDownloadPaidSuccessOpen(true);
+      if (gate.paymentRequired) {
+        promptDownloadPayment(gate.creditsRemaining);
         return;
       }
       const now = Date.now();
@@ -552,7 +596,7 @@ export default function OptimizePage() {
       setIsUnlockingDownload(false);
     }
   },
-  [editableResume, toPlainText, resolveDownloadGate, downloadPassToken]
+  [editableResume, toPlainText, checkDownloadGate, downloadPassToken, promptDownloadPayment]
   );
 
   const handleDownloadDocx = useCallback(
@@ -560,11 +604,11 @@ export default function OptimizePage() {
     try {
       setIsUnlockingDownload(true);
       const gate: DownloadGateResult = downloadPassToken
-        ? { ok: true, justPaidForDownload: false }
-        : await resolveDownloadGate();
+        ? { ok: true, paymentRequired: false }
+        : await checkDownloadGate();
       if (!gate.ok) return;
-      if (gate.justPaidForDownload) {
-        setDownloadPaidSuccessOpen(true);
+      if (gate.paymentRequired) {
+        promptDownloadPayment(gate.creditsRemaining);
         return;
       }
       const now = Date.now();
@@ -615,8 +659,9 @@ export default function OptimizePage() {
     editableResume,
     result?.optimizedResume,
     toPlainText,
-    resolveDownloadGate,
+    checkDownloadGate,
     downloadPassToken,
+    promptDownloadPayment,
   ]
   );
 
@@ -748,12 +793,20 @@ export default function OptimizePage() {
     buildBulletEvidenceMaps(bulletChanges, bulletDiffsKeyed);
   const selectedRejectionRisks =
     result.selectedRejectionRisks ?? input.selectedRejectionRisks ?? [];
-  const fixBulletKeys = Object.entries(bulletReasonByKey)
-    .filter(([, reason]) => reason.kind === "rejection_risk")
-    .map(([key]) => key);
-  const fixHighlightKeywords = extractFixHighlightKeywords(selectedRejectionRisks).filter((kw) =>
-    afterContent.toLowerCase().includes(kw.toLowerCase())
+  const appliedFixOutcomes = result.appliedFixOutcomes ?? [];
+  const fixBulletKeys = Array.from(
+    new Set([
+      ...appliedFixOutcomes
+        .map((o) => o.bulletKey)
+        .filter((key): key is string => Boolean(key)),
+      ...Object.entries(bulletReasonByKey)
+        .filter(([, reason]) => reason.kind === "rejection_risk")
+        .map(([key]) => key),
+    ])
   );
+  const fixHighlightKeywords = extractFixHighlightKeywords(
+    selectedRejectionRisks
+  ).filter((kw) => afterContent.toLowerCase().includes(kw.toLowerCase()));
   const showKeywords = (
     strengthenedWeakKeywords.length > 0 ? strengthenedWeakKeywords : strengthenedSkills
   ).filter((kw) => afterContent.toLowerCase().includes(kw.toLowerCase()));
@@ -971,6 +1024,7 @@ export default function OptimizePage() {
               jdGapsRemaining={jdGaps.length}
               jdGapDetails={jdGapDetails}
               weakKeywordsStrengthened={strengthenedWeakKeywords.length}
+              appliedFixOutcomes={appliedFixOutcomes}
               selectedFixes={selectedRejectionRisks}
               availableRecommendedFixes={resolveDashboardRecommendedFixes(
                 input.analyzeResult.evidence_dashboard?.riskAreas ?? []
@@ -993,17 +1047,30 @@ export default function OptimizePage() {
               }}
             />
             {isUnlockingDownload ? (
-              <p className="text-xs text-slate-600">
-                Unlocking download and opening secure checkout...
-              </p>
+              <p className="text-xs text-slate-600">Preparing download…</p>
             ) : null}
           </div>
         </div>
+
+        <DownloadPaymentModal
+          open={downloadPaymentModalOpen}
+          onClose={() => {
+            if (!downloadCheckoutLoading) {
+              setDownloadPaymentModalOpen(false);
+              setDownloadCheckoutError(null);
+            }
+          }}
+          onCheckout={runDownloadCheckout}
+          isCheckoutLoading={downloadCheckoutLoading}
+          checkoutError={downloadCheckoutError}
+        />
 
         <DownloadPaymentSuccessModal
           open={downloadPaidSuccessOpen}
           onClose={() => setDownloadPaidSuccessOpen(false)}
           isBusy={isUnlockingDownload}
+          creditsGranted={downloadPaymentReceipt?.creditsGranted ?? 5}
+          creditsRemaining={downloadPaymentReceipt?.creditsRemaining ?? 5}
           onDownloadPdf={async () => {
             try {
               await handleDownloadPdf("payment_success_modal");

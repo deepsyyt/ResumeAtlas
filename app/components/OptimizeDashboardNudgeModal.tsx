@@ -7,7 +7,7 @@ import {
 import { OptimizeCta } from "@/app/components/EvidenceMetricBar";
 import type { ApplicationVerdict } from "@/app/lib/applicationVerdict";
 import type { RecommendedFix } from "@/app/lib/recommendedFixes";
-import { OPTIMIZE_ALIGN_BENEFITS_TITLE, OPTIMIZE_CTA_LABEL_HERO } from "@/app/lib/evidenceMetricCopy";
+import { OPTIMIZE_NUDGE_HEADLINE, OPTIMIZE_CTA_LABEL_HERO } from "@/app/lib/evidenceMetricCopy";
 
 export type OptimizeDashboardNudgeModalProps = {
   open: boolean;
@@ -57,11 +57,11 @@ export function OptimizeDashboardNudgeModal({
         aria-labelledby="optimize-nudge-align-title"
       >
         <h2 id="optimize-nudge-align-title" className="sr-only">
-          {OPTIMIZE_ALIGN_BENEFITS_TITLE}
+          {OPTIMIZE_NUDGE_HEADLINE}
         </h2>
-        <div className="px-3 py-2.5 sm:px-3.5 sm:py-3">
+        <div className="optimize-nudge-modal__body px-3 py-2 sm:px-3.5 sm:py-2.5">
           {creditNotice ? (
-            <p className="mb-2.5 rounded-lg border border-amber-200/90 bg-amber-50/90 px-3 py-2 text-xs leading-relaxed text-amber-950 sm:text-sm">
+            <p className="mb-2 rounded-lg border border-amber-200/90 bg-amber-50/90 px-2.5 py-1.5 text-[11px] leading-snug text-amber-950 sm:text-xs">
               {creditNotice}
             </p>
           ) : null}
@@ -78,7 +78,7 @@ export function OptimizeDashboardNudgeModal({
             className="!static min-w-0 border-0 bg-transparent p-0 shadow-none ring-0 lg:!static"
           />
         </div>
-        <div className="shrink-0 border-t border-slate-200/80 bg-slate-50/70 px-3 py-2.5 sm:px-3.5">
+        <div className="optimize-nudge-modal__footer shrink-0 border-t border-slate-200/80 bg-slate-50/70 px-3 py-2 sm:px-3.5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
             <button
               type="button"
