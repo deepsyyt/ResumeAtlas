@@ -175,7 +175,7 @@ export function CreditPackModal({
   const fivePack = packs.find((p) => p.id === "jobseeker") ?? null;
   const fifteenPack = packs.find((p) => p.id === "power") ?? null;
   const showStart = isLoggedIn && creditsRemaining > 0;
-  const showPurchasePacks = !isLoggedIn || creditsRemaining === 0;
+  const showPurchasePacks = !checkoutSuccess;
   const busy = isBusy || checkoutLoading !== null || isStartingGoogleAuth;
   const previewKeywords = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.keywords];
   const previewRewritten = [...DEMO_OPTIMIZED_RESUME_HIGHLIGHTS.rewritten];
@@ -205,8 +205,8 @@ export function CreditPackModal({
           {checkoutSuccess
             ? "Payment successful"
             : showStart
-              ? "Start optimization"
-              : "Unlock resume downloads"}
+              ? "Continue where you left off"
+              : "You've used your free scan"}
         </h2>
         <div className="absolute right-6 top-6">
           <button
@@ -225,16 +225,16 @@ export function CreditPackModal({
             aria-live="polite"
           >
             <p className="text-sm font-semibold text-emerald-950">
-              {checkoutSuccess.packName}: +{checkoutSuccess.creditsAdded} application flow
+              {checkoutSuccess.packName}: {checkoutSuccess.creditsAdded} job application
               {checkoutSuccess.creditsAdded === 1 ? "" : "s"} added to your account.
             </p>
             <p className="mt-2 text-sm text-slate-700">
-              You now have{" "}
+              You have{" "}
               <span className="font-semibold tabular-nums text-slate-900">
                 {checkoutSuccess.balance}
               </span>{" "}
-              flow{checkoutSuccess.balance === 1 ? "" : "s"} available. Each flow is one scan → optimize → ATS download
-              for the same job — you cannot start a new scan until the current flow finishes.
+              left. Each one covers checking a job posting, tailoring your resume, and downloading
+              ATS-ready files — finish one job before starting the next.
             </p>
             <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button
@@ -251,7 +251,7 @@ export function CreditPackModal({
                 onClick={() => void handleContinueToOptimization()}
                 className="rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
               >
-                {isBusy ? "Starting…" : "Start optimization"}
+                {isBusy ? "Starting…" : "Tailor my resume"}
               </button>
             </div>
           </div>
@@ -261,12 +261,11 @@ export function CreditPackModal({
               <>
                 <p className="mt-2 text-sm text-slate-600">
                   {showStart
-                    ? "Continue your current application flow: optimize, then download your ATS-ready resume."
-                    : "Sign in to save your balance and run scan → optimize → download flows."}
+                    ? "Next step: tailor your resume for this job, then download the ATS-ready PDF."
+                    : "Sign in to save your purchases and pick up where you left off."}
                 </p>
                 <p className="mt-1 text-xs text-slate-500">
-                  1 credit = one full flow for one job posting. Finish optimize and download before starting another
-                  scan.
+                  One purchase = one job from check to download. Finish that job before starting another.
                 </p>
               </>
             )}
@@ -282,7 +281,8 @@ export function CreditPackModal({
         {!checkoutSuccess && showStart && (
           <div className="mt-5">
             <p className="text-sm font-medium text-slate-700">
-              Balance: <span className="tabular-nums text-slate-900">{creditsRemaining}</span> application flow
+              Remaining:{" "}
+              <span className="tabular-nums text-slate-900">{creditsRemaining}</span> job application
               {creditsRemaining === 1 ? "" : "s"}
             </p>
             <button
@@ -291,10 +291,10 @@ export function CreditPackModal({
               onClick={() => void onStartOptimization("credit_modal_balance")}
               className="mt-3 w-full rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
             >
-              {isBusy ? "Starting…" : "Start optimization"}
+              {isBusy ? "Starting…" : "Tailor my resume"}
             </button>
             <p className="mt-3 text-xs text-slate-500">
-              You can buy another pack after these are used (balance reaches zero).
+              You can buy another pack after you use these up.
             </p>
           </div>
         )}
@@ -302,28 +302,31 @@ export function CreditPackModal({
         {!checkoutSuccess && showPurchasePacks && (
         <div className={showStart ? "mt-8 border-t border-slate-200 pt-6" : "mt-6"}>
           <h2 className="text-2xl font-semibold text-center mb-2">
-            Get an interview-ready, ATS-optimized resume in one click
+            {showStart
+              ? "Buy 5 more job applications"
+              : "Keep going — tailor your resume for 5 more jobs"}
           </h2>
           <p className="text-center text-gray-600 mb-6">
-            Instant ATS improvements, stronger bullets, downloadable resume.
+            {showStart
+              ? `You have ${creditsRemaining} left. Add 5 more anytime — they stack on your balance.`
+              : "Check each posting, get AI improvements, and download ATS-ready files. One price, five jobs."}
           </p>
 
           {starterPack ? (
             <div className="border rounded-2xl p-6 shadow-sm max-w-md mx-auto bg-white">
-              <div className="text-sm text-gray-500 mb-1">Most popular</div>
+              <div className="text-sm text-gray-500 mb-1">Best value</div>
               <div className="text-3xl font-bold mb-1">
                 {formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)}
               </div>
               <div className="text-gray-600 mb-4">
-                Unlock this resume download (PDF + editable)
+                {starterPack.credits} job applications — check, tailor, and download for each posting
               </div>
 
               <ul className="space-y-2 text-sm mb-6">
-                <li>✔ Summary tailored for this role (120-150 tokens)</li>
-                <li>✔ Project bullets refined with supported JD language</li>
-                <li>✔ Keywords surfaced in experience, not invented</li>
-                <li>✔ Honest JD gaps flagged, not fabricated</li>
-                <li>✔ Download PDF + editable file</li>
+                <li>✔ ATS check against the job description</li>
+                <li>✔ Summary and bullets tailored for that role</li>
+                <li>✔ Keywords surfaced honestly — nothing invented</li>
+                <li>✔ Download PDF + editable file when you&apos;re ready</li>
               </ul>
 
               <button
@@ -336,7 +339,9 @@ export function CreditPackModal({
                   ? "Opening checkout…"
                   : isStartingGoogleAuth
                     ? "Signing in…"
-                    : "Unlock PDF + editable download"}
+                    : showStart
+                      ? `Add 5 more — ${formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)}`
+                      : `Get ${starterPack.credits} job applications`}
               </button>
 
               <p className="text-xs text-center text-gray-500 mt-3">
@@ -362,7 +367,7 @@ export function CreditPackModal({
                 <div className="grid md:grid-cols-2 gap-4 mt-6 page-prose">
                   {fivePack ? (
                     <div className="border rounded-xl p-5">
-                      <h3 className="font-semibold mb-1">5 Optimizations</h3>
+                      <h3 className="font-semibold mb-1">{fivePack.credits} job applications</h3>
                       <div className="text-2xl font-bold mb-2">
                         {formatCreditPackPrice(fivePack.razorpayAmount, fivePack.currency)}
                       </div>
@@ -379,14 +384,14 @@ export function CreditPackModal({
                           ? "Opening checkout…"
                           : isStartingGoogleAuth
                             ? "Signing in…"
-                            : "Pay and unlock 5 downloads"}
+                            : `Get ${fivePack.credits} job applications`}
                       </button>
                     </div>
                   ) : null}
 
                   {fifteenPack ? (
                     <div className="border rounded-xl p-5">
-                      <h3 className="font-semibold mb-1">15 Optimizations</h3>
+                      <h3 className="font-semibold mb-1">{fifteenPack.credits} job applications</h3>
                       <div className="text-2xl font-bold mb-2">
                         {formatCreditPackPrice(fifteenPack.razorpayAmount, fifteenPack.currency)}
                       </div>
@@ -403,7 +408,7 @@ export function CreditPackModal({
                           ? "Opening checkout…"
                           : isStartingGoogleAuth
                             ? "Signing in…"
-                            : "Pay and unlock 15 downloads"}
+                            : `Get ${fifteenPack.credits} job applications`}
                       </button>
                     </div>
                   ) : null}
@@ -487,7 +492,7 @@ export function CreditPackModal({
 
         {!checkoutSuccess && isLoggedIn && creditsRemaining === 0 && (
           <p className="mt-4 text-xs text-slate-600">
-            You&apos;ve used all available optimizations. Buy another pack to keep tailoring your resume for new jobs.
+            You&apos;ve used all your job applications. Buy another pack to keep tailoring resumes for new postings.
           </p>
         )}
 

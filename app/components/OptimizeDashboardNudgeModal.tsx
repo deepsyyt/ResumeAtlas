@@ -17,6 +17,8 @@ export type OptimizeDashboardNudgeModalProps = {
   allFixes: string[];
   bulletPreview?: AlignBulletPreview | null;
   isBusy?: boolean;
+  /** Shown after a paid scan when 1 credit was deducted at dashboard generation. */
+  creditNotice?: string | null;
 };
 
 /**
@@ -31,6 +33,7 @@ export function OptimizeDashboardNudgeModal({
   allFixes,
   bulletPreview = null,
   isBusy = false,
+  creditNotice = null,
 }: OptimizeDashboardNudgeModalProps) {
   if (!open) return null;
 
@@ -56,6 +59,11 @@ export function OptimizeDashboardNudgeModal({
           {OPTIMIZE_ALIGN_CARD_TITLE}
         </h2>
         <div className="px-3 py-2.5 sm:px-3.5 sm:py-3">
+          {creditNotice ? (
+            <p className="mb-2.5 rounded-lg border border-amber-200/90 bg-amber-50/90 px-3 py-2 text-xs leading-relaxed text-amber-950 sm:text-sm">
+              {creditNotice}
+            </p>
+          ) : null}
           <OptimizeAlignCard
             verdict={verdict}
             selectedFixes={selectedFixes}

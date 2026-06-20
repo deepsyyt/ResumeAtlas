@@ -66,12 +66,6 @@ export async function openRazorpayPackCheckout({
   checkoutTrigger = "pack_button",
   funnelId: _funnelId,
 }: OpenRazorpayPackCheckoutParams): Promise<PackCheckoutResult> {
-  if (isLoggedIn && creditsRemaining > 0) {
-    return {
-      status: "error",
-      message: "Use your current application credits before buying another pack.",
-    };
-  }
   try {
     await loadRazorpayScript();
     const Razorpay = window.Razorpay;
@@ -132,8 +126,8 @@ export async function openRazorpayPackCheckout({
     const pkgMeta = getCreditPackage(packageId);
     const checkoutDescription =
       checkoutTrigger === "download_gate"
-        ? "Unlock resume downloads (PDF + editable)"
-        : `${data.credits ?? ""} job application${data.credits === 1 ? "" : "s"} (scan → optimize → download)`;
+        ? "ResumeAtlas — tailored resume download"
+        : `${data.credits ?? ""} job application${data.credits === 1 ? "" : "s"} (check, tailor, download)`;
     void logBillingEvent("billing_razorpay_checkout_opened", {
       package_id: packageId,
       credits: pkgMeta?.credits ?? 0,

@@ -3,7 +3,7 @@ import PDFDocument from "pdfkit/js/pdfkit.standalone";
 import { getSupabaseAdmin } from "@/app/lib/supabase/server";
 import {
   assertFunnelAllowsDownload,
-  completeFunnel,
+  completeApplication,
 } from "@/app/lib/billing/funnelServer";
 import {
   buildResumeHash,
@@ -368,6 +368,15 @@ export async function POST(request: Request) {
           { status: 403 }
         );
       }
+      if (allowed.paymentRequired) {
+        return NextResponse.json(
+          {
+            error: "Payment required to download your tailored resume.",
+            code: "DOWNLOAD_PAYMENT_REQUIRED",
+          },
+          { status: 402 }
+        );
+      }
     }
 
     const doc = new PDFDocument({ size: "A4", margin: 50 });
@@ -546,7 +555,7 @@ export async function POST(request: Request) {
     const pdfBuffer = await pdfPromise;
 
     if (!hasValidPass) {
-      const completed = await completeFunnel(user.id);
+      const completed = await completeApplication(user.id);
       if (!completed.ok) {
         console.error("[download] funnel complete failed", completed.code);
       }

@@ -20,9 +20,9 @@ export type QuotaExceededPayload = {
 };
 
 const ANON_MESSAGE =
-  "You've used your free ATS scan for this month. Sign in and upgrade for 5 full runs (scan → optimize → download).";
+  "You've used your free scan for this month. Sign in to get 5 job applications for $2.99.";
 const USER_MESSAGE =
-  "You've used your free ATS scan for this month. Upgrade for 5 full runs (scan → optimize → download).";
+  "You've used your free scan for this month. Get 5 job applications for $2.99.";
 
 /**
  * Resolves the actor for quota: signed-in user takes precedence; otherwise anonymous.

@@ -285,6 +285,7 @@ export default function HomeClient({
   const [activeFunnelId, setActiveFunnelIdState] = useState<string | null>(null);
   const [optimizeOauthResumeModalOpen, setOptimizeOauthResumeModalOpen] = useState(false);
   const [optimizeDashboardNudgeOpen, setOptimizeDashboardNudgeOpen] = useState(false);
+  const [scanCreditNotice, setScanCreditNotice] = useState<string | null>(null);
   const [optimizeNudgeTrigger, setOptimizeNudgeTrigger] = useState(0);
   const optimizeNudgeTriggerRef = useRef(0);
   /** Triggers (`optimizeNudgeTrigger` at fire time) the user dismissed or acted on - allows nudge again on a new analysis. */
@@ -719,7 +720,7 @@ export default function HomeClient({
               setLimitModalMessage(
                 typeof err.message === "string"
                   ? err.message
-                  : "Finish your current scan → optimize → download flow before starting a new scan."
+                  : "Finish tailoring and downloading this resume before starting a new job check."
               );
               setLimitModalOpen(true);
               return;
@@ -758,9 +759,24 @@ export default function HomeClient({
           );
           return;
         }
-        const result = data as ATSAnalyzeResult & { quota?: Partial<AnalysisQuotaStatus> };
+        const result = data as ATSAnalyzeResult & {
+          quota?: Partial<AnalysisQuotaStatus>;
+          application?: { creditUsed?: boolean; source?: "free" | "pack" };
+        };
         setAnalyzeResult(result);
         setSelectedRecommendedFixes(result.evidence_dashboard?.riskAreas ?? []);
+        if (result.application?.creditUsed) {
+          setScanCreditNotice(
+            "We've applied 1 job application from your balance for this check. Continue with tailoring to get the full value — stopping here means no tailored resume or download for this job."
+          );
+          void refreshUsage();
+        } else if (result.application?.source === "free" && isLoggedIn) {
+          setScanCreditNotice(
+            "Your free scan is complete. Continue with tailoring next — payment is only needed when you're ready to download."
+          );
+        } else {
+          setScanCreditNotice(null);
+        }
         if (result.quota && typeof result.quota.remaining === "number") {
           const limit = result.quota.limit ?? 0;
           const used = Math.min(result.quota.used ?? 0, limit);
@@ -815,7 +831,7 @@ export default function HomeClient({
         setIsGenerating(false);
       }
     },
-    [clearOptimizeNudgeReshowTimeout, getAuthHeaders, isLoggedIn, logAnalysisEvent]
+    [clearOptimizeNudgeReshowTimeout, getAuthHeaders, isLoggedIn, logAnalysisEvent, refreshUsage]
   );
 
   const handleStartGoogleAuthForQuota = useCallback(async () => {
@@ -1527,6 +1543,7 @@ export default function HomeClient({
                 selectedFixes={selectedRecommendedFixes}
                 allFixes={analyzeResult.evidence_dashboard.riskAreas}
                 bulletPreview={analyzeResult.bullet_preview ?? null}
+                creditNotice={scanCreditNotice}
               />
             ) : null}
             {resume && (

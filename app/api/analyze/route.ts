@@ -16,8 +16,9 @@ import { enrichEvidenceDashboardWithLlm } from "@/app/lib/enrichEvidenceDashboar
 import { normalizeTargetRoleTitle } from "@/app/lib/roleFitArchetypes";
 import {
   assertCanRunAnalysisOrThrow,
-  commitAnalysisFunnel,
+  commitAnalysisApplication,
   type AnalysisAccess,
+  type ApplicationCommitResult,
 } from "@/app/lib/billing/funnelAccess";
 import type { QuotaExceededPayload } from "@/app/lib/quota";
 import { quotaAfterSuccessfulUse } from "@/app/lib/quota/validate";
@@ -162,6 +163,7 @@ export type AnalyzeRequestBody = {
 export async function POST(request: Request) {
   let analysisAccess: AnalysisAccess | null = null;
   let quotaStatusBefore: AnalysisAccess["quotaStatus"] | null = null;
+  let applicationCommit: ApplicationCommitResult | null = null;
 
   try {
     const body = (await request.json()) as AnalyzeRequestBody;
@@ -227,17 +229,19 @@ export async function POST(request: Request) {
       }
 
       let usageRecorded = false;
+      const cachedPayload = { ...cached };
       if (analysisAccess) {
         try {
-          await commitAnalysisFunnel(
+          applicationCommit = await commitAnalysisApplication(
             analysisAccess,
             resumeText,
-            jobDescription
+            jobDescription,
+            cachedPayload
           );
           usageRecorded = analysisAccess.source === "free";
         } catch (recErr) {
           const msg = recErr instanceof Error ? recErr.message : String(recErr);
-          console.error("[analyze] funnel commit failed (cache still returned result)", msg);
+          console.error("[analyze] application commit failed (cache still returned result)", msg);
         }
       }
 
@@ -253,7 +257,6 @@ export async function POST(request: Request) {
               }
             : undefined;
 
-      const cachedPayload = { ...cached };
       if (cachedPayload.evidence_dashboard && !jdEmpty) {
         const hadLlmEnrichment =
           (cachedPayload.evidence_dashboard.roleFit?.length ?? 0) > 0 &&
@@ -292,6 +295,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         ...cachedPayload,
         ...(quotaAfter && { quota: quotaAfter }),
+        ...(applicationCommit && { application: applicationCommit }),
       });
     }
 
@@ -530,7 +534,12 @@ ${jobDescription}`;
     let usageRecorded = false;
     if (analysisAccess) {
       try {
-        await commitAnalysisFunnel(analysisAccess, resumeText, jobDescription);
+        applicationCommit = await commitAnalysisApplication(
+          analysisAccess,
+          resumeText,
+          jobDescription,
+          normalized
+        );
         usageRecorded = analysisAccess.source === "free";
       } catch (recErr) {
         const msg = recErr instanceof Error ? recErr.message : String(recErr);
@@ -556,6 +565,7 @@ ${jobDescription}`;
     return NextResponse.json({
       ...normalized,
       ...(quotaAfter && { quota: quotaAfter }),
+      ...(applicationCommit && { application: applicationCommit }),
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Analysis failed";

@@ -1,5 +1,9 @@
 import { getBearerUser } from "@/app/lib/billing/requestUser";
-import { getFunnelWallet, openFunnel } from "@/app/lib/billing/funnelServer";
+import {
+  getFunnelWallet,
+  startApplication,
+  type ApplicationSource,
+} from "@/app/lib/billing/funnelServer";
 import {
   getAnalysisQuotaStatus,
   recordSuccessfulAnalysis,
@@ -17,17 +21,23 @@ export type AnalysisAccess = {
   quotaStatus: AnalysisQuotaStatus | null;
 };
 
+export type ApplicationCommitResult = {
+  applicationId: string;
+  source: ApplicationSource;
+  creditUsed: boolean;
+};
+
 export type IncompleteFunnelPayload = {
   code: "INCOMPLETE_FUNNEL";
   message: string;
 };
 
 const FREE_EXHAUSTED_MESSAGE =
-  "You've used your free ATS scan for this month. Upgrade for 5 full runs: scan → optimize → download.";
+  "You've used your free scan for this month. Get 5 job applications for $2.99 — check, tailor, and download for each posting.";
 const ANON_EXHAUSTED_MESSAGE =
-  "You've used your free ATS scan for this month. Sign in and upgrade for 5 full runs.";
-const INCOMPLETE_FUNNEL_MESSAGE =
-  "Finish optimizing and downloading your current resume before starting a new scan.";
+  "You've used your free scan for this month. Sign in to get 5 job applications for $2.99.";
+const INCOMPLETE_APPLICATION_MESSAGE =
+  "Finish tailoring and downloading this resume before you start a new job check.";
 
 function quotaExceededError(
   message: string,
@@ -46,20 +56,17 @@ function quotaExceededError(
   return err;
 }
 
-function incompleteFunnelError(): Error & { funnelPayload: IncompleteFunnelPayload } {
-  const err = new Error(INCOMPLETE_FUNNEL_MESSAGE) as Error & {
+function incompleteApplicationError(): Error & { funnelPayload: IncompleteFunnelPayload } {
+  const err = new Error(INCOMPLETE_APPLICATION_MESSAGE) as Error & {
     funnelPayload: IncompleteFunnelPayload;
   };
   err.funnelPayload = {
     code: "INCOMPLETE_FUNNEL",
-    message: INCOMPLETE_FUNNEL_MESSAGE,
+    message: INCOMPLETE_APPLICATION_MESSAGE,
   };
   return err;
 }
 
-/**
- * Free quota first; logged-in users with pack credits may start a new funnel when none is active.
- */
 export async function assertCanRunAnalysisOrThrow(
   request: Request
 ): Promise<AnalysisAccess> {
@@ -75,8 +82,8 @@ export async function assertCanRunAnalysisOrThrow(
   }
 
   const wallet = await getFunnelWallet(actor.userId);
-  if (wallet.activeFunnel) {
-    throw incompleteFunnelError();
+  if (wallet.activeApplication) {
+    throw incompleteApplicationError();
   }
 
   if (wallet.creditsRemaining > 0) {
@@ -86,75 +93,89 @@ export async function assertCanRunAnalysisOrThrow(
   throw quotaExceededError(FREE_EXHAUSTED_MESSAGE, quotaStatus, true);
 }
 
-export async function commitAnalysisFunnel(
+export async function commitAnalysisApplication(
   access: AnalysisAccess,
   resumeText: string,
-  jobDescription: string
-): Promise<void> {
+  jobDescription: string,
+  analysisResult: unknown
+): Promise<ApplicationCommitResult | null> {
   if (access.source === "free") {
     await recordSuccessfulAnalysis(access.actor, resumeText, jobDescription);
-    if (access.actor.userId) {
-      const opened = await openFunnel(
-        access.actor.userId,
-        resumeText,
-        jobDescription,
-        "free"
-      );
-      if (!opened.ok) {
-        throw new Error(
-          opened.code === "INCOMPLETE_FUNNEL"
-            ? INCOMPLETE_FUNNEL_MESSAGE
-            : "Could not start your free application flow. Try again."
-        );
-      }
+    if (!access.actor.userId) {
+      return null;
     }
-    return;
+    const started = await startApplication(
+      access.actor.userId,
+      resumeText,
+      jobDescription,
+      "free",
+      analysisResult
+    );
+    if (!started.ok) {
+      throw new Error(
+        started.code === "INCOMPLETE_APPLICATION"
+          ? INCOMPLETE_APPLICATION_MESSAGE
+          : "Could not save your job check. Please try again."
+      );
+    }
+    return {
+      applicationId: started.applicationId,
+      source: started.source,
+      creditUsed: false,
+    };
   }
 
   if (!access.actor.userId) {
     throw new Error("Pack-funded analysis requires login.");
   }
 
-  const opened = await openFunnel(
+  const started = await startApplication(
     access.actor.userId,
     resumeText,
     jobDescription,
-    "pack"
+    "pack",
+    analysisResult
   );
-  if (!opened.ok) {
+  if (!started.ok) {
     const msg =
-      opened.code === "NO_CREDITS"
-        ? "No application credits remaining. Buy a pack to continue."
-        : opened.code === "INCOMPLETE_FUNNEL"
-          ? INCOMPLETE_FUNNEL_MESSAGE
-          : "Unable to start a new application flow. Try again.";
+      started.code === "NO_CREDITS"
+        ? "No job applications left. Buy a pack to continue."
+        : started.code === "INCOMPLETE_APPLICATION"
+          ? INCOMPLETE_APPLICATION_MESSAGE
+          : "Unable to start a new job check. Try again.";
     throw new Error(msg);
   }
+  return {
+    applicationId: started.applicationId,
+    source: started.source,
+    creditUsed: started.creditUsed,
+  };
 }
 
-/** Opens or resumes the scan → optimize funnel before running optimization. */
-export async function ensureFunnelForOptimize(
+/** Resume a free scan after sign-in (anonymous analyzed first). */
+export async function ensureApplicationForOptimize(
   userId: string,
   resumeText: string,
-  jobDescription: string
+  jobDescription: string,
+  analysisResult: unknown
 ): Promise<{ ok: true } | { ok: false; code: string; message: string }> {
   const wallet = await getFunnelWallet(userId);
-  if (wallet.activeFunnel?.stage === "analyzed") {
+  if (wallet.activeApplication?.state === "analyzed") {
     return { ok: true };
   }
-  if (wallet.activeFunnel?.stage === "optimized") {
+  if (wallet.activeApplication?.state === "optimized") {
     return {
       ok: false,
       code: "ALREADY_OPTIMIZED",
       message:
-        "This application flow is already optimized. Download your resume or finish your current funnel before optimizing again.",
+        "This resume is already tailored. Download it, or finish this job before tailoring again.",
     };
   }
-  if (wallet.activeFunnel) {
+  if (wallet.activeApplication) {
     return {
       ok: false,
       code: "INCOMPLETE_FUNNEL",
-      message: INCOMPLETE_FUNNEL_MESSAGE,
+      message: INCOMPLETE_APPLICATION_MESSAGE,
     };
   }
 
@@ -168,27 +189,18 @@ export async function ensureFunnelForOptimize(
 
   if (quotaStatus.allowed) {
     await recordSuccessfulAnalysis(actor, resumeText, jobDescription);
-    const opened = await openFunnel(userId, resumeText, jobDescription, "free");
-    if (!opened.ok) {
+    const started = await startApplication(
+      userId,
+      resumeText,
+      jobDescription,
+      "free",
+      analysisResult
+    );
+    if (!started.ok) {
       return {
         ok: false,
-        code: opened.code,
-        message: "Could not start your free application flow. Try again.",
-      };
-    }
-    return { ok: true };
-  }
-
-  if (wallet.creditsRemaining > 0) {
-    const opened = await openFunnel(userId, resumeText, jobDescription, "pack");
-    if (!opened.ok) {
-      return {
-        ok: false,
-        code: opened.code,
-        message:
-          opened.code === "NO_CREDITS"
-            ? "No application credits remaining. Buy a pack to continue."
-            : "Could not start a paid application flow. Try again.",
+        code: started.code,
+        message: "Something went wrong saving your job check. Please try again.",
       };
     }
     return { ok: true };
@@ -196,15 +208,12 @@ export async function ensureFunnelForOptimize(
 
   return {
     ok: false,
-    code: "PURCHASE_REQUIRED",
-    message: FREE_EXHAUSTED_MESSAGE,
+    code: "APPLICATION_REQUIRED",
+    message: "Run a job check on this resume first, then tailor it.",
   };
 }
 
-/** Whether the caller can buy another pack (no unused credits, no open funnel). */
-export async function canPurchaseFunnelPack(request: Request): Promise<boolean> {
-  const { user } = await getBearerUser(request);
-  if (!user) return true;
-  const wallet = await getFunnelWallet(user.id);
-  return wallet.creditsRemaining <= 0 && !wallet.activeFunnel;
-}
+/** @deprecated */
+export const commitAnalysisFunnel = commitAnalysisApplication;
+/** @deprecated */
+export const ensureFunnelForOptimize = ensureApplicationForOptimize;

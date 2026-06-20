@@ -4,7 +4,6 @@ export type UsageType = "anon" | "member";
 
 export type Usage = {
   type: UsageType;
-  /** Unused job-application funnel credits (scan → optimize → download). */
   creditsRemaining: number;
   creditsReserved: number;
   creditsPurchased: number;
@@ -12,6 +11,8 @@ export type Usage = {
   showFullIntelligence: boolean;
   funnelStage?: "analyzed" | "optimized" | null;
   hasIncompleteFunnel?: boolean;
+  applicationSource?: "free" | "pack" | null;
+  downloadPaymentRequired?: boolean;
 };
 
 export async function getUsage(
@@ -30,6 +31,8 @@ export async function getUsage(
       showFullIntelligence: true,
       funnelStage: null,
       hasIncompleteFunnel: false,
+      applicationSource: null,
+      downloadPaymentRequired: false,
     };
   }
 
@@ -47,21 +50,42 @@ export async function getUsage(
       showFullIntelligence: true,
       funnelStage: null,
       hasIncompleteFunnel: false,
+      applicationSource: null,
+      downloadPaymentRequired: false,
     };
   }
 
   const { data: wallet } = await supabase
     .from("credit_wallets")
     .select(
-      "credits_remaining, credits_reserved, credits_purchased_total, credits_consumed_total, funnel_stage"
+      "credits_remaining, credits_reserved, credits_purchased_total, credits_consumed_total, funnel_stage, active_application_id"
     )
     .eq("user_id", user.id)
     .maybeSingle();
 
-  const funnelStage =
+  let applicationSource: "free" | "pack" | null = null;
+  let downloadPaymentRequired = false;
+  let funnelStage =
     wallet?.funnel_stage === "analyzed" || wallet?.funnel_stage === "optimized"
       ? wallet.funnel_stage
       : null;
+
+  if (wallet?.active_application_id) {
+    const { data: app } = await supabase
+      .from("job_applications")
+      .select("state, source, download_unlocked")
+      .eq("id", wallet.active_application_id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (app && (app.state === "analyzed" || app.state === "optimized")) {
+      funnelStage = app.state;
+      applicationSource = app.source === "pack" ? "pack" : "free";
+      downloadPaymentRequired =
+        app.source === "free" &&
+        app.state === "optimized" &&
+        app.download_unlocked !== true;
+    }
+  }
 
   return {
     type: "member",
@@ -72,5 +96,7 @@ export async function getUsage(
     showFullIntelligence: true,
     funnelStage,
     hasIncompleteFunnel: funnelStage != null,
+    applicationSource,
+    downloadPaymentRequired,
   };
 }

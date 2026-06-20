@@ -6,6 +6,7 @@ import { OptimizationProcessingScreen } from "@/app/components/OptimizationProce
 import { ResumeOptimizationPanel } from "@/app/components/ResumeOptimizationPanel";
 import { StructuredResume } from "@/app/components/StructuredResume";
 import { parseResumeToJSON } from "@/app/lib/resumeParser";
+import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import {
   resumeDocumentFromHeuristicParsed,
   resumeDocumentToDownloadResume,
@@ -433,19 +434,50 @@ export default function OptimizePage() {
       headers: { Authorization: `Bearer ${session.access_token}` },
     });
     const usageJson = (await usageRes.json().catch(() => null)) as
-      | { funnelStage?: "analyzed" | "optimized" | null }
+      | {
+          funnelStage?: "analyzed" | "optimized" | null;
+          downloadPaymentRequired?: boolean;
+          creditsRemaining?: number;
+        }
       | null;
-    if (usageJson?.funnelStage === "optimized") {
-      return { ok: true, justPaidForDownload: false };
+
+    if (usageJson?.funnelStage !== "optimized") {
+      setError(
+        usageJson?.funnelStage === "analyzed"
+          ? "Tailor your resume first — download unlocks after that step."
+          : "Check a job, tailor your resume, then download — in that order."
+      );
+      return { ok: false };
     }
 
-    setError(
-      usageJson?.funnelStage === "analyzed"
-        ? "Optimize your resume first — download unlocks after optimization in the same flow."
-        : "Complete scan → optimize → download in order, or run a new analysis if your funnel expired."
-    );
-    return { ok: false };
-  }, []);
+    if (usageJson.downloadPaymentRequired) {
+      const checkout = await openRazorpayPackCheckout({
+        packageId: "starter",
+        creditsRemaining: usageJson.creditsRemaining ?? 0,
+        isLoggedIn: true,
+        getAuthHeaders: async () => ({
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        }),
+        checkoutTrigger: "download_gate",
+        onRefreshBalance: refreshDownloadWallet,
+      });
+      if (checkout.status === "error") {
+        setError(checkout.message);
+        return { ok: false };
+      }
+      if (checkout.status === "dismissed") {
+        return { ok: false };
+      }
+      if (checkout.status !== "paid") {
+        return { ok: false };
+      }
+      await refreshDownloadWallet();
+      return { ok: true, justPaidForDownload: true };
+    }
+
+    return { ok: true, justPaidForDownload: false };
+  }, [refreshDownloadWallet]);
 
   type DownloadSurface = "optimize_panel" | "payment_success_modal";
 

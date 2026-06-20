@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { ensureFunnelForOptimize } from "@/app/lib/billing/funnelAccess";
+import { ensureApplicationForOptimize } from "@/app/lib/billing/funnelAccess";
 import {
-  advanceFunnelToOptimized,
+  advanceApplicationToOptimized,
+  assertFunnelAllowsOptimize,
 } from "@/app/lib/billing/funnelServer";
 import { getBearerUser } from "@/app/lib/billing/requestUser";
 import {
@@ -1790,15 +1791,23 @@ export async function POST(request: Request) {
       );
     }
 
-    const funnelReady = await ensureFunnelForOptimize(user.id, resumeText, jobDescription);
-    if (!funnelReady.ok) {
-      return NextResponse.json(
-        {
-          error: funnelReady.message,
-          code: funnelReady.code,
-        },
-        { status: funnelReady.code === "PURCHASE_REQUIRED" ? 402 : 403 }
+    const allowed = await assertFunnelAllowsOptimize(user.id);
+    if (!allowed.ok) {
+      const ensured = await ensureApplicationForOptimize(
+        user.id,
+        resumeText,
+        jobDescription,
+        analyzeResult
       );
+      if (!ensured.ok) {
+        return NextResponse.json(
+          {
+            error: ensured.message,
+            code: ensured.code,
+          },
+          { status: ensured.code === "PURCHASE_REQUIRED" ? 402 : 403 }
+        );
+      }
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -2577,7 +2586,7 @@ export async function POST(request: Request) {
         : {}),
     };
 
-    const advanced = await advanceFunnelToOptimized(user.id);
+    const advanced = await advanceApplicationToOptimized(user.id);
     if (!advanced.ok) {
       console.error("[optimize] funnel advance failed", advanced.code);
     }

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/app/lib/supabase/server";
 import { getBearerUser } from "@/app/lib/billing/requestUser";
 import { assertRazorpayConfigured } from "@/app/lib/billing/razorpayConfig";
+import { unlockApplicationDownload } from "@/app/lib/billing/funnelServer";
 
 type Body = {
   razorpay_order_id?: string;
@@ -136,6 +137,11 @@ export async function POST(request: Request) {
       }
     } else {
       await supabase.from("payments").update({ status: "paid" }).eq("id", payment.id);
+    }
+
+    const unlocked = await unlockApplicationDownload(user.id);
+    if (!unlocked.ok) {
+      console.info("[billing/verify] download unlock skipped", unlocked.code);
     }
 
     const snap = await walletSnapshot(supabase, user.id);

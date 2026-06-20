@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/app/lib/supabase/server";
 import {
   assertFunnelAllowsDownload,
-  completeFunnel,
+  completeApplication,
 } from "@/app/lib/billing/funnelServer";
 import {
   buildResumeHash,
@@ -65,9 +65,18 @@ export async function POST(request: Request) {
           { status: 403 }
         );
       }
+      if (allowed.paymentRequired) {
+        return NextResponse.json(
+          {
+            error: "Payment required to download your tailored resume.",
+            code: "DOWNLOAD_PAYMENT_REQUIRED",
+          },
+          { status: 402 }
+        );
+      }
     }
     if (!hasValidPass) {
-      const completed = await completeFunnel(user.id);
+      const completed = await completeApplication(user.id);
       if (!completed.ok) {
         console.error("[download-editable] funnel complete failed", completed.code);
       }
