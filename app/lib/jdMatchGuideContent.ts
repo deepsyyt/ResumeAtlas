@@ -23,8 +23,8 @@ export const JD_GUIDE_SECTIONS: readonly JdGuideSection[] = [
   },
   {
     id: "resume-match-score",
-    title: "Evidence match and dashboard metrics",
-    navLabel: "Evidence metrics",
+    title: "Application verdict and dashboard metrics",
+    navLabel: "Dashboard",
   },
   {
     id: "ai-resume-optimization",
@@ -33,7 +33,36 @@ export const JD_GUIDE_SECTIONS: readonly JdGuideSection[] = [
   },
   {
     id: "jd-match-example",
-    title: "Resume job description match example",
+    title: "Why a listed skill can still get you rejected",
+    navLabel: "Example",
+  },
+] as const;
+
+/** Fewer nav pills for non-compact guide pages. */
+export const JD_GUIDE_SECTIONS_COMPACT: readonly JdGuideSection[] = [
+  {
+    id: "compare-resume-jd",
+    title: "Can you realistically clear this role?",
+    navLabel: "Verdict",
+  },
+  {
+    id: "resume-gap-analysis",
+    title: "Listed vs proven skills",
+    navLabel: "Proof",
+  },
+  {
+    id: "resume-match-score",
+    title: "Your application verdict",
+    navLabel: "Verdict",
+  },
+  {
+    id: "ai-resume-optimization",
+    title: "Fix proof, then apply",
+    navLabel: "Fix",
+  },
+  {
+    id: "jd-match-example",
+    title: "Why a listed skill can still get you rejected",
     navLabel: "Example",
   },
 ] as const;

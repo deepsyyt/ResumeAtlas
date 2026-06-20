@@ -1,18 +1,8 @@
-import type { EvidenceDashboard, EvidenceStrength } from "@/app/lib/resumeEvidenceScore";
+import type { ApplicationVerdict } from "@/app/lib/applicationVerdict";
+import type { EvidenceStrength } from "@/app/lib/resumeEvidenceScore";
 import type { BulletRefinementBreakdown } from "@/app/lib/optimizeBulletEvidence";
-import { jdDomainLabel } from "@/app/lib/jdDomainClass";
+import type { KeywordCoverageVerdict } from "@/app/lib/skillProofLlm";
 import { getKeywordCoverageLabel } from "@/app/lib/scoreColors";
-
-/** Familiar SERP language first; Evidence Match is the product metric name in parentheses. */
-export const EVIDENCE_MATCH_TITLE = "Job description match score (Evidence Match)";
-/** Compact label for the score-row card (full title available via tooltip). */
-export const EVIDENCE_MATCH_CARD_LABEL = "Evidence match";
-export const EVIDENCE_MATCH_SUBTITLE =
-  "Resume-to-job match: how much of this posting you prove in project bullets, not just skills lists.";
-
-export const OPTIMIZE_EVIDENCE_MATCH_TITLE = "Proof changes from optimization";
-export const OPTIMIZE_EVIDENCE_MATCH_SUBTITLE =
-  "Green +N in rewrites = bullets that gained that proof signal. Full-resume % is context for the whole document.";
 
 export const KEYWORD_COVERAGE_SCORE_TITLE = "Keyword coverage score";
 export const KEYWORD_COVERAGE_SCORE_SUBTITLE =
@@ -165,16 +155,18 @@ export function keywordCoverageScoreLine(coverage: KeywordCoverageMetricInput): 
   return `${matchedCount} matched · ${missed} missed — ${coverageLabel.toLowerCase()}.`;
 }
 
-/** @deprecated Use keywordCoverageScoreLine */
-export function atsShortlistLikelihoodLine(score: number): string {
-  const pct = clampLikelihoodPct(score);
-  return `~${pct}% estimated shortlist likelihood after ATS review.`;
+/** Compact line for PDF / share exports — mirrors the application verdict card. */
+export function applicationVerdictReportLine(verdict: ApplicationVerdict): string {
+  const pct = clampLikelihoodPct(verdict.shortlistPct);
+  return `~${pct}% estimated shortlist odds · ${verdict.badgeLabel}`;
 }
 
-/** Second line under Evidence Match — derived from the evidence match score. */
-export function evidenceInterviewLikelihoodLine(score: number): string {
-  const pct = clampLikelihoodPct(score);
-  return `~${pct}% estimated interview clearance at current proof level.`;
+/** Compact line for PDF / share exports — mirrors the keyword coverage score card. */
+export function keywordCoverageReportLine(
+  coverage: KeywordCoverageMetricInput,
+  verdict: KeywordCoverageVerdict
+): string {
+  return `${keywordCoverageScoreLine(coverage)} ${verdict.headline}`.trim();
 }
 
 export const SKILL_PROOF_MAP_TITLE = "Keyword coverage";
@@ -352,8 +344,3 @@ export function evidenceStrengthShortLabel(strength: EvidenceStrength): string {
   }
 }
 
-export function snapshotSummaryLine(dashboard: EvidenceDashboard): string {
-  const { snapshot, seniority } = dashboard;
-  const domainPhrase = jdDomainLabel(dashboard.jdDomain);
-  return `This posting reads as ${domainPhrase} at ${seniority.roleLevelLabel.toLowerCase()} scope. ${snapshot.jdSkillsProved} of ${snapshot.jdSkillsTotal} required skills are proven in work bullets. Measurable-outcome coverage averages ${snapshot.impactCoverage}% across project experiences.`;
-}

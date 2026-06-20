@@ -411,7 +411,7 @@ export function GuidesFooterLinks() {
         </li>
         <li>
           <Link
-            href="/problems/resume-not-getting-interviews"
+            href="/resume-not-getting-interviews"
             className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
           >
             All job-search problem pages

@@ -70,16 +70,24 @@ export const TOOL_PAGE_NAV_LABEL = "Compare resume to job description" as const;
 /** Short navbar label on small screens. */
 export const TOOL_PAGE_NAV_LABEL_SHORT = "Resume JD match" as const;
 
+/** Navbar + hero CTA (apply-readiness). */
+export const CHECK_RESUME_AGAINST_JD_HERO_CTA = "Check if I'm ready to apply" as const;
+
 /** Primary JD-tool CTA: keyword-rich anchor for buttons and links to the matcher. */
 export const CHECK_RESUME_AGAINST_JD_PRIMARY_CTA =
-  "Check resume against job description" as const;
-
-/** Navbar + hero CTA (shorter). */
-export const CHECK_RESUME_AGAINST_JD_HERO_CTA = "Check my resume free" as const;
+  "Check if you're ready to apply (free)" as const;
 
 /** Competitor comparison pages: message match for alternative-intent traffic. */
-export const COMPETITOR_COMPARISON_CTA =
-  "Compare my resume to a job description free" as const;
+export const COMPETITOR_COMPARISON_CTA = "Try ResumeAtlas free" as const;
+
+/** Pillar: keyword match ≠ apply-readiness; linked from comparison pages. */
+export {
+  ATS_SCORE_VS_JOB_FIT_PATH,
+  RESUME_NOT_GETTING_INTERVIEWS_PATH,
+  SKILLS_LISTED_NOT_PROVEN_PATH,
+  ALREADY_HAVE_SKILLS_PATH,
+  HOW_RECRUITERS_EVALUATE_PATH,
+} from "@/app/lib/interviewCluster/paths";
 
 /** Primary nav label for the workbench tool. */
 export const PRIMARY_TOOL_NAV_LABEL = "Resume checker & optimizer" as const;

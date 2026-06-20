@@ -176,13 +176,12 @@ export const TOOL_CLUSTER_PRIMARY: ToolClusterPageConfig = {
   ogTitle: CLUSTER_JD_MATCH_TOOL_COPY.ogTitle,
   twitterTitle: CLUSTER_JD_MATCH_TOOL_COPY.twitterTitle,
   ctaAnchor: CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
-  exampleJobRequires: "Python, SQL, stakeholder communication, and experimentation.",
-  exampleResumeContains: "Python, dashboards, and ad-hoc analysis.",
-  exampleMissing: "SQL depth, experimentation, and stakeholder-facing outcomes.",
+  exampleJobRequires: "AWS, Python, and deployment experience.",
+  exampleResumeContains: "AWS listed in skills — no project bullet demonstrates usage.",
+  exampleMissing: "AWS proof in project or work bullets.",
   exampleScoreLine:
-    "Job description match score (Evidence Match): ~58% before optimization (ATS keyword score ~66% for reference).",
-  exampleFixLine:
-    "After evidence-first optimization: SQL and experiment proof moved into project bullets; estimated job description match ~72%.",
+    "After analysis: AWS marked as weak because no project bullet demonstrates AWS usage.",
+  exampleFixLine: "Add AWS deployment project evidence with scope, stack, and outcome.",
   keywords: [
     "compare resume to job description",
     "compare resume to job posting",

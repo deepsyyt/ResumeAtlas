@@ -60,8 +60,8 @@ export default function FAQPage() {
             Check your resume against a job description
           </p>
           <p className="mt-1 text-sm text-slate-600">
-            Free ATS-style readout plus evidence match, skill proof map, and AI optimization for the
-            posting you paste.
+            Free ATS score and keyword coverage plus application verdict, skill proof map, and
+            optimization for the posting you paste.
           </p>
           <Link
             href={CHECK_RESUME_AGAINST_JD_FORM_HREF}

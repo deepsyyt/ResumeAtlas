@@ -5,8 +5,8 @@
  * | Cluster        | Canonical path |
  * |----------------|----------------|
  * | Homepage discovery | `/` exposes **role-only** link clusters (`#browse-by-role`); product/tools stay in-page and nav, not separate “topics” columns. |
- * | Brand + category hub (AI/ATS checker, optimizer) | / |
- * | Resume ↔ JD compare / match / score | `/check-resume-against-job-description` |
+ * | Brand + apply-readiness commercial (Layer 2 hero) + compare/ATS SEO (Layer 1 title) | / |
+ * | Resume ↔ JD compare / match / score (tool execution) | `/check-resume-against-job-description` |
  * | Keyword gap scan (missing terms vs posting) | `/resume-keyword-scanner` (SEO cluster → workbench) |
  * | ATS education (traffic door → workbench) | /ats-resume-checker |
  * | ATS layout guide | /ats-resume-template |
@@ -33,42 +33,56 @@ import {
 const siteBase = () => getSiteUrl().replace(/\/$/, "");
 const abs = (path: string) => `${siteBase()}${path.startsWith("/") ? path : `/${path}`}`;
 
-/** Resume ↔ this job description (tailor / compare / match). */
+/** Resume ↔ this job description (tailor / compare / match). Layer 1 SEO + Layer 2 apply-readiness on-page. */
 export const CLUSTER_JD_MATCH_TOOL_COPY = {
   titleAbsolute:
-    "Compare Resume to Job Description Free | ATS Match and Keyword Gaps",
+    `Compare Resume to Job Description | ATS Score, Gaps & Apply Readiness${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Compare your resume against a job description in seconds. Get ATS match score, missing keywords, skill gaps, and optimization suggestions. Free, no signup required.",
+    "Compare your resume to a job description free. ATS score, keyword coverage, application verdict, rejection risks, and job-specific fixes before you apply. No signup required.",
   ogTitle:
-    `Compare Resume to Job Description Free | ATS Match and Keyword Gaps (${CONTENT_FRESHNESS_YEAR})`,
+    `Compare Resume to Job Description | ATS Score, Gaps & Apply Readiness (${CONTENT_FRESHNESS_YEAR})`,
   ogDescription:
-    "Compare your resume against a job description in seconds. Get ATS match score, missing keywords, skill gaps, and optimization suggestions. Free, no signup required.",
-  twitterTitle: "Compare resume to job description free | ATS match and keyword gaps",
+    "Compare your resume to a job description free. ATS score, keyword coverage, application verdict, rejection risks, and fixes before you apply.",
+  twitterTitle: "Compare resume to job description | ATS score, gaps & apply readiness",
   twitterDescription:
-    "ATS match score, missing keywords, skill gaps, and optimization suggestions. Free, no signup required.",
-  h1: "Compare resume to a job description | free ATS match and keyword gaps",
+    "Application verdict, keyword coverage, elimination risks, and job-specific optimization. Free, no signup.",
+  h1: "Compare resume to a job description | ATS score, gaps, and apply readiness",
   intro:
-    "Paste your resume and the exact job description. See how much of the job you prove in real project bullets (not just skills lists), a skill-by-skill proof map, honest gap callouts, and reference ATS metrics. Then run evidence-first optimization: move supported JD skills into the right bullets with architecture, deployment, and impact proof. No signup.",
-  /** Visible workbench hero — aligned with title/meta for SERP consistency. */
-  heroEyebrow: "Free resume vs job description checker",
-  heroH1: "Compare your resume to a job description | free ATS match and keyword gaps",
-  heroIntro:
-    "Compare your resume against a job description in seconds. Get ATS match score, missing keywords, skill gaps, and optimization suggestions. Free, no signup required.",
+    "Paste your resume and the exact job description. See whether you're likely to clear screening, what might get you rejected, which skills are proven in bullets vs listed only, and what to fix before you apply. Then optimize proof and download the version for this role.",
+  heroEyebrow: "Free · compare resume to job description",
+  heroH1: "Before you apply, see what may get you rejected.",
+  heroIntro: "Paste your resume and a job description.",
+  heroShowLabel: "We'll show:",
+  heroBullets: [
+    "Your application verdict",
+    "Unproven skills",
+    "Elimination risks",
+    "Recommended fixes",
+  ],
+  postFormOutcomesHeading: "What you'll learn in one scan",
+  postFormOutcomes: [
+    "Should you apply?",
+    "What may eliminate you?",
+    "Which skills are proven vs weak?",
+    "What should you fix first?",
+    "Which resume version should you send?",
+  ],
+  primaryNarrative: "Can you realistically clear this role?",
   topStripStrong:
-    "Analyze proof, then optimize: evidence match, skill gaps, and interview-safe bullet rewrites for the posting you paste.",
-  webAppName: "ResumeAtlas compare resume to job description checker",
+    "Diagnose fit → fix elimination risks → optimize proof → download the version you send.",
+  webAppName: "ResumeAtlas compare resume to job description",
   webAppDescription:
-    "Free tool to compare resume to job description: match score, missing keywords, skill gaps, and AI optimization for that posting.",
-  differentiatorHeading: "Evidence match analysis and optimization in one free tool",
+    "Evaluate whether your experience supports a specific role: application verdict, unproven skills, elimination risks, and job-specific fixes.",
+  differentiatorHeading: "Apply readiness — before you waste time applying",
   differentiatorBody: [
-    "This page is not keyword stuffing. After you paste resume + job description, you get an evidence match score, what-we-measured signals (impact, architecture, deployment, JD skills in bullets), and a skill-by-skill proof map. Optimization moves real work into project bullets and leaves unsupported requirements honest.",
-    "ATS keyword score is shown as a reference metric only. It can look fine when proof is thin. Use the ATS checker for parsing and layout; use this page when you need to see what you actually prove for this posting and strengthen bullets without inventing skills.",
+    "Most tools stop at keyword lists. ResumeAtlas evaluates whether your experience supports this specific role: application verdict, elimination risks, and which skills are proven in your bullets vs listed only.",
+    "Fix what you can honestly defend, leave gaps visible, then download the posting-specific file you send.",
   ],
   serpVariantsParagraph:
-    "People search compare resume to job description, resume match score, resume gap analysis, optimize resume for job description, and tailor resume to job description. This page is the canonical free tool: read evidence match and skill proof, close honest gaps, then optimize with evidence-first rewrites.",
-  howItWorksHeading: "How evidence analysis and optimization works",
-  whyMatchHeading: "Why proof in bullets beats keyword lists alone",
-  resultsHeading: "What the intelligence dashboard highlights",
+    "People search compare resume to job description, resume match job description, ATS resume checker, resume keyword scanner, tailor resume to job description, and resume not getting interviews. This page delivers ATS score and keyword coverage, then shows application verdict, elimination risks, and fixes before you apply.",
+  howItWorksHeading: "Diagnose → fix → apply",
+  whyMatchHeading: "Listed vs proven: why strong resumes still get rejected",
+  resultsHeading: "What your scan shows",
 };
 
 /** Homepage `/` marketing metadata (see `buildHomeMarketingMetadata`). */
@@ -107,7 +121,7 @@ export const CLUSTER_KEYWORD_SCANNER_TOOL_COPY = {
   differentiatorHeading: "Keyword gaps vs full resume evaluation",
   differentiatorBody: [
     "This scan centers on keyword coverage: skills, tools, and phrases from the posting that should appear clearly in your experience if they reflect your real background. You get missing keywords, weak coverage areas, term frequency, and suggested terms to add truthfully.",
-    "When you also need evidence match, bullet optimization, and export for one posting, use the job description matcher. When formatting and parser risk dominate, use the ATS checker first.",
+    "When you also need an application verdict, elimination risks, and optimize-before-apply for one posting, use the job description matcher. When formatting and parser risk dominate, use the ATS checker first.",
   ],
   serpVariantsParagraph:
     "Queries include resume keywords scanner, scanning resumes for keywords, scan my resume for keywords, resume keyword checker, cv keyword scanner, keywords for resume scanners, missing keywords in resume, and job posting keyword gap. This page owns keyword gap detection from a pasted posting.",

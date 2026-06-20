@@ -380,7 +380,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
             </li>
             <li className="sm:col-span-2">
               <Link
-                href="/problems/resume-not-getting-interviews"
+                href="/resume-not-getting-interviews"
                 className="block rounded-xl border border-white bg-white p-4 text-sm font-medium text-sky-800 shadow-sm transition hover:border-sky-200"
               >
                 Why resumes fail to get interviews →

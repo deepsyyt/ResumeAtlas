@@ -5,12 +5,12 @@ import { getSiteUrl } from "@/app/lib/siteUrl";
 const siteBase = () => getSiteUrl().replace(/\/$/, "");
 const ogImage = () => `${siteBase()}/og-resume-checker.png`;
 
-/** Aligns with on-page H1 (`HOME_MARKETING_H1`). Category hub — not JD-compare or ATS-checker SERP (see workbench URLs). */
+/** Layer 1 SEO — search demand (compare, ATS, gaps). Layer 2 hero is apply-readiness (`HOME_MARKETING_H1`). */
 export const HOME_PAGE_TITLE_ABSOLUTE =
-  `Free AI Resume Checker & ATS Resume Optimizer${RESUME_ATLAS_TITLE_SUFFIX}`;
+  `Compare Resume to Job Description | ATS Score, Gaps & Apply Readiness${RESUME_ATLAS_TITLE_SUFFIX}`;
 
 export const HOME_PAGE_DESCRIPTION =
-  "ResumeAtlas — free AI resume checker and ATS resume optimizer. Scan resume for keywords, check ATS compatibility, strengthen bullets with AI. No signup required.";
+  "Compare your resume to a job description free. ATS score, keyword coverage, application verdict, rejection risks, and job-specific fixes before you apply. No signup required.";
 
 export function buildHomeMarketingMetadata(): Metadata {
   const url = siteBase();
@@ -19,14 +19,15 @@ export function buildHomeMarketingMetadata(): Metadata {
     title: { absolute: HOME_PAGE_TITLE_ABSOLUTE },
     description: HOME_PAGE_DESCRIPTION,
     keywords: [
-      "resumeatlas",
-      "resume atlas",
-      "free resume checker",
+      "compare resume to job description",
+      "resume vs job description",
+      "ats resume checker",
+      "resume keyword scanner",
+      "tailor resume to job description",
+      "resume match job description",
+      "resume not getting interviews",
       "resume optimizer",
-      "resume optimization tool",
-      "ai resume checker",
-      "ats keyword matching resume",
-      "ai resume optimizer",
+      "resumeatlas",
     ],
     robots: { index: true, follow: true },
     alternates: { canonical: "/" },
@@ -37,7 +38,12 @@ export function buildHomeMarketingMetadata(): Metadata {
       type: "website",
       url,
       images: [
-        { url: img, width: 1200, height: 630, alt: "ResumeAtlas free AI resume checker and ATS optimizer" },
+        {
+          url: img,
+          width: 1200,
+          height: 630,
+          alt: "ResumeAtlas — compare resume to job description and check apply readiness",
+        },
       ],
     },
     twitter: {

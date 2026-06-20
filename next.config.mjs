@@ -744,12 +744,22 @@ const nextConfig = {
       // Legacy /seo/* and /{role}/keywords/* handled by middleware.ts
       {
         source: "/problems",
-        destination: "/problems/resume-not-getting-interviews",
+        destination: "/resume-not-getting-interviews",
         permanent: true,
       },
       {
         source: "/problems/",
-        destination: "/problems/resume-not-getting-interviews",
+        destination: "/resume-not-getting-interviews",
+        permanent: true,
+      },
+      {
+        source: "/problems/resume-not-getting-interviews",
+        destination: "/resume-not-getting-interviews",
+        permanent: true,
+      },
+      {
+        source: "/problems/resume-not-getting-interviews/",
+        destination: "/resume-not-getting-interviews",
         permanent: true,
       },
       {
@@ -775,12 +785,12 @@ const nextConfig = {
       // Problems intent deduplication (keep only one pillar page per intent)
       {
         source: "/problems/why-am-i-not-getting-interviews",
-        destination: "/problems/resume-not-getting-interviews",
+        destination: "/resume-not-getting-interviews",
         permanent: true,
       },
       {
         source: "/problems/why-am-i-not-getting-interviews/",
-        destination: "/problems/resume-not-getting-interviews",
+        destination: "/resume-not-getting-interviews",
         permanent: true,
       },
       {
@@ -815,12 +825,32 @@ const nextConfig = {
       },
       {
         source: "/problems/why-recruiters-ignore-resume",
-        destination: "/problems/resume-not-getting-interviews",
+        destination: "/resume-not-getting-interviews",
         permanent: true,
       },
       {
         source: "/problems/why-recruiters-ignore-resume/",
-        destination: "/problems/resume-not-getting-interviews",
+        destination: "/resume-not-getting-interviews",
+        permanent: true,
+      },
+      {
+        source: "/why-ats-scores-are-not-enough",
+        destination: "/ats-score-vs-real-job-fit",
+        permanent: true,
+      },
+      {
+        source: "/why-ats-scores-are-not-enough/",
+        destination: "/ats-score-vs-real-job-fit",
+        permanent: true,
+      },
+      {
+        source: "/why-jobscan-score-isnt-enough",
+        destination: "/ats-score-vs-real-job-fit",
+        permanent: true,
+      },
+      {
+        source: "/why-jobscan-score-isnt-enough/",
+        destination: "/ats-score-vs-real-job-fit",
         permanent: true,
       },
       {

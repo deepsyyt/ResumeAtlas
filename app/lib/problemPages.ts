@@ -247,42 +247,42 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
   "resume-not-getting-interviews": {
     slug: "resume-not-getting-interviews",
     primaryKeyword: "resume not getting interviews",
-    metaTitle: "Resume Not Getting Interviews? 7 Fast Fixes | ResumeAtlas",
+    metaTitle: "Resume Not Getting Interviews? Skills Listed Aren't Proven | ResumeAtlas",
     metaDescription:
-      "Find why your resume gets ignored and fix ATS issues, weak bullets, missing keywords, and positioning.",
-    h1: "Your Resume Is Not Getting Interviews - Fix It for the Job You Want",
+      "Resume not getting interviews? Often requirements are mentioned in your skills section but not proven in bullets. See unproven skills, rejection risks, and fixes before you apply.",
+    h1: "Resume Not Getting Interviews? Requirements May Be Mentioned — Not Proven",
     hook: [
-      "When your resume is not getting interviews, it is easy to assume you need a complete rewrite. Often the issue is narrower: your resume does not prove fit for each specific role, or systems cannot connect your experience to the posting.",
-      "Below is a practical pass: what breaks first, what people get wrong, and how to align your resume to the job description without sounding fake.",
+      "When your resume is not getting interviews, the problem is rarely 'write a completely new resume.' More often, job requirements appear somewhere on the page — skills, summary, or keyword-stuffed lines — but experience bullets never prove you did the work.",
+      "That gap explains silence from employers even when ATS scores look fine. Below: the chain from unproven skills to rejection risks to recommended fixes you can make before the next application.",
     ],
     rootCauses: {
       heading: "Why a resume not getting interviews is so common",
       intro:
-        "Interviews start from shortlists. Shortlists favor clear overlap with the job and easy scanning.",
+        "Shortlists favor evidence recruiters can verify in ten seconds. Mentioned skills without bullet proof fail that test.",
       bullets: [
         {
-          title: "Fit reads vague",
-          text: "If a recruiter cannot answer “why this role?” in ten seconds, you sink in the pile. A resume not getting interviews often lacks a tight headline and summary for the target job.",
+          title: "Requirements mentioned, not proven",
+          text: "AWS, Kubernetes, or domain tools sit in a skills cloud but never appear in a project bullet. Recruiters treat that as unproven — a top reason a resume is not getting interviews.",
         },
         {
           title: "Keywords live in the wrong places",
-          text: "Tools and domains need to appear in experience bullets, not only a skills cloud. Otherwise you look keyword-light even when you did the work.",
+          text: "Tools and domains need to appear in experience bullets, not only a skills section. Otherwise you look keyword-light even when you did the work.",
         },
         {
-          title: "One-size-fits-all file",
-          text: "The same resume for a startup IC role and an enterprise lead role will underperform both. Each needs a different emphasis.",
-        },
-        {
-          title: "ATS or format friction",
-          text: "Odd section titles or multi-column layouts can scramble parsing. Your resume not getting interviews might be invisible data as much as wording.",
+          title: "Fit reads vague",
+          text: "If a recruiter cannot answer “why this role?” in ten seconds, you sink in the pile. A resume not getting interviews often lacks a tight headline and summary for the target job.",
         },
         {
           title: "Impact is implied, not shown",
           text: "“Improved systems” does not compete with “cut error rate by 22%.” Recruiters reward proof.",
         },
         {
-          title: "Competition at the keyword layer",
-          text: "Others mirror the posting more closely. Without that step, you lose on estimated match before a human compares stories.",
+          title: "One-size-fits-all file",
+          text: "The same resume for a startup IC role and an enterprise lead role will underperform both. Each needs different emphasis and proof.",
+        },
+        {
+          title: "ATS or format friction",
+          text: "Odd section titles or multi-column layouts can scramble parsing. Your resume not getting interviews might be invisible data as much as wording.",
         },
       ],
     },
@@ -322,10 +322,10 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
       ],
     },
     resumeAtlas: {
-      heading: "ResumeAtlas for when your resume is not getting interviews",
+      heading: "ResumeAtlas when your resume is not getting interviews",
       paragraphs: [
-        "Paste a real job description alongside your resume. ResumeAtlas highlights likely gaps between your text and the posting, with alignment feedback you can act on. We do not guarantee interviews - we show where the document and the role diverge.",
-        "That is especially useful when you are sure your background fits but the shortlist says otherwise. Small edits to wording and ordering often change estimated match more than a full redesign.",
+        "Paste a real job description alongside your resume. ResumeAtlas surfaces unproven skills (listed vs proven in bullets), rejection risks for that posting, and recommended fixes you can apply before you submit again.",
+        "That chain — resume not getting interviews → unproven skills → rejection risks → recommended fixes — is what keyword scores alone do not show. We do not guarantee interviews; we show where evidence and the role diverge.",
       ],
     },
     benefits: {
@@ -357,7 +357,12 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
       {
         question: "Why am I not getting interviews?",
         answer:
-          "Often your resume does not show clear overlap with the job on paper: missing keywords, weak bullets, or ATS parsing issues. Comparing your resume to a specific job description surfaces those gaps so you can fix them before you apply again.",
+          "Often your resume mentions requirements but does not prove them in experience bullets — or it lacks clear overlap with the specific job. Comparing resume to job description surfaces unproven skills, rejection risks, and fixes before you apply again.",
+      },
+      {
+        question: "Why is my resume not getting interviews with a good ATS score?",
+        answer:
+          "ATS scores measure keyword overlap, not whether recruiters believe you can do the job. Skills listed without bullet proof are a common gap. Check rejection risks and skill proof for each posting, not only the match percentage.",
       },
       {
         question: "Do ATS scores matter?",

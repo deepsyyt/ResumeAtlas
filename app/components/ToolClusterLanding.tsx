@@ -2,8 +2,8 @@ import Link from "next/link";
 import HomeClient from "@/app/HomeClient";
 import { ShareFriendsCta } from "@/app/components/ShareFriendsCta";
 import { JdMatchGuide } from "@/app/components/JdMatchGuide";
+import { JdWorkbenchClusterBridge } from "@/app/components/tools/JdWorkbenchClusterBridge";
 import { LastUpdated } from "@/app/components/LastUpdated";
-import { PostingFitMethodologyAppendix } from "@/app/components/PostingFitMethodologyAppendix";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
 import { ToolClusterNextSteps } from "@/app/components/ToolClusterNextSteps";
 import { ToolClusterRelatedLinks } from "@/app/components/ToolClusterRelatedLinks";
@@ -18,7 +18,6 @@ import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PATH,
   RESUME_KEYWORD_SCANNER_FORM_HREF,
-  OPTIMIZE_RESUME_FOR_JD_PATH,
 } from "@/app/lib/internalLinks";
 
 type Props = {
@@ -116,155 +115,78 @@ export function ToolClusterLanding({
 
       {!omitWorkbench ? <HomeClient variant="toolOnly" /> : null}
 
-      {isJdWorkbench && !homePageMode ? (
-        <div className="border-b border-slate-200 bg-white">
-          <div className="page-prose-wide py-6 text-center sm:text-left">
-            <p className="mx-auto max-w-3xl text-sm text-slate-600 sm:mx-0">
-              Want sample JD match examples and role keyword checklists first? See{" "}
-              <Link
-                href={OPTIMIZE_RESUME_FOR_JD_PATH}
-                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
-              >
-                optimize resume for job description by role
-              </Link>
-              . Ready to run analysis and optimization?{" "}
-              <a
-                href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-                className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
-              >
-                Open the free tool
-              </a>
-              .
-            </p>
-          </div>
-        </div>
-      ) : null}
-
       <div
         className={`page-prose space-y-8 ${homePageMode ? "py-5 sm:py-6" : "py-8 sm:py-10"}`}
       >
         {isJdWorkbench ? (
           <>
-            {!homePageMode ? (
-              <section>
-                <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-                  {config.howItWorksHeading}
-                </h2>
-                <ol className="mt-4 space-y-4 list-decimal pl-5 text-sm sm:text-base text-slate-700">
-                  <li>
-                    <strong className="text-slate-900">Paste resume and job description.</strong> Copy
-                    the full posting requirements into the fields above.
-                  </li>
-                  <li>
-                    <strong className="text-slate-900">ATS match score and resume JD match.</strong> See
-                    posting-specific alignment: keyword coverage, skills evidence, and fit readout.
-                  </li>
-                  <li>
-                    <strong className="text-slate-900">Keyword gap analysis.</strong> Resume keyword scanner
-                    lists missing job description terms and skill gaps to fix first.
-                  </li>
-                  <li>
-                    <strong className="text-slate-900">AI resume optimization.</strong> Apply JD-aligned
-                    bullet rewrites and tailoring suggestions you review before export.
-                  </li>
-                  <li>
-                    <strong className="text-slate-900">Edit and download.</strong> Refine optimized bullets
-                    and export PDF or DOCX.
-                  </li>
-                </ol>
-              </section>
-            ) : null}
-
-            <JdMatchGuide homePageMode={homePageMode} />
-
-            {!homePageMode ? <PostingFitMethodologyAppendix /> : null}
-
-            <section className="rounded-xl border border-amber-200 bg-amber-50/40 p-5 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
-                {config.differentiatorHeading}
-              </h2>
-              <div className="mt-2 space-y-3">
-                {config.differentiatorBody.map((para, i) => (
-                  <p key={i} className="text-sm sm:text-base text-slate-700">
-                    {para}
-                  </p>
-                ))}
-              </div>
-              <p className="mt-3 text-sm text-slate-700">
-                Need parsing and formatting only?{" "}
-                <Link
-                  href="/ats-resume-checker"
-                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-                >
-                  ATS resume checker
-                </Link>
-                .
-              </p>
-            </section>
-
-            {!homePageMode ? (
-              <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
-                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                  {config.serpVariantsParagraph}
-                </p>
-              </section>
-            ) : null}
-
-            {!homePageMode ? <ToolClusterNextSteps /> : null}
+            <JdMatchGuide homePageMode={homePageMode} compact />
 
             {homePageMode ? (
-              <section className="rounded-xl border border-slate-200 bg-slate-50/80 px-5 py-6 text-center sm:px-6">
-                <h2 className="text-lg font-semibold tracking-tight text-slate-900">
-                  Questions about evidence match or optimization?
-                </h2>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                  Read answers about skill proof maps, gap analysis, privacy, and how the free
-                  checker works.
-                </p>
-                <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-                  <Link
-                    href="/faq"
-                    className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
-                  >
-                    View FAQ
-                  </Link>
-                  <ShareFriendsCta layout="button" />
-                </div>
-              </section>
-            ) : (
-              <section id="faq">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-                    Frequently asked questions
+              <>
+                <JdWorkbenchClusterBridge />
+                <section className="rounded-xl border border-slate-200 bg-slate-50/80 px-5 py-6 text-center sm:px-6">
+                  <h2 className="text-lg font-semibold tracking-tight text-slate-900">
+                    Questions about apply readiness or optimization?
                   </h2>
-                  <ShareFriendsCta layout="button" />
-                </div>
-                <div className="mt-5 space-y-5 text-sm sm:text-base text-slate-700">
-                  {config.faq.map((item) => (
-                    <div key={item.question}>
-                      <h3 className="font-semibold text-slate-900">{item.question}</h3>
-                      <p className="mt-1">{item.answer}</p>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                    Read answers about skill proof, gap analysis, privacy, and how the free checker
+                    works.
+                  </p>
+                  <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                    <a
+                      href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                      className="inline-flex rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+                    >
+                      {config.ctaAnchor}
+                    </a>
+                    <Link
+                      href="/faq"
+                      className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
+                    >
+                      View FAQ
+                    </Link>
+                    <ShareFriendsCta layout="button" />
+                  </div>
+                </section>
+              </>
+            ) : (
+              <>
+                <JdWorkbenchClusterBridge />
+                <section id="faq">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+                      Frequently asked questions
+                    </h2>
+                    <ShareFriendsCta layout="button" />
+                  </div>
+                  <div className="mt-5 space-y-5 text-sm sm:text-base text-slate-700">
+                    {config.faq.map((item) => (
+                      <div key={item.question}>
+                        <h3 className="font-semibold text-slate-900">{item.question}</h3>
+                        <p className="mt-1">{item.answer}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
 
-            {!homePageMode ? (
-              <section className="rounded-2xl border border-slate-900/10 bg-slate-900 text-white p-6 sm:p-8 text-center">
-                <h2 className="text-lg sm:text-xl font-semibold tracking-tight">Final step</h2>
-                <p className="mt-2 text-sm sm:text-base text-slate-200 max-w-xl mx-auto">
-                  Run ATS match score and keyword gap analysis, then optimize your resume for the job
-                  description you paste. Analyze fit and tailor bullets in one workflow.
-                </p>
-                <a
-                  href="#ats-checker-form"
-                  className="mt-6 inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-100 transition"
-                >
-                  {config.ctaAnchor}
-                </a>
-              </section>
-            ) : null}
+                <section className="rounded-2xl border border-slate-900/10 bg-slate-900 text-white p-6 sm:p-8 text-center">
+                  <h2 className="text-lg sm:text-xl font-semibold tracking-tight">
+                    Before you apply to this role
+                  </h2>
+                  <p className="mt-2 text-sm sm:text-base text-slate-200 max-w-xl mx-auto">
+                    Paste your resume and job description. See your application verdict, unproven
+                    skills, elimination risks, and what to fix first.
+                  </p>
+                  <a
+                    href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+                    className="mt-6 inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-100 transition"
+                  >
+                    {config.ctaAnchor}
+                  </a>
+                </section>
+              </>
+            )}
 
             {!homePageMode ? (
               <RelatedResumeGuidesSection

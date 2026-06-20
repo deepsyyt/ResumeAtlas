@@ -24,7 +24,7 @@ export function ResumeExampleSeoFunnel() {
         </li>
         <li>
           <Link
-            href="/problems/resume-not-getting-interviews"
+            href="/resume-not-getting-interviews"
             className="text-sky-800 underline underline-offset-2 hover:text-sky-950"
           >
             Resume not getting interviews (fix guide)

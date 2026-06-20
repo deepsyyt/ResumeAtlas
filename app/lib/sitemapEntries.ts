@@ -48,6 +48,11 @@ function priorityForPath(pathname: string): number {
   if (pathname.startsWith("/problems/")) return 0.92;
   if (pathname.startsWith("/how-ats-")) return 0.92;
   if (pathname.startsWith("/resumeatlas-vs-")) return 0.88;
+  if (pathname === "/resume-not-getting-interviews") return 0.94;
+  if (pathname === "/skills-listed-but-not-proven-on-resume") return 0.92;
+  if (pathname === "/already-have-the-skills-but-not-getting-interviews") return 0.9;
+  if (pathname === "/how-recruiters-evaluate-resumes") return 0.9;
+  if (pathname === "/ats-score-vs-real-job-fit") return 0.9;
   if (
     pathname === "/ats-resume-template" ||
     pathname === "/resume-guides/resume-work-experience-examples" ||
@@ -181,6 +186,42 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     lastModified: new Date("2026-06-15"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/resumeatlas-vs-resume-worded"),
+  });
+  entries.push({
+    url: `${base}/resume-not-getting-interviews`,
+    lastModified: new Date("2026-06-18"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/resume-not-getting-interviews"),
+  });
+  entries.push({
+    url: `${base}/skills-listed-but-not-proven-on-resume`,
+    lastModified: new Date("2026-06-18"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/skills-listed-but-not-proven-on-resume"),
+  });
+  entries.push({
+    url: `${base}/already-have-the-skills-but-not-getting-interviews`,
+    lastModified: new Date("2026-06-18"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/already-have-the-skills-but-not-getting-interviews"),
+  });
+  entries.push({
+    url: `${base}/how-recruiters-evaluate-resumes`,
+    lastModified: new Date("2026-06-18"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/how-recruiters-evaluate-resumes"),
+  });
+  entries.push({
+    url: `${base}/resumeatlas-vs-teal`,
+    lastModified: new Date("2026-06-18"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/resumeatlas-vs-teal"),
+  });
+  entries.push({
+    url: `${base}/ats-score-vs-real-job-fit`,
+    lastModified: new Date("2026-06-18"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/ats-score-vs-real-job-fit"),
   });
   const legalLastMod = new Date("2026-03-23");
   for (const path of LEGAL_PATHS) {

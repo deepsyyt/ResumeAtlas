@@ -33,9 +33,9 @@ export function postingFitWebApplicationJsonLd(config: ToolClusterPageConfig) {
   return toolClusterWebApplicationSchema(config, {
     featureList: [
       "Compare resume to job description",
-      "Resume match score and ATS match score",
-      "Resume keyword gap analysis and missing keywords",
-      "Tailor resume to job description with AI optimization",
+      "Application verdict and elimination risks",
+      "Proven vs weak skills and missing requirements",
+      "Job-specific resume optimization and download",
     ],
   });
 }

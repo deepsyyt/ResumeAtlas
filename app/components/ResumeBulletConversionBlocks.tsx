@@ -65,7 +65,7 @@ export function ResumeBulletConversionBlocks({ roleKeywordLabel }: Props) {
             Compare your resume with this job description
           </Link>
           <Link
-            href="/problems/resume-not-getting-interviews"
+            href="/resume-not-getting-interviews"
             className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
           >
             Why resumes fail to get interviews

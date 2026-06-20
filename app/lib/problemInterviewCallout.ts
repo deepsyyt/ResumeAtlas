@@ -40,7 +40,15 @@ export function resolveProblemInterviewCallout(
 ): ProblemInterviewCalloutResolved | null {
   const p = normalizePathname(pathname);
 
-  if (p === "/problems/resume-not-getting-interviews") {
+  if (p === "/resume-not-getting-interviews" || p === "/problems/resume-not-getting-interviews") {
+    return null;
+  }
+  if (
+    p === "/ats-score-vs-real-job-fit" ||
+    p === "/skills-listed-but-not-proven-on-resume" ||
+    p === "/already-have-the-skills-but-not-getting-interviews" ||
+    p === "/how-recruiters-evaluate-resumes"
+  ) {
     return null;
   }
   if (p === "/problems/ats-rejecting-my-resume") {
@@ -78,6 +86,6 @@ export function resolveProblemInterviewCallout(
   return {
     prefix: "Not getting interview calls? ",
     linkText: "See why your resume may be getting rejected",
-    href: "/problems/resume-not-getting-interviews",
+    href: "/resume-not-getting-interviews",
   };
 }

@@ -141,7 +141,7 @@ export function IntelligencePanel({
             ? "Paste your resume on the left and run a free ATS check."
             : isKeywordScanner
               ? "Paste your resume and a job posting, then scan for keyword gaps."
-              : "Paste resume and job description on the left, then run evidence match and optimization.");
+              : "Paste resume and job description on the left, then see your application verdict and what to fix.");
 
       if (isKeywordScanner) {
         return (
@@ -210,12 +210,12 @@ export function IntelligencePanel({
       ? [
           "ATS readability and parsing risk",
           "Structure, headings, and bullet clarity",
-          "Optional: add a job description for evidence match",
+          "Optional: add a job description for the full dashboard",
         ]
       : [
-          "Job description match score (Evidence Match)",
-          "JD skill proof map and topic coverage",
-          "Honest gap callouts plus optimize option",
+          "Application verdict — should you apply?",
+          "Elimination risks and proven vs weak skills",
+          "Recommended fixes and the resume version to send",
         ];
 
     return (
@@ -232,7 +232,7 @@ export function IntelligencePanel({
           </h2>
           <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-600">
             {emptyAts
-              ? "Paste your resume on the left and run a free ATS check. Add a job description anytime for evidence match."
+              ? "Paste your resume on the left and run a free ATS check. Add a job description anytime for the intelligence dashboard."
               : "Paste your resume and job description on the left, then run a free check."}
           </p>
           <ul className="mt-6 w-full max-w-md space-y-2.5 text-left text-sm text-slate-700">
@@ -307,8 +307,8 @@ export function IntelligencePanel({
                     {isKeywordScanner
                       ? "Keyword gaps vs this posting"
                       : analysisUsedJobDescription
-                        ? "Evidence match, keyword coverage, and alignment actions"
-                        : "ATS readability snapshot"}
+                        ? "Application verdict, elimination risks, and recommended fixes"
+                        : "Resume formatting snapshot"}
                   </p>
                 </div>
                 <span className="intelligence-result-badge inline-flex shrink-0 items-center rounded-full">
@@ -499,8 +499,8 @@ export function IntelligencePanel({
         <div className="mt-3 rounded-xl border border-sky-200 bg-gradient-to-br from-sky-50 to-white px-3 py-3 sm:px-4 sm:py-3.5">
           <p className="text-sm font-semibold text-slate-900">Want better results?</p>
           <p className="mt-1 text-xs text-slate-700 leading-snug">
-            Compare your resume with a job description to see keyword overlap, missing skills, and a
-            match-style score for that posting.
+            Compare your resume with a job description to see your application verdict, unproven
+            skills, and what may eliminate you for that posting.
           </p>
           <Link
             href={CHECK_RESUME_AGAINST_JD_FORM_HREF}

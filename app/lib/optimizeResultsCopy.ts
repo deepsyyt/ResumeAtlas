@@ -125,7 +125,7 @@ export function buildOptimizeBenefitItems(args: {
     items.push({
       id: "match",
       icon: "match",
-      title: `Evidence match improved by ${args.evidenceMatchDelta} point${args.evidenceMatchDelta === 1 ? "" : "s"}`,
+      title: `Proof in project bullets strengthened (+${args.evidenceMatchDelta} point${args.evidenceMatchDelta === 1 ? "" : "s"})`,
       detail: "Stronger alignment between this job and proof in your experience.",
     });
   }

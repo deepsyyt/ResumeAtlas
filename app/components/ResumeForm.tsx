@@ -2,9 +2,14 @@
 
 import { useForm, Controller } from "react-hook-form";
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { ShareFriendsCta } from "@/app/components/ShareFriendsCta";
 import type { Resume } from "@/app/types/resume";
-import { CHECK_RESUME_AGAINST_JD_PRIMARY_CTA } from "@/app/lib/internalLinks";
+import {
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+  RESUME_NOT_GETTING_INTERVIEWS_PATH,
+  SKILLS_LISTED_NOT_PROVEN_PATH,
+} from "@/app/lib/internalLinks";
 import {
   countWords,
   clipToWordLimit,
@@ -400,6 +405,8 @@ export function ResumeForm({
     <div className="mb-2.5">{targetRoleField}</div>
   ) : null;
 
+  const showJdModeRejectionWhy = analysisMode === "jdMatch";
+
   if (isWorkbench) {
     return (
       <div className="relative flex h-full min-h-[min(70vh,36rem)] flex-col">
@@ -484,6 +491,34 @@ export function ResumeForm({
                     <p className={`mt-1.5 text-right ${wordCountClass(wc >= JOB_DESCRIPTION_MAX_WORDS)}`}>
                       {wc.toLocaleString()} / {JOB_DESCRIPTION_MAX_WORDS.toLocaleString()} words
                     </p>
+                    {showJdModeRejectionWhy ? (
+                      <div className="mt-2 rounded-lg border border-slate-200 bg-slate-50/70 p-2.5">
+                        <p className="text-[11px] font-semibold text-slate-900">
+                          Why resumes get rejected
+                        </p>
+                        <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[11px] leading-snug text-slate-600">
+                          <li>Skills listed but not proven</li>
+                          <li>Strong keyword match but weak evidence</li>
+                          <li>Missing proof in project bullets</li>
+                        </ul>
+                        <p className="mt-1.5 text-[11px] text-slate-700">
+                          Learn why:{" "}
+                          <Link
+                            href={RESUME_NOT_GETTING_INTERVIEWS_PATH}
+                            className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                          >
+                            resume not getting interviews
+                          </Link>
+                          {" · "}
+                          <Link
+                            href={SKILLS_LISTED_NOT_PROVEN_PATH}
+                            className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                          >
+                            skills listed but not proven
+                          </Link>
+                        </p>
+                      </div>
+                    ) : null}
                   </>
                 );
               }}
@@ -554,7 +589,7 @@ export function ResumeForm({
                   ? "ATS compatibility scan"
                   : isKeywordScanner
                     ? "Keyword gap scan"
-                    : "Resume vs job match"}
+                    : "Readiness scan"}
               </p>
               {!splitPanelLayout ? (
                 <>
@@ -793,6 +828,34 @@ export function ResumeForm({
                     <p className={`shrink-0 text-right ${splitPanelLayout ? "text-[10px]" : "mt-1.5"} ${wordCountClass(wc >= JOB_DESCRIPTION_MAX_WORDS)}`}>
                       {wc.toLocaleString()} / {JOB_DESCRIPTION_MAX_WORDS.toLocaleString()} words
                     </p>
+                    {showJdModeRejectionWhy ? (
+                      <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-2.5">
+                        <p className="text-[11px] font-semibold text-slate-900">
+                          Why resumes get rejected
+                        </p>
+                        <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[11px] leading-snug text-slate-600">
+                          <li>Skills listed but not proven</li>
+                          <li>Strong keyword match but weak evidence</li>
+                          <li>Missing proof in project bullets</li>
+                        </ul>
+                        <p className="mt-1.5 text-[11px] text-slate-700">
+                          Learn why:{" "}
+                          <Link
+                            href={RESUME_NOT_GETTING_INTERVIEWS_PATH}
+                            className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                          >
+                            resume not getting interviews
+                          </Link>
+                          {" · "}
+                          <Link
+                            href={SKILLS_LISTED_NOT_PROVEN_PATH}
+                            className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                          >
+                            skills listed but not proven
+                          </Link>
+                        </p>
+                      </div>
+                    ) : null}
                   </div>
                 );
               }}

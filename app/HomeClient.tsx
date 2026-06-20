@@ -1470,7 +1470,7 @@ export default function HomeClient({
                     ? "Paste your resume on the left and run a free ATS check. Job description is optional."
                     : isKeywordScanner
                       ? "Paste your resume and a job posting on the left, then scan for keyword gaps."
-                      : "Paste resume and job description on the left, then run evidence match and optimization."
+                      : "Paste resume and job description on the left, then see your application verdict and what may eliminate you."
                   : undefined
               }
               onOpenOptimizer={

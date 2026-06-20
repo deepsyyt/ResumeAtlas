@@ -3,7 +3,7 @@ import { getSiteUrl } from "@/app/lib/siteUrl";
 
 const siteBase = () => getSiteUrl().replace(/\/$/, "");
 
-/** Homepage category hub — AI checker and optimizer (ATS checker SERP: `/ats-resume-checker`). */
+/** Homepage — compare/ATS SEO + apply-readiness product. */
 export function homeWebApplicationJsonLd() {
   return {
     "@context": "https://schema.org",
@@ -15,12 +15,12 @@ export function homeWebApplicationJsonLd() {
     description: HOME_PAGE_DESCRIPTION,
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     featureList: [
-      "Free AI resume checker",
-      "ATS compatibility and parsing check",
-      "Resume vs job description matching",
-      "ATS keyword matching",
-      "AI resume optimizer and bullet rewrites",
-      "Edit and export PDF or DOCX",
+      "Compare resume to job description",
+      "ATS score and keyword coverage",
+      "Application verdict and shortlist odds",
+      "Elimination risks and recommended fixes",
+      "Skill proof map — listed vs proven in bullets",
+      "Job-specific resume optimization and download",
     ],
   };
 }

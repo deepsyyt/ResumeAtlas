@@ -29,7 +29,7 @@ export const FAQ_PAGE_TITLE_ABSOLUTE =
   `AI Resume Optimization FAQ: Check Resume vs Job Description & ATS Checker (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`;
 
 export const FAQ_PAGE_DESCRIPTION =
-  "Answers on AI resume optimization, checking your resume against a job description (JD), free ATS resume checker scores, why you're not getting interviews, keyword gaps, evidence match, and skill proof maps. ResumeAtlas FAQ.";
+  "Answers on checking your resume against a job description, ATS checker scores, why you're not getting interviews, application verdict, keyword gaps, and skill proof maps. ResumeAtlas FAQ.";
 
 export const FAQ_PAGE_OG_TITLE =
   `AI Resume Optimization & ATS Checker FAQ (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`;
@@ -40,7 +40,7 @@ export const FAQ_PAGE_OG_DESCRIPTION =
 export const FAQ_PAGE_TWITTER_TITLE = "AI resume optimization FAQ: JD match, ATS checker, no interviews";
 
 export const FAQ_PAGE_TWITTER_DESCRIPTION =
-  "Check resume vs job description, ATS checker help, interview gaps, AI optimization, and evidence match—ResumeAtlas FAQ.";
+  "Check resume vs job description, ATS checker help, interview gaps, application verdict, and optimization—ResumeAtlas FAQ.";
 
 /** Visible H1 support copy (not the HTML title tag). */
 export const FAQ_PAGE_HERO_INTRO =

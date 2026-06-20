@@ -3,7 +3,11 @@ import {
   postingFitWebApplicationJsonLd,
   postingFitWorkbenchBreadcrumbJsonLd,
 } from "@/app/lib/postingFitJsonLd";
-import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
+import {
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_HERO_CTA,
+} from "@/app/lib/internalLinks";
+import { WORKBENCH_HERO_BULLETS } from "@/app/lib/homeMarketingContent";
 import { TOOL_CLUSTER_PRIMARY } from "@/app/lib/toolClusterPages";
 import { HeroDashboardPreview } from "@/app/components/postingFit/HeroDashboardPreview";
 
@@ -53,11 +57,7 @@ export function PostingFitSsrShell() {
               </p>
 
               <ul className="mx-auto mt-6 hidden max-w-md space-y-2 text-left text-sm text-slate-700 lg:mx-0 lg:block">
-                {[
-                  "Job description match score (Evidence Match)",
-                  "JD skill proof map and topic coverage",
-                  "Optimize thin bullets without inventing experience",
-                ].map((line) => (
+                {WORKBENCH_HERO_BULLETS.map((line) => (
                   <li key={line} className="flex gap-2 leading-snug">
                     <span className="mt-0.5 font-semibold text-emerald-600" aria-hidden>
                       ✓
@@ -72,7 +72,7 @@ export function PostingFitSsrShell() {
                   href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
                   className="inline-flex min-w-[min(100%,18rem)] items-center justify-center rounded-2xl bg-slate-900 px-8 py-3.5 text-base font-semibold text-white shadow-[0_14px_40px_-14px_rgba(15,23,42,0.55)] transition hover:bg-slate-800"
                 >
-                  Check my resume for this job (free)
+                  {CHECK_RESUME_AGAINST_JD_HERO_CTA}
                 </Link>
                 <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm font-medium text-slate-600 lg:justify-start">
                   <span>

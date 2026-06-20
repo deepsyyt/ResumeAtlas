@@ -1,14 +1,15 @@
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
+import { computeApplicationVerdict } from "@/app/lib/applicationVerdict";
 import {
-  atsShortlistLikelihoodLine,
-  evidenceInterviewLikelihoodLine,
+  applicationVerdictReportLine,
+  buildKeywordCoverageMetricInput,
+  keywordCoverageReportLine,
   TOP_REJECTION_RISKS_TITLE,
-  snapshotSummaryLine,
 } from "@/app/lib/evidenceMetricCopy";
-import { getATSBadgeLabel } from "@/app/lib/scoreColors";
 import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
 import { recommendedFixActionLabel, resolveDashboardRecommendedFixes } from "@/app/lib/recommendedFixes";
 import { ROLE_FIT_SECTION_TITLE, verdictLabelFor } from "@/app/lib/roleFitArchetypes";
+import { resolveKeywordCoverageVerdict } from "@/app/lib/skillProofLlm";
 
 export const SHARE_RECRUITER_CTA_HINT =
   "Download a color PDF report, or share it on LinkedIn with a short message.";
@@ -25,8 +26,17 @@ export const ANALYSIS_REPORT_PDF_FILENAME = "ResumeAtlas-Job-Match-Report.pdf";
 
 /** Short professional note to accompany the PDF on LinkedIn. */
 export function buildShareIntroMessage(args: ShareRecruiterReportArgs): string {
-  const evidence = args.evidenceDashboard.evidenceMatch;
-  const ats = args.analyzeResult.ats_score;
+  const verdict = computeApplicationVerdict(args.evidenceDashboard);
+  const keywordCoverage =
+    buildKeywordCoverageMetricInput({
+      score: args.analyzeResult.keyword_coverage ?? args.analyzeResult.ats_score,
+      matchedSkills: args.analyzeResult.matched_skills ?? [],
+      missingSkills: args.analyzeResult.missing_skills ?? [],
+    }) ?? null;
+  const keywordVerdict =
+    keywordCoverage != null
+      ? resolveKeywordCoverageVerdict(args.evidenceDashboard, keywordCoverage)
+      : null;
   const summaryLead =
     args.analyzeResult.summary?.trim().split(/[.!?]/)[0]?.trim() ||
     "Please find my résumé–job description fit analysis.";
@@ -35,15 +45,19 @@ export function buildShareIntroMessage(args: ShareRecruiterReportArgs): string {
     "",
     "Sharing a résumé–job description fit analysis I prepared with ResumeAtlas for your review.",
     "",
-    `• Evidence Match: ${evidence}% (${getATSBadgeLabel(evidence)})`,
-    `• ATS keyword reference: ${ats}%`,
+    `• Application verdict: ${applicationVerdictReportLine(verdict)}`,
+    keywordCoverage && keywordVerdict
+      ? `• Keyword coverage: ${keywordCoverageReportLine(keywordCoverage, keywordVerdict)}`
+      : null,
     "",
     summaryLead + ".",
     "",
     "The full color report is in the attached PDF (or the PDF I am sending next).",
     "",
     "Thank you,",
-  ].join("\n");
+  ]
+    .filter((line): line is string => line != null)
+    .join("\n");
 }
 
 export async function fetchAnalysisReportPdfBlob(
@@ -125,8 +139,15 @@ function formatSkillLists(result: ATSAnalyzeResult): string[] {
 /** Plain-text report suitable for email, ATS notes, or messaging a hiring contact. */
 export function buildShareRecruiterReportText(args: ShareRecruiterReportArgs): string {
   const { analyzeResult: r, evidenceDashboard: dash } = args;
-  const evidence = dash.evidenceMatch;
-  const ats = r.ats_score;
+  const verdict = computeApplicationVerdict(dash);
+  const keywordCoverage =
+    buildKeywordCoverageMetricInput({
+      score: r.keyword_coverage ?? r.ats_score,
+      matchedSkills: r.matched_skills ?? [],
+      missingSkills: r.missing_skills ?? [],
+    }) ?? null;
+  const keywordVerdict =
+    keywordCoverage != null ? resolveKeywordCoverageVerdict(dash, keywordCoverage) : null;
   const lines: string[] = [];
 
   lines.push("RESUME–JOB DESCRIPTION ANALYSIS SUMMARY");
@@ -135,16 +156,12 @@ export function buildShareRecruiterReportText(args: ShareRecruiterReportArgs): s
   lines.push("Executive summary");
   lines.push(r.summary?.trim() || "Analysis completed for the pasted job description.");
   lines.push("");
-  lines.push("Match scores");
-  lines.push(
-    `• Evidence Match: ${evidence}% (${getATSBadgeLabel(evidence)}), ${evidenceInterviewLikelihoodLine(evidence)}`
-  );
-  lines.push(
-    `• ATS keyword reference: ${ats}%, ${atsShortlistLikelihoodLine(ats)}`
-  );
-  lines.push("");
-  lines.push("Evidence signals");
-  lines.push(`• ${snapshotSummaryLine(dash)}`);
+  lines.push("Dashboard scores");
+  lines.push(`• Application verdict: ${applicationVerdictReportLine(verdict)}`);
+  lines.push(`• ${verdict.headline}`);
+  if (keywordCoverage && keywordVerdict) {
+    lines.push(`• Keyword coverage: ${keywordCoverageReportLine(keywordCoverage, keywordVerdict)}`);
+  }
   for (const skillLine of formatSkillLists(r)) {
     lines.push(`• ${skillLine}`);
   }

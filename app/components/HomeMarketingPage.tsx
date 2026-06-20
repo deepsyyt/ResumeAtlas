@@ -49,7 +49,8 @@ export function HomeMarketingPage() {
             What you get for free
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            One workflow: ATS compatibility check, resume keyword scan, and AI resume optimizer.
+            Evaluate whether to apply, fix elimination risks, optimize proof, and download — for the
+            job you paste.
           </p>
           <ul className="mt-8 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
             {HOME_CAPABILITY_CARDS.map((card) => (
@@ -82,7 +83,7 @@ export function HomeMarketingPage() {
               How it works
             </h2>
             <p className="mx-auto mt-2 max-w-xl text-sm text-slate-600">
-              Open the free checker, paste your resume and job description, then review and optimize.
+              Paste resume and job description — get an application verdict, then fix and download.
             </p>
           </div>
           <ol className="mt-8 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
@@ -112,10 +113,11 @@ export function HomeMarketingPage() {
         <section className="mt-12 text-center">
           <div className="rounded-2xl bg-slate-900 px-6 py-10 text-white sm:px-10">
             <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
-              Ready to check your resume?
+              Ready to check this job?
             </h2>
             <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-slate-300 sm:text-base">
-              Open the free AI checker and optimizer. Paste only, instant results, no signup.
+              Compare your resume to a job description. See if you're ready to apply before you
+              spend time on the application.
             </p>
             <Link
               href={CHECK_RESUME_AGAINST_JD_PATH}

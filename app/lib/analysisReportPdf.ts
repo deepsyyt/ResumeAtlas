@@ -1,13 +1,15 @@
 import PDFDocument from "pdfkit/js/pdfkit.standalone";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
+import { computeApplicationVerdict } from "@/app/lib/applicationVerdict";
 import {
-  atsShortlistLikelihoodLine,
-  ATS_REFERENCE_TITLE,
-  evidenceInterviewLikelihoodLine,
+  APPLICATION_VERDICT_TITLE,
+  buildKeywordCoverageMetricInput,
+  KEYWORD_COVERAGE_SCORE_TITLE,
+  keywordCoverageReportLine,
+  applicationVerdictReportLine,
   RISK_AREAS_INTRO,
   TOP_REJECTION_RISKS_INTRO,
   TOP_REJECTION_RISKS_TITLE,
-  snapshotSummaryLine,
 } from "@/app/lib/evidenceMetricCopy";
 import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
 import { recommendedFixActionLabel, resolveDashboardRecommendedFixes } from "@/app/lib/recommendedFixes";
@@ -18,7 +20,8 @@ import {
   type RoleFitRow,
   verdictLabelFor,
 } from "@/app/lib/roleFitArchetypes";
-import { getATSBadgeLabel, getScoreStyle, type ScoreStyle } from "@/app/lib/scoreColors";
+import { getScoreStyle, type ScoreStyle } from "@/app/lib/scoreColors";
+import { resolveKeywordCoverageVerdict } from "@/app/lib/skillProofLlm";
 
 export type AnalysisReportPdfInput = {
   analyzeResult: ATSAnalyzeResult;
@@ -279,8 +282,21 @@ function drawSkillPills(d: PdfDoc, x: number, y: number, w: number, skills: stri
 
 export function renderAnalysisReportPdf(input: AnalysisReportPdfInput): Promise<Buffer> {
   const { analyzeResult: r, evidenceDashboard: dash } = input;
-  const evidenceStyle = getScoreStyle(dash.evidenceMatch);
-  const atsStyle = getScoreStyle(r.ats_score);
+  const verdict = computeApplicationVerdict(dash);
+  const verdictStyle = getScoreStyle(verdict.shortlistPct);
+  const keywordCoverage =
+    buildKeywordCoverageMetricInput({
+      score: r.keyword_coverage ?? r.ats_score,
+      matchedSkills: r.matched_skills ?? [],
+      missingSkills: r.missing_skills ?? [],
+    }) ?? {
+      score: r.ats_score,
+      matchedCount: r.matched_skills?.length ?? 0,
+      totalCount: (r.matched_skills?.length ?? 0) + (r.missing_skills?.length ?? 0),
+      coverageLabel: getScoreStyle(r.ats_score).label,
+    };
+  const keywordVerdict = resolveKeywordCoverageVerdict(dash, keywordCoverage);
+  const keywordStyle = getScoreStyle(keywordCoverage.score);
 
   const doc = new PDFDocument({ size: "A4", margin: MARGIN, autoFirstPage: true });
   const chunks: Buffer[] = [];
@@ -319,18 +335,18 @@ export function renderAnalysisReportPdf(input: AnalysisReportPdfInput): Promise<
   const cardH = 58;
   const half = (w - 12) / 2;
   drawCompactScoreCard(doc, left, y, half, cardH, {
-    label: "Evidence match",
-    score: dash.evidenceMatch,
-    badge: getATSBadgeLabel(dash.evidenceMatch),
-    secondaryLine: evidenceInterviewLikelihoodLine(dash.evidenceMatch),
-    style: evidenceStyle,
+    label: APPLICATION_VERDICT_TITLE,
+    score: verdict.shortlistPct,
+    badge: verdict.badgeLabel,
+    secondaryLine: applicationVerdictReportLine(verdict),
+    style: verdictStyle,
   });
   drawCompactScoreCard(doc, left + half + 12, y, half, cardH, {
-    label: ATS_REFERENCE_TITLE,
-    score: r.ats_score,
-    badge: getATSBadgeLabel(r.ats_score),
-    secondaryLine: atsShortlistLikelihoodLine(r.ats_score),
-    style: atsStyle,
+    label: KEYWORD_COVERAGE_SCORE_TITLE,
+    score: keywordCoverage.score,
+    badge: keywordVerdict.badgeLabel,
+    secondaryLine: keywordCoverageReportLine(keywordCoverage, keywordVerdict),
+    style: keywordStyle,
   });
   y += cardH + 10;
 
@@ -340,8 +356,8 @@ export function renderAnalysisReportPdf(input: AnalysisReportPdfInput): Promise<
   const summaryTextH = doc.heightOfString(summaryRaw, { width: w - summaryPad * 2 - 6, lineGap: 1.2 });
   const summaryH = Math.min(summaryTextH + summaryPad * 2 + 6, 78);
   doc.save();
-  doc.roundedRect(left, y, w, summaryH, 5).fill(evidenceStyle.bgHex);
-  doc.rect(left, y, 4, summaryH).fill(evidenceStyle.hex);
+  doc.roundedRect(left, y, w, summaryH, 5).fill(verdictStyle.bgHex);
+  doc.rect(left, y, 4, summaryH).fill(verdictStyle.hex);
   doc.restore();
   doc.font("Helvetica-Bold").fontSize(7).fillColor(COLORS.indigo900);
   doc.text("EXECUTIVE SUMMARY", left + summaryPad + 4, y + 6, { width: w - summaryPad * 2 - 6 });
@@ -362,10 +378,7 @@ export function renderAnalysisReportPdf(input: AnalysisReportPdfInput): Promise<
   const matchedSkills = r.matched_skills ?? [];
   const hasSkills = matchedSkills.length > 0;
 
-  let contentY = drawSectionLabel(doc, left, bodyTop, w, "Evidence snapshot");
-  doc.font("Helvetica").fontSize(6.5).fillColor(COLORS.indigo700);
-  doc.text(snapshotSummaryLine(dash), left, contentY, { width: w, lineGap: 1 });
-  contentY += doc.heightOfString(snapshotSummaryLine(dash), { width: w, lineGap: 1 }) + 10;
+  let contentY = bodyTop;
 
   if (roleFitRows.length > 0) {
     contentY = drawSectionLabel(doc, left, contentY, w, ROLE_FIT_SECTION_TITLE) + 2;

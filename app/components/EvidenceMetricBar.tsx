@@ -169,60 +169,9 @@ export function AnimatedScoreBar({
   );
 }
 
-type SignalMetricCardProps = {
-  label: string;
-  value: number;
-  hint: string;
-  index?: number;
-  style?: { hex: string; bgHex: string; label: string };
-};
-
-export function SignalMetricCard({
-  label,
-  value,
-  hint,
-  index = 0,
-  style,
-}: SignalMetricCardProps) {
-  const scoreStyle = style ?? getScoreStyle(value);
-
-  return (
-    <div
-      className="rounded-lg px-2 py-1.5"
-      style={{ backgroundColor: scoreStyle.bgHex }}
-    >
-      <div className="flex items-center justify-between gap-1.5">
-        <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight text-slate-600">
-          {label}
-        </p>
-        <span
-          className="h-1.5 w-1.5 shrink-0 rounded-full"
-          style={{ backgroundColor: scoreStyle.hex }}
-          title={scoreStyle.label}
-          aria-hidden
-        />
-      </div>
-      <p
-        className="mt-0.5 text-sm font-semibold leading-none tabular-nums"
-        style={{ color: scoreStyle.hex }}
-      >
-        {value}%
-      </p>
-      <AnimatedScoreBar
-        value={value}
-        colorHex={scoreStyle.hex}
-        className="mt-1"
-        heightClass="h-1"
-        delayMs={index * 60}
-      />
-      <p className="mt-0.5 text-[10px] leading-snug text-slate-600">{hint}</p>
-    </div>
-  );
-}
-
 type IntelligenceScoreCardProps = {
   label: string;
-  /** Full title on hover (e.g. long evidence match name). */
+  /** Full title on hover (e.g. long metric name). */
   labelTitle?: string;
   score?: number;
   badgeLabel?: string;

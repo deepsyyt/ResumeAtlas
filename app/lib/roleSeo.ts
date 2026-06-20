@@ -76,7 +76,7 @@ export function roleToProblemPath(role: RoleSlug): string {
   if (role === "devops-engineer" || role === "backend-developer") {
     return "/problems/ats-rejecting-my-resume";
   }
-  return "/problems/resume-not-getting-interviews";
+  return "/resume-not-getting-interviews";
 }
 
 /** Anchor for {@link roleToProblemPath} (tool URL vs problem page). */

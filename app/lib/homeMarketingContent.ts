@@ -1,68 +1,79 @@
-/** Shared homepage funnel copy (marketing `/` only — tool lives on the checker page). */
+/** Shared homepage funnel copy (marketing `/` — commercial page; tool on workbench URL). */
 
-/** Page topic — category hub (checker + optimizer). JD-compare SERP lives on the workbench URL. */
-export const HOME_MARKETING_H1 = "Free AI resume checker and ATS resume optimizer";
+/** Layer 2 — product truth (apply-readiness). */
+export const HOME_MARKETING_H1 = "Know if you're ready to apply — before you apply";
+
+export const HOME_MARKETING_SUBHEAD =
+  "Paste your resume and a job description. ResumeAtlas tells you whether you're likely to clear first screening, what might get you rejected, what you can realistically fix, and which version of your resume to send.";
+
+/** Layer 1 bridge — search-native phrase users recognize. */
+export const HOME_MARKETING_SEO_BRIDGE =
+  "Compare your resume to a job description — ATS score, keyword coverage, rejection risks, and job-specific optimization in one scan.";
 
 export const HOME_MARKETING_TRUST_EYEBROW = "100% free · no signup";
 
-/** Compare section — first capability (no “Step 1” in UI). */
-export const HOME_COMPARE_SECTION_EYEBROW = "First, check ATS and keyword fit";
-
-export const HOME_COMPARE_SECTION_HEADING = "Resume fit readout for the posting you paste";
-
-export const HOME_COMPARE_SECTION_INTRO =
-  "Paste your resume and a job description. You get a clear readout for that posting. Free, instant, paste-only.";
-
-/** Contextual internal link copy (homepage → JD workbench). */
-export const HOME_COMPARE_SECTION_DETAIL_LINK_PREFIX = "Need a detailed comparison? ";
-export const HOME_COMPARE_SECTION_DETAIL_LINK_SUFFIX =
-  " to identify keyword gaps, missing requirements, and ATS issues.";
-export const HOME_COMPARE_SECTION_DETAIL_LINK_ANCHOR =
-  "compare your resume against a job description";
-
-export const HOME_COMPARE_METRICS = [
+/** Layer 3 preview — what the dashboard delivers (matches live product). */
+export const HOME_MARKETING_OUTCOMES = [
   {
-    label: "Job description match score (Evidence Match)",
-    body: "resume-to-job match — how much of the posting you prove in project bullets, not just a skills list.",
+    label: "Application verdict",
+    body: "whether you're likely to clear screening for this role, or should optimize first.",
   },
   {
-    label: "ATS keyword score",
-    body: "resume keyword scan: ATS readability plus keyword overlap with the posting.",
+    label: "Elimination risks",
+    body: "top reasons recruiters might skip your application for this posting.",
   },
   {
     label: "Skill proof map",
-    body: "each job skill requirement marked strong, weak, or only listed in skills with no bullet proof.",
+    body: "which JD skills are proven in project bullets vs listed only in your skills section.",
   },
   {
-    label: "Gap callouts",
-    body: "missing requirements and thin areas called out honestly so you know what to fix first.",
+    label: "Recommended fixes",
+    body: "concrete changes to strengthen proof before you hit submit.",
   },
 ] as const;
 
-/** Optimize section — second capability (no “Step 2” in UI). */
-export const HOME_OPTIMIZE_SECTION_EYEBROW = "Then, optimize for the role";
+/** Evaluate section — first scroll after hero (search intent → dashboard). */
+export const HOME_COMPARE_SECTION_EYEBROW = "Compare resume to job description";
 
-export const HOME_OPTIMIZE_SECTION_HEADING = "Your resume, rewritten for the job you pasted";
+export const HOME_COMPARE_SECTION_HEADING = "ATS score, gaps, and apply readiness in one paste";
+
+export const HOME_COMPARE_SECTION_INTRO =
+  "You came for a resume check. What you need is an apply decision for this specific role — fit, risks, and fixes, not a generic score alone.";
+
+export const HOME_COMPARE_SECTION_DETAIL_LINK_PREFIX = "Open the ";
+export const HOME_COMPARE_SECTION_DETAIL_LINK_SUFFIX =
+  " workbench to paste resume + posting and run the full scan.";
+export const HOME_COMPARE_SECTION_DETAIL_LINK_ANCHOR =
+  "compare resume to job description";
+
+/** @deprecated Use HOME_MARKETING_OUTCOMES — kept for any legacy imports. */
+export const HOME_COMPARE_METRICS = HOME_MARKETING_OUTCOMES;
+
+/** Fix → apply section. */
+export const HOME_OPTIMIZE_SECTION_EYEBROW = "Then fix what matters and apply";
+
+export const HOME_OPTIMIZE_SECTION_HEADING =
+  "Optimize proof for this job, edit, and download the version you send";
 
 export const HOME_OPTIMIZE_SECTION_INTRO =
-  "AI tailors your resume for the posting in an ATS-friendly format—summary, bullets, and the fixes you select for that job.";
+  "Address elimination risks and strengthen proof in bullets you already have. Review every change, tweak wording, then export an ATS-friendly file for this posting only.";
 
 export const HOME_OPTIMIZE_POINTS = [
   {
-    label: "Summary",
-    body: "aligned to this role.",
+    label: "Verdict-driven",
+    body: "optimize only when screening odds need a lift — or apply when you're already competitive.",
   },
   {
-    label: "Bullets",
-    body: "refined or added for the fixes you selected, in the best-matching job.",
+    label: "Selected fixes",
+    body: "applied to the projects that best match this job.",
   },
   {
-    label: "Keywords",
-    body: "weak or missing JD terms strengthened in your experience bullets.",
+    label: "Listed → proven",
+    body: "supported JD skills moved into work bullets with evidence, not keyword stuffing.",
   },
   {
-    label: "Impact",
-    body: "thin bullets polished with clearer results and metrics.",
+    label: "Honest gaps",
+    body: "unsupported requirements stay visible — we don't invent experience.",
   },
 ] as const;
 
@@ -87,31 +98,32 @@ export type HomeCapabilityCard =
 export const HOME_CAPABILITY_CARDS: HomeCapabilityCard[] = [
   {
     key: "jd-compare",
-    title: "Resume vs job description",
+    title: "Should I apply to this job?",
     bodyLink: {
-      prefix: "You can ",
-      anchor: "compare your resume to a job description",
-      suffix: " and see job description match score, skill proof map, and keyword gaps.",
+      prefix: "",
+      anchor: "Compare your resume to a job description",
+      suffix:
+        " for an application verdict, elimination risks, and keyword coverage for that posting.",
     },
   },
   {
     key: "ats-checker",
-    title: "ATS compatibility check",
+    title: "ATS score and parsing",
     bodyLink: {
-      prefix: "Scan resume for keywords, parsing risk, and format readability. Use our ",
+      prefix: "Check format and keyword overlap with our ",
       anchor: "free ATS resume checker",
-      suffix: " for a dedicated parsing and format readout.",
+      suffix: ", then add a job description for posting-specific proof.",
     },
   },
   {
     key: "ai-optimize",
-    title: "AI resume optimization",
-    body: "Strengthen thin bullets with architecture, deployment, and impact from work you already did.",
+    title: "Fix elimination risks",
+    body: "Strengthen proof in bullets for the fixes you select — summary, keywords, and impact from work you already did.",
   },
   {
     key: "edit-download",
-    title: "Edit and download",
-    body: "Review every change, tweak in the editor, then export when ready.",
+    title: "Apply with confidence",
+    body: "Edit the tailored version, then download PDF or DOCX for this role.",
   },
 ];
 
@@ -121,28 +133,36 @@ export const HOME_HOW_IT_WORKS_STEPS = [
     emoji: "📝",
     title: "Paste resume & job description",
     lineLead: {
-      prefix: "Open the free ",
-      anchor: "resume-job comparison tool",
-      suffix: " and paste both documents. ",
+      prefix: "Open the ",
+      anchor: "compare resume to job description",
+      suffix: " tool and paste both. ",
     },
-    line: "Copy-paste your resume and the posting. No file upload.",
+    line: "One posting at a time. No file upload.",
   },
   {
-    key: "analyze",
+    key: "evaluate",
     emoji: "📊",
-    title: "ATS scan + job match",
-    line: "Get ATS keyword match, resume match score, proof map, and gap callouts.",
+    title: "Evaluate fit",
+    line: "Application verdict, ATS score, keyword coverage, elimination risks, and skill proof map.",
   },
   {
-    key: "aiOptimize",
+    key: "fix",
     emoji: "✨",
-    title: "AI optimization",
-    line: "Summary, bullets, and selected fixes tailored to the posting you pasted.",
+    title: "Fix proof",
+    line: "Select recommended fixes and optimize bullets for this job — only what you can defend.",
   },
   {
-    key: "download",
+    key: "apply",
     emoji: "⬇️",
-    title: "Edit & download",
-    line: "Tweak any section, then export PDF or DOCX.",
+    title: "Edit & apply",
+    line: "Tweak the tailored resume, download, and submit the version built for this role.",
   },
+] as const;
+
+/** Workbench hero bullets (shared with PostingFitSsrShell and JD workbench). */
+export const WORKBENCH_HERO_BULLETS = [
+  "Your application verdict",
+  "Unproven skills",
+  "Elimination risks",
+  "Recommended fixes",
 ] as const;
