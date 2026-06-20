@@ -1,14 +1,14 @@
 /** Shared homepage funnel copy (marketing `/` — commercial page; tool on workbench URL). */
 
 /** Layer 2 — product truth (apply-readiness). */
-export const HOME_MARKETING_H1 = "Know if you're ready to apply — before you apply";
+export const HOME_MARKETING_H1 = "Know if you're ready to apply before you apply";
 
 export const HOME_MARKETING_SUBHEAD =
   "Paste your resume and a job description. ResumeAtlas tells you whether you're likely to clear first screening, what might get you rejected, what you can realistically fix, and which version of your resume to send.";
 
 /** Layer 1 bridge — search-native phrase users recognize. */
 export const HOME_MARKETING_SEO_BRIDGE =
-  "Compare your resume to a job description — ATS score, keyword coverage, rejection risks, and job-specific optimization in one scan.";
+  "Paste resume + job description. ATS score and keyword coverage, plus application verdict, elimination risks, recommended fixes, and job-specific optimization before you submit.";
 
 export const HOME_MARKETING_TRUST_EYEBROW = "100% free · no signup";
 

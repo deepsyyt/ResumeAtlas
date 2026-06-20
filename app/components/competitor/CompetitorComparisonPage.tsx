@@ -429,7 +429,7 @@ export function CompetitorComparisonPage({ config, benchmarkDisclaimer }: Props)
 
         <section className="rounded-2xl border border-slate-200 bg-slate-900 px-6 py-8 text-center text-white sm:px-8">
           <h2 className="text-lg font-semibold sm:text-xl">
-            Know if you&apos;re ready to apply — before you apply
+            Know if you&apos;re ready to apply before you apply
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-sm text-slate-300">
             Paste your resume and a job description. Application verdict, rejection risks, keyword
