@@ -69,7 +69,7 @@ const FIX_KEYWORD_STOP = new Set([
 
 /** Coaching / filler terms — omit from post-optimize fix chip rows. */
 const FIX_DISPLAY_STOP = new Set([
-  ...FIX_KEYWORD_STOP,
+  ...Array.from(FIX_KEYWORD_STOP),
   "section",
   "emphasizes",
   "emphasize",
