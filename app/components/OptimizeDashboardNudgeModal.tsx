@@ -7,7 +7,7 @@ import {
 import { OptimizeCta } from "@/app/components/EvidenceMetricBar";
 import type { ApplicationVerdict } from "@/app/lib/applicationVerdict";
 import type { RecommendedFix } from "@/app/lib/recommendedFixes";
-import { OPTIMIZE_ALIGN_CARD_TITLE, OPTIMIZE_CTA_LABEL_HERO } from "@/app/lib/evidenceMetricCopy";
+import { OPTIMIZE_ALIGN_BENEFITS_TITLE, OPTIMIZE_CTA_LABEL_HERO } from "@/app/lib/evidenceMetricCopy";
 
 export type OptimizeDashboardNudgeModalProps = {
   open: boolean;
@@ -23,7 +23,7 @@ export type OptimizeDashboardNudgeModalProps = {
 };
 
 /**
- * Post-dashboard modal — compact "Align before you apply" (no scroll).
+ * Post-dashboard modal — compact "What you get after you optimize" (no scroll).
  */
 export function OptimizeDashboardNudgeModal({
   open,
@@ -57,7 +57,7 @@ export function OptimizeDashboardNudgeModal({
         aria-labelledby="optimize-nudge-align-title"
       >
         <h2 id="optimize-nudge-align-title" className="sr-only">
-          {OPTIMIZE_ALIGN_CARD_TITLE}
+          {OPTIMIZE_ALIGN_BENEFITS_TITLE}
         </h2>
         <div className="px-3 py-2.5 sm:px-3.5 sm:py-3">
           {creditNotice ? (
@@ -74,6 +74,7 @@ export function OptimizeDashboardNudgeModal({
             busy={isBusy}
             heroLayout
             embedInModal
+            liveDashboard
             className="!static min-w-0 border-0 bg-transparent p-0 shadow-none ring-0 lg:!static"
           />
         </div>
@@ -89,7 +90,7 @@ export function OptimizeDashboardNudgeModal({
             </button>
             <OptimizeCta
               onClick={() => void onOptimize()}
-              size="md"
+              size="lg"
               disabled={ctaDisabled}
               className="w-full min-w-0 flex-1"
               variant="purple"

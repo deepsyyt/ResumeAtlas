@@ -47,7 +47,8 @@ Rules:
 - "target": MUST be an exact company, role title, or project name from the RESUME ROLES list in the user message. Omit or null if the fix applies to summary/skills only.
 - "section": one of "experience" | "summary" | "skills" | "projects".
 - "detail": optional one-line why for this JD (max 90 chars).
-- Base fixes only on gaps between the resume and job description — never invent skills, tools, or experience.
+- Base fixes on gaps between the resume and job description for THIS role.
+- Prefer defensible proof from the resume; selected fixes may add skills or tools needed to close a gap.
 - Each fix must target a different gap. Never repeat the same theme twice.
 - Do NOT repeat generic ATS advice ("improve formatting", "use keywords").
 - Forbidden: inventing credentials, claiming experience they do not have, vague "improve your resume".`;

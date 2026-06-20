@@ -240,7 +240,7 @@ export function OptimizeAlignCard({
 
   return (
     <div className={shellClass}>
-      <p
+        <p
         className={`font-bold text-slate-900 ${
           embedInModal
             ? "text-xs"
@@ -249,7 +249,7 @@ export function OptimizeAlignCard({
               : "text-[10px] uppercase tracking-[0.14em] text-indigo-950"
         }`}
       >
-        {OPTIMIZE_ALIGN_CARD_TITLE}
+        {heroLayout && embedInModal ? OPTIMIZE_ALIGN_BENEFITS_TITLE : OPTIMIZE_ALIGN_CARD_TITLE}
       </p>
       {heroLayout && embedInModal ? (
         <p className="mt-1 text-[11px] leading-snug text-slate-600">{OPTIMIZE_ALIGN_CARD_BODY}</p>
@@ -281,9 +281,11 @@ export function OptimizeAlignCard({
         >
           {heroLayout ? (
             <>
-              <p className={`font-bold text-slate-900 ${embedInModal ? "text-[11px]" : "text-xs"}`}>
-                {OPTIMIZE_ALIGN_BENEFITS_TITLE}
-              </p>
+              {!(heroLayout && embedInModal) ? (
+                <p className={`font-bold text-slate-900 ${embedInModal ? "text-[11px]" : "text-xs"}`}>
+                  {OPTIMIZE_ALIGN_BENEFITS_TITLE}
+                </p>
+              ) : null}
               <ul className={embedInModal ? "mt-1 space-y-1" : "mt-2.5 space-y-2"}>
                 {OPTIMIZE_ALIGN_BENEFITS.map((benefit) => (
                   <li

@@ -6,6 +6,11 @@ import {
   type CreditPackageId,
 } from "@/app/lib/billing/packages";
 import { SHOW_AUTOMATIC_OPTIMIZER_PAYWALL_MODALS } from "@/app/lib/optimizerPaywallFlags";
+import {
+  OPTIMIZE_ALIGN_BENEFITS,
+  OPTIMIZE_ALIGN_BENEFITS_TITLE,
+  OPTIMIZE_ALIGN_CARD_BODY,
+} from "@/app/lib/evidenceMetricCopy";
 
 export type OptimizeConversionPaymentReceipt = {
   packName: string;
@@ -165,35 +170,21 @@ export function OptimizeConversionModal({
         >
           Tailor your resume for this job posting
         </h2>
-        <p className="mt-2 text-sm text-slate-600 leading-snug">
-          Reframe your real experience for this role: interview-safe summary, clearer project bullets, and
-          honest gaps where the JD goes beyond what you did.
-        </p>
+        <p className="mt-2 text-sm text-slate-600 leading-snug">{OPTIMIZE_ALIGN_CARD_BODY}</p>
 
         <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3">
           <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">
-            What you get
+            {OPTIMIZE_ALIGN_BENEFITS_TITLE}
           </p>
-          <p className="mt-2 text-sm font-semibold text-slate-900">
-            JD-aligned resume you can defend in an interview
-          </p>
-          <ul className="mt-2.5 space-y-1 text-sm text-slate-700">
-            <li className="flex gap-2">
-              <span aria-hidden>+</span>
-              <span>Summary tailored for this role (120-150 tokens)</span>
-            </li>
-            <li className="flex gap-2">
-              <span aria-hidden>+</span>
-              <span>Project bullets refined with supported JD language</span>
-            </li>
-            <li className="flex gap-2">
-              <span aria-hidden>+</span>
-              <span>Keywords surfaced in experience, not invented skills</span>
-            </li>
-            <li className="flex gap-2">
-              <span aria-hidden>+</span>
-              <span>Missing JD requirements left visible, not fabricated</span>
-            </li>
+          <ul className="mt-2.5 space-y-1.5 text-sm text-slate-700">
+            {OPTIMIZE_ALIGN_BENEFITS.map((benefit) => (
+              <li key={benefit} className="flex gap-2">
+                <span aria-hidden className="text-emerald-600">
+                  ✓
+                </span>
+                <span>{benefit}</span>
+              </li>
+            ))}
           </ul>
         </div>
 

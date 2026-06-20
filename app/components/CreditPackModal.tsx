@@ -325,7 +325,7 @@ export function CreditPackModal({
               <ul className="space-y-2 text-sm mb-6">
                 <li>✔ See how your resume matches the job</li>
                 <li>✔ Optimize summary and bullets for that posting</li>
-                <li>✔ Honest keyword gaps — nothing invented</li>
+                <li>✔ Summary, bullets, and fixes tailored to each job</li>
                 <li>✔ Download PDF + editable file when ready</li>
               </ul>
 

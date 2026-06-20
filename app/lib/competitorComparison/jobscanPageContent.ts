@@ -77,8 +77,8 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
       "Free core resume-vs-JD analysis, no signup required",
       "Paste resume + JD: match signals, keyword gaps, impact metrics, and bullet suggestions",
       "Metrics include evidence match, bullets with metrics, architecture and deployment signals",
-      "Signed in: truth-based one-click optimize, 1 free run per rolling day",
-      "Optimization aligns skills you already matched; never invents experience",
+      "Signed in: one-click optimize for this posting, 1 free run per rolling day",
+      "Optimization aligns summary, bullets, and selected fixes to the job you pasted",
       "Only paid step: $2.99 per tailored resume export (PDF + editable), less than a coffee",
       "No monthly subscription",
     ],
@@ -92,7 +92,7 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
   strengths: {
     resumeAtlas: [
       "Free core compare without signup: metrics-rich readout before you pay anything",
-      "Truth-based optimization: aligns matched skills to the JD; never invents experience",
+      "Posting-specific optimization: summary, bullets, and selected fixes tailored to the JD",
       "One-click optimize included (1 free run per rolling day when signed in)",
       "Simple pricing: $2.99 per resume export, no subscription lock-in",
     ],
@@ -175,7 +175,7 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
     {
       question: "Does ResumeAtlas invent skills to match a job description?",
       answer:
-        "No. Optimization aligns skills you already matched to the posting: moving proof from your skills list into bullets, strengthening impact language, and surfacing honest gaps. Missing requirements stay missing; we do not add experience you cannot defend in an interview.",
+        "Optimization tailors your resume to the posting you pasted: summary and title aligned to the role, selected fixes refined or added in the best-matching job, weak keywords strengthened in experience bullets, and thin bullets polished with clearer results. You choose which recommended fixes to apply before you optimize.",
     },
     {
       question: "Which ATS checker is most accurate?",

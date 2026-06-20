@@ -34,17 +34,17 @@ export const OPTIMIZE_ALIGN_PRIVACY_NOTE = "Your data is private and secure.";
 
 export const OPTIMIZE_ALIGN_CARD_TITLE = "Align before you apply";
 export const OPTIMIZE_ALIGN_CARD_BODY =
-  "Your selected fixes become sharper bullets and clearer proof for this job—targeted edits, nothing invented.";
+  "Your selected fixes applied—summary, bullets, and proof aligned to this job.";
 export const OPTIMIZE_ALIGN_CARD_HINT =
   "Select at least one recommended fix on the left.";
 export const OPTIMIZE_ALIGN_CARD_DEMO_HINT =
   "Run a check to see recommended fixes pre-selected here.";
-export const OPTIMIZE_ALIGN_BENEFITS_TITLE = "What you get when you optimize";
+export const OPTIMIZE_ALIGN_BENEFITS_TITLE = "What you get after you optimize";
 export const OPTIMIZE_ALIGN_BENEFITS = [
-  "Skills moved from your list into your bullets",
-  "One stronger bullet per role: focused edits, not a full rewrite",
-  "Thin proof strengthened only where your resume already supports it",
-  "Rejection risks from your scan addressed in the right bullets",
+  "Summary and title aligned to this job",
+  "Selected fixes refined or added in the best-matching job",
+  "Weak keywords strengthened in your experience bullets",
+  "Thin bullets polished with clearer results and metrics",
 ] as const;
 export const OPTIMIZE_ALIGN_SELECTION_TITLE = "Recommended fixes";
 export const OPTIMIZE_ALIGN_PREVIEW_TITLE = "Bullet preview";
@@ -97,7 +97,7 @@ export function evidenceInterviewLikelihoodLine(score: number): string {
 
 export const SKILL_PROOF_MAP_TITLE = "Keyword coverage";
 export const SKILL_PROOF_MAP_INTRO =
-  "Every missing JD skill gets a status, meaning, and optimize action. We never invent missing skills.";
+  "Each JD keyword gets a status, what it means for this role, and a fix you can run in Optimize.";
 
 export const KEYWORD_COVERAGE_VIEW_ALL = "View all keywords";
 export const KEYWORD_COVERAGE_PROVEN_LABEL = "Proven";
@@ -112,7 +112,7 @@ export const OPTIMIZE_SKILL_PROOF_INTRO =
   "Skills you already had that now show stronger proof in project or role bullets. Missing JD requirements are not shown here.";
 
 export const OPTIMIZE_SUMMARY_CHANGED_LINE =
-  "Professional summary tightened for this job using experience you already have (not invented)";
+  "Professional summary tightened for this job";
 
 export function optimizeBulletSummaryLine(refinedCount: number, projectScopes: number): string {
   if (refinedCount <= 0) return "";
@@ -189,7 +189,7 @@ export function optimizeWeakKeywordsStrengthenedLine(keywordCount: number): stri
 
 export const RISK_AREAS_TITLE = "Fix before you apply (recommended fix)";
 export const RISK_AREAS_INTRO =
-  "Resume changes to improve shortlist odds for this role. Only fixes you can defend — we never invent experience.";
+  "Resume changes to improve shortlist odds for this role. Optimize applies the fixes you select.";
 
 export const RECOMMENDED_FIXES_TITLE = "Recommended fixes for this role";
 export const RECOMMENDED_FIXES_INTRO =
@@ -211,15 +211,15 @@ export function missingSkillsImprovementTip(args: {
   if (missingCount <= 0) return "";
 
   if (hasRequiredPreferred && requiredMissingCount > 0) {
-    return `${requiredMissingCount} required skill${requiredMissingCount === 1 ? "" : "s"} from this job ${requiredMissingCount === 1 ? "isn't" : "aren't"} proven in your work bullets yet. Add ${requiredMissingCount === 1 ? "it" : "them"} only where your experience supports ${requiredMissingCount === 1 ? "it" : "them"}.`;
+    return `${requiredMissingCount} required skill${requiredMissingCount === 1 ? "" : "s"} from this job ${requiredMissingCount === 1 ? "isn't" : "aren't"} proven in your work bullets yet. Select a matching fix and run Optimize to strengthen proof.`;
   }
 
-  return `${missingCount} skill${missingCount === 1 ? "" : "s"} this job asks for ${missingCount === 1 ? "isn't" : "aren't"} shown in your work bullets yet. Add ${missingCount === 1 ? "an example" : "examples"} in experience only if you've actually used ${missingCount === 1 ? "it" : "them"}.`;
+  return `${missingCount} skill${missingCount === 1 ? "" : "s"} this job asks for ${missingCount === 1 ? "isn't" : "aren't"} shown in your work bullets yet. Select fixes on the left and run Optimize to close the gap.`;
 }
 
-export const OPTIMIZE_RISK_AREAS_TITLE = "Still honest gaps";
+export const OPTIMIZE_RISK_AREAS_TITLE = "Still thin after optimize";
 export const OPTIMIZE_RISK_AREAS_INTRO =
-  "Your resume is already optimized. These stayed out on purpose. We never invent skills or experience you do not have.";
+  "These items stayed weak or unproven after your selected fixes. Review before you apply.";
 
 export type KeywordCoverageMetricInput = {
   score: number;
@@ -253,7 +253,7 @@ export function evidenceStrengthDescription(strength: EvidenceStrength): string 
     case "weak":
       return "Summary only, not in project or role bullets";
     case "gap":
-      return "Not in resume (left honest, not invented)";
+      return "Not in resume — target with a selected fix in Optimize";
   }
 }
 
