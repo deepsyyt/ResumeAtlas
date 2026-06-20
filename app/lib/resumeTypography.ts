@@ -59,8 +59,8 @@ export function splitAnalyzeMatchSummarySections(text: string): PartialAnalyzeMa
   const raw = String(text ?? "").trim();
   const parts: PartialAnalyzeMatchSummary = {};
 
-  const jdMatch = raw.match(/\bJD needs:\s*(.*?)(?=\s*Resume shows:|\s*Match:|$)/is);
-  const resumeMatch = raw.match(/\bResume shows:\s*(.*?)(?=\s*Match:|$)/is);
+  const jdMatch = raw.match(/\bJD needs:\s*([\s\S]*?)(?=\s*Resume shows:|\s*Match:|$)/i);
+  const resumeMatch = raw.match(/\bResume shows:\s*([\s\S]*?)(?=\s*Match:|$)/i);
   const levelMatch = raw.match(/\bMatch:\s*(strong|weak|no\s*match)\b/i);
 
   if (jdMatch?.[1]?.trim()) parts.jdNeeds = stripSectionTail(jdMatch[1]);

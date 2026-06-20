@@ -465,9 +465,6 @@ export function CreditPackModal({
                   bulletsRefined={6}
                   summaryTailored
                   jdGapsRemaining={3}
-                  targetSkillCoverage={{ coveredAfter: 14, total: 18 }}
-                  scoreBefore={78}
-                  scoreAfter={86}
                   evidenceMatchDelta={8}
                   atsScoreReference={90}
                   onDownloadPdf={() => {
