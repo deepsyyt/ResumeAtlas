@@ -4,6 +4,10 @@ import {
   INTERVIEW_BRIDGE_STEPS,
   interviewBridgeIntro,
 } from "@/app/lib/competitorComparison/interviewBridgeContent";
+import {
+  CHECK_RESUME_AGAINST_JD_FORM_HREF,
+  CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
+} from "@/app/lib/internalLinks";
 
 type Props = {
   competitorName?: string;
@@ -38,12 +42,20 @@ export function InterviewProblemBridge({ competitorName, id = "interview-bridge"
           </li>
         ))}
       </ol>
-      <Link
-        href={INTERVIEW_BRIDGE_GUIDE.path}
-        className="mt-4 inline-flex text-sm font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
-      >
-        {INTERVIEW_BRIDGE_GUIDE.label} →
-      </Link>
+      <div className="mt-4 flex flex-wrap gap-4">
+        <Link
+          href={INTERVIEW_BRIDGE_GUIDE.path}
+          className="inline-flex text-sm font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+        >
+          {INTERVIEW_BRIDGE_GUIDE.label} →
+        </Link>
+        <Link
+          href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+          className="inline-flex text-sm font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+        >
+          {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA} →
+        </Link>
+      </div>
     </section>
   );
 }

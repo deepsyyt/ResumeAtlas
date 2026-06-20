@@ -13,7 +13,13 @@ import {
   RESUME_KEYWORDS_HUB_PATH,
 } from "@/app/lib/seoHubPages";
 import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
-import { FAQ_PAGE_PATH } from "@/app/lib/faqPageSeo";
+import {
+  ALREADY_HAVE_SKILLS_PATH,
+  ATS_SCORE_VS_JOB_FIT_PATH,
+  HOW_RECRUITERS_EVALUATE_PATH,
+  RESUME_NOT_GETTING_INTERVIEWS_PATH,
+  SKILLS_LISTED_NOT_PROVEN_PATH,
+} from "@/app/lib/interviewCluster/paths";
 import {
   RESUME_BULLET_ROLES,
   publicPathForBulletHub,
@@ -29,54 +35,76 @@ const LEGAL_PATHS = [
   "/feedback",
 ] as const;
 
+/**
+ * Coarse sitemap tiers only. Google largely ignores fine-grained priority — use tiers you can reason about.
+ */
+const SITEMAP_PRIORITY = {
+  TOP: 1.0,
+  CLUSTER_CORE: 0.9,
+  CLUSTER_SPOKE: 0.8,
+  SUPPORT: 0.7,
+  SECONDARY: 0.65,
+  LEGAL: 0.5,
+} as const;
+
 function priorityForPath(pathname: string): number {
-  if (pathname === "/") return 1.0;
-  if (pathname === CHECK_RESUME_AGAINST_JD_PATH) return 0.96;
-  if (pathname === FAQ_PAGE_PATH) return 0.89;
-  if (pathname === OPTIMIZE_HUB_PATH) return 0.89;
-  if (pathname.endsWith("-resume-optimizer")) return 0.84;
-  if (pathname === "/methodology") return 0.93;
-  if (pathname === "/ats-resume-checker") {
-    return 0.91;
+  if (pathname === "/" || pathname === CHECK_RESUME_AGAINST_JD_PATH) {
+    return SITEMAP_PRIORITY.TOP;
   }
-  if (pathname === "/resume-keyword-scanner") {
-    return 0.9;
+  if (
+    pathname === RESUME_NOT_GETTING_INTERVIEWS_PATH ||
+    pathname === ATS_SCORE_VS_JOB_FIT_PATH
+  ) {
+    return SITEMAP_PRIORITY.CLUSTER_CORE;
   }
-  if (pathname === "/resume-examples") return 0.86;
-  if (pathname === "/resume-keywords" || pathname === "/resume-guides") return 0.87;
-  if (pathname.startsWith("/resume-examples/")) return 0.88;
-  if (pathname.startsWith("/problems/")) return 0.92;
-  if (pathname.startsWith("/how-ats-")) return 0.92;
-  if (pathname.startsWith("/resumeatlas-vs-")) return 0.88;
-  if (pathname === "/resume-not-getting-interviews") return 0.94;
-  if (pathname === "/skills-listed-but-not-proven-on-resume") return 0.92;
-  if (pathname === "/already-have-the-skills-but-not-getting-interviews") return 0.9;
-  if (pathname === "/how-recruiters-evaluate-resumes") return 0.9;
-  if (pathname === "/ats-score-vs-real-job-fit") return 0.9;
+  if (
+    pathname === SKILLS_LISTED_NOT_PROVEN_PATH ||
+    pathname === ALREADY_HAVE_SKILLS_PATH ||
+    pathname === HOW_RECRUITERS_EVALUATE_PATH ||
+    pathname.startsWith("/resumeatlas-vs-")
+  ) {
+    return SITEMAP_PRIORITY.CLUSTER_SPOKE;
+  }
+  if (
+    pathname === "/ats-resume-checker" ||
+    pathname === "/resume-keyword-scanner" ||
+    pathname === OPTIMIZE_HUB_PATH ||
+    pathname === "/methodology" ||
+    pathname === "/resume-examples" ||
+    pathname === "/resume-keywords" ||
+    pathname === "/resume-guides" ||
+    pathname.startsWith("/problems/") ||
+    pathname.startsWith("/how-ats-")
+  ) {
+    return SITEMAP_PRIORITY.CLUSTER_SPOKE;
+  }
   if (
     pathname === "/ats-resume-template" ||
     pathname === "/resume-guides/resume-work-experience-examples" ||
     pathname === "/resume-guides/resume-skills-examples" ||
-    pathname === "/customize-resume-without-lying"
+    pathname === "/customize-resume-without-lying" ||
+    pathname.startsWith("/resume-examples/") ||
+    pathname.startsWith("/ats-resume-template-") ||
+    pathname.endsWith("-resume-guide") ||
+    pathname.endsWith("-resume-keywords") ||
+    pathname.endsWith("-resume-optimizer") ||
+    /^\/[^/]+-resume-bullet-points(-entry-level|-junior|-senior)?$/.test(pathname)
   ) {
-    return 0.85;
+    return SITEMAP_PRIORITY.SECONDARY;
   }
-  if (pathname.startsWith("/ats-resume-template-")) return 0.84;
-  if (pathname.endsWith("-resume-guide")) return 0.84;
-  if (pathname.endsWith("-resume-keywords")) return 0.86;
-  if (/^\/[^/]+-resume-bullet-points(-entry-level|-junior|-senior)?$/.test(pathname)) {
-    return 0.87;
+  if (LEGAL_PATHS.includes(pathname as (typeof LEGAL_PATHS)[number])) {
+    return SITEMAP_PRIORITY.LEGAL;
+  }
+  if (/^\/[^/]+\/resume$/.test(pathname) || /^\/[^/]+\/resume\/[^/]+$/.test(pathname)) {
+    return SITEMAP_PRIORITY.LEGAL;
   }
   if (
     /^\/[a-z0-9-]+$/.test(pathname) &&
     Object.prototype.hasOwnProperty.call(KEYWORD_PAGES, pathname.slice(1))
   ) {
-    return 0.83;
+    return SITEMAP_PRIORITY.SECONDARY;
   }
-  if (LEGAL_PATHS.includes(pathname as (typeof LEGAL_PATHS)[number])) return 0.6;
-  if (/^\/[^/]+\/resume$/.test(pathname)) return 0.62;
-  if (/^\/[^/]+\/resume\/[^/]+$/.test(pathname)) return 0.56;
-  return 0.65;
+  return SITEMAP_PRIORITY.SECONDARY;
 }
 
 const STANDALONE_RESUME_EXAMPLE_ROLE_SET = new Set<RoleSlug>(
@@ -90,24 +118,19 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
 
   entries.push({
     url: `${base}/`,
-    lastModified: new Date("2026-03-09"),
+    lastModified: new Date("2026-06-20"),
     changeFrequency: "weekly" as const,
     priority: priorityForPath("/"),
   });
-  const primaryToolLastMod = new Date("2026-06-13");
+  const primaryToolLastMod = new Date("2026-06-20");
   entries.push({
     url: `${base}${CHECK_RESUME_AGAINST_JD_PATH}`,
     lastModified: primaryToolLastMod,
     changeFrequency: "weekly" as const,
     priority: priorityForPath(CHECK_RESUME_AGAINST_JD_PATH),
   });
-  const siteSupportLastMod = new Date("2026-06-13");
-  entries.push({
-    url: `${base}${FAQ_PAGE_PATH}`,
-    lastModified: siteSupportLastMod,
-    changeFrequency: "monthly" as const,
-    priority: priorityForPath(FAQ_PAGE_PATH),
-  });
+  const siteSupportLastMod = new Date("2026-06-20");
+  // `/faq` is noindex support content — omit from sitemap (linked from workbench only).
   const resumeBulletLastMod = new Date("2026-06-13");
   for (const role of RESUME_BULLET_ROLES) {
     const hubPath = publicPathForBulletHub(role);
@@ -177,49 +200,49 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
   });
   entries.push({
     url: `${base}/resumeatlas-vs-jobscan`,
-    lastModified: new Date("2026-06-15"),
+    lastModified: new Date("2026-06-20"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/resumeatlas-vs-jobscan"),
   });
   entries.push({
     url: `${base}/resumeatlas-vs-resume-worded`,
-    lastModified: new Date("2026-06-15"),
+    lastModified: new Date("2026-06-20"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/resumeatlas-vs-resume-worded"),
   });
   entries.push({
     url: `${base}/resume-not-getting-interviews`,
-    lastModified: new Date("2026-06-18"),
+    lastModified: new Date("2026-06-20"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/resume-not-getting-interviews"),
   });
   entries.push({
     url: `${base}/skills-listed-but-not-proven-on-resume`,
-    lastModified: new Date("2026-06-18"),
+    lastModified: new Date("2026-06-20"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/skills-listed-but-not-proven-on-resume"),
   });
   entries.push({
     url: `${base}/already-have-the-skills-but-not-getting-interviews`,
-    lastModified: new Date("2026-06-18"),
+    lastModified: new Date("2026-06-20"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/already-have-the-skills-but-not-getting-interviews"),
   });
   entries.push({
     url: `${base}/how-recruiters-evaluate-resumes`,
-    lastModified: new Date("2026-06-18"),
+    lastModified: new Date("2026-06-20"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/how-recruiters-evaluate-resumes"),
   });
   entries.push({
     url: `${base}/resumeatlas-vs-teal`,
-    lastModified: new Date("2026-06-18"),
+    lastModified: new Date("2026-06-20"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/resumeatlas-vs-teal"),
   });
   entries.push({
     url: `${base}/ats-score-vs-real-job-fit`,
-    lastModified: new Date("2026-06-18"),
+    lastModified: new Date("2026-06-20"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/ats-score-vs-real-job-fit"),
   });

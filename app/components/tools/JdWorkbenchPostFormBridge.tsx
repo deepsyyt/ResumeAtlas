@@ -1,8 +1,10 @@
 import { CLUSTER_JD_MATCH_TOOL_COPY } from "@/app/lib/canonicalIntentClusters";
+import { RESUME_NOT_GETTING_INTERVIEWS_PATH } from "@/app/lib/interviewCluster/paths";
 import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
 } from "@/app/lib/internalLinks";
+import Link from "next/link";
 
 /**
  * Conversion bridge between the workbench form and long-form guide content.
@@ -55,6 +57,15 @@ export function JdWorkbenchPostFormBridge() {
               </p>
             ))}
           </div>
+          <p className="mt-3 text-sm text-slate-700">
+            <Link
+              href={RESUME_NOT_GETTING_INTERVIEWS_PATH}
+              className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              Resume not getting interviews
+            </Link>{" "}
+            — why skills on paper still get filtered out.
+          </p>
         </div>
       </div>
     </section>

@@ -53,7 +53,7 @@ export function buildFaqPageMetadata(): Metadata {
     title: { absolute: FAQ_PAGE_TITLE_ABSOLUTE },
     description: FAQ_PAGE_DESCRIPTION,
     keywords: [...FAQ_PAGE_KEYWORDS],
-    robots: { index: true, follow: true },
+    robots: { index: false, follow: true },
     alternates: { canonical: FAQ_PAGE_PATH },
     openGraph: {
       title: FAQ_PAGE_OG_TITLE,

@@ -13,6 +13,7 @@ import {
   APPLY_READINESS_CHECKS,
   KEYWORD_VS_READINESS,
 } from "@/app/lib/atsScoreVsJobFitContent";
+import { RESUME_NOT_GETTING_INTERVIEWS_PATH } from "@/app/lib/interviewCluster/paths";
 import {
   CHECK_RESUME_AGAINST_JD_FORM_HREF,
   COMPETITOR_COMPARISON_CTA,
@@ -55,7 +56,13 @@ export default function AtsScoreVsRealJobFitPage() {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${canonicalBase}/` },
-      { "@type": "ListItem", position: 2, name: ATS_SCORE_VS_JOB_FIT_H1, item: pageUrl },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Resume not getting interviews",
+        item: `${canonicalBase}${RESUME_NOT_GETTING_INTERVIEWS_PATH}`,
+      },
+      { "@type": "ListItem", position: 3, name: ATS_SCORE_VS_JOB_FIT_H1, item: pageUrl },
     ],
   };
 
@@ -66,6 +73,13 @@ export default function AtsScoreVsRealJobFitPage() {
           <nav aria-label="Breadcrumb" className="mb-3 text-left text-[11px] text-slate-500 sm:text-xs">
             <Link href="/" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
               Home
+            </Link>
+            <span className="mx-1.5 text-slate-400">/</span>
+            <Link
+              href={RESUME_NOT_GETTING_INTERVIEWS_PATH}
+              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
+              Resume not getting interviews
             </Link>
             <span className="mx-1.5 text-slate-400">/</span>
             <span className="text-slate-600">{ATS_SCORE_VS_JOB_FIT_H1}</span>

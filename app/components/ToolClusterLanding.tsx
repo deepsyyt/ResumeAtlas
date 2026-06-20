@@ -3,6 +3,7 @@ import HomeClient from "@/app/HomeClient";
 import { ShareFriendsCta } from "@/app/components/ShareFriendsCta";
 import { JdMatchGuide } from "@/app/components/JdMatchGuide";
 import { JdWorkbenchClusterBridge } from "@/app/components/tools/JdWorkbenchClusterBridge";
+import { InterviewClusterNav } from "@/app/components/interviewCluster/InterviewClusterNav";
 import { LastUpdated } from "@/app/components/LastUpdated";
 import { RelatedResumeGuidesSection } from "@/app/components/RelatedResumeGuidesSection";
 import { ToolClusterNextSteps } from "@/app/components/ToolClusterNextSteps";
@@ -124,6 +125,7 @@ export function ToolClusterLanding({
 
             {homePageMode ? (
               <>
+                <InterviewClusterNav currentPath={CHECK_RESUME_AGAINST_JD_PATH} />
                 <JdWorkbenchClusterBridge />
                 <section className="rounded-xl border border-slate-200 bg-slate-50/80 px-5 py-6 text-center sm:px-6">
                   <h2 className="text-lg font-semibold tracking-tight text-slate-900">

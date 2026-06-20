@@ -106,6 +106,13 @@ export function CompetitorComparisonPage({ config, benchmarkDisclaimer }: Props)
               Home
             </Link>
             <span className="mx-1.5 text-slate-400">/</span>
+            <Link
+              href={RESUME_NOT_GETTING_INTERVIEWS_PATH}
+              className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
+            >
+              Resume not getting interviews
+            </Link>
+            <span className="mx-1.5 text-slate-400">/</span>
             <span className="text-slate-600">{config.h1}</span>
           </nav>
 

@@ -33,7 +33,6 @@ export const CANONICAL_PROBLEM_SLUGS = [
  * Others in {@link CANONICAL_PROBLEM_SLUGS} stay reachable (hub + links) but are noindex to reduce SERP overlap with tools.
  */
 export const INDEXED_PROBLEM_SLUGS = [
-  "resume-not-getting-interviews",
   "no-response-after-applying",
   "ats-rejecting-my-resume",
 ] as const satisfies readonly ProblemSlug[];
