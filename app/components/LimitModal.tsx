@@ -63,7 +63,7 @@ export function LimitModal({
               disabled={isSigningIn}
               className="flex-1 rounded-xl bg-slate-900 py-2.5 text-center text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
             >
-              {isSigningIn ? "Signing in…" : "Sign in for more free scans"}
+              {isSigningIn ? "Signing in…" : "Sign in for 1 free scan"}
             </button>
           )}
           {!isQuotaAnonymous && (

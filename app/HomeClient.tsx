@@ -767,12 +767,12 @@ export default function HomeClient({
         setSelectedRecommendedFixes(result.evidence_dashboard?.riskAreas ?? []);
         if (result.application?.creditUsed) {
           setScanCreditNotice(
-            "You used 1 credit from your pack to check this job. Next: optimize your resume for this posting, then download it. If you stop here, you only get the report — not a finished resume."
+            "1 credit used. Tap Optimize next, or you won't get an application-ready ATS downloadable resume."
           );
           void refreshUsage();
-        } else if (result.application?.source === "free" && isLoggedIn) {
+        } else if (result.application?.source === "free") {
           setScanCreditNotice(
-            "Your free job check is done. Next: optimize your resume for this posting. You pay $2.99 only when you download."
+            "Your free job check is done. Next: optimize your resume for this posting."
           );
         } else {
           setScanCreditNotice(null);

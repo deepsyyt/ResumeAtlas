@@ -251,7 +251,9 @@ export function ResumeForm({
     ? `Log in to unlock ${signedInScanAllowance} more free ATS compatibility ${signedInScanNoun}.`
     : isKeywordScanner
       ? `Log in to unlock ${signedInScanAllowance} more free keyword gap ${signedInScanAllowance === 1 ? "analysis" : "analyses"}.`
-      : `Log in to unlock ${signedInScanAllowance} more free ${signedInScanAllowance === 1 ? "analysis" : "analyses"}.`;
+      : `Log in to unlock ${signedInScanAllowance} more free ${signedInScanAllowance === 1 ? "scan" : "scans"}.`;
+  const loginCtaLabel =
+    signedInScanAllowance === 1 ? "Log in for 1 more" : `Log in for ${signedInScanAllowance} more`;
 
   const handleLoginForMoreScans = () => {
     if (!onLoginForMoreScans) return;
@@ -512,7 +514,7 @@ export function ResumeForm({
                         disabled={isLoggingInForMoreScans || !onLoginForMoreScans}
                         className="font-medium text-slate-600 underline underline-offset-2 hover:text-slate-900 disabled:opacity-60"
                       >
-                        {isLoggingInForMoreScans ? "Signing in…" : "Log in for 5 more"}
+                        {isLoggingInForMoreScans ? "Signing in…" : loginCtaLabel}
                       </button>
                     </>
                   ) : null}
@@ -629,7 +631,7 @@ export function ResumeForm({
                       : `inline-flex shrink-0 items-center rounded-md bg-gradient-to-r px-2.5 py-1 text-[10px] font-semibold text-white shadow-sm transition disabled:opacity-60 sm:text-[11px] ${accent.cta}`
                   }
                 >
-                  {isLoggingInForMoreScans ? "Signing in..." : "Log in for 5 more"}
+                  {isLoggingInForMoreScans ? "Signing in..." : loginCtaLabel}
                 </button>
               </div>
             ) : null}
