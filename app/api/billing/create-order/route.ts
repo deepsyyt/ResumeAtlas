@@ -32,17 +32,20 @@ export async function POST(request: Request) {
     const supabase = getSupabaseAdmin();
     const { data: wallet } = await supabase
       .from("credit_wallets")
-      .select("credits_remaining")
+      .select("credits_remaining, funnel_stage")
       .eq("user_id", user.id)
       .maybeSingle();
 
     const remaining = wallet?.credits_remaining ?? 0;
-    if (remaining > 0) {
+    const funnelStage = wallet?.funnel_stage ?? null;
+    if (remaining > 0 || funnelStage != null) {
       return NextResponse.json(
         {
           error:
-            "You still have optimizations available. Use them before buying another pack.",
-          code: "CREDITS_REMAINING",
+            funnelStage != null
+              ? "Finish your current scan → optimize → download flow before buying another pack."
+              : "You still have application credits available. Use them before buying another pack.",
+          code: funnelStage != null ? "INCOMPLETE_FUNNEL" : "CREDITS_REMAINING",
         },
         { status: 409 }
       );

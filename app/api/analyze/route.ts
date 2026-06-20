@@ -15,12 +15,11 @@ import { APPLICATION_VERDICT_VERSION } from "@/app/lib/applicationVerdictLlm";
 import { enrichEvidenceDashboardWithLlm } from "@/app/lib/enrichEvidenceDashboard";
 import { normalizeTargetRoleTitle } from "@/app/lib/roleFitArchetypes";
 import {
-  assertAnalysisQuotaOrThrow,
-  recordSuccessfulAnalysis,
-  resolveAnalysisActor,
-  type QuotaExceededPayload,
-} from "@/app/lib/quota";
-import { getAnalysisQuotaStatus } from "@/app/lib/quota/store";
+  assertCanRunAnalysisOrThrow,
+  commitAnalysisFunnel,
+  type AnalysisAccess,
+} from "@/app/lib/billing/funnelAccess";
+import type { QuotaExceededPayload } from "@/app/lib/quota";
 import { quotaAfterSuccessfulUse } from "@/app/lib/quota/validate";
 import {
   buildAnalysisCacheKey,
@@ -161,8 +160,8 @@ export type AnalyzeRequestBody = {
 };
 
 export async function POST(request: Request) {
-  let actor: Awaited<ReturnType<typeof assertAnalysisQuotaOrThrow>>["actor"] | null = null;
-  let quotaStatusBefore: Awaited<ReturnType<typeof assertAnalysisQuotaOrThrow>>["status"] | null = null;
+  let analysisAccess: AnalysisAccess | null = null;
+  let quotaStatusBefore: AnalysisAccess["quotaStatus"] | null = null;
 
   try {
     const body = (await request.json()) as AnalyzeRequestBody;
@@ -211,25 +210,34 @@ export async function POST(request: Request) {
       // Even if we reuse the cached ATS result, the user clicked "Analyze" and
       // should still consume a scan against the free/purchased quota.
       try {
-        const resolved = await assertAnalysisQuotaOrThrow(request);
-        actor = resolved.actor;
-        quotaStatusBefore = resolved.status;
-      } catch (quotaErr) {
-        const payload = (quotaErr as Error & { quotaPayload?: QuotaExceededPayload }).quotaPayload;
+        const resolved = await assertCanRunAnalysisOrThrow(request);
+        analysisAccess = resolved;
+        quotaStatusBefore = resolved.quotaStatus;
+      } catch (accessErr) {
+        const funnelPayload = (accessErr as Error & { funnelPayload?: { code: string; message: string } })
+          .funnelPayload;
+        if (funnelPayload) {
+          return NextResponse.json({ error: funnelPayload }, { status: 409 });
+        }
+        const payload = (accessErr as Error & { quotaPayload?: QuotaExceededPayload }).quotaPayload;
         if (payload) {
           return NextResponse.json({ error: payload }, { status: 429 });
         }
-        throw quotaErr;
+        throw accessErr;
       }
 
       let usageRecorded = false;
-      if (actor) {
+      if (analysisAccess) {
         try {
-          await recordSuccessfulAnalysis(actor, resumeText, jobDescription);
-          usageRecorded = true;
+          await commitAnalysisFunnel(
+            analysisAccess,
+            resumeText,
+            jobDescription
+          );
+          usageRecorded = analysisAccess.source === "free";
         } catch (recErr) {
           const msg = recErr instanceof Error ? recErr.message : String(recErr);
-          console.error("[analyze] usage record failed (cache still returned result)", msg);
+          console.error("[analyze] funnel commit failed (cache still returned result)", msg);
         }
       }
 
@@ -288,15 +296,20 @@ export async function POST(request: Request) {
     }
 
     try {
-      const resolved = await assertAnalysisQuotaOrThrow(request);
-      actor = resolved.actor;
-      quotaStatusBefore = resolved.status;
-    } catch (quotaErr) {
-      const payload = (quotaErr as Error & { quotaPayload?: QuotaExceededPayload }).quotaPayload;
+      const resolved = await assertCanRunAnalysisOrThrow(request);
+      analysisAccess = resolved;
+      quotaStatusBefore = resolved.quotaStatus;
+    } catch (accessErr) {
+      const funnelPayload = (accessErr as Error & { funnelPayload?: { code: string; message: string } })
+        .funnelPayload;
+      if (funnelPayload) {
+        return NextResponse.json({ error: funnelPayload }, { status: 409 });
+      }
+      const payload = (accessErr as Error & { quotaPayload?: QuotaExceededPayload }).quotaPayload;
       if (payload) {
         return NextResponse.json({ error: payload }, { status: 429 });
       }
-      throw quotaErr;
+      throw accessErr;
     }
 
     const userContent = jdEmpty
@@ -515,16 +528,16 @@ ${jobDescription}`;
     await setCachedAnalysisResult(cacheKey, normalized);
 
     let usageRecorded = false;
-    if (actor) {
+    if (analysisAccess) {
       try {
-        await recordSuccessfulAnalysis(actor, resumeText, jobDescription);
-        usageRecorded = true;
+        await commitAnalysisFunnel(analysisAccess, resumeText, jobDescription);
+        usageRecorded = analysisAccess.source === "free";
       } catch (recErr) {
         const msg = recErr instanceof Error ? recErr.message : String(recErr);
         const hint = /analysis_usage|relation.*does not exist|permission denied/i.test(msg)
           ? " Ensure analysis_usage table exists (run supabase/migrations/005_ensure_billing_tables.sql)."
           : "";
-        console.error("[analyze] usage record failed (analysis still returned)", msg, hint);
+        console.error("[analyze] funnel commit failed (analysis still returned)", msg, hint);
       }
     }
 

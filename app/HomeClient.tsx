@@ -712,18 +712,42 @@ export default function HomeClient({
           return;
         }
         if (!res.ok) {
+          if (res.status === 409) {
+            const err = (data as { error?: { code?: string; message?: string } })?.error;
+            if (typeof err === "object" && err?.code === "INCOMPLETE_FUNNEL") {
+              setLimitModalQuotaScope(isLoggedIn ? "user" : null);
+              setLimitModalMessage(
+                typeof err.message === "string"
+                  ? err.message
+                  : "Finish your current scan → optimize → download flow before starting a new scan."
+              );
+              setLimitModalOpen(true);
+              return;
+            }
+          }
           if (res.status === 429) {
-            const err = (data as { error?: { code?: string; message?: string; quota?: AnalysisQuotaStatus } })?.error;
+            const err = (data as {
+              error?: {
+                code?: string;
+                message?: string;
+                quota?: AnalysisQuotaStatus;
+                purchaseRequired?: boolean;
+              };
+            })?.error;
             const quotaErr =
               typeof err === "object" && err && "code" in err && err.code === "ANALYSIS_QUOTA_EXCEEDED";
             if (quotaErr && typeof err === "object" && "quota" in err && err.quota) {
               const q = err.quota as AnalysisQuotaStatus;
+              setAnalysisQuota(q);
+              if (err.purchaseRequired && isLoggedIn) {
+                setCreditModalOpen(true);
+                return;
+              }
               setLimitModalQuotaScope(q.scope);
               setLimitModalMessage(
                 typeof err.message === "string" ? err.message : "You've used your free ATS scans for now."
               );
               setLimitModalOpen(true);
-              setAnalysisQuota(q);
               return;
             }
           }

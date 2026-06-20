@@ -225,7 +225,7 @@ export function CreditPackModal({
             aria-live="polite"
           >
             <p className="text-sm font-semibold text-emerald-950">
-              {checkoutSuccess.packName}: +{checkoutSuccess.creditsAdded} optimization run
+              {checkoutSuccess.packName}: +{checkoutSuccess.creditsAdded} application flow
               {checkoutSuccess.creditsAdded === 1 ? "" : "s"} added to your account.
             </p>
             <p className="mt-2 text-sm text-slate-700">
@@ -233,8 +233,8 @@ export function CreditPackModal({
               <span className="font-semibold tabular-nums text-slate-900">
                 {checkoutSuccess.balance}
               </span>{" "}
-              optimization run{checkoutSuccess.balance === 1 ? "" : "s"} available. Each successful optimization for
-              one job description uses 1 run; nothing is charged if optimization does not complete.
+              flow{checkoutSuccess.balance === 1 ? "" : "s"} available. Each flow is one scan → optimize → ATS download
+              for the same job — you cannot start a new scan until the current flow finishes.
             </p>
             <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button
@@ -261,12 +261,12 @@ export function CreditPackModal({
               <>
                 <p className="mt-2 text-sm text-slate-600">
                   {showStart
-                    ? "You are ready to optimize. One run is used when this resume is successfully optimized for this job description."
-                    : "Sign in to save your optimization balance and download optimized resumes. ATS analysis stays free."}
+                    ? "Continue your current application flow: optimize, then download your ATS-ready resume."
+                    : "Sign in to save your balance and run scan → optimize → download flows."}
                 </p>
                 <p className="mt-1 text-xs text-slate-500">
-                  1 run = one tailored resume optimization for one job description. Runs are deducted only when
-                  optimization completes successfully.
+                  1 credit = one full flow for one job posting. Finish optimize and download before starting another
+                  scan.
                 </p>
               </>
             )}
@@ -282,7 +282,7 @@ export function CreditPackModal({
         {!checkoutSuccess && showStart && (
           <div className="mt-5">
             <p className="text-sm font-medium text-slate-700">
-              Balance: <span className="tabular-nums text-slate-900">{creditsRemaining}</span> optimization run
+              Balance: <span className="tabular-nums text-slate-900">{creditsRemaining}</span> application flow
               {creditsRemaining === 1 ? "" : "s"}
             </p>
             <button

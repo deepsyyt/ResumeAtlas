@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import { ensureFunnelForOptimize } from "@/app/lib/billing/funnelAccess";
+import {
+  advanceFunnelToOptimized,
+} from "@/app/lib/billing/funnelServer";
 import { getBearerUser } from "@/app/lib/billing/requestUser";
 import {
   clipToWordLimit,
@@ -1786,6 +1790,17 @@ export async function POST(request: Request) {
       );
     }
 
+    const funnelReady = await ensureFunnelForOptimize(user.id, resumeText, jobDescription);
+    if (!funnelReady.ok) {
+      return NextResponse.json(
+        {
+          error: funnelReady.message,
+          code: funnelReady.code,
+        },
+        { status: funnelReady.code === "PURCHASE_REQUIRED" ? 402 : 403 }
+      );
+    }
+
     const apiKey = process.env.ANTHROPIC_API_KEY;
     const model = resolveAnthropicModelCandidates()[0] ?? "claude-haiku-4-5-20251001";
     const budget = getOptimizeLlmBudget();
@@ -2561,6 +2576,11 @@ export async function POST(request: Request) {
           }
         : {}),
     };
+
+    const advanced = await advanceFunnelToOptimized(user.id);
+    if (!advanced.ok) {
+      console.error("[optimize] funnel advance failed", advanced.code);
+    }
 
     return NextResponse.json(response);
   } catch (err) {

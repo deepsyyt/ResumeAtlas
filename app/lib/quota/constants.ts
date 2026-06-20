@@ -4,10 +4,10 @@ export const ANALYSIS_QUOTA_LIMITS = {
   user: 1,
 } as const;
 
-/** Rolling window length per scope. Anonymous: 30-day month; signed-in: 24 hours. */
+/** Rolling window length per scope. Both anonymous and signed-in: 30 days. */
 export const ANALYSIS_QUOTA_WINDOW_MS = {
   anonymous: 30 * 24 * 60 * 60 * 1000,
-  user: 24 * 60 * 60 * 1000,
+  user: 30 * 24 * 60 * 60 * 1000,
 } as const;
 
 export const ANONYMOUS_ID_COOKIE = "ra_anon_id";

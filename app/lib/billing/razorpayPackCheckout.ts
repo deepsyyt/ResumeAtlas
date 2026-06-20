@@ -69,7 +69,7 @@ export async function openRazorpayPackCheckout({
   if (isLoggedIn && creditsRemaining > 0) {
     return {
       status: "error",
-      message: "Use your current optimizations before buying another pack.",
+      message: "Use your current application credits before buying another pack.",
     };
   }
   try {
@@ -133,7 +133,7 @@ export async function openRazorpayPackCheckout({
     const checkoutDescription =
       checkoutTrigger === "download_gate"
         ? "Unlock resume downloads (PDF + editable)"
-        : `${data.credits ?? ""} resume optimization${data.credits === 1 ? "" : "s"}`;
+        : `${data.credits ?? ""} job application${data.credits === 1 ? "" : "s"} (scan → optimize → download)`;
     void logBillingEvent("billing_razorpay_checkout_opened", {
       package_id: packageId,
       credits: pkgMeta?.credits ?? 0,

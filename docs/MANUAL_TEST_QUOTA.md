@@ -1,59 +1,46 @@
-# Manual Test Checklist: ATS Analysis Quota
+# Manual Test Checklist: ATS Analysis Quota & Funnel Billing
 
 ## Prerequisites
 
-- Supabase with `analysis_usage` table (run migration `004_analysis_usage.sql`)
+- Supabase with `analysis_usage` and `credit_wallets` (migrations `004`, `005`, `012`)
 - `ANTHROPIC_API_KEY` set for analysis
-- Optional: `ANALYSIS_QUOTA_IP_SALT` for production IP hashing (default uses built-in salt)
+- Optional: `ANALYSIS_QUOTA_IP_SALT` for production IP hashing
 
-## Anonymous User
+## Free scan quota (anonymous & signed-in)
 
-### Under limit
-
-1. Open app in incognito (or clear cookies for localhost).
-2. Run 1–2 ATS analyses. Each should succeed.
-3. Verify "X of 3 free scans today" appears near the form.
-4. Count decrements after each successful run.
-
-### At limit
-
-1. Run 3 analyses (all succeed).
-2. On the 4th, expect 429 with modal: "You've used your free ATS scans for now. Sign in to continue with more free scans."
-3. Click "Sign in for more free scans" → Google OAuth → return to home.
-4. After sign-in, you get the signed-in quota (1 scan per 24h); run an analysis to confirm.
-
-### Failed analysis does not consume quota
-
-1. Temporarily break `ANTHROPIC_API_KEY` or simulate 502.
-2. Run analysis → fails with 502.
-3. Fix API key, run again → should succeed and consume 1 (not 2).
-
-## Signed-in User
+Both scopes: **1 scan per rolling 30 days**.
 
 ### Under limit
 
-1. Sign in, run 1 analysis. It should succeed.
-2. Verify "X of 1 free scan today" in form.
+1. Run 1 ATS analysis — should succeed.
+2. Badge shows `0/1` or `1/1` free scan **this month**.
 
-### At limit
+### At limit (anonymous)
 
-1. Run 1 analysis.
-2. On the 2nd, expect 429 with modal: "You've used your free ATS scan for the last 24 hours. Please try again later."
-3. Click "Got it" to dismiss. No sign-in CTA (user is already signed in).
+1. Run 1 analysis, then a 2nd — expect 429 and sign-in / upgrade modal.
 
-## Rolling 24-hour window
+### At limit (signed-in)
 
-1. Run 3 analyses as anonymous → quota exhausted.
-2. Wait 24+ hours (or manually delete rows in `analysis_usage` for testing).
-3. Run analysis again → should succeed.
+1. Run 1 analysis, then a 2nd — expect 429 and **CreditPackModal** (paywall) if no pack credits.
 
-## Cookie and identity
+## Funnel billing ($2.99 → 5 flows)
 
-1. As anonymous, run 1 analysis.
-2. Refresh page. Quota badge should persist (same anonymous_id cookie).
-3. Clear cookies. Badge may show fresh 3/3 until next fetch.
+Each **application flow** = scan → optimize → download for one job.
+
+1. Exhaust free scan, buy starter pack ($2.99).
+2. Run analysis — 1 pack credit reserved (`credits_remaining` −1, funnel stage `analyzed`).
+3. Try another analysis before optimizing — expect 409 `INCOMPLETE_FUNNEL`.
+4. Run optimize — funnel stage becomes `optimized`.
+5. Download PDF — funnel clears; credit consumed.
+6. Repeat until 5 flows used; next scan requires another purchase.
+
+## Failed steps
+
+- Failed analysis must not open a funnel or consume pack credits.
+- Failed optimize must not advance funnel to `optimized`.
+- Failed download must not complete funnel (credit stays reserved until successful download).
 
 ## Edge cases
 
-- Retry after network error: quota should not be double-consumed (only recorded after success).
-- Sign in mid-session: quota should switch from anonymous (1/month) to user (1/24h) on next refresh.
+- Sign in mid-session: quota scope switches; optimize may open a free funnel if signed-in free scan remains.
+- Cannot buy a new pack while `credits_remaining > 0` or an incomplete funnel exists.

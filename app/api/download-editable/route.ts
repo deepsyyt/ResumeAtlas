@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/app/lib/supabase/server";
 import {
-  finalizeOptimizationCredit,
-  reserveOptimizationCredit,
-} from "@/app/lib/billing/creditsServer";
+  assertFunnelAllowsDownload,
+  completeFunnel,
+} from "@/app/lib/billing/funnelServer";
 import {
   buildResumeHash,
   createDownloadPass,
@@ -16,7 +16,6 @@ type DownloadEditableRequestBody = {
 
 export async function POST(request: Request) {
   let userId: string | undefined;
-  let optimizationId: string | undefined;
   try {
     const authHeader = request.headers.get("authorization");
     const accessToken = authHeader?.replace(/Bearer\s+/i, "").trim() || null;
@@ -56,24 +55,22 @@ export async function POST(request: Request) {
       format: "editable",
     });
     if (!hasValidPass) {
-      const reserved = await reserveOptimizationCredit(user.id, rawText, "download");
-      if (!reserved.ok) {
+      const allowed = await assertFunnelAllowsDownload(user.id);
+      if (!allowed.ok) {
         return NextResponse.json(
           {
-            error:
-              reserved.code === "NO_CREDITS"
-                ? "No downloads remaining. Buy a pack to continue."
-                : "Unable to reserve a download credit. Try again.",
-            code: reserved.code,
+            error: allowed.message,
+            code: allowed.code,
           },
           { status: 403 }
         );
       }
-      optimizationId = reserved.optimizationId;
     }
-
-    if (optimizationId) {
-      await finalizeOptimizationCredit(optimizationId, user.id, true);
+    if (!hasValidPass) {
+      const completed = await completeFunnel(user.id);
+      if (!completed.ok) {
+        console.error("[download-editable] funnel complete failed", completed.code);
+      }
     }
     const nextPass = hasValidPass
       ? null
@@ -91,9 +88,6 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    if (optimizationId && userId) {
-      await finalizeOptimizationCredit(optimizationId, userId, false);
-    }
     console.error("Download editable error", error);
     return NextResponse.json(
       { error: "Failed to generate editable file." },

@@ -601,8 +601,8 @@ export function ResumeForm({
                   ? "free"
                   : isLoggedIn
                     ? quota.limit === 1
-                      ? "free scan today"
-                      : "free scans today"
+                      ? "free scan this month"
+                      : "free scans this month"
                     : "free scan this month"}
               </span>
             </p>

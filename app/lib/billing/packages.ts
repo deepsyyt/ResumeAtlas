@@ -22,16 +22,16 @@ export function formatCreditPackPrice(
   }
 }
 
-/** USD amounts (cents). For Razorpay International. */
+/** USD amounts (cents). Starter = one job-application pack (5 funnel credits). */
 const PACKAGES_USD = {
-  starter: { credits: 1, amount: 299 },
+  starter: { credits: 5, amount: 299 },
   jobseeker: { credits: 5, amount: 999 },
   power: { credits: 15, amount: 2499 },
 } as const;
 
-/** INR amounts (paise). ~₹249, ₹849, ₹2099. For Razorpay India. */
+/** INR amounts (paise). Starter ≈ ₹249 for 5 funnel credits. */
 const PACKAGES_INR = {
-  starter: { credits: 1, amount: 24900 },
+  starter: { credits: 5, amount: 24900 },
   jobseeker: { credits: 5, amount: 84900 },
   power: { credits: 15, amount: 209900 },
 } as const;
@@ -41,7 +41,7 @@ function buildPackages(currency: "USD" | "INR") {
   return {
     starter: {
       id: "starter" as const,
-      name: "Starter",
+      name: "Job Application Pack",
       credits: amounts.starter.credits,
       razorpayAmount: amounts.starter.amount,
       currency,
