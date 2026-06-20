@@ -1024,6 +1024,16 @@ export default function HomeClient({
     [launchOptimizerFlow]
   );
 
+  const creditPackPostPaymentAction: "analyze" | "continue" =
+    !analyzeResult && lastInputs ? "analyze" : "continue";
+
+  const onCreditModalPostPaymentPrimary = useCallback(async () => {
+    setCreditModalOpen(false);
+    if (!analyzeResult && lastInputs) {
+      await handleGenerate(lastInputs);
+    }
+  }, [analyzeResult, lastInputs, handleGenerate]);
+
   const dismissOptimizeOAuthResumeModal = useCallback(() => {
     trackOptimizePromptDismissed("oauth_return");
     oauthResumeLaunchGuardRef.current = false;
@@ -1515,11 +1525,13 @@ export default function HomeClient({
               }}
               isLoggedIn={isLoggedIn}
               creditsRemaining={usage?.creditsRemaining ?? 0}
+              postPaymentAction={creditPackPostPaymentAction}
+              onPostPaymentPrimary={onCreditModalPostPaymentPrimary}
               onStartOptimization={onCreditModalStartOptimize}
               onRefreshBalance={refreshUsage}
               onStartGoogleAuthForPackage={handleStartGoogleAuthForPackage}
               isStartingGoogleAuth={isStartingGoogleAuth}
-              isBusy={isLaunchingOptimize}
+              isBusy={isLaunchingOptimize || isGenerating}
               funnelId={activeFunnelId ?? undefined}
             />
             <OptimizeConversionModal

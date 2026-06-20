@@ -5,7 +5,7 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 type PaymentCtaButtonProps = {
   children: ReactNode;
   className?: string;
-  size?: "md" | "lg";
+  size?: "md" | "lg" | "xl";
 } & Pick<ButtonHTMLAttributes<HTMLButtonElement>, "disabled" | "onClick" | "type">;
 
 export function PaymentCtaButton({
@@ -18,7 +18,13 @@ export function PaymentCtaButton({
 }: PaymentCtaButtonProps) {
   return (
     <div
-      className={`payment-glow-shell payment-cta-shell ${size === "md" ? "payment-cta-shell--md" : "payment-cta-shell--lg"} ${className}`.trim()}
+      className={`payment-glow-shell payment-cta-shell ${
+        size === "md"
+          ? "payment-cta-shell--md"
+          : size === "xl"
+            ? "payment-cta-shell--xl"
+            : "payment-cta-shell--lg"
+      } ${className}`.trim()}
     >
       <button
         type={type}

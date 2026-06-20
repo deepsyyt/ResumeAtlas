@@ -99,7 +99,6 @@ export const CONVERSION_MODAL_CTA = (price: string) => `Unlock optimization for 
 export const CREDIT_PACK_EXHAUSTED_HEADLINE = "Keep landing interviews. Don't stop at one job.";
 export const CREDIT_PACK_EXHAUSTED_SUBHEAD =
   "You have used this run. Get 5 more full job credits: match check, optimize, and ATS-ready download for each posting.";
-export const CREDIT_PACK_OFFER_HEADLINE = (price: string) => `5 aligned applications · ${price}`;
 export const CREDIT_PACK_OFFER_SUBHEAD = "Less time applying. More time interviewing.";
 export const CREDIT_PACK_BENEFITS = [
   "Match score and gap list for each job",
@@ -108,6 +107,12 @@ export const CREDIT_PACK_BENEFITS = [
   "Built for shortlists, not generic mass applications",
 ] as const;
 export const CREDIT_PACK_CTA = (price: string) => `Get 5 job credits for ${price}`;
+export const CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_BODY =
+  "Your credits are ready. Run your job check on the resume and job you already pasted.";
+export const CREDIT_PACK_PAYMENT_SUCCESS_CONTINUE_BODY =
+  "You're all set. Use your credits whenever you're ready for the next job.";
+export const CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_CTA = "Analyze my resume";
+export const CREDIT_PACK_PAYMENT_SUCCESS_CONTINUE_CTA = "Continue";
 export const CREDIT_PACK_FREE_SCAN_HEADLINE = "You've used your free scan";
 
 export const LIMIT_MODAL_ANON_HEADLINE = "You've used your free scan";

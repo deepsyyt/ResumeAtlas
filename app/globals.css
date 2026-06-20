@@ -859,11 +859,25 @@
   .nudge-modal-panel__body {
     min-height: 0;
     flex: 1 1 auto;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .nudge-modal-panel__footer {
     flex-shrink: 0;
+  }
+
+  .nudge-modal-panel--fit {
+    display: block;
+    max-height: none;
+    overflow: visible;
+    width: min(100%, 26rem);
+  }
+
+  .nudge-modal-panel--fit .nudge-modal-panel__body,
+  .nudge-modal-panel--fit .nudge-modal-panel__footer {
+    overflow: visible;
   }
 
   .skill-proof-live-table tbody tr {
@@ -1606,6 +1620,22 @@
   border-radius: 0.75rem;
 }
 
+.payment-glow-card--prominent {
+  border-radius: 1.125rem;
+  padding: 4px;
+}
+
+.payment-glow-card--prominent.payment-glow-shell::after {
+  box-shadow:
+    0 0 24px rgba(99, 102, 241, 0.55),
+    0 0 46px rgba(168, 85, 247, 0.4),
+    0 0 64px rgba(236, 72, 153, 0.24);
+}
+
+.payment-glow-card--prominent .payment-glow-card-inner {
+  border-radius: calc(1.125rem - 4px);
+}
+
 .payment-glow-card-inner {
   position: relative;
   z-index: 1;
@@ -1651,6 +1681,17 @@
 .payment-cta-shell--md .payment-cta-button {
   padding: 0.625rem 1rem;
   font-size: 0.875rem;
+}
+
+.payment-cta-shell--xl .payment-cta-button {
+  padding: 1.125rem 1.5rem;
+  font-size: 1.0625rem;
+}
+
+@media (min-width: 640px) {
+  .payment-cta-shell--xl .payment-cta-button {
+    font-size: 1.125rem;
+  }
 }
 
 .payment-cta-button:hover:not(:disabled) {
