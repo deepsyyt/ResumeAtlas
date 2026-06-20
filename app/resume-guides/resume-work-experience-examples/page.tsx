@@ -110,7 +110,7 @@ export default function ResumeWorkExperienceExamplesPage() {
       />
 
       <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50/90 to-white">
-        <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-18 lg:px-8">
+        <div className="page-prose-wide py-14 text-center sm:py-18">
           <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">
             Format · samples · ATS-safe layout
           </p>
@@ -140,7 +140,7 @@ export default function ResumeWorkExperienceExamplesPage() {
         </div>
       </section>
 
-      <article className="mx-auto max-w-3xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
+      <article className="page-prose space-y-12 py-12">
         <section className="space-y-4 text-slate-700">
           <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">
             The work experience block recruiters expect

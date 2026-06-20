@@ -27,11 +27,11 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
     "Need a jobscan alternative? ResumeAtlas vs Jobscan compared side by side: free resume-vs-JD analysis, keyword gaps, truth-based optimize, $2.99 export. Best free alternative to Jobscan in 2026.",
   lastUpdatedLabel: COMPARISON_FRESHNESS_NOTE,
   heroAnswer:
-    "Jobscan is a well-known ATS match scanner with a limited free tier and paid subscription plans. ResumeAtlas is a free Jobscan alternative: paste resume and JD for evidence match, keyword gaps, impact metrics, and bullet suggestions, no signup. Signed-in users get truth-based one-click optimization (5 runs per rolling day). You only pay $2.99 when you export a tailored resume, no monthly subscription. This page is a side-by-side decision guide, not a sales pitch.",
+    "Jobscan is a well-known ATS match scanner with a limited free tier and paid subscription plans. ResumeAtlas is a free Jobscan alternative: paste resume and JD for evidence match, keyword gaps, impact metrics, and bullet suggestions, no signup. Signed-in users get truth-based one-click optimization (1 run per rolling day). You only pay $2.99 when you export a tailored resume, no monthly subscription. This page is a side-by-side decision guide, not a sales pitch.",
   verdictSummary:
     "Choose ResumeAtlas when you want free resume-vs-JD analysis with metrics-rich feedback, truth-based optimization (no invented skills), and a simple $2.99 export with no subscription. Choose Jobscan when you need LinkedIn optimization, cover-letter scanning, or a job tracker bundled with match-rate scoring, and you are OK with scan limits or recurring paid tiers.",
   quickVerdictPoints: [
-    "ResumeAtlas fits jobscan alternative searches when you want paste-and-compare on one screen, metrics in the analysis (evidence match, impact coverage, which job skills you prove in bullets), truth-based one-click optimize (5 free runs per rolling day when signed in), and a $2.99 per-resume export with no subscription.",
+    "ResumeAtlas fits jobscan alternative searches when you want paste-and-compare on one screen, metrics in the analysis (evidence match, impact coverage, which job skills you prove in bullets), truth-based one-click optimize (1 free run per rolling day when signed in), and a $2.99 per-resume export with no subscription.",
     "Jobscan fits when you want a familiar match-rate score plus LinkedIn, cover-letter, and job-tracker tools in a paid bundle.",
     "Neither percentage is directly comparable. ResumeAtlas emphasizes provable bullets and honest gaps; Jobscan emphasizes match-rate lift and formatting checks.",
   ],
@@ -43,8 +43,8 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
     { feature: "JD match workflow", resumeAtlas: "Paste resume + JD on one screen", jobscan: "Upload resume + paste JD; tabbed report" },
     { feature: "Resume review depth", resumeAtlas: "Evidence match, impact coverage, architecture/deployment signals, which JD skills you back up in experience", jobscan: "Formatting, searchability, keyword categories" },
     { feature: "Pricing", resumeAtlas: "Free core analysis (no signup); $2.99 per resume export, no subscription", jobscan: "Free tier with limited scans; paid subscription plans on jobscan.com" },
-    { feature: "Free usage", resumeAtlas: "5 compare + optimize runs per rolling day (signed in); 1/month without signup", jobscan: "Limited monthly scans on free plan (see Jobscan site)" },
-    { feature: "Export / rewrite help", resumeAtlas: "Truth-based one-click optimize (5 free/day signed in); export $2.99/resume (PDF + editable)", jobscan: "One-Click Optimize on paid tiers" },
+    { feature: "Free usage", resumeAtlas: "1 compare + optimize run per rolling day (signed in); 1/month without signup", jobscan: "Limited monthly scans on free plan (see Jobscan site)" },
+    { feature: "Export / rewrite help", resumeAtlas: "Truth-based one-click optimize (1 free/day signed in); export $2.99/resume (PDF + editable)", jobscan: "One-Click Optimize on paid tiers" },
   ],
   benchmark: {
     roleLabel: "Software engineer",
@@ -65,7 +65,7 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
       },
       {
         label: "Suggestions",
-        resumeAtlas: "Truth-based optimize aligns matched skills to the JD, no invented experience (5 free runs per rolling day when signed in); export $2.99/resume",
+        resumeAtlas: "Truth-based optimize aligns matched skills to the JD, no invented experience (1 free run per rolling day when signed in); export $2.99/resume",
         jobscan: "Keyword additions + formatting notes; AI rewrite on premium",
       },
     ],
@@ -77,7 +77,7 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
       "Free core resume-vs-JD analysis, no signup required",
       "Paste resume + JD: match signals, keyword gaps, impact metrics, and bullet suggestions",
       "Metrics include evidence match, bullets with metrics, architecture and deployment signals",
-      "Signed in: truth-based one-click optimize, 5 free runs per rolling day",
+      "Signed in: truth-based one-click optimize, 1 free run per rolling day",
       "Optimization aligns skills you already matched; never invents experience",
       "Only paid step: $2.99 per tailored resume export (PDF + editable), less than a coffee",
       "No monthly subscription",
@@ -93,7 +93,7 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
     resumeAtlas: [
       "Free core compare without signup: metrics-rich readout before you pay anything",
       "Truth-based optimization: aligns matched skills to the JD; never invents experience",
-      "One-click optimize included (5 free runs per rolling day when signed in)",
+      "One-click optimize included (1 free run per rolling day when signed in)",
       "Simple pricing: $2.99 per resume export, no subscription lock-in",
     ],
     jobscan: [
@@ -118,11 +118,11 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
   audience: [
     {
       persona: "Job seekers comparing one posting at a time",
-      pick: "ResumeAtlas for free JD match + one-click optimize (5/day signed in); Jobscan free tier if you need ≤ few scans/month",
+      pick: "ResumeAtlas for free JD match + one-click optimize (1/day signed in); Jobscan free tier if you need ≤ few scans/month",
     },
     {
       persona: "Students and early-career applicants",
-      pick: "ResumeAtlas: free analysis and 5 optimize runs/day; pay $2.99 only when you export a final resume",
+      pick: "ResumeAtlas: free analysis and 1 optimize run/day; pay $2.99 only when you export a final resume",
     },
     {
       persona: "Software engineers and data scientists",
@@ -170,7 +170,7 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
     {
       question: "Is there a free alternative to Jobscan?",
       answer:
-        "Yes. ResumeAtlas offers free resume-vs-job-description analysis without signup: evidence match, keyword gaps, impact metrics, and bullet suggestions. Signed-in users get 5 truth-based optimize runs per rolling day. Export is $2.99 per resume with no subscription. Jobscan also has a limited free tier; compare scan limits and pricing models before you rely on either for a full search.",
+        "Yes. ResumeAtlas offers free resume-vs-job-description analysis without signup: evidence match, keyword gaps, impact metrics, and bullet suggestions. Signed-in users get 1 truth-based optimize run per rolling day. Export is $2.99 per resume with no subscription. Jobscan also has a limited free tier; compare scan limits and pricing models before you rely on either for a full search.",
     },
     {
       question: "Does ResumeAtlas invent skills to match a job description?",

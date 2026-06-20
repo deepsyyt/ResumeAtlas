@@ -234,7 +234,7 @@ export default function ResumeExamplesIndexPage() {
 
       <section className="border-b border-slate-200 bg-slate-50/50">
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 text-center">
+        <div className="page-prose-wide py-14 text-center">
 
           <SeoBreadcrumbs
             kind="hub"
@@ -249,7 +249,7 @@ export default function ResumeExamplesIndexPage() {
 
           </h1>
 
-          <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="mt-4 text-base sm:text-lg text-slate-600 page-prose-sm">
 
             Each example page includes a realistic sample, ATS score breakdown, recruiter section review, role-specific
 
@@ -277,7 +277,7 @@ export default function ResumeExamplesIndexPage() {
 
 
 
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 space-y-10">
+      <section className="page-prose-wide py-10 sm:py-12 space-y-10">
 
         <div className="space-y-8">
 

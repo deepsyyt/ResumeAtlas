@@ -38,7 +38,7 @@ export function CompactToolHero({
       }
     >
       <div
-        className={`mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ${
+        className={`page-shell ${
           isWorkbench ? "py-5 sm:py-6" : showCta ? "py-8 sm:py-10" : "py-6 sm:py-7"
         }`}
       >

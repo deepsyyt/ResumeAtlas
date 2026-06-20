@@ -119,7 +119,7 @@ export function DataAnalystResumeExampleMain({ omitHero = false }: { omitHero?: 
 
       {!omitHero ? (
         <section className="border-b border-slate-200 bg-slate-50/60">
-          <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+          <div className="page-prose-xl py-8 sm:py-10">
             <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
               Data Analyst Resume Example
             </h1>
@@ -161,7 +161,7 @@ export function DataAnalystResumeExampleMain({ omitHero = false }: { omitHero?: 
         </section>
       ) : null}
 
-      <div className="mx-auto max-w-3xl space-y-10 px-4 py-8 pb-24 sm:px-6 sm:py-10 sm:pb-10 lg:px-8">
+      <div className="page-prose space-y-10 py-8 pb-24 sm:py-10 sm:pb-10">
         <section id="resume-example" aria-labelledby="resume-example-h2">
           <h2 id="resume-example-h2" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             Data Analyst Resume Example

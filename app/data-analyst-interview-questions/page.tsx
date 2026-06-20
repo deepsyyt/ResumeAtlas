@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function DataAnalystInterviewQuestionsPage() {
   return (
     <main className="min-h-screen bg-white text-slate-900">
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="page-prose py-12 sm:py-16">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Data Analyst Interview Questions</h1>
         <ul className="mt-5 list-disc space-y-2 pl-5 text-sm text-slate-700 sm:text-base">
           <li>How would you diagnose a sudden conversion drop using SQL and dashboard signals?</li>

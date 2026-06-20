@@ -13,18 +13,32 @@ import {
   seniorityMetricLabel,
   type JdRoleLevel,
 } from "@/app/lib/jdRoleLevel";
+import type { JdDomain } from "@/app/lib/jdDomainClass";
+import { classifyJdDomain } from "@/app/lib/jdDomainClass";
+import type { ApplicationVerdictLlm } from "@/app/lib/applicationVerdictLlm";
+import type { KeywordCoverageVerdict } from "@/app/lib/skillProofLlm";
 import type { RoleFitRow } from "@/app/lib/roleFitArchetypes";
+import type {
+  JdSkillProofStatus,
+  SkillOptimizeAction,
+} from "@/app/lib/jdSkillProofStatus";
+import { selectSkillProofForDisplay } from "@/app/lib/jdSkillProofStatus";
 
 export type EvidenceStrength = "gap" | "weak" | "medium" | "strong";
 
 export type JdSkillEvidenceRow = {
   skill: string;
   strength: EvidenceStrength;
+  /** Universal proof status for UI and optimize actions. */
+  proofStatus: JdSkillProofStatus;
+  optimizeAction: SkillOptimizeAction;
   mentionCount: number;
   /** Where proof lives in the resume. */
   evidenceLocation: "project" | "experience" | "skills_only" | "summary" | "none";
   /** First project/role hint when evidence is project-level. */
   evidenceHint?: string;
+  /** LLM-generated why line for live keyword coverage table. */
+  whyDetail?: string;
   jdRequired: boolean;
 };
 
@@ -72,12 +86,35 @@ export type EvidenceDashboard = {
   snapshot: EvidenceSnapshot;
   seniority: SeniorityAlignment;
   skillProof: JdSkillEvidenceRow[];
+  /** Full JD keyword proof list (skillProof is a capped dashboard sample). */
+  skillProofAll?: JdSkillEvidenceRow[];
   categories: EvidenceCategoryScore[];
+  /** Posting domain used to frame role-specific topics and summary copy. */
+  jdDomain?: JdDomain;
+  /** JD-specific topic coverage — populated by LLM in /api/analyze. */
+  jdTopicsVersion?: number;
   riskAreas: string[];
+  /** Bumped when fix-before-apply prompt/calibration changes. */
+  riskAreasVersion?: number;
+  /** Top rejection risks for this posting — populated by LLM in /api/analyze. */
+  mostMissingEvidence?: string[];
+  /** Bumped when missing-evidence prompt/calibration changes. */
+  missingEvidenceVersion?: number;
   /** Career archetype fit — populated by LLM in /api/analyze. */
   roleFit?: RoleFitRow[];
+  /** Target role title used to generate parallel role-fit rows. */
+  targetRoleTitle?: string;
+  /** Parallel role titles shown in the role-fit table (same order as roleFit). */
+  roleFitTargetRoles?: string[];
   /** Bumped when role-fit prompt/calibration changes (invalidates stale cache). */
   roleFitVersion?: number;
+  /** LLM apply / optimize-first / skip verdict for live dashboard. */
+  applicationVerdictLlm?: ApplicationVerdictLlm;
+  applicationVerdictVersion?: number;
+  /** LLM keyword coverage verdict for the score card (live dashboard). */
+  keywordCoverageVerdict?: KeywordCoverageVerdict;
+  /** JD keyword proof rows — populated by LLM in /api/analyze. */
+  skillProofVersion?: number;
 };
 
 const METRIC_RE =
@@ -263,11 +300,29 @@ function experienceImpactCoverage(blocks: ExperienceBlock[]): {
   totalExperiences: number;
 } {
   const totalExperiences = blocks.length;
-  const experiencesWithMetrics = blocks.filter((block) =>
-    block.bullets.some((text) => bulletHasImpactEvidence(text))
-  ).length;
+  if (totalExperiences === 0) {
+    return { coverage: 0, experiencesWithMetrics: 0, totalExperiences: 0 };
+  }
+
+  const perExperienceCoverage: number[] = [];
+  let experiencesWithMetrics = 0;
+
+  for (const block of blocks) {
+    const totalBullets = block.bullets.length;
+    if (totalBullets === 0) continue;
+
+    const bulletsWithMetrics = block.bullets.filter((text) => bulletHasImpactEvidence(text)).length;
+    if (bulletsWithMetrics > 0) experiencesWithMetrics += 1;
+    perExperienceCoverage.push(Math.round((bulletsWithMetrics / totalBullets) * 100));
+  }
+
   const coverage =
-    totalExperiences > 0 ? Math.round((experiencesWithMetrics / totalExperiences) * 100) : 0;
+    perExperienceCoverage.length > 0
+      ? Math.round(
+          perExperienceCoverage.reduce((sum, value) => sum + value, 0) / perExperienceCoverage.length
+        )
+      : 0;
+
   return { coverage, experiencesWithMetrics, totalExperiences };
 }
 
@@ -376,27 +431,73 @@ function classifySkillEvidence(
   return { strength: "weak", mentionCount, evidenceLocation: "summary" };
 }
 
-function buildCategoryScores(resumeText: string, jobDescription: string): EvidenceCategoryScore[] {
-  const jd = jobDescription.toLowerCase();
-  const resume = resumeText.toLowerCase();
+function hasIndirectBulletEvidence(skill: string, bullets: BulletRecord[]): boolean {
+  const workBullets = bullets.filter(
+    (b) => b.location === "project" || b.location === "experience"
+  );
+  if (workBullets.length === 0) return false;
 
-  return JD_CATEGORY_PATTERNS.map(({ category, patterns }) => {
-    const jdRelevant = patterns.some((p) => p.test(jd));
-    if (!jdRelevant) return null;
+  const topic = jdTopicForSkill(skill);
+  if (topic) {
+    const category = JD_CATEGORY_PATTERNS.find((c) => c.category === topic);
+    if (category && workBullets.some((b) => category.patterns.some((p) => p.test(b.text)))) {
+      return true;
+    }
+  }
 
-    const jdHits = patterns.filter((p) => p.test(jd)).length;
-    const resumeHits = patterns.filter((p) => p.test(resume)).length;
-    const score = Math.min(100, Math.round((resumeHits / Math.max(jdHits, 1)) * 85 + (resumeHits > 0 ? 15 : 0)));
+  const tokens = skill
+    .toLowerCase()
+    .split(/[\s,/]+/)
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 4);
+  if (tokens.length === 0) return false;
 
-    const detail =
-      resumeHits === 0
-        ? `JD mentions ${category}; no clear evidence in resume yet`
-        : resumeHits >= jdHits
-          ? `${category} themes evidenced in project or experience text`
-          : `${category} partially evidenced; strengthen project-level proof`;
+  return workBullets.some((b) => {
+    const lower = b.text.toLowerCase();
+    return tokens.some((token) => lower.includes(token));
+  });
+}
 
-    return { category, score, detail };
-  }).filter((c): c is EvidenceCategoryScore => c !== null);
+function resolveJdSkillProofStatus(
+  skill: string,
+  classified: Pick<JdSkillEvidenceRow, "strength" | "evidenceLocation">,
+  bullets: BulletRecord[]
+): Pick<JdSkillEvidenceRow, "proofStatus" | "optimizeAction"> {
+  if (classified.strength === "strong") {
+    return { proofStatus: "proven", optimizeAction: "strengthen" };
+  }
+  if (classified.strength === "medium" || classified.strength === "weak") {
+    return { proofStatus: "weak", optimizeAction: "add_evidence" };
+  }
+  if (hasIndirectBulletEvidence(skill, bullets)) {
+    return { proofStatus: "implied", optimizeAction: "surface" };
+  }
+  return { proofStatus: "missing", optimizeAction: "do_not_invent" };
+}
+
+function buildJdSkillEvidenceRow(
+  skill: string,
+  bullets: BulletRecord[],
+  resumeText: string,
+  jdRequired: boolean,
+  llmMatched: boolean
+): JdSkillEvidenceRow {
+  const classified = classifySkillEvidence(skill, bullets, resumeText);
+  const effectiveClassified =
+    llmMatched && classified.strength === "gap"
+      ? {
+          strength: "weak" as const,
+          mentionCount: Math.max(1, classified.mentionCount ?? 0),
+          evidenceLocation: "summary" as const,
+        }
+      : classified;
+  const status = resolveJdSkillProofStatus(skill, effectiveClassified, bullets);
+  return {
+    skill,
+    ...effectiveClassified,
+    ...status,
+    jdRequired,
+  };
 }
 
 function roleTitles(structured?: ResumeDocument): string[] {
@@ -592,12 +693,18 @@ function buildRiskAreas(
   const level = seniority.roleLevel;
 
   const weakRequired = skillProof.filter(
-    (s) => s.jdRequired && (s.strength === "gap" || s.strength === "medium" || s.strength === "weak")
+    (s) =>
+      s.jdRequired &&
+      (s.proofStatus === "missing" ||
+        s.proofStatus === "weak" ||
+        s.proofStatus === "implied")
   );
   for (const s of weakRequired.slice(0, 3)) {
-    if (s.strength === "gap") {
+    if (s.proofStatus === "missing") {
       risks.push(`${s.skill}: required in JD, not evidenced in resume (not invented)`);
-    } else if (s.strength === "medium") {
+    } else if (s.proofStatus === "implied") {
+      risks.push(`${s.skill}: indirect evidence only, surface in work bullets`);
+    } else if (s.evidenceLocation === "skills_only") {
       risks.push(`${s.skill}: only listed in skills, not proven in project bullets`);
     } else {
       risks.push(`${s.skill}: only in summary, not proven in work bullets`);
@@ -606,7 +713,7 @@ function buildRiskAreas(
 
   if (snapshot.impactCoverage < 55) {
     risks.push(
-      "Impact coverage low: many roles lack measurable outcomes in project bullets"
+      "Impact coverage low: many project bullets lack measurable outcomes or clear business results"
     );
   }
 
@@ -621,6 +728,15 @@ function buildRiskAreas(
   }
 
   return risks.slice(0, 5);
+}
+
+/** Heuristic fallback for recommended fixes when LLM is unavailable. */
+export function inferRiskAreasHeuristic(dashboard: EvidenceDashboard): string[] {
+  return buildRiskAreas(
+    dashboard.skillProofAll ?? dashboard.skillProof,
+    dashboard.snapshot,
+    dashboard.seniority
+  );
 }
 
 function computeSnapshot(
@@ -676,6 +792,51 @@ function computeSnapshot(
   };
 }
 
+export function buildJdSkillProofRows(args: {
+  resumeText: string;
+  structuredResume?: ResumeDocument;
+  matchedSkills?: string[];
+  missingSkills?: string[];
+  missingRequired?: string[];
+  missingPreferred?: string[];
+}): JdSkillEvidenceRow[] {
+  const resumeText =
+    args.structuredResume != null
+      ? resumeDocumentToPlainText(args.structuredResume) || args.resumeText
+      : args.resumeText;
+
+  const structuredResume = resolveStructuredResume(resumeText, args.structuredResume);
+  const required = filterSkillGapPhrases(args.missingRequired ?? []);
+  const preferred = filterSkillGapPhrases(args.missingPreferred ?? []);
+  const missing = filterSkillGapPhrases(args.missingSkills ?? []);
+  const matched = filterSkillGapPhrases(args.matchedSkills ?? []);
+
+  const requiredSet = new Set(required.map((s) => s.toLowerCase()));
+  const matchedSet = new Set(matched.map((s) => s.toLowerCase().trim()));
+  const jdSkills = Array.from(
+    new Set([...matched, ...missing, ...required, ...preferred].map((s) => s.trim()).filter(Boolean))
+  );
+
+  const bullets = collectBullets(resumeText, structuredResume);
+
+  const skillProof = jdSkills.map((skill) =>
+    buildJdSkillEvidenceRow(
+      skill,
+      bullets,
+      resumeText,
+      requiredSet.has(skill.toLowerCase()) || missing.includes(skill),
+      matchedSet.has(skill.toLowerCase().trim())
+    )
+  );
+
+  skillProof.sort((a, b) => {
+    if (a.jdRequired !== b.jdRequired) return a.jdRequired ? -1 : 1;
+    return a.skill.localeCompare(b.skill);
+  });
+
+  return skillProof;
+}
+
 /** Deterministic evidence dashboard: proof location, signal scores, honest gaps. */
 export function buildEvidenceDashboard(args: {
   resumeText: string;
@@ -687,6 +848,8 @@ export function buildEvidenceDashboard(args: {
   missingPreferred?: string[];
   requiredYearsExperience?: number | null;
   resumeYearsExperience?: number | null;
+  targetRoleTitle?: string;
+  skillProofDisplayLimit?: number;
 }): EvidenceDashboard {
   const resumeText =
     args.structuredResume != null
@@ -694,33 +857,17 @@ export function buildEvidenceDashboard(args: {
       : args.resumeText;
 
   const structuredResume = resolveStructuredResume(resumeText, args.structuredResume);
-
-  const required = filterSkillGapPhrases(args.missingRequired ?? []);
-  const preferred = filterSkillGapPhrases(args.missingPreferred ?? []);
-  const missing = filterSkillGapPhrases(args.missingSkills ?? []);
-  const matched = filterSkillGapPhrases(args.matchedSkills ?? []);
-
-  const requiredSet = new Set(required.map((s) => s.toLowerCase()));
-  const jdSkills = Array.from(
-    new Set([...matched, ...missing, ...required, ...preferred].map((s) => s.trim()).filter(Boolean))
-  );
+  const skillProof = buildJdSkillProofRows({
+    resumeText,
+    structuredResume,
+    matchedSkills: args.matchedSkills,
+    missingSkills: args.missingSkills,
+    missingRequired: args.missingRequired,
+    missingPreferred: args.missingPreferred,
+  });
 
   const bullets = collectBullets(resumeText, structuredResume);
   const experienceBlocks = collectExperienceBlocks(resumeText, structuredResume);
-
-  const skillProof: JdSkillEvidenceRow[] = jdSkills.map((skill) => {
-    const classified = classifySkillEvidence(skill, bullets, resumeText);
-    return {
-      skill,
-      ...classified,
-      jdRequired: requiredSet.has(skill.toLowerCase()) || missing.includes(skill),
-    };
-  });
-
-  skillProof.sort((a, b) => {
-    const order: Record<EvidenceStrength, number> = { gap: 0, weak: 1, medium: 2, strong: 3 };
-    return order[a.strength] - order[b.strength];
-  });
 
   const roleLevel = detectJdRoleLevel(args.jobDescription, {
     requiredYears: args.requiredYearsExperience,
@@ -739,22 +886,35 @@ export function buildEvidenceDashboard(args: {
   const snapshot = computeSnapshot(
     resumeText,
     structuredResume,
-    jdSkills,
+    skillProof.map((row) => row.skill),
     skillProof,
     seniority.score,
     roleLevel
   );
-  const categories = buildCategoryScores(resumeText, args.jobDescription);
   const riskAreas = buildRiskAreas(skillProof, snapshot, seniority);
+  const jdDomain = classifyJdDomain(args.jobDescription, args.targetRoleTitle);
 
   return {
     evidenceMatch: snapshot.evidenceMatch,
     snapshot,
     seniority,
-    skillProof: skillProof.slice(0, 14),
-    categories,
+    skillProof: selectSkillProofForDashboard(
+      skillProof,
+      args.skillProofDisplayLimit ?? 14
+    ),
+    skillProofAll: skillProof,
+    categories: [],
+    jdDomain,
     riskAreas,
   };
+}
+
+/** Balanced JD skill rows — avoids showing only one status when others exist. */
+export function selectSkillProofForDashboard(
+  rows: JdSkillEvidenceRow[],
+  limit: number
+): JdSkillEvidenceRow[] {
+  return selectSkillProofForDisplay(rows, limit);
 }
 
 /** Bullets that are generic or weak candidates for evidence-focused rewrite. */
@@ -815,20 +975,23 @@ export function buildSkillProofForSkills(
   const bullets = collectBullets(resumeText, structuredResume);
   const unique = Array.from(new Set(skills.map((s) => s.trim()).filter(Boolean)));
 
-  return unique.map((skill) => {
-    const classified = classifySkillEvidence(skill, bullets, resumeText);
-    return {
+  return unique.map((skill) =>
+    buildJdSkillEvidenceRow(
       skill,
-      ...classified,
-      jdRequired: requiredSkills?.has(skill.toLowerCase()) ?? false,
-    };
-  });
+      bullets,
+      resumeText,
+      requiredSkills?.has(skill.toLowerCase()) ?? false,
+      false
+    )
+  );
 }
 
 export type OptimizedSkillProofRow = {
   skill: string;
   beforeStrength: EvidenceStrength;
   afterStrength: EvidenceStrength;
+  beforeProofStatus: JdSkillProofStatus;
+  afterProofStatus: JdSkillProofStatus;
   beforeLocation: JdSkillEvidenceRow["evidenceLocation"];
   afterLocation: JdSkillEvidenceRow["evidenceLocation"];
   evidenceHint?: string;
@@ -836,41 +999,45 @@ export type OptimizedSkillProofRow = {
   improvementNote: string;
 };
 
+const PROOF_STATUS_RANK: Record<JdSkillProofStatus, number> = {
+  missing: 0,
+  weak: 1,
+  implied: 2,
+  proven: 3,
+};
+
+function isWorkBulletLocation(location: JdSkillEvidenceRow["evidenceLocation"]): boolean {
+  return location === "project" || location === "experience";
+}
+
 function skillProofImproved(before: JdSkillEvidenceRow, after: JdSkillEvidenceRow): boolean {
-  if (STRENGTH_RANK[after.strength] > STRENGTH_RANK[before.strength]) return true;
+  if (PROOF_STATUS_RANK[after.proofStatus] < PROOF_STATUS_RANK[before.proofStatus]) return false;
+  if (!isWorkBulletLocation(after.evidenceLocation)) return false;
+  if (after.proofStatus !== "proven") return false;
+  if (before.proofStatus === "proven" && isWorkBulletLocation(before.evidenceLocation)) return false;
   return (
-    STRENGTH_RANK[after.strength] >= STRENGTH_RANK[before.strength] &&
+    PROOF_STATUS_RANK[after.proofStatus] > PROOF_STATUS_RANK[before.proofStatus] ||
     LOCATION_RANK[after.evidenceLocation] > LOCATION_RANK[before.evidenceLocation]
   );
 }
 
 function buildSkillImprovementNote(
   before: JdSkillEvidenceRow,
-  after: JdSkillEvidenceRow,
-  jdTopic: string | undefined,
-  topicDetail: string | undefined
+  after: JdSkillEvidenceRow
 ): string {
-  const topicPrefix = jdTopic ? `${jdTopic}: ` : "";
-
-  if (
-    (before.strength === "medium" || before.strength === "weak") &&
-    after.strength === "strong"
-  ) {
-    if (before.evidenceLocation === "skills_only") {
-      return `${topicPrefix}Moved from skills list into work bullets this JD emphasizes`;
-    }
-    if (before.evidenceLocation === "summary") {
-      return `${topicPrefix}Moved from summary into work bullets this JD emphasizes`;
-    }
-    return `${topicPrefix}Proof upgraded to match what this job cares about`;
+  if (before.evidenceLocation === "skills_only" && isWorkBulletLocation(after.evidenceLocation)) {
+    return "Moved from skills list into project bullets";
   }
-  if (topicDetail && jdTopic) {
-    const detail = topicDetail.replace(new RegExp(`^${jdTopic}\\s*`, "i"), "").trim();
-    if (detail && !detail.toLowerCase().includes("not found")) {
-      return `${topicPrefix}${detail.charAt(0).toUpperCase()}${detail.slice(1)}`;
-    }
+  if (before.evidenceLocation === "summary" && isWorkBulletLocation(after.evidenceLocation)) {
+    return "Moved from summary into project bullets";
   }
-  return `${topicPrefix}Proof upgraded to match what this job cares about`;
+  if (before.proofStatus === "implied" && after.proofStatus === "proven") {
+    return "Indirect evidence surfaced in project bullets";
+  }
+  if (before.proofStatus === "weak" && after.proofStatus === "proven") {
+    return "Weak mention upgraded to bullet-level proof";
+  }
+  return "Now proven in project bullets";
 }
 
 /**
@@ -879,32 +1046,28 @@ function buildSkillImprovementNote(
  */
 export function buildOptimizedSkillProofRows(
   beforeRows: JdSkillEvidenceRow[],
-  afterRows: JdSkillEvidenceRow[],
-  categories: EvidenceCategoryScore[] = []
+  afterRows: JdSkillEvidenceRow[]
 ): OptimizedSkillProofRow[] {
   const beforeMap = new Map(beforeRows.map((r) => [r.skill.toLowerCase(), r]));
-  const categoryByName = new Map(categories.map((c) => [c.category, c]));
   const out: OptimizedSkillProofRow[] = [];
 
   for (const afterRow of afterRows) {
     const beforeRow = beforeMap.get(afterRow.skill.toLowerCase());
     if (!beforeRow) continue;
-    if (beforeRow.strength !== "medium" && beforeRow.strength !== "weak") continue;
-    if (afterRow.strength === "gap") continue;
+    if (beforeRow.optimizeAction === "do_not_invent") continue;
+    if (afterRow.proofStatus === "missing") continue;
     if (!skillProofImproved(beforeRow, afterRow)) continue;
-
-    const jdTopic = jdTopicForSkill(afterRow.skill);
-    const topicDetail = jdTopic ? categoryByName.get(jdTopic)?.detail : undefined;
 
     out.push({
       skill: afterRow.skill,
       beforeStrength: beforeRow.strength,
       afterStrength: afterRow.strength,
+      beforeProofStatus: beforeRow.proofStatus,
+      afterProofStatus: afterRow.proofStatus,
       beforeLocation: beforeRow.evidenceLocation,
       afterLocation: afterRow.evidenceLocation,
       evidenceHint: afterRow.evidenceHint,
-      jdTopic,
-      improvementNote: buildSkillImprovementNote(beforeRow, afterRow, jdTopic, topicDetail),
+      improvementNote: buildSkillImprovementNote(beforeRow, afterRow),
     });
   }
 

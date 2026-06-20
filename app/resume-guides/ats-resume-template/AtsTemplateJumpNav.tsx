@@ -16,7 +16,7 @@ export function AtsTemplateJumpNav() {
       aria-label="Jump to sections"
       className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 py-2.5 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-white/80"
     >
-      <div className="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-4 sm:px-6 lg:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="page-shell flex items-center gap-1 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {LINKS.map((l) => (
           <Link
             key={l.href}

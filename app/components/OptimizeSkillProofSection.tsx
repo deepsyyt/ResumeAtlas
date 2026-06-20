@@ -1,29 +1,15 @@
 "use client";
 
 import {
-  AnimatedScoreBar,
-  strengthBarHex,
-  strengthBarPercent,
-} from "@/app/components/EvidenceMetricBar";
+  JD_SKILL_STATUS_COPY,
+  skillProofStatusLabel,
+  statusChipClass,
+} from "@/app/lib/jdSkillProofStatus";
 import {
   OPTIMIZE_SKILL_PROOF_INTRO,
   OPTIMIZE_SKILL_PROOF_TITLE,
-  evidenceStrengthShortLabel,
 } from "@/app/lib/evidenceMetricCopy";
-import type { EvidenceStrength, OptimizedSkillProofRow } from "@/app/lib/resumeEvidenceScore";
-
-function strengthChipClass(strength: EvidenceStrength): string {
-  switch (strength) {
-    case "strong":
-      return "bg-emerald-50 text-emerald-800 ring-emerald-200";
-    case "medium":
-      return "bg-sky-50 text-sky-900 ring-sky-200";
-    case "weak":
-      return "bg-amber-50 text-amber-950 ring-amber-200";
-    case "gap":
-      return "bg-slate-100 text-slate-700 ring-slate-200";
-  }
-}
+import type { OptimizedSkillProofRow } from "@/app/lib/resumeEvidenceScore";
 
 function formatLocation(
   location: OptimizedSkillProofRow["afterLocation"],
@@ -61,13 +47,12 @@ export function OptimizeSkillProofSection({
           <thead>
             <tr className="border-b border-emerald-200/80 text-emerald-900/70">
               <th className="pb-1 pr-2 font-semibold">Skill</th>
-              <th className="pb-1 pr-2 font-semibold">Proof</th>
-              <th className="pb-1 pr-2 font-semibold">JD topic</th>
+              <th className="pb-1 pr-2 font-semibold">Status</th>
               <th className="pb-1 font-semibold">Where now</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, index) => (
+            {rows.map((row) => (
               <tr
                 key={row.skill}
                 className="border-b border-emerald-100/80 transition-colors hover:bg-white/70"
@@ -76,33 +61,25 @@ export function OptimizeSkillProofSection({
                   <p className="font-semibold text-slate-800">{row.skill}</p>
                   <p className="mt-0.5 leading-snug text-slate-600">{row.improvementNote}</p>
                 </td>
-                <td className="py-2 pr-2 align-top min-w-[108px]">
+                <td className="py-2 pr-2 align-top">
                   <div className="flex flex-wrap items-center gap-1">
                     <span
-                      className={`inline-flex rounded px-1 py-0.5 font-semibold ring-1 ${strengthChipClass(row.beforeStrength)}`}
+                      className={`inline-flex rounded px-1 py-0.5 font-semibold ring-1 ${statusChipClass(row.beforeProofStatus)}`}
                     >
-                      {evidenceStrengthShortLabel(row.beforeStrength)}
+                      {skillProofStatusLabel(row.beforeProofStatus)}
                     </span>
                     <span className="text-slate-400" aria-hidden>
                       →
                     </span>
                     <span
-                      className={`inline-flex rounded px-1 py-0.5 font-semibold ring-1 ${strengthChipClass(row.afterStrength)}`}
+                      className={`inline-flex rounded px-1 py-0.5 font-semibold ring-1 ${statusChipClass(row.afterProofStatus)}`}
                     >
-                      {evidenceStrengthShortLabel(row.afterStrength)}
+                      {skillProofStatusLabel(row.afterProofStatus)}
                     </span>
                   </div>
-                  <AnimatedScoreBar
-                    value={strengthBarPercent(row.afterStrength)}
-                    beforeValue={strengthBarPercent(row.beforeStrength)}
-                    colorHex={strengthBarHex(row.afterStrength)}
-                    className="mt-1.5"
-                    heightClass="h-1.5"
-                    delayMs={60 + index * 40}
-                  />
-                </td>
-                <td className="py-2 pr-2 align-top text-slate-700">
-                  {row.jdTopic ?? "—"}
+                  <p className="mt-1 text-[9px] text-slate-500">
+                    {JD_SKILL_STATUS_COPY[row.afterProofStatus].action}
+                  </p>
                 </td>
                 <td className="py-2 align-top text-slate-600">
                   {formatLocation(row.afterLocation, row.evidenceHint)}

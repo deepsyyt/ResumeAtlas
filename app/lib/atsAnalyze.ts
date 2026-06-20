@@ -13,8 +13,6 @@ export type ATSAnalyzeResult = {
   ats_score: number;
   /** JD keyword overlap %; `null` when no job description was analyzed (resume-only ATS scan). */
   keyword_coverage: number | null;
-  semantic_similarity: number;
-  experience_alignment: number;
   /** Years of experience required by the job description; null if not specified in the JD. */
   required_years_experience: number | null;
   /**
@@ -23,8 +21,6 @@ export type ATSAnalyzeResult = {
   required_years_experience_max?: number | null;
   /** Years of experience reflected in the resume (inferred from roles and dates). */
   resume_years_experience: number;
-  impact_score: number;
-  resume_quality: number;
   matched_skills: string[];
   missing_skills: string[];
   /** Missing skills the JD lists as required/must-have. When set, UI shows Required vs Preferred. */
@@ -62,13 +58,9 @@ export function isATSAnalyzeResult(obj: unknown): obj is ATSAnalyzeResult {
   return (
     typeof o.ats_score === "number" &&
     keywordCovOk &&
-    typeof o.semantic_similarity === "number" &&
-    typeof o.experience_alignment === "number" &&
     requiredYearsOk &&
     requiredMaxOk &&
     resumeYearsOk &&
-    typeof o.impact_score === "number" &&
-    typeof o.resume_quality === "number" &&
     Array.isArray(o.matched_skills) &&
     Array.isArray(o.missing_skills) &&
     (o.missing_skills_required === undefined || Array.isArray(o.missing_skills_required)) &&
@@ -79,5 +71,35 @@ export function isATSAnalyzeResult(obj: unknown): obj is ATSAnalyzeResult {
       (typeof o.bullet_preview === "object" &&
         typeof (o.bullet_preview as BulletPreview).before === "string" &&
         typeof (o.bullet_preview as BulletPreview).after === "string"))
+  );
+}
+
+/** LLM JSON before server-side score normalization (JD prompt omits ats_score). */
+export function isAnalyzeLlmPayload(obj: unknown): boolean {
+  if (!obj || typeof obj !== "object") return false;
+  const o = obj as Record<string, unknown>;
+  const requiredYearsOk =
+    o.required_years_experience === null || typeof o.required_years_experience === "number";
+  const requiredMaxOk =
+    o.required_years_experience_max === undefined ||
+    o.required_years_experience_max === null ||
+    typeof o.required_years_experience_max === "number";
+  const resumeYearsOk = typeof o.resume_years_experience === "number";
+  const atsOk = o.ats_score === undefined || typeof o.ats_score === "number";
+  const keywordCovOk =
+    o.keyword_coverage === undefined ||
+    o.keyword_coverage === null ||
+    typeof o.keyword_coverage === "number";
+  return (
+    atsOk &&
+    keywordCovOk &&
+    requiredYearsOk &&
+    requiredMaxOk &&
+    resumeYearsOk &&
+    Array.isArray(o.matched_skills) &&
+    Array.isArray(o.missing_skills) &&
+    (o.missing_skills_required === undefined || Array.isArray(o.missing_skills_required)) &&
+    (o.missing_skills_preferred === undefined || Array.isArray(o.missing_skills_preferred)) &&
+    typeof o.summary === "string"
   );
 }

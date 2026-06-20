@@ -30,7 +30,7 @@ export function ResumeKeywordScannerLanding() {
         className="border-b border-slate-200 bg-gradient-to-b from-emerald-50/50 to-white"
         aria-labelledby="keyword-scanner-heading"
       >
-        <div className="mx-auto max-w-4xl px-4 py-12 text-center sm:px-6 sm:py-14 lg:px-8">
+        <div className="page-prose-wide py-12 text-center sm:py-14">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-800">
             Keyword gap scan · missing terms vs a job posting
           </p>
@@ -66,7 +66,7 @@ export function ResumeKeywordScannerLanding() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl space-y-12 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+      <div className="page-prose space-y-12 py-10 sm:py-12">
         <section className="rounded-xl border border-emerald-200/80 bg-emerald-50/40 p-5 sm:p-6">
           <h2 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
             What you&apos;ll get

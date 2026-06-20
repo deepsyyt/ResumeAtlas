@@ -20,7 +20,7 @@
 1. Run 3 analyses (all succeed).
 2. On the 4th, expect 429 with modal: "You've used your free ATS scans for now. Sign in to continue with more free scans."
 3. Click "Sign in for more free scans" → Google OAuth → return to home.
-4. After sign-in, you get the signed-in quota (5 scans per 24h); run an analysis to confirm.
+4. After sign-in, you get the signed-in quota (1 scan per 24h); run an analysis to confirm.
 
 ### Failed analysis does not consume quota
 
@@ -32,13 +32,13 @@
 
 ### Under limit
 
-1. Sign in, run 1–2 analyses. All succeed.
-2. Verify "X of 5 free scans today" in form.
+1. Sign in, run 1 analysis. It should succeed.
+2. Verify "X of 1 free scan today" in form.
 
 ### At limit
 
-1. Run 5 analyses.
-2. On the 6th, expect 429 with modal: "You've used your free ATS scans for the last 24 hours. Please try again later."
+1. Run 1 analysis.
+2. On the 2nd, expect 429 with modal: "You've used your free ATS scan for the last 24 hours. Please try again later."
 3. Click "Got it" to dismiss. No sign-in CTA (user is already signed in).
 
 ## Rolling 24-hour window
@@ -56,4 +56,4 @@
 ## Edge cases
 
 - Retry after network error: quota should not be double-consumed (only recorded after success).
-- Sign in mid-session: quota should switch from anonymous (3) to user (5) on next refresh.
+- Sign in mid-session: quota should switch from anonymous (1/month) to user (1/24h) on next refresh.

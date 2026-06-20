@@ -96,7 +96,7 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
       </head>
-      <body className="flex min-h-screen flex-col bg-[#f4f7fc] font-sans text-slate-900 antialiased">
+      <body className="flex min-h-screen flex-col overflow-x-hidden bg-[#f4f7fc] font-sans text-slate-900 antialiased">
         <Navbar />
         <main className="flex flex-1 flex-col pb-16">{children}</main>
         <ProblemInterviewCallout />

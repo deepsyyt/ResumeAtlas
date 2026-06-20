@@ -40,7 +40,7 @@ export function ScoreImprovementBanner({
       <p className="mt-1 text-xs text-slate-600 leading-snug">{EVIDENCE_MATCH_SUBTITLE}</p>
       <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-700">
         <li>
-          {delta >= 0 ? `+${delta}` : `${delta}`} points — more JD requirements proven in bullets
+          {delta >= 0 ? `+${delta}` : `${delta}`} points, more JD requirements proven in bullets
         </li>
         {bulletsRefined > 0 ? <li>{bulletsRefined} bullets strengthened with proof</li> : null}
         {keywordsSurfaced > 0 ? <li>{keywordsSurfaced} skills evidenced in projects</li> : null}

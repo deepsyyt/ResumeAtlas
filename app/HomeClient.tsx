@@ -7,6 +7,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ResumeForm, type GenerateInputs } from "@/app/components/ResumeForm";
 import { ResumePreview } from "@/app/components/ResumePreview";
 import { IntelligencePanel } from "@/app/components/IntelligencePanel";
+import { AnalysisPreviewIntroBanner } from "@/app/components/postingFit/AnalysisPreviewIntroBanner";
 import { LimitModal } from "@/app/components/LimitModal";
 import { CreditPackModal } from "@/app/components/CreditPackModal";
 import { OptimizeConversionModal } from "@/app/components/OptimizeConversionModal";
@@ -28,6 +29,7 @@ import { detectEvidenceGaps } from "@/app/lib/evidenceGap";
 import { scanATS, type ATSScanResult } from "@/app/lib/atsScan";
 import type { JDAnalysisResult } from "@/app/lib/jdAnalysis";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
+import { computeApplicationVerdict } from "@/app/lib/applicationVerdict";
 import type { AnalysisQuotaStatus } from "@/app/lib/quota";
 import type { LimitModalQuotaScope } from "@/app/components/LimitModal";
 import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
@@ -151,9 +153,11 @@ const ANALYZER_STATE_KEY = "resumeatlas_analyzer_state_v1";
 const POST_OAUTH_ANALYZER_KEY = "resumeatlas_post_oauth_analyze_v1";
 /** Successful logged-in analyses in this tab (sessionStorage). Upgrade modal on 2nd and 4th dashboard only. */
 const LOGGED_IN_ANALYSIS_SUCCESS_COUNT_KEY = "resumeatlas_logged_in_analysis_success_count";
-/** After JD-backed dashboard renders, pause before showing optimize nudge (lets users scan scores first). */
-const OPTIMIZE_NUDGE_DELAY_MS = 60_000;
-/** Max nudge impressions per analysis run (first at delay, then every 60s after dismiss). */
+/** After JD-backed dashboard renders, pause before first optimize nudge. */
+const OPTIMIZE_NUDGE_DELAY_MS = 300_000;
+/** Reshow interval after dismiss (same cadence as first impression). */
+const OPTIMIZE_NUDGE_RESCHEDULE_MS = 300_000;
+/** Max nudge impressions per analysis run (first at delay, then every reschedule interval after dismiss). */
 const OPTIMIZE_NUDGE_MAX_SHOWS = 3;
 
 function countMissingKeywordsForConversion(r: ATSAnalyzeResult): number {
@@ -266,6 +270,7 @@ export default function HomeClient({
   const [evidenceGaps, setEvidenceGaps] = useState<string[]>([]);
   const [atsResult, setAtsResult] = useState<ATSScanResult | null>(null);
   const [analyzeResult, setAnalyzeResult] = useState<ATSAnalyzeResult | null>(null);
+  const [selectedRecommendedFixes, setSelectedRecommendedFixes] = useState<string[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLaunchingOptimize, setIsLaunchingOptimize] = useState(false);
@@ -663,6 +668,7 @@ export default function HomeClient({
       setEvidenceGaps([]);
       setAtsResult(null);
       setAnalyzeResult(null);
+      setSelectedRecommendedFixes([]);
       const country = inputs.country || "USA";
       const roleLevel = inputs.roleLevel || "Mid";
       const jdTrimmed = inputs.jobDescription.trim();
@@ -670,6 +676,7 @@ export default function HomeClient({
       const normalizedInputs: GenerateInputs = {
         resumeText: inputs.resumeText,
         jobDescription: inputs.jobDescription,
+        targetRoleTitle: inputs.targetRoleTitle?.trim() ?? "",
         country,
         roleLevel,
       };
@@ -689,6 +696,7 @@ export default function HomeClient({
           body: JSON.stringify({
             resumeText: inputs.resumeText,
             jobDescription: jdTrimmed,
+            targetRoleTitle: inputs.targetRoleTitle?.trim() ?? "",
           }),
         });
         const raw = await res.text();
@@ -728,6 +736,7 @@ export default function HomeClient({
         }
         const result = data as ATSAnalyzeResult & { quota?: Partial<AnalysisQuotaStatus> };
         setAnalyzeResult(result);
+        setSelectedRecommendedFixes(result.evidence_dashboard?.riskAreas ?? []);
         if (result.quota && typeof result.quota.remaining === "number") {
           const limit = result.quota.limit ?? 0;
           const used = Math.min(result.quota.used ?? 0, limit);
@@ -856,6 +865,10 @@ export default function HomeClient({
 
   const launchOptimizerFlow = useCallback(async () => {
     if (!lastInputs || !analyzeResult) return;
+    if (selectedRecommendedFixes.length === 0) {
+      setError("Select at least one recommended fix to optimize.");
+      return;
+    }
     const supabase = createClient();
     const {
       data: { session },
@@ -877,6 +890,8 @@ export default function HomeClient({
             jobDescription,
             analyzeResult,
             funnelId: activeFunnelId ?? undefined,
+            selectedSkills: [],
+            selectedRejectionRisks: selectedRecommendedFixes,
           });
           window.sessionStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
           window.localStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
@@ -913,6 +928,7 @@ export default function HomeClient({
     refreshUsage,
     activeFunnelId,
     handleStartGoogleAuthForOptimize,
+    selectedRecommendedFixes,
   ]);
 
   const dismissOptimizeDashboardNudge = useCallback(() => {
@@ -932,7 +948,7 @@ export default function HomeClient({
     optimizeNudgeReshowTimeoutRef.current = window.setTimeout(() => {
       optimizeNudgeReshowTimeoutRef.current = null;
       tryOpenOptimizeDashboardNudge(t);
-    }, OPTIMIZE_NUDGE_DELAY_MS);
+    }, OPTIMIZE_NUDGE_RESCHEDULE_MS);
   }, [clearOptimizeNudgeReshowTimeout, tryOpenOptimizeDashboardNudge]);
 
   const onOptimizeFromDashboardNudge = useCallback(() => {
@@ -1169,8 +1185,8 @@ export default function HomeClient({
   const splitPanels = workbenchSplitPanelColors(analysisMode);
   const rootClassName =
     isHome && !hideMarketingHero
-      ? "min-h-screen flex flex-col bg-white"
-      : "flex flex-col";
+      ? "min-h-screen flex w-full min-w-0 flex-col bg-white"
+      : "flex w-full min-w-0 flex-col";
 
   return (
     <Root
@@ -1185,14 +1201,14 @@ export default function HomeClient({
           }
         : {})}
     >
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-2 sm:py-3 flex flex-col gap-3 sm:gap-4">
+      <div className="page-shell flex flex-col gap-3 py-2 sm:gap-4 sm:py-3">
         {isHome && !hideMarketingHero ? (
         <header className="text-center mt-0 sm:mt-0 mb-0">
-          <h1 className="text-xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 max-w-4xl mx-auto leading-snug sm:leading-[1.2]">
+          <h1 className="mx-auto max-w-4xl text-xl font-semibold leading-snug tracking-tight text-slate-900 sm:text-3xl sm:leading-[1.2] md:text-4xl">
             ResumeAtlas: free AI resume editor and ATS checker
           </h1>
 
-          <p className="mt-2 sm:mt-2.5 text-[13px] sm:text-base text-slate-600 max-w-3xl mx-auto px-1 sm:px-2 leading-relaxed sm:leading-snug">
+          <p className="mx-auto mt-2 max-w-3xl px-1 text-[13px] leading-relaxed text-slate-600 sm:mt-2.5 sm:px-2 sm:text-base sm:leading-snug">
             Try the resume checker below: paste your resume, get ATS-style feedback, improve bullets
             with AI, and export when ready. Free until download.
           </p>
@@ -1251,7 +1267,7 @@ export default function HomeClient({
             className="mt-4 sm:mt-5 w-full pb-5 sm:pb-6"
             aria-labelledby="home-how-it-works-heading"
           >
-            <div className="max-w-7xl mx-auto w-full px-2 sm:px-3">
+            <div className="page-shell w-full">
               <div className="flex flex-col items-center text-center">
                 <h2
                   id="home-how-it-works-heading"
@@ -1313,20 +1329,21 @@ export default function HomeClient({
         ) : null}
 
         <div className={isHome ? "mt-3 sm:mt-4" : "mt-0 sm:mt-0"}>
+          <div className={useSplitPanels ? "min-w-0 w-full" : undefined}>
           <div
             className={
               isKeywordScanner
                 ? "grid grid-cols-1 gap-4"
                 : useSplitPanels
-                ? "grid min-h-0 flex-1 grid-cols-1 gap-0 overflow-hidden rounded-2xl border border-slate-200/70 shadow-sm shadow-slate-900/[0.04] lg:grid-cols-3"
-                : "grid min-h-0 flex-1 grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3"
+                ? "page-checker-grid rounded-2xl border border-slate-200/90 bg-white shadow-md shadow-slate-900/[0.05] lg:min-h-[min(calc(100dvh-11rem),44rem)]"
+                : "grid min-h-0 min-w-0 flex-1 grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]"
             }
           >
           <div
             className={
               useSplitPanels
-                ? `border-b p-3 sm:p-4 lg:col-span-1 lg:border-b-0 lg:p-5 ${splitPanels.input} ${splitPanels.divider}`
-                : "lg:col-span-1"
+                ? `flex flex-col border-b bg-white lg:border-b-0 lg:border-r lg:border-slate-200/80 lg:p-0 ${splitPanels.divider}`
+                : ""
             }
             id="ats-checker-form"
           >
@@ -1343,21 +1360,43 @@ export default function HomeClient({
                 onLoginForMoreScans={handleStartGoogleAuthForQuota}
                 isLoggingInForMoreScans={isStartingGoogleAuth}
                 showShareFriendsCta={isToolOnly && !isKeywordScanner}
+                splitPanelLayout={useSplitPanels}
               />
             )}
           </div>
           <div
             className={
               useSplitPanels
-                ? `flex min-h-0 flex-col gap-4 p-3 sm:p-4 lg:col-span-2 lg:border-l lg:p-5 ${splitPanels.preview} ${splitPanels.divider}`
-                : "flex min-h-0 flex-col gap-4 lg:col-span-2"
+                ? `flex min-h-[min(calc(100dvh-11rem),44rem)] flex-col overflow-hidden lg:rounded-br-2xl ${splitPanels.divider}`
+                : "flex min-h-0 min-w-0 flex-col gap-4"
             }
           >
+            {useSplitPanels && !analyzeResult ? (
+              <div
+                className={`shrink-0 border-b border-slate-700/50 px-3 py-1.5 sm:px-4 ${splitPanels.preview}`}
+              >
+                <AnalysisPreviewIntroBanner
+                  isAnalyzing={isGenerating}
+                  darkSurface
+                />
+              </div>
+            ) : null}
             <div
               className={
                 useSplitPanels
-                  ? "flex h-[min(82vh,42rem)] min-h-0 w-full flex-col overflow-hidden"
-                  : ""
+                  ? `relative min-h-0 flex-1 basis-0 overflow-hidden lg:rounded-br-2xl ${splitPanels.preview}`
+                  : "contents"
+              }
+            >
+            <div
+              className={
+                useSplitPanels
+                  ? `preview-panel-scroll preview-panel-scroll--dark flex h-full min-h-0 flex-col overflow-y-auto overscroll-contain px-2 pb-8 sm:px-3 sm:pb-10 lg:px-4 lg:pb-12 ${
+                      isGenerating && !analyzeResult
+                        ? "items-center justify-center pt-0"
+                        : "items-center justify-start pt-2 sm:pt-2.5"
+                    }`
+                  : "contents"
               }
             >
             <IntelligencePanel
@@ -1401,6 +1440,15 @@ export default function HomeClient({
               analysisUsedJobDescription={lastAnalysisUsedJd}
               emptyStateVariant={isAtsCompliance ? "ats" : "jd"}
               panelVariant={isKeywordScanner ? "keywordScanner" : "default"}
+              selectedRecommendedFixes={selectedRecommendedFixes}
+              onSelectedRecommendedFixesChange={setSelectedRecommendedFixes}
+              optimizeDisabled={selectedRecommendedFixes.length === 0}
+              optimizeBusy={isLaunchingOptimize}
+            />
+            </div>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-12 bg-gradient-to-t from-[#1e293b] via-[#1e293b]/70 to-transparent sm:h-14 lg:rounded-br-2xl"
             />
             </div>
             <CreditPackModal
@@ -1445,14 +1493,18 @@ export default function HomeClient({
               onStartOptimization={startOptimizationAfterOAuthReturn}
               isBusy={isLaunchingOptimize}
             />
-            <OptimizeDashboardNudgeModal
-              open={optimizeDashboardNudgeOpen}
-              onDismiss={dismissOptimizeDashboardNudge}
-              onOptimize={onOptimizeFromDashboardNudge}
-              isLoggedIn={isLoggedIn}
-              isBusy={isLaunchingOptimize}
-              isStartingGoogleAuth={isStartingGoogleAuth}
-            />
+            {analyzeResult?.evidence_dashboard ? (
+              <OptimizeDashboardNudgeModal
+                open={optimizeDashboardNudgeOpen}
+                onDismiss={dismissOptimizeDashboardNudge}
+                onOptimize={onOptimizeFromDashboardNudge}
+                isBusy={isLaunchingOptimize}
+                verdict={computeApplicationVerdict(analyzeResult.evidence_dashboard)}
+                selectedFixes={selectedRecommendedFixes}
+                allFixes={analyzeResult.evidence_dashboard.riskAreas}
+                bulletPreview={analyzeResult.bullet_preview ?? null}
+              />
+            ) : null}
             {resume && (
               <div className="flex-1 min-h-0 flex flex-col">
                 <div className="mb-2 flex items-center justify-between gap-2">
@@ -1476,11 +1528,12 @@ export default function HomeClient({
           </div>
         </div>
         </div>
+        </div>
       </div>
 
       {isHome && !hidePostFormSections ? (
       <section className="border-t border-slate-200 bg-slate-50/60">
-        <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+        <div className="page-prose w-full py-5 sm:py-6">
           <p className="text-sm text-slate-600 leading-snug">
             Need ATS format and parsing guidance?{" "}
             <Link

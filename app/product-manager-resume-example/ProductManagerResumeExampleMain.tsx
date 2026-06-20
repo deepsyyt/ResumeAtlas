@@ -135,7 +135,7 @@ export function ProductManagerResumeExampleMain({ omitHero = false }: { omitHero
     <div className={omitHero ? "bg-white text-slate-900" : "min-h-screen bg-white text-slate-900"}>
       {!omitHero ? (
         <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
-          <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+          <div className="page-prose-wide py-12 sm:py-16">
             <h1 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
               {getResumeExampleSerpH1("product-manager")}
             </h1>
@@ -161,7 +161,7 @@ export function ProductManagerResumeExampleMain({ omitHero = false }: { omitHero
         </section>
       ) : null}
 
-      <div className="mx-auto max-w-3xl space-y-14 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="page-prose space-y-14 py-12 sm:py-16">
         <div className="space-y-4">
           <ResumeExampleTopAtsKeywordsSection
             role={ROLE}

@@ -6,7 +6,7 @@ import { getSupabaseAdmin } from "@/app/lib/supabase/server";
 /**
  * Bump when prompts, post-processing, or scoring logic changes so old cache rows are ignored.
  */
-export const ANALYSIS_RESULT_CACHE_STAMP = "20260329-v3";
+export const ANALYSIS_RESULT_CACHE_STAMP = "20260618-v8";
 
 export function buildAnalysisCacheKey(
   resumeClipped: string,

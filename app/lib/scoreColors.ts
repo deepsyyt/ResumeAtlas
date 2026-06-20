@@ -20,7 +20,7 @@ const BANDS: Record<ScoreBand, { hex: string; bgHex: string }> = {
   excellent: { hex: "#16A34A", bgHex: "#ECFDF5" },   // Emerald / Green
   strong:    { hex: "#22C55E", bgHex: "#ECFDF5" },   // Green
   moderate:  { hex: "#EAB308", bgHex: "#FEFCE8" },   // Yellow
-  weak:      { hex: "#F97316", bgHex: "#FFF7ED" },   // Orange
+  weak:      { hex: "#F59E0B", bgHex: "#FFFBEB" },   // Amber (softer than orange)
   poor:      { hex: "#EF4444", bgHex: "#FEF2F2" },   // Red
 };
 

@@ -17,7 +17,7 @@ export default function FAQPage() {
   return (
     <main className="min-h-screen bg-white">
       <div className="border-b border-slate-200 bg-gradient-to-b from-sky-50/60 to-white">
-        <div className="mx-auto max-w-3xl px-4 py-10 text-center sm:px-6 sm:py-12">
+        <div className="page-prose py-10 text-center sm:py-12">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-800">
             AI resume optimization &amp; ATS help
           </p>
@@ -30,7 +30,7 @@ export default function FAQPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-3xl space-y-10 px-4 py-10 sm:px-6 sm:py-12">
+      <div className="page-prose space-y-10 py-10 sm:py-12">
         <section aria-labelledby="workbench-faq-heading">
           <h2
             id="workbench-faq-heading"

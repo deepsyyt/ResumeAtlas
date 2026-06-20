@@ -232,3 +232,21 @@ export function makeExperienceBulletKey(
     ? `${expIndex}:${bulletIndex}`
     : `${expIndex}:p${projectIndex}:${bulletIndex}`;
 }
+
+/** Distinct project/role scopes touched by refined bullet keys (`exp:pN:…` or `exp:bullet`). */
+export function countRefinedScopesFromBulletKeys(keys: string[]): number {
+  const scopes = new Set<string>();
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]!;
+    const parts = key.split(":");
+    const expIndex = parts[0];
+    if (!expIndex) continue;
+    const scopePart = parts[1];
+    if (scopePart?.startsWith("p")) {
+      scopes.add(`${expIndex}:${scopePart}`);
+    } else {
+      scopes.add(`${expIndex}:role`);
+    }
+  }
+  return scopes.size;
+}

@@ -60,7 +60,7 @@ export default function MethodologyPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <main className="min-h-screen bg-white text-slate-900">
-        <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+        <article className="page-prose py-12">
           <p className="text-xs font-semibold uppercase tracking-widest text-sky-800">
             Methodology · registry {DIAGNOSTIC_REGISTRY_VERSION}
           </p>

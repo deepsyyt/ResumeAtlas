@@ -175,13 +175,12 @@ export function JdMatchGuide({ homePageMode = false }: JdMatchGuideProps) {
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
           <strong className="text-slate-900">Evidence match</strong> is the headline score: how much of
-          this job you prove in experience and project bullets. Reference metrics include ATS keyword
-          score, keyword coverage, semantic similarity, impact score, and resume quality.
+          this job you prove in experience and project bullets. The ATS keyword score is a separate
+          formatting and overlap reference.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-slate-700 sm:text-base">
-          <strong className="text-slate-900">What we measured</strong> breaks proof into signals
-          recruiters skim for: results in bullets, system and design scope, shipped or live work,
-          collaboration, JD skills in bullets, and experience vs the posting.
+          Keyword coverage shows each JD skill with proof status in your bullets — proven, weak, or
+          missing.
         </p>
         <ul className="mt-4 list-disc space-y-1.5 pl-5 text-sm text-slate-700 sm:text-base">
           <li>

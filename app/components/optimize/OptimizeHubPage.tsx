@@ -25,7 +25,7 @@ export function OptimizeHubPage() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="mx-auto max-w-4xl px-4 py-10 text-center sm:px-6 sm:py-12 lg:px-8">
+        <div className="page-prose-wide py-10 text-center sm:py-12">
           <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
             {hub.h1}
           </h1>
@@ -42,7 +42,7 @@ export function OptimizeHubPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl space-y-10 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+      <div className="page-prose space-y-10 py-10 sm:py-12">
         <section id="how-it-works" className={sectionClass}>
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             How resume optimization works
@@ -137,7 +137,7 @@ export function OptimizeHubPage() {
         <OptimizePagesToolCta />
       </div>
 
-      <div className="mx-auto max-w-3xl px-4 pb-14 sm:px-6 lg:px-8">
+      <div className="page-prose pb-14">
         <section id="faq" className={`${sectionClass} pt-8`}>
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             Frequently asked questions

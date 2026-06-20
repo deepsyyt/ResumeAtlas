@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function DataAnalystCoverLetterExamplePage() {
   return (
     <main className="min-h-screen bg-white text-slate-900">
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="page-prose py-12 sm:py-16">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Data Analyst Cover Letter Example</h1>
         <p className="mt-4 text-sm text-slate-700 sm:text-base">
           Keep it short: role fit in one line, two quantified wins, and one line on why this company and role

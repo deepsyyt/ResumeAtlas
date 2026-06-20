@@ -4,6 +4,8 @@ import type { ResumeDocument, ResumeSkillGroup } from "@/app/lib/resumeDocument"
 import { formatSkillGroupLine, getSkillGroups } from "@/app/lib/resumeDocument";
 import { sanitizeResumeProse } from "@/app/lib/resumeTypography";
 import { makeExperienceBulletKey } from "@/app/lib/optimizeExperience";
+import type { BulletRefinementReason } from "@/app/lib/optimizeBulletEvidence";
+import { extractFixHighlightKeywords } from "@/app/lib/recommendedFixes";
 import React from "react";
 
 type StructuredResumeProps = {
@@ -27,6 +29,16 @@ type StructuredResumeProps = {
   showJdAlignedSummaryBadge?: boolean;
   /** Pre-optimization summary for before/after evidence in the preview. */
   originalSummary?: string;
+  /** Pre-optimization bullet text keyed by stable bullet key (refined bullets only). */
+  bulletOriginalsByKey?: Record<string, string>;
+  /** Weak keywords strengthened per refined bullet key. */
+  bulletKeywordsByKey?: Record<string, string[]>;
+  /** Why each refined bullet was rewritten. */
+  bulletReasonByKey?: Record<string, BulletRefinementReason>;
+  /** Stable keys for bullets that address a selected recommended fix. */
+  fixBulletKeys?: string[];
+  /** Global fix-related terms to highlight when they appear in fix bullets. */
+  fixHighlightKeywords?: string[];
   /** JD topic tags per stable bullet key (refined bullets only). */
   bulletTopicTags?: Record<string, string[]>;
   /** JD topic tags for tailored summary. */
@@ -65,7 +77,8 @@ type StructuredResumeProps = {
 
 function highlightKeywordsInText(
   text: string,
-  keywords: string[] | undefined
+  keywords: string[] | undefined,
+  variant: "sky" | "amber" | "emerald" = "sky"
 ): React.ReactNode[] {
   const list = keywords?.filter((k) => k.trim().length > 0) ?? [];
   if (list.length === 0) return [text];
@@ -75,13 +88,16 @@ function highlightKeywordsInText(
     .sort((a, b) => b.length - a.length);
   const re = new RegExp(`(${escaped.join("|")})`, "gi");
   const parts = text.split(re);
+  const markClass =
+    variant === "emerald"
+      ? "rounded bg-emerald-100 px-0.5 font-semibold text-emerald-950 ring-1 ring-emerald-200/80 print:bg-transparent print:px-0 print:font-inherit print:text-inherit print:ring-0"
+      : variant === "amber"
+      ? "rounded bg-amber-100 px-0.5 font-semibold text-amber-950 ring-1 ring-amber-200/80 print:bg-transparent print:px-0 print:font-inherit print:text-inherit print:ring-0"
+      : "rounded bg-sky-100 px-0.5 font-medium text-sky-900 print:bg-transparent print:px-0 print:font-inherit print:text-inherit";
 
   return parts.map((part, i) =>
     i % 2 === 1 ? (
-      <mark
-        key={`kw-${i}`}
-        className="rounded bg-sky-100 px-0.5 font-medium text-sky-900 print:bg-transparent print:px-0 print:font-inherit print:text-inherit"
-      >
+      <mark key={`kw-${variant}-${i}`} className={markClass}>
         {part}
       </mark>
     ) : (
@@ -213,6 +229,11 @@ type ExperienceBulletRowProps = {
   quantifiedSet: Set<string>;
   newBulletSet: Set<string>;
   highlightKeywords?: string[];
+  strengthenedKeywords?: string[];
+  fixHighlightKeywords?: string[];
+  fixKeySet: Set<string>;
+  originalBullet?: string;
+  refinementReason?: BulletRefinementReason;
   jdTopicTags?: string[];
 };
 
@@ -232,6 +253,11 @@ function ExperienceBulletRow({
   quantifiedSet,
   newBulletSet,
   highlightKeywords,
+  strengthenedKeywords = [],
+  fixHighlightKeywords = [],
+  fixKeySet,
+  originalBullet,
+  refinementReason,
   jdTopicTags = [],
 }: ExperienceBulletRowProps) {
   const key = normalizeBulletKey(text);
@@ -239,20 +265,44 @@ function ExperienceBulletRow({
   const ctx =
     projectIndex === undefined ? undefined : { projectIndex };
 
+  const isFixBullet =
+    fixKeySet.has(bulletKey) || refinementReason?.kind === "rejection_risk";
   const isNewBullet = newKeySet.has(bulletKey) || newBulletSet.has(key);
   const isRewritten =
     !isNewBullet && (refinedKeySet.has(bulletKey) || highlightedSet.has(key));
   const isKeyword = keywordSet.has(key);
   const isQuantified = quantifiedSet.has(key);
   const showJdTopics = (isRewritten || isNewBullet) && jdTopicTags.length > 0;
-  const hasCallout = isNewBullet || isRewritten || isKeyword || isQuantified;
+  const hasCallout = isFixBullet || isNewBullet || isRewritten || isKeyword || isQuantified;
+  const weakKeywords =
+    isRewritten && strengthenedKeywords.length > 0 ? strengthenedKeywords : undefined;
+  const fixKeywords = isFixBullet
+    ? Array.from(
+        new Set([
+          ...extractFixHighlightKeywords(
+            refinementReason?.kind === "rejection_risk" ? refinementReason.risks : []
+          ),
+          ...fixHighlightKeywords,
+        ])
+      ).filter((kw) => kw.trim().length > 0)
+    : [];
+  const bulletHighlightKeywords = fixKeywords.length > 0
+    ? fixKeywords
+    : weakKeywords
+      ? weakKeywords
+      : shouldHighlightKeyword
+        ? highlightKeywords
+        : undefined;
+  const bulletHighlightVariant: "sky" | "amber" | "emerald" =
+    fixKeywords.length > 0 ? "emerald" : weakKeywords ? "amber" : "sky";
 
   const calloutClass = [
     hasCallout ? "rounded-md px-2 py-1.5 print:bg-transparent print:px-0 print:py-0 print:ring-0 print:border-l-0" : "py-0.5",
-    isNewBullet ? "bg-amber-50/90 ring-1 ring-amber-200 border-l-2 border-amber-600" : "",
-    isRewritten ? "bg-violet-50 ring-1 ring-violet-200 border-l-2 border-violet-500" : "",
-    !isNewBullet && isKeyword ? "bg-sky-100 ring-1 ring-sky-300 border-l-2 border-sky-500" : "",
-    !isNewBullet && isQuantified ? "bg-emerald-50/80 ring-1 ring-emerald-200 border-l-2 border-emerald-500" : "",
+    isFixBullet ? "bg-emerald-50/95 ring-1 ring-emerald-200 border-l-2 border-emerald-500" : "",
+    !isFixBullet && isNewBullet ? "bg-amber-50/90 ring-1 ring-amber-200 border-l-2 border-amber-600" : "",
+    !isFixBullet && isRewritten ? "bg-violet-50 ring-1 ring-violet-200 border-l-2 border-violet-500" : "",
+    !isFixBullet && !isNewBullet && isKeyword ? "bg-sky-100 ring-1 ring-sky-300 border-l-2 border-sky-500" : "",
+    !isFixBullet && !isNewBullet && isQuantified ? "bg-emerald-50/80 ring-1 ring-emerald-200 border-l-2 border-emerald-500" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -277,20 +327,61 @@ function ExperienceBulletRow({
           />
         ) : isQuantified ? (
           highlightMetrics(
-            highlightKeywordsInText(text, shouldHighlightKeyword ? highlightKeywords : undefined)
+            highlightKeywordsInText(text, bulletHighlightKeywords, bulletHighlightVariant)
           )
         ) : (
-          highlightKeywordsInText(text, shouldHighlightKeyword ? highlightKeywords : undefined).map(
+          highlightKeywordsInText(text, bulletHighlightKeywords, bulletHighlightVariant).map(
             (node, k) => <React.Fragment key={k}>{node}</React.Fragment>
           )
         )}
+        {isRewritten &&
+        originalBullet?.trim() &&
+        originalBullet.trim().toLowerCase() !== text.toLowerCase() ? (
+          <details className="mt-1.5 print:hidden">
+            <summary className="cursor-pointer text-[10px] font-semibold text-slate-500 hover:text-slate-700">
+              View original bullet
+            </summary>
+            <p className="mt-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs leading-relaxed text-slate-600">
+              {originalBullet.trim()}
+            </p>
+          </details>
+        ) : null}
         <span className="ml-2 inline-flex flex-wrap gap-1 align-middle print:hidden">
           {isNewBullet && (
             <span className="inline-flex rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
               new
             </span>
           )}
-          {showJdTopics
+          {(isRewritten || isNewBullet) && isFixBullet ? (
+            <span
+              className="inline-flex max-w-full rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-950"
+              title={
+                refinementReason?.kind === "rejection_risk"
+                  ? refinementReason.risks.join("\n")
+                  : "Addresses a fix you selected"
+              }
+            >
+              Fix applied
+              {refinementReason?.kind === "rejection_risk" && refinementReason.risks.length > 1
+                ? ` · ${refinementReason.risks.length}`
+                : ""}
+            </span>
+          ) : isRewritten && refinementReason?.kind === "weak_keyword" ? (
+            <span
+              className="inline-flex max-w-full rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-950"
+              title="Refined to strengthen weak JD keyword proof"
+            >
+              For: {refinementReason.keywords.slice(0, 3).join(", ")}
+              {refinementReason.keywords.length > 3 ? "…" : ""}
+            </span>
+          ) : isRewritten && refinementReason?.kind === "impact_polish" ? (
+            <span
+              className="inline-flex rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-800"
+              title="Refined for stronger impact wording and measurable proof"
+            >
+              Impact polish{refinementReason.quantified ? " · metrics" : ""}
+            </span>
+          ) : showJdTopics
             ? jdTopicTags.map((topic) => <JdTopicTag key={topic} topic={topic} />)
             : isRewritten
               ? (
@@ -327,6 +418,11 @@ export function StructuredResume({
   highlightOptimizedSummary = false,
   showJdAlignedSummaryBadge = false,
   originalSummary,
+  bulletOriginalsByKey,
+  bulletKeywordsByKey,
+  bulletReasonByKey,
+  fixBulletKeys,
+  fixHighlightKeywords,
   bulletTopicTags,
   summaryTopicTags = [],
   showOptimizationLegend = false,
@@ -372,6 +468,11 @@ export function StructuredResume({
     () => new Set((newBullets ?? []).map((b) => normalizeBulletKey(String(b ?? "")))),
     [newBullets]
   );
+  const fixKeySet = React.useMemo(() => new Set(fixBulletKeys ?? []), [fixBulletKeys]);
+  const fixKeywordsGlobal = React.useMemo(
+    () => (fixHighlightKeywords ?? []).filter((kw) => kw.trim().length > 0),
+    [fixHighlightKeywords]
+  );
   const certifications = resume.certifications ?? [];
   const awards = resume.awards ?? [];
   const additionalSections = resume.additionalSections ?? [];
@@ -385,9 +486,15 @@ export function StructuredResume({
     awards: false,
   });
 
+  const bulletEvidenceForKey = (bulletKey: string) => ({
+    strengthenedKeywords: bulletKeywordsByKey?.[bulletKey] ?? [],
+    originalBullet: bulletOriginalsByKey?.[bulletKey],
+    refinementReason: bulletReasonByKey?.[bulletKey],
+  });
+
   return (
     <div
-      className={`rounded-2xl border border-slate-200 bg-white shadow-sm p-8 text-slate-900 print:h-auto print:overflow-visible print:rounded-none print:border-0 print:shadow-none print:p-0 ${
+      className={`min-w-0 rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-sm sm:p-6 lg:p-8 print:h-auto print:overflow-visible print:rounded-none print:border-0 print:shadow-none print:p-0 ${
         scrollable ? "max-h-[70vh] overflow-auto" : ""
       }`}
     >
@@ -402,8 +509,20 @@ export function StructuredResume({
               Summary tailored
             </li>
             <li className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-sm border border-emerald-300 bg-emerald-100" aria-hidden />
+              Fix applied
+            </li>
+            <li className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-sm border border-emerald-200 bg-emerald-50" aria-hidden />
+              Fix keyword
+            </li>
+            <li className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-sm border border-violet-300 bg-violet-50" aria-hidden />
               Bullet refined
+            </li>
+            <li className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-sm border border-amber-300 bg-amber-100" aria-hidden />
+              Weak keyword strengthened
             </li>
             <li className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-sm border border-sky-300 bg-sky-100" aria-hidden />
@@ -714,7 +833,9 @@ export function StructuredResume({
                         text: sanitizeBulletText(String(b ?? "")),
                       }))
                       .filter((b) => b.text.length > 0)
-                      .map(({ j, text }) => (
+                      .map(({ j, text }) => {
+                        const rowKey = makeExperienceBulletKey(idx, j);
+                        return (
                         <ExperienceBulletRow
                           key={`top-${idx}-${j}`}
                           text={text}
@@ -726,14 +847,18 @@ export function StructuredResume({
                           highlightedSet={highlightedSet}
                           refinedKeySet={refinedKeySet}
                           newKeySet={newKeySet}
-                          bulletKey={makeExperienceBulletKey(idx, j)}
+                          bulletKey={rowKey}
                           keywordSet={keywordSet}
                           quantifiedSet={quantifiedSet}
                           newBulletSet={newBulletSet}
                           highlightKeywords={highlightKeywords}
-                          jdTopicTags={bulletTopicTags?.[makeExperienceBulletKey(idx, j)] ?? []}
+                          fixHighlightKeywords={fixKeywordsGlobal}
+                          fixKeySet={fixKeySet}
+                          jdTopicTags={bulletTopicTags?.[rowKey] ?? []}
+                          {...bulletEvidenceForKey(rowKey)}
                         />
-                      ))}
+                        );
+                      })}
                   </ul>
                 )}
                 {(exp.projects ?? []).map((proj, pIdx) => (
@@ -759,7 +884,9 @@ export function StructuredResume({
                           text: sanitizeBulletText(String(b ?? "")),
                         }))
                         .filter((b) => b.text.length > 0)
-                        .map(({ j, text }) => (
+                        .map(({ j, text }) => {
+                          const rowKey = makeExperienceBulletKey(idx, j, pIdx);
+                          return (
                           <ExperienceBulletRow
                             key={`p-${idx}-${pIdx}-${j}`}
                             text={text}
@@ -772,16 +899,18 @@ export function StructuredResume({
                             highlightedSet={highlightedSet}
                             refinedKeySet={refinedKeySet}
                             newKeySet={newKeySet}
-                            bulletKey={makeExperienceBulletKey(idx, j, pIdx)}
+                            bulletKey={rowKey}
                             keywordSet={keywordSet}
                             quantifiedSet={quantifiedSet}
                             newBulletSet={newBulletSet}
                             highlightKeywords={highlightKeywords}
-                            jdTopicTags={
-                              bulletTopicTags?.[makeExperienceBulletKey(idx, j, pIdx)] ?? []
-                            }
+                            fixHighlightKeywords={fixKeywordsGlobal}
+                            fixKeySet={fixKeySet}
+                            jdTopicTags={bulletTopicTags?.[rowKey] ?? []}
+                            {...bulletEvidenceForKey(rowKey)}
                           />
-                        ))}
+                          );
+                        })}
                     </ul>
                   </div>
                 ))}

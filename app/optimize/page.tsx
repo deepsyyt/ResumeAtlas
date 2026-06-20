@@ -25,11 +25,9 @@ import {
 } from "@/app/lib/analyticsFunnel";
 import { DownloadPaymentSuccessModal } from "@/app/components/DownloadPaymentSuccessModal";
 import { buildRefinementEvidence } from "@/app/lib/resumeFactualAudit";
-import {
-  buildBulletJdTopicTags,
-  summaryJdTopicTags,
-} from "@/app/lib/jdTopicHighlights";
-import { makeExperienceBulletKey } from "@/app/lib/optimizeExperience";
+import { makeExperienceBulletKey, countRefinedScopesFromBulletKeys } from "@/app/lib/optimizeExperience";
+import { buildBulletEvidenceMaps } from "@/app/lib/optimizeBulletEvidence";
+import { extractFixHighlightKeywords } from "@/app/lib/recommendedFixes";
 
 const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
 const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
@@ -48,6 +46,8 @@ type OptimizeInput = {
   jobDescription: string;
   analyzeResult: ATSAnalyzeResult;
   funnelId?: string;
+  selectedSkills?: string[];
+  selectedRejectionRisks?: string[];
   /** Structured resume parsed on the client via /api/parse-resume. */
   parsedResume?: ResumeDocument;
 };
@@ -72,7 +72,10 @@ type OptimizeResult = {
     improved: string;
     addedKeywords: string[];
     quantified: boolean;
+    addressedRejectionRisks?: string[];
   }[];
+  selectedRejectionRisks?: string[];
+  addressedRejectionRisks?: string[];
   insights?: {
     strongMatches?: string[];
     missingCritical?: string[];
@@ -242,6 +245,17 @@ export default function OptimizePage() {
 
         if (cancelled) return;
 
+        const selectedFixes = (parsed.selectedRejectionRisks ?? []).filter(
+          (f): f is string => typeof f === "string" && f.trim().length > 0
+        );
+        if (selectedFixes.length === 0) {
+          setHydrating(false);
+          setError(
+            "Select at least one recommended fix on the analyzer, then run Optimize again."
+          );
+          return;
+        }
+
         /** Home page skips parse before navigate so /optimize loads immediately; parse here while the loading UI shows. */
         let structuredResume: ResumeDocument | undefined = parsed.parsedResume;
         if (!structuredResume || !Array.isArray(structuredResume.experience)) {
@@ -279,6 +293,8 @@ export default function OptimizePage() {
             jobDescription: parsed.jobDescription,
             analyzeResult: parsed.analyzeResult,
             structuredResume,
+            selectedSkills: parsed.selectedSkills,
+            selectedRejectionRisks: selectedFixes,
           }),
         });
         if (res.status === 401) {
@@ -292,7 +308,19 @@ export default function OptimizePage() {
               : "No optimizations available. Buy a pack on the home page to continue."
           );
         }
-        if (!res.ok) throw new Error("Optimization failed");
+        if (!res.ok) {
+          const errBody = (await res.json().catch(() => ({}))) as { error?: string; code?: string };
+          if (res.status === 400 && errBody.code === "OPTIMIZE_FIXES_REQUIRED") {
+            throw new Error(
+              typeof errBody.error === "string"
+                ? errBody.error
+                : "Select at least one recommended fix before optimizing."
+            );
+          }
+          throw new Error(
+            typeof errBody.error === "string" ? errBody.error : "Optimization failed"
+          );
+        }
         const data = (await res.json()) as OptimizeResult;
 
         if (!cancelled) {
@@ -631,9 +659,7 @@ export default function OptimizePage() {
     (input.parsedResume && parsedAfter
       ? buildRefinementEvidence(input.parsedResume, parsedAfter, jdGapsFallback)
       : undefined);
-  const showKeywords = result.addedKeywords.filter((kw) =>
-    afterContent.toLowerCase().includes(kw.toLowerCase())
-  );
+  const strengthenedSkills = (result.improvedSkillProof ?? []).map((row) => row.skill);
   const quantifiedBullets = result.quantifiedBullets ?? [];
   const bulletChanges = result.bulletChanges ?? [];
   const highlightedBullets =
@@ -662,22 +688,6 @@ export default function OptimizePage() {
   const keywordBulletsFromChanges = bulletChanges
     .filter((c) => c.addedKeywords.length > 0)
     .map((c) => c.improved);
-  const keywordBulletsFromFinalResume = parsedAfter.experience.flatMap((exp) => {
-    const top = (exp.bullets ?? []).filter((b) => {
-      const lower = String(b ?? "").toLowerCase();
-      return showKeywords.some((kw) => lower.includes(kw.toLowerCase()));
-    });
-    const nested = (exp.projects ?? []).flatMap((p) =>
-      (p.bullets ?? []).filter((b) => {
-        const lower = String(b ?? "").toLowerCase();
-        return showKeywords.some((kw) => lower.includes(kw.toLowerCase()));
-      })
-    );
-    return [...top, ...nested];
-  });
-  const keywordBullets = Array.from(
-    new Set([...keywordBulletsFromChanges, ...keywordBulletsFromFinalResume])
-  );
   const rawBulletDiffs =
     evidence?.bulletDiffs ??
     bulletChanges
@@ -716,24 +726,52 @@ export default function OptimizePage() {
     }
     return { original: diff.original, improved: diff.improved };
   });
-  const jdCategories = result.evidenceDashboard?.after.categories ?? [];
-  const bulletTopicTags = buildBulletJdTopicTags({
-    categories: jdCategories,
-    bulletDiffs: bulletDiffsWithKeys,
+  const refinedBulletKeys = (
+    evidence?.refinedBulletKeys ??
+    bulletDiffsWithKeys.map((d) => d.key).filter((k): k is string => Boolean(k))
+  );
+  const projectsRefined = countRefinedScopesFromBulletKeys(refinedBulletKeys);
+  const bulletDiffsKeyed = bulletDiffsWithKeys.filter(
+    (d): d is { original: string; improved: string; key: string } => Boolean(d.key)
+  );
+  const { bulletOriginalsByKey, bulletKeywordsByKey, bulletReasonByKey, strengthenedWeakKeywords } =
+    buildBulletEvidenceMaps(bulletChanges, bulletDiffsKeyed);
+  const selectedRejectionRisks =
+    result.selectedRejectionRisks ?? input.selectedRejectionRisks ?? [];
+  const fixBulletKeys = Object.entries(bulletReasonByKey)
+    .filter(([, reason]) => reason.kind === "rejection_risk")
+    .map(([key]) => key);
+  const fixHighlightKeywords = extractFixHighlightKeywords(selectedRejectionRisks).filter((kw) =>
+    afterContent.toLowerCase().includes(kw.toLowerCase())
+  );
+  const showKeywords = (
+    strengthenedWeakKeywords.length > 0 ? strengthenedWeakKeywords : strengthenedSkills
+  ).filter((kw) => afterContent.toLowerCase().includes(kw.toLowerCase()));
+  const keywordBulletsFromFinalResume = parsedAfter.experience.flatMap((exp) => {
+    const top = (exp.bullets ?? []).filter((b) => {
+      const lower = String(b ?? "").toLowerCase();
+      return showKeywords.some((kw) => lower.includes(kw.toLowerCase()));
+    });
+    const nested = (exp.projects ?? []).flatMap((p) =>
+      (p.bullets ?? []).filter((b) => {
+        const lower = String(b ?? "").toLowerCase();
+        return showKeywords.some((kw) => lower.includes(kw.toLowerCase()));
+      })
+    );
+    return [...top, ...nested];
   });
-  const summaryTopics =
-    result.summaryOptimized === true
-      ? summaryJdTopicTags(parsedAfter.summary, jdCategories)
-      : [];
+  const keywordBullets = Array.from(
+    new Set([...keywordBulletsFromChanges, ...keywordBulletsFromFinalResume])
+  );
 
   return (
-    <div className="flex-1 bg-slate-50 px-4 py-8 pb-20 print:min-h-0 print:bg-white print:px-0 print:py-0">
-      <div className="mx-auto max-w-6xl space-y-6 print:max-w-none print:space-y-0">
+    <div className="flex-1 bg-slate-50 py-6 pb-20 sm:py-8 print:min-h-0 print:bg-white print:py-0">
+      <div className="page-shell space-y-5 sm:space-y-6 print:max-w-none print:space-y-0 print:px-0">
         {/* Header */}
         <div className="flex flex-col gap-3 print:hidden">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl font-semibold text-slate-900">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl font-semibold text-slate-900 sm:text-2xl">
                 Your resume, upgraded for this job
               </h1>
               <p className="mt-1 text-xs text-slate-600">
@@ -743,7 +781,7 @@ export default function OptimizePage() {
             </div>
             <Link
               href="/"
-              className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-3.5 py-2.5 text-xs font-semibold text-white shadow-sm ring-1 ring-black/10 hover:bg-slate-800 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 transition"
+              className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-black/10 transition hover:bg-slate-800 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 sm:px-3.5 sm:py-2.5"
             >
               <span
                 aria-hidden
@@ -751,27 +789,27 @@ export default function OptimizePage() {
               >
                 ←
               </span>
-              Back to analyzer
+              <span className="hidden sm:inline">Back to analyzer</span>
+              <span className="sm:hidden">Back</span>
             </Link>
           </div>
         </div>
 
         {/* Optimized resume + AI suggestions */}
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-[3fr_2fr] xl:items-start print:block">
+        <div className="page-split-grid print:block">
           {/* Optimized resume */}
-          <div className="space-y-2 print:space-y-0">
+          <div className="space-y-2 print:space-y-0" id="optimized-resume-preview">
             <div className="print:hidden space-y-1">
-              <h2 className="text-sm font-semibold text-slate-700">Optimized resume preview</h2>
+              <h2 className="text-sm font-semibold text-slate-700">Your tailored resume</h2>
               <p className="max-w-2xl text-xs leading-relaxed text-slate-500">
-                Refined bullets are tagged with the JD topics they now evidence (GenAI, Leadership,
-                etc.).
+                Green highlights show fixes you selected and the keywords they added. Click{" "}
+                <span className="font-medium">Edit</span> on any section to adjust wording before you
+                download.
               </p>
             </div>
             <StructuredResume
               resume={parsedAfter}
               highlightKeywords={showKeywords}
-              bulletTopicTags={bulletTopicTags}
-              summaryTopicTags={summaryTopics}
               quantifiedBullets={quantifiedBullets}
               highlightedBullets={highlightedBullets}
               refinedBulletKeys={evidence?.refinedBulletKeys}
@@ -781,6 +819,11 @@ export default function OptimizePage() {
               highlightOptimizedSummary
               showJdAlignedSummaryBadge={result.summaryOptimized === true}
               originalSummary={originalSummary}
+              bulletOriginalsByKey={bulletOriginalsByKey}
+              bulletKeywordsByKey={bulletKeywordsByKey}
+              bulletReasonByKey={bulletReasonByKey}
+              fixBulletKeys={fixBulletKeys}
+              fixHighlightKeywords={fixHighlightKeywords}
               showOptimizationLegend
               editable
               onUpdateResumeMeta={(patch) =>
@@ -912,33 +955,26 @@ export default function OptimizePage() {
             <ResumeOptimizationPanel
               surfacedKeywords={showKeywords}
               bulletsRefined={result.bulletImprovements}
+              bulletsAdded={result.bulletsAdded ?? 0}
+              projectsRefined={projectsRefined}
               summaryTailored={result.summaryOptimized === true}
               jdGapsRemaining={jdGaps.length}
               jdGapDetails={jdGapDetails}
-              bulletDiffs={
-                evidence?.bulletDiffs ??
-                bulletChanges
-                  .filter((c) => c.original.trim() && c.improved !== c.original)
-                  .map((c) => ({ original: c.original, improved: c.improved }))
+              weakKeywordsStrengthened={strengthenedWeakKeywords.length}
+              selectedFixes={selectedRejectionRisks}
+              availableRecommendedFixes={
+                input.analyzeResult.evidence_dashboard?.riskAreas ?? []
               }
-              evidenceDashboard={result.evidenceDashboard}
               improvedSkillProof={result.improvedSkillProof}
-              targetSkillCoverage={result.targetSkillCoverage}
-              scoreBefore={
-                result.scoreBefore ??
-                result.evidenceDashboard?.before.evidenceMatch ??
-                input.analyzeResult.evidence_dashboard?.evidenceMatch ??
-                0
-              }
-              scoreAfter={
-                result.scoreAfter ??
-                result.evidenceDashboard?.after.evidenceMatch ??
-                0
-              }
               evidenceMatchDelta={result.evidenceMatchDelta}
               atsScoreReference={
                 result.atsScoreReference ?? input.analyzeResult.ats_score
               }
+              onScrollToPreview={() => {
+                document
+                  .getElementById("optimized-resume-preview")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
               onDownloadPdf={() => {
                 void handleDownloadPdf("optimize_panel");
               }}

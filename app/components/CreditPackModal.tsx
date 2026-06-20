@@ -359,7 +359,7 @@ export function CreditPackModal({
               </button>
 
               {showBundles && (
-                <div className="grid md:grid-cols-2 gap-4 mt-6 max-w-3xl mx-auto">
+                <div className="grid md:grid-cols-2 gap-4 mt-6 page-prose">
                   {fivePack ? (
                     <div className="border rounded-xl p-5">
                       <h3 className="font-semibold mb-1">5 Optimizations</h3>
@@ -440,7 +440,7 @@ export function CreditPackModal({
               <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
                 Real output preview sample
               </p>
-              <div className="mt-2 grid grid-cols-1 gap-4 xl:grid-cols-[3fr_2fr]">
+              <div className="mt-2 page-split-grid">
                 <div className="space-y-2">
                   <div className="space-y-1">
                     <h4 className="text-sm font-semibold text-slate-700">Optimized resume preview</h4>

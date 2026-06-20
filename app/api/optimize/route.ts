@@ -21,6 +21,7 @@ import { resolveAnthropicModelCandidates } from "@/app/lib/anthropicModels";
 import {
   buildBulletRewriteSystemPrompt,
   GENERATE_BULLET_SYSTEM_PROMPT,
+  RISK_MITIGATION_BULLET_SYSTEM_PROMPT,
   RECOMPOSE_SYSTEM_PROMPT,
   SUMMARY_ONLY_SYSTEM,
 } from "@/app/lib/optimizePrompts";
@@ -41,18 +42,33 @@ import {
 } from "@/app/lib/resumeTypography";
 import { filterSkillGapPhrases, type JdGapDetail, type JdGapSource } from "@/app/lib/skillGapRules";
 import {
+  pickBestBulletKeyForRisk,
+  pickBestProjectPlacementForRisk,
+  rejectionRiskBulletScore,
+  rejectionRiskTheme,
+  rejectionRisksForBullet,
+  riskAddressedInBulletText,
+  risksBetterAddressedInRewrite,
+  siblingBulletsForPlacement,
+} from "@/app/lib/rejectionRiskOptimize";
+import { enrichOptimizeEvidenceDashboards } from "@/app/lib/enrichEvidenceDashboard";
+import {
   buildEvidenceDashboard,
+  buildJdSkillProofRows,
   buildOptimizedSkillProofRows,
   buildSkillProofForSkills,
   isEvidenceWeakBullet,
   type EvidenceDashboard,
+  type JdSkillEvidenceRow,
   type OptimizedSkillProofRow,
 } from "@/app/lib/resumeEvidenceScore";
 import {
-  jdThemePriorityBoost,
-  jdThemesToStrengthenForBullet,
-  weakJdCategoriesForRewrite,
-} from "@/app/lib/jdTopicHighlights";
+  buildSkillOptimizePlan,
+  filterSkillProofRowsBySelection,
+  formatSkillActionBlock,
+  skillOptimizeActionPrompt,
+  type SkillOptimizeAction,
+} from "@/app/lib/jdSkillProofStatus";
 
 export type OptimizeRequestBody = {
   resumeText: string;
@@ -64,8 +80,6 @@ export type OptimizeRequestBody = {
     missing_skills_preferred?: string[];
     matched_skills?: string[];
     keyword_coverage?: number;
-    impact_score?: number;
-    semantic_similarity?: number;
     required_years_experience?: number | null;
     resume_years_experience?: number | null;
   };
@@ -73,6 +87,10 @@ export type OptimizeRequestBody = {
   structuredResume?: ResumeDocument;
   /** Optional debug mode to inspect optimization planning. */
   debug?: boolean;
+  /** When set, only these JD skills are targeted for bullet rewrites. */
+  selectedSkills?: string[];
+  /** Rejection risks the user wants surfaced in project bullets where supported. */
+  selectedRejectionRisks?: string[];
 };
 
 export type OptimizeResponse = {
@@ -109,7 +127,12 @@ export type OptimizeResponse = {
     improved: string;
     addedKeywords: string[];
     quantified: boolean;
+    addressedRejectionRisks?: string[];
   }[];
+  /** Rejection risks the user selected before optimize. */
+  selectedRejectionRisks?: string[];
+  /** Subset of selected risks with stronger proof surfaced in refined bullets. */
+  addressedRejectionRisks?: string[];
   alignmentInsights?: {
     coverageBreakdown: {
       covered: string[];
@@ -383,6 +406,7 @@ type BulletChangeInternal = {
   improved: string;
   addedKeywords: string[];
   quantified: boolean;
+  addressedRejectionRisks: string[];
 };
 
 type RecomposedExperience = {
@@ -542,38 +566,39 @@ function buildCoveragePlan(
 type BulletRewriteQueueItem = {
   bulletKey: string;
   skills: string[];
+  skillActions: Record<string, SkillOptimizeAction>;
   priority: number;
+  targetRisks?: string[];
 };
 
-/** Skills the candidate already has — strengthen in bullets (not missing JD gaps). */
-function buildProofTargetSkills(args: {
-  matchedSkills: string[];
-  resumeText: string;
-  structuredResume: ResumeDocument;
-  gapSkills: string[];
-  max: number;
-}): string[] {
-  const resumeLower = args.resumeText.toLowerCase();
-  const gapSet = new Set(args.gapSkills.map((s) => s.toLowerCase().trim()));
-
-  const fromMatched = dedupeSkillsPreserveOrder(args.matchedSkills).filter(
-    (s) => !gapSet.has(s.toLowerCase())
-  );
-
-  const resumeSkills: string[] = [];
-  for (const s of args.structuredResume.skills ?? []) {
-    if (s?.trim()) resumeSkills.push(s.trim());
+function skillActionsForSkills(
+  skills: string[],
+  actionBySkill: Record<string, SkillOptimizeAction>
+): Record<string, SkillOptimizeAction> {
+  const out: Record<string, SkillOptimizeAction> = {};
+  for (const skill of skills) {
+    const action = actionBySkill[skill.toLowerCase().trim()];
+    if (action) out[skill] = action;
   }
-  for (const g of args.structuredResume.skillGroups ?? []) {
-    for (const item of g.items ?? []) {
-      if (item?.trim()) resumeSkills.push(item.trim());
-    }
-  }
-  const fromResume = dedupeSkillsPreserveOrder(resumeSkills).filter(
-    (s) => !gapSet.has(s.toLowerCase()) && resumeLower.includes(s.toLowerCase())
-  );
+  return out;
+}
 
-  return dedupeSkillsPreserveOrder([...fromMatched, ...fromResume]).slice(0, args.max);
+function formatSkillsForRewritePrompt(
+  keywords: string[],
+  skillActions?: Record<string, SkillOptimizeAction>
+): string {
+  if (!skillActions || Object.keys(skillActions).length === 0) {
+    return keywords.filter(Boolean).join(", ");
+  }
+  return keywords
+    .filter(Boolean)
+    .map((skill) => {
+      const action = skillActions[skill] ?? skillActions[skill.toLowerCase()];
+      return action
+        ? `${skill} — ${skillOptimizeActionPrompt(action)}`
+        : skill;
+    })
+    .join("\n");
 }
 
 function buildBulletRewriteQueue(
@@ -581,7 +606,8 @@ function buildBulletRewriteQueue(
   bullets: BulletWithContext[],
   expanded: ExpandedSkillMap,
   maxBullets: number,
-  weakJdCategories: string[] = []
+  actionBySkill: Record<string, SkillOptimizeAction>,
+  selectedRejectionRisks: string[] = []
 ): BulletRewriteQueueItem[] {
   const coveragePlan = buildCoveragePlan(proofSkills, bullets, expanded);
   const queue: BulletRewriteQueueItem[] = [];
@@ -590,11 +616,18 @@ function buildBulletRewriteQueue(
   for (const [bulletKey, skills] of Object.entries(coveragePlan.existingBulletMappings)) {
     const b = bullets.find((x) => x.bulletKey === bulletKey);
     const weak = b ? isWeakBullet(b.text) : false;
-    const themeBoost = b ? jdThemePriorityBoost(b.text, weakJdCategories) : 0;
+    const riskBoost = b
+      ? selectedRejectionRisks.reduce(
+          (sum, risk) => sum + rejectionRiskBulletScore(b.text, risk),
+          0
+        )
+      : 0;
     queue.push({
       bulletKey,
       skills: Array.from(new Set(skills)),
-      priority: (weak ? 120 : 40) + skills.length * 8 + themeBoost,
+      skillActions: skillActionsForSkills(skills, actionBySkill),
+      priority: (weak ? 120 : 40) + skills.length * 8 + riskBoost * 3,
+      targetRisks: b ? rejectionRisksForBullet(b.text, selectedRejectionRisks) : [],
     });
     seen.add(bulletKey);
   }
@@ -609,20 +642,43 @@ function buildBulletRewriteQueue(
         tokens.some((t) => textLower.includes(t))
       );
     });
-    if (!isWeakBullet(b.text) && localSkills.length === 0 && weakJdCategories.length === 0) {
+    if (!isWeakBullet(b.text) && localSkills.length === 0) {
       continue;
     }
-    const themeBoost = jdThemePriorityBoost(b.text, weakJdCategories);
-    if (!isWeakBullet(b.text) && localSkills.length === 0 && themeBoost === 0) continue;
+    const assignedSkills = (localSkills.length > 0 ? localSkills : proofSkills).slice(0, 6);
+    const riskBoost = selectedRejectionRisks.reduce(
+      (sum, risk) => sum + rejectionRiskBulletScore(b.text, risk),
+      0
+    );
     queue.push({
       bulletKey: b.bulletKey,
-      skills: (localSkills.length > 0 ? localSkills : proofSkills).slice(0, 6),
-      priority:
-        (isWeakBullet(b.text) ? 80 : 20) +
-        localSkills.length * 5 +
-        themeBoost,
+      skills: assignedSkills,
+      skillActions: skillActionsForSkills(assignedSkills, actionBySkill),
+      priority: (isWeakBullet(b.text) ? 80 : 20) + localSkills.length * 5 + riskBoost * 3,
+      targetRisks: rejectionRisksForBullet(b.text, selectedRejectionRisks),
     });
     seen.add(b.bulletKey);
+  }
+
+  for (const risk of selectedRejectionRisks) {
+    const bestKey = pickBestBulletKeyForRisk(bullets, risk, seen);
+    if (!bestKey) continue;
+    const b = bullets.find((x) => x.bulletKey === bestKey);
+    if (!b) continue;
+    const localSkills = proofSkills.filter((skill) => {
+      const textLower = b.text.toLowerCase();
+      const tokens = tokenizeSkill(skill);
+      return isSkillCovered(textLower, skill, expanded) || tokens.some((t) => textLower.includes(t));
+    });
+    const assignedSkills = (localSkills.length > 0 ? localSkills : proofSkills).slice(0, 6);
+    queue.push({
+      bulletKey: bestKey,
+      skills: assignedSkills,
+      skillActions: skillActionsForSkills(assignedSkills, actionBySkill),
+      priority: 220 + rejectionRiskBulletScore(b.text, risk) * 8,
+      targetRisks: [risk],
+    });
+    seen.add(bestKey);
   }
 
   queue.sort((a, b) => b.priority - a.priority);
@@ -634,12 +690,17 @@ function upsertBulletChange(
   key: string,
   baseline: string,
   improved: string,
-  addedKeywords: string[]
+  addedKeywords: string[],
+  addressedRejectionRisks: string[] = []
 ) {
   const prev = map[key];
   const existingKeywords = new Set<string>(prev?.addedKeywords ?? []);
   for (const kw of addedKeywords) {
     if (kw && kw.trim()) existingKeywords.add(kw);
+  }
+  const existingRisks = new Set<string>(prev?.addressedRejectionRisks ?? []);
+  for (const risk of addressedRejectionRisks) {
+    if (risk && risk.trim()) existingRisks.add(risk.trim());
   }
   map[key] = {
     original: prev?.original ?? baseline,
@@ -647,6 +708,7 @@ function upsertBulletChange(
     addedKeywords: Array.from(existingKeywords),
     quantified:
       hasImpactMetric(improved) && !hasImpactMetric(prev?.original ?? baseline),
+    addressedRejectionRisks: Array.from(existingRisks),
   };
 }
 
@@ -1027,7 +1089,7 @@ Return JSON: {"summary":"..."}`;
 async function recomposeExperience(
   structuredResume: ResumeDocument,
   jobDescription: string,
-  proofSkills: string[],
+  proofSkillRows: JdSkillEvidenceRow[],
   gapSkills: string[],
   requiredGapSkills: string[],
   matchedSkills: string[],
@@ -1039,6 +1101,9 @@ async function recomposeExperience(
   apiKey: string | undefined,
   model: string
 ): Promise<RecomposedExperience | null> {
+  const proofSkills = proofSkillRows
+    .filter((row) => row.optimizeAction !== "do_not_invent")
+    .map((row) => row.skill);
   if (!apiKey || proofSkills.length === 0) return null;
   if (llm.skipRecomposeWhenNoGap && !explicitSkillGaps) {
     const summaryOnly = await rewriteSummaryOnlyForJd(
@@ -1056,7 +1121,7 @@ async function recomposeExperience(
   }
 
   const jd = jobDescription.slice(0, llm.recomposeJdChars);
-  const proofBlock = `PROOF SKILLS TO STRENGTHEN (candidate already has this work — move from skills lists into project bullets with architecture, deployment, and impact):\n${proofSkills.join(", ")}`;
+  const proofBlock = `JD SKILLS — action per skill (rewrite bullets ONLY as specified; never invent missing skills):\n${formatSkillActionBlock(proofSkillRows)}`;
   const gapBlock =
     explicitSkillGaps && gapSkills.length > 0
       ? `HONEST GAPS ONLY (do NOT add to resume; note internally if needed):\n${gapSkills.join(", ")}\n\nREQUIRED GAPS (never fabricate):\n${requiredGapSkills.join(", ")}`
@@ -1159,7 +1224,8 @@ type BulletRewriteContext = {
   company?: string;
   role?: string;
   projectTitle?: string;
-  jdThemes?: string[];
+  skillActions?: Record<string, SkillOptimizeAction>;
+  rejectionRisks?: string[];
 };
 
 async function rewriteBullet(
@@ -1187,16 +1253,16 @@ async function rewriteBullet(
     );
   }
 
-  const themeLine =
-    context?.jdThemes && context.jdThemes.length > 0
-      ? `JD topics to surface if truthful in this bullet: ${context.jdThemes.join(", ")}\n`
+  const rejectionLine =
+    context?.rejectionRisks && context.rejectionRisks.length > 0
+      ? `REJECTION RISKS the user selected to fix — surface related proof in THIS role/project by reframing transferable work already here:\n${context.rejectionRisks.map((r) => `- ${r}`).join("\n")}\n\n`
       : "";
 
   const userPrompt = `Bullet:
 "${bullet}"
 
-${scopeLines.length > 0 ? `ROLE CONTEXT:\n${scopeLines.join("\n")}\n\n` : ""}${themeLine}Skills/themes to strengthen as evidence (already supported by this bullet — do NOT add missing JD requirements):
-"${keywords.filter(Boolean).join(", ")}"
+${scopeLines.length > 0 ? `ROLE CONTEXT:\n${scopeLines.join("\n")}\n\n` : ""}${rejectionLine}Skills to address in this bullet (follow each action exactly — never invent missing skills):
+${formatSkillsForRewritePrompt(keywords, context?.skillActions)}
 
 QUANTIFY=${forceQuantified ? "true" : "false"}`;
 
@@ -1238,7 +1304,8 @@ async function generateAlignedBullet(
   apiKey: string,
   model: string,
   llm: Pick<OptimizeLlmBudget, "generateBulletMaxTokens" | "generateJdChars">,
-  projectTitle?: string
+  projectTitle?: string,
+  rejectionRisks?: string[]
 ): Promise<string | null> {
   const systemPrompt = `${GENERATE_BULLET_SYSTEM_PROMPT}
 
@@ -1248,8 +1315,13 @@ Required skill phrase (include verbatim ONLY if honestly supported): ${skill}`;
     ? `\nPROJECT SCOPE (this bullet must belong here only): ${projectTitle.trim()}`
     : "";
 
+  const rejectionLine =
+    rejectionRisks && rejectionRisks.length > 0
+      ? `\nREJECTION RISKS the user selected to fix (surface related proof in this project):\n${rejectionRisks.map((r) => `- ${r}`).join("\n")}`
+      : "";
+
   const userPrompt = `ROLE: ${role || "Unknown role"}
-COMPANY: ${company || "Unknown company"}${projectLine}
+COMPANY: ${company || "Unknown company"}${projectLine}${rejectionLine}
 JOB DESCRIPTION CONTEXT:
 ${jobDescription.slice(0, llm.generateJdChars)}
 
@@ -1278,6 +1350,158 @@ Write one aligned bullet containing: ${skill}`;
   const cleaned = normalizeInlineText(raw.replace(/^["']|["']$/g, "").trim());
   if (!cleaned || isInvalidBulletRewrite(cleaned)) return null;
   return cleaned;
+}
+
+async function generateRiskMitigationBullet(
+  role: string,
+  company: string,
+  jobDescription: string,
+  risk: string,
+  siblingBullets: string[],
+  apiKey: string,
+  model: string,
+  llm: Pick<OptimizeLlmBudget, "generateBulletMaxTokens" | "generateJdChars">,
+  projectTitle?: string
+): Promise<string | null> {
+  const projectLine = projectTitle?.trim()
+    ? `\nPROJECT SCOPE (new bullet must belong here only): ${projectTitle.trim()}`
+    : "";
+
+  const siblingLine =
+    siblingBullets.length > 0
+      ? `\nEXISTING PROJECT BULLETS (factual anchor — reframe transferable proof from here):\n${siblingBullets.map((b) => `- ${b}`).join("\n")}`
+      : "";
+
+  const userPrompt = `ROLE: ${role || "Unknown role"}
+COMPANY: ${company || "Unknown company"}${projectLine}
+REJECTION RISK TO MITIGATE: ${risk}
+${siblingLine}
+
+JOB DESCRIPTION CONTEXT:
+${jobDescription.slice(0, llm.generateJdChars)}
+
+Write one NEW bullet that mitigates the rejection risk using proof transferable from this project.`;
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: llm.generateBulletMaxTokens,
+      temperature: 0.2,
+      system: RISK_MITIGATION_BULLET_SYSTEM_PROMPT,
+      messages: [{ role: "user" as const, content: userPrompt }],
+    }),
+  });
+  if (!response.ok) return null;
+  const data = (await response.json().catch(() => null)) as
+    | { content?: { type: string; text?: string }[] }
+    | null;
+  const raw = data?.content?.find((c) => c.type === "text")?.text?.trim() ?? "";
+  const cleaned = normalizeInlineText(raw.replace(/^["']|["']$/g, "").trim());
+  if (!cleaned || cleaned.toUpperCase() === "REJECT" || isInvalidBulletRewrite(cleaned)) {
+    return null;
+  }
+  return cleaned;
+}
+
+function addressedRisksFromBulletChanges(
+  bulletChangeMap: Record<string, BulletChangeInternal>
+): string[] {
+  return Array.from(
+    new Set(
+      Object.values(bulletChangeMap).flatMap((change) => change.addressedRejectionRisks ?? [])
+    )
+  );
+}
+
+async function addNewBulletsForUncoveredRejectionRisks(args: {
+  selectedRejectionRisks: string[];
+  bulletChangeMap: Record<string, BulletChangeInternal>;
+  improvedMap: ImprovedMap;
+  baseStructured: ResumeDocument;
+  jobDescription: string;
+  apiKey: string;
+  model: string;
+  budget: OptimizeLlmBudget;
+}): Promise<void> {
+  const {
+    selectedRejectionRisks,
+    bulletChangeMap,
+    improvedMap,
+    baseStructured,
+    jobDescription,
+    apiKey,
+    model,
+    budget,
+  } = args;
+  if (!apiKey || selectedRejectionRisks.length === 0) return;
+  if (!baseStructured.experience.length) return;
+
+  const covered = new Set(addressedRisksFromBulletChanges(bulletChangeMap));
+
+  for (const risk of selectedRejectionRisks) {
+    if (covered.has(risk)) continue;
+
+    const placement = pickBestProjectPlacementForRisk(baseStructured.experience, risk);
+    if (!placement) continue;
+
+    const exp = baseStructured.experience[placement.expIndex];
+    if (!exp) continue;
+
+    const projectTitle =
+      placement.projectIndex !== undefined
+        ? exp.projects?.[placement.projectIndex]?.title
+        : undefined;
+    const siblings = siblingBulletsForPlacement(baseStructured.experience, placement);
+
+    let generated = await generateRiskMitigationBullet(
+      exp.role ?? "",
+      exp.company ?? "",
+      jobDescription,
+      risk,
+      siblings,
+      apiKey,
+      model,
+      {
+        generateBulletMaxTokens: budget.generateBulletMaxTokens,
+        generateJdChars: budget.generateJdChars,
+      },
+      projectTitle
+    );
+
+    if (!generated) {
+      generated = await generateAlignedBullet(
+        exp.role ?? "",
+        exp.company ?? "",
+        jobDescription,
+        rejectionRiskTheme(risk) || risk,
+        apiKey,
+        model,
+        {
+          generateBulletMaxTokens: budget.generateBulletMaxTokens,
+          generateJdChars: budget.generateJdChars,
+        },
+        projectTitle,
+        [risk]
+      );
+    }
+
+    if (!generated) continue;
+
+    const existing = new Set(allExperienceBulletTextsNormalized(exp));
+    if (existing.has(generated) || isSimilar(generated, Array.from(existing))) continue;
+
+    const skillHint = rejectionRiskTheme(risk) || risk;
+    const bulletKey = appendBulletToExperience(exp, placement.expIndex, generated, skillHint);
+    improvedMap[bulletKey] = generated;
+    upsertBulletChange(bulletChangeMap, bulletKey, "", generated, [skillHint], [risk]);
+    covered.add(risk);
+  }
 }
 
 function tokenSet(text: string): Set<string> {
@@ -1647,14 +1871,57 @@ export async function POST(request: Request) {
     const explicitSkillGaps =
       missingRequired.length > 0 || missingSkills.length > 0;
 
-    const gapSkills = candidates.slice(0, maxTarget).map((c) => c.skill);
-    let proofSkills = buildProofTargetSkills({
-      matchedSkills,
+    const jdSkillProofAll = buildJdSkillProofRows({
       resumeText,
       structuredResume: body.structuredResume,
-      gapSkills,
-      max: maxTarget,
+      matchedSkills,
+      missingSkills,
+      missingRequired,
+      missingPreferred,
     });
+    const skillOptimizePlan = buildSkillOptimizePlan(jdSkillProofAll);
+    let proofSkills = skillOptimizePlan.optimizableSkills.slice(0, maxTarget);
+    const gapSkills = skillOptimizePlan.doNotInvent.slice(0, maxTarget);
+    const skillActionBySkill = skillOptimizePlan.actionBySkill;
+    let optimizableSkillRows = jdSkillProofAll.filter(
+      (row) => row.optimizeAction !== "do_not_invent"
+    );
+
+    const selectedRejectionRisks = Array.isArray(body.selectedRejectionRisks)
+      ? body.selectedRejectionRisks.filter(
+          (risk): risk is string => typeof risk === "string" && risk.trim().length > 0
+        )
+      : [];
+
+    if (selectedRejectionRisks.length === 0) {
+      return NextResponse.json(
+        {
+          error: "Select at least one recommended fix on the analyzer before optimizing.",
+          code: "OPTIMIZE_FIXES_REQUIRED",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (Array.isArray(body.selectedSkills)) {
+      const selectedSkills = body.selectedSkills.filter(
+        (skill): skill is string => typeof skill === "string" && skill.trim().length > 0
+      );
+      if (selectedSkills.length === 0 && selectedRejectionRisks.length === 0) {
+        proofSkills = [];
+        optimizableSkillRows = [];
+      } else if (selectedSkills.length > 0) {
+        const selectedLower = new Set(selectedSkills.map((skill) => skill.toLowerCase().trim()));
+        proofSkills = proofSkills.filter((skill) =>
+          selectedLower.has(skill.toLowerCase().trim())
+        );
+        optimizableSkillRows = filterSkillProofRowsBySelection(
+          optimizableSkillRows,
+          selectedSkills
+        );
+      }
+    }
+
     if (proofSkills.length === 0) {
       proofSkills = dedupeSkillsPreserveOrder(matchedSkills).slice(0, maxTarget);
     }
@@ -1670,11 +1937,6 @@ export async function POST(request: Request) {
     if (requiredSkills.length === 0 && optionalSkills.length === 0 && gapSkills.length > 0) {
       optionalSkills = [...gapSkills];
     }
-
-    const semanticSimilarity =
-      typeof analyzeResult.semantic_similarity === "number"
-        ? Math.max(0, Math.min(100, analyzeResult.semantic_similarity))
-        : undefined;
 
     const skillsForExpansion = Array.from(
       new Set([...proofSkills, ...matchedSkills, ...gapSkills])
@@ -1694,7 +1956,7 @@ export async function POST(request: Request) {
       const recomposed = await recomposeExperience(
         baseStructured,
         jobDescription,
-        proofSkills,
+        optimizableSkillRows.slice(0, maxTarget),
         gapSkills,
         missingRequired,
         matchedSkills,
@@ -1786,20 +2048,7 @@ export async function POST(request: Request) {
     let coveragePlanDebug: CoveragePlanDebug | undefined;
     let factualAuditResult: AuditResult | undefined;
 
-    if (apiKey && orderedBullets.length > 0 && proofSkills.length > 0) {
-      const preOptimizeEvidence = buildEvidenceDashboard({
-        resumeText,
-        jobDescription,
-        structuredResume: resumeSnapshotBeforeOptimization,
-        matchedSkills,
-        missingSkills,
-        missingRequired,
-        missingPreferred,
-        requiredYearsExperience: analyzeResult.required_years_experience ?? null,
-        resumeYearsExperience: analyzeResult.resume_years_experience ?? null,
-      });
-      const weakJdCategories = weakJdCategoriesForRewrite(preOptimizeEvidence.categories);
-
+    if (apiKey && orderedBullets.length > 0 && (proofSkills.length > 0 || selectedRejectionRisks.length > 0)) {
       const baseGlobalStyle: GlobalStyle = {
         tense: "past",
         tone: "impact-driven",
@@ -1817,22 +2066,13 @@ export async function POST(request: Request) {
         ),
         orderedBullets.length
       );
-      if (
-        semanticSimilarity !== undefined &&
-        semanticSimilarity < 78 &&
-        budget.semanticExtraRewrites > 0
-      ) {
-        rewriteBudget = Math.min(
-          orderedBullets.length,
-          rewriteBudget + budget.semanticExtraRewrites
-        );
-      }
       const rewriteQueue = buildBulletRewriteQueue(
         proofSkills,
         orderedBullets,
         expandedMap,
         rewriteBudget,
-        weakJdCategories
+        skillActionBySkill,
+        selectedRejectionRisks
       );
       const requiredNeedingNewBullets = coveragePlan.skillsNeedingNewBullets.filter(
         (skill) =>
@@ -1899,7 +2139,11 @@ export async function POST(request: Request) {
               company: b.company,
               role: b.role,
               projectTitle: b.projectTitle,
-              jdThemes: jdThemesToStrengthenForBullet(original, weakJdCategories),
+              skillActions: item.skillActions,
+              rejectionRisks:
+                item.targetRisks && item.targetRisks.length > 0
+                  ? item.targetRisks
+                  : selectedRejectionRisks,
             }
           )
         );
@@ -1913,12 +2157,20 @@ export async function POST(request: Request) {
             const s = kw.toLowerCase();
             return s && improvedLower.includes(s) && !originalLower.includes(s);
           });
+          const addressedRisks = risksBetterAddressedInRewrite(
+            baselineByKey[key] ?? original,
+            improved,
+            item.targetRisks && item.targetRisks.length > 0
+              ? item.targetRisks
+              : selectedRejectionRisks
+          );
           upsertBulletChange(
             bulletChangeMap,
             key,
             baselineByKey[key] ?? original,
             improved,
-            addedForThisBullet
+            addedForThisBullet,
+            addressedRisks
           );
           if (hasImpactMetric(improved) && !hasImpactMetric(original)) {
             quantUsed++;
@@ -1953,7 +2205,8 @@ export async function POST(request: Request) {
             generateBulletMaxTokens: budget.generateBulletMaxTokens,
             generateJdChars: budget.generateJdChars,
           },
-          projectTitle
+          projectTitle,
+          selectedRejectionRisks
         );
         if (!generated) continue;
         const next = normalizeInlineText(generated);
@@ -1964,6 +2217,19 @@ export async function POST(request: Request) {
         improvedMap[bulletKey] = next;
         upsertBulletChange(bulletChangeMap, bulletKey, "", next, [skill]);
       }
+    }
+
+    if (apiKey && selectedRejectionRisks.length > 0) {
+      await addNewBulletsForUncoveredRejectionRisks({
+        selectedRejectionRisks,
+        bulletChangeMap,
+        improvedMap,
+        baseStructured,
+        jobDescription,
+        apiKey,
+        model,
+        budget,
+      });
     }
 
     let optimizedStructured: ResumeDocument = {
@@ -2039,6 +2305,9 @@ export async function POST(request: Request) {
     }
 
     const bulletChanges = Object.values(bulletChangeMap);
+    const addressedRejectionRisksAggregate = Array.from(
+      new Set(bulletChanges.flatMap((c) => c.addressedRejectionRisks ?? []))
+    );
     const rewrittenChanges = bulletChanges.filter(
       (c) => c.original.trim().length > 0 && c.improved !== c.original
     );
@@ -2170,7 +2439,7 @@ export async function POST(request: Request) {
       jdGapDetails
     );
 
-    const evidenceDashboard = {
+    let evidenceDashboard = {
       before: buildEvidenceDashboard({
         resumeText,
         jobDescription,
@@ -2195,6 +2464,13 @@ export async function POST(request: Request) {
       }),
     };
 
+    if (apiKey) {
+      evidenceDashboard = await enrichOptimizeEvidenceDashboards({
+        before: evidenceDashboard.before,
+        after: evidenceDashboard.after,
+      });
+    }
+
     const proofRequiredSet = new Set(
       filterSkillGapPhrases(missingRequired ?? []).map((s) => s.toLowerCase())
     );
@@ -2210,8 +2486,7 @@ export async function POST(request: Request) {
         optimizedText,
         optimizedStructured,
         proofRequiredSet
-      ),
-      evidenceDashboard.after.categories
+      )
     );
 
     const scoreBefore = evidenceDashboard.before.evidenceMatch;
@@ -2233,20 +2508,17 @@ export async function POST(request: Request) {
             after: Math.min(100, Math.max(0, kwBefore + jdProofDelta)),
           };
 
-    const impBefore =
-      typeof analyzeResult.impact_score === "number"
-        ? Math.max(0, Math.min(100, Math.round(analyzeResult.impact_score)))
-        : undefined;
+    const impBefore = Math.max(
+      0,
+      Math.min(100, Math.round(evidenceDashboard.before.snapshot.impactCoverage))
+    );
     const impactDelta =
       evidenceDashboard.after.snapshot.impactCoverage -
       evidenceDashboard.before.snapshot.impactCoverage;
-    const impactScore =
-      impBefore === undefined
-        ? undefined
-        : {
-            before: impBefore,
-            after: Math.min(100, Math.max(0, impBefore + impactDelta)),
-          };
+    const impactScore = {
+      before: impBefore,
+      after: Math.min(100, Math.max(0, impBefore + impactDelta)),
+    };
 
     const response: OptimizeResponse = {
       optimizedResume: optimizedText,
@@ -2264,6 +2536,12 @@ export async function POST(request: Request) {
       optimizedStructuredResume: optimizedStructured,
       quantifiedBullets,
       bulletChanges,
+      selectedRejectionRisks:
+        selectedRejectionRisks.length > 0 ? selectedRejectionRisks : undefined,
+      addressedRejectionRisks:
+        addressedRejectionRisksAggregate.length > 0
+          ? addressedRejectionRisksAggregate
+          : undefined,
       alignmentInsights: {
         coverageBreakdown: { covered, missing },
       },

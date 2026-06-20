@@ -65,7 +65,7 @@ export function RoleSeoHubPage({
   return (
     <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 lg:px-8">
+        <div className="page-prose-wide py-14 text-center">
           <SeoBreadcrumbs
             kind="hub"
             currentLabel={hubTitle}
@@ -92,7 +92,7 @@ export function RoleSeoHubPage({
         </div>
       </section>
 
-      <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 space-y-10">
+      <section className="page-prose-wide py-10 sm:py-12 space-y-10">
         {sections?.length ? (
           sections.map((section) => (
             <div key={section.title}>

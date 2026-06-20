@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
+import { OptimizeCta } from "@/app/components/EvidenceMetricBar";
+import { OPTIMIZE_CTA_LABEL } from "@/app/lib/evidenceMetricCopy";
 
 export const OPTIMIZE_PREVIEW_MESSAGE = "Optimize your resume for this job role";
 export { ANALYSIS_REPORT_HEADING } from "@/app/lib/evidenceMetricCopy";
@@ -107,13 +109,13 @@ export function OptimizePreviewBanner({
         </p>
 
         {ctaVisible ? (
-          <button
-            type="button"
+          <OptimizeCta
             onClick={onOptimize}
-            className="mt-3 inline-flex w-full max-w-xs items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-900/25 transition hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 sm:w-auto sm:min-w-[220px]"
+            className="mt-3 w-full max-w-xs sm:w-auto sm:min-w-[220px]"
+            size="lg"
           >
-            Optimize for this job
-          </button>
+            {OPTIMIZE_CTA_LABEL}
+          </OptimizeCta>
         ) : null}
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
-import { isATSAnalyzeResult } from "@/app/lib/atsAnalyze";
+import { isAnalyzeLlmPayload } from "@/app/lib/atsAnalyze";
 import { repairSkillListsAgainstResume } from "@/app/lib/skillResumeEvidence";
 import {
   clipToWordLimit,
@@ -9,7 +9,11 @@ import {
 } from "@/app/lib/inputWordLimits";
 import { SKILL_GAP_LLM_RULES, filterSkillGapPhrases } from "@/app/lib/skillGapRules";
 import { buildEvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
-import { attachRoleFitToEvidenceDashboard } from "@/app/lib/roleFitLlm";
+import { SKILL_PROOF_VERSION, countKeywordProofCoverage } from "@/app/lib/skillProofLlm";
+import { RISK_AREAS_VERSION } from "@/app/lib/riskAreasLlm";
+import { APPLICATION_VERDICT_VERSION } from "@/app/lib/applicationVerdictLlm";
+import { enrichEvidenceDashboardWithLlm } from "@/app/lib/enrichEvidenceDashboard";
+import { normalizeTargetRoleTitle } from "@/app/lib/roleFitArchetypes";
 import {
   assertAnalysisQuotaOrThrow,
   recordSuccessfulAnalysis,
@@ -27,6 +31,11 @@ import {
   parseAnthropicErrorType,
   resolveAnthropicModelCandidates,
 } from "@/app/lib/anthropicModels";
+import {
+  ANALYZE_MATCH_SUMMARY_RULE,
+  ANALYZE_MATCH_SUMMARY_RULE_RESUME_ONLY,
+  clampAnalyzeMatchSummary,
+} from "@/app/lib/resumeTypography";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 
@@ -73,6 +82,7 @@ Resume scanning rules:
 
 Self-check before output:
 - Re-read the full resume (including "Project 1:", case studies, and headings). If any phrase in matched_skills or missing_skills appears anywhere in that text under a clear variation, move it to matched_skills and remove it from missing_skills, missing_skills_required, and missing_skills_preferred.
+- summary MUST include all three labeled sections ("JD needs:", "Resume shows:", "Match:"); JD and Resume bodies each ≤28 words; at most 3 sentences and ≤110 tokens; shorten JD/resume text before dropping any section.
 
 Section classification rules:
 - Use robust, section-aware rules so required vs preferred skills are classified consistently across any JD format.
@@ -82,52 +92,23 @@ Section classification rules:
 - If section headers exist, prioritize section-based classification over individual wording in the sentences.
 - If the section is unclear, mixed, or not explicitly labeled, you MUST default to treating the skill as REQUIRED.
 
-Evaluate the following metrics (each 0-100):
-1. ats_score - overall probability the resume passes ATS
-2. keyword_coverage - must be calculated as: round((number of matched_skills ÷ total JD skills) × 100). Total JD skills = count of distinct skill phrases you extracted from the JD. If there are zero JD skills, set keyword_coverage to 100.
-3. semantic_similarity - how closely the experience matches the role context
-4. experience_alignment - compare required years vs resume years (0-100). If the JD does not specify years of experience, set experience_alignment to 80 (neutral) and set required_years_experience and required_years_experience_max to null.
-5. impact_score - based on quantified achievements (%, $, growth, etc.)
-6. resume_quality - structure, bullet points, clarity
-
-For experience alignment you MUST also output:
+Extract years of experience from the job description and resume:
 - required_years_experience: number or null. Lower bound from the JD. Examples: "5+ years" or "at least 5 years" -> 5. For an explicit range "10-15 years" or "10 to 15 years of experience" -> 10. If the JD does not mention years of experience at all, use null.
 - required_years_experience_max: number or null. Upper bound ONLY when the JD states a clear range (e.g. "10-15 years" -> 15, "3 to 7 years" -> 7). For a minimum only ("5+", "minimum 8 years", no upper cap), use null. If required_years_experience is null, this MUST be null.
 - resume_years_experience: number. Estimate total relevant years of experience from the resume (based on job dates and roles). Use a number (e.g. 7), not a range.
-- For experience_alignment scoring with a range: treat resume years within [required_years_experience, required_years_experience_max] as a strong match; below the range lower the score appropriately; above the max can remain high (candidate exceeds the stated range).
-- Use this strict rubric for experience_alignment (do not improvise):
-  - If required_years_experience is null -> experience_alignment MUST be 80.
-  - Minimum-only JD (no max):
-    - resume_years_experience >= required_years_experience -> score MUST be between 90 and 98.
-    - 1 year below minimum -> 70 to 79.
-    - 2 years below minimum -> 55 to 69.
-    - 3+ years below minimum -> 0 to 54.
-  - Range JD (required_years_experience and required_years_experience_max both present):
-    - Within range -> 90 to 98.
-    - Above max -> 90 to 98 (still strong; candidate exceeds range).
-    - 1 year below range min -> 70 to 79.
-    - 2 years below range min -> 55 to 69.
-    - 3+ years below range min -> 0 to 54.
-- Consistency rule: If your summary implies "meets", "within range", "above requirement", or "above range", experience_alignment MUST NOT be below 90.
 
 Also extract:
 - matched_skills: array of skill phrases from the JD that appear in the resume (with direct textual evidence as above)
 - missing_skills: array of skill phrases from the JD that do NOT appear in the resume (combined list). Do not include skills that have any clear textual evidence in the resume.
 - missing_skills_required: array of missing skill phrases that the JD explicitly marks as required, must-have, or essential
 - missing_skills_preferred: array of missing skill phrases that the JD marks as preferred, nice-to-have, or bonus. If the JD does not distinguish required vs preferred, leave this empty and put all missing skills in missing_skills_required.
-- summary: one short sentence summarizing the match. If years of experience are not mentioned in the JD, include in the summary that experience requirements are not specified in the job description.
+- ${ANALYZE_MATCH_SUMMARY_RULE}
 
 Output format (no other keys):
 {
-  "ats_score": number,
-  "keyword_coverage": number,
-  "semantic_similarity": number,
-  "experience_alignment": number,
   "required_years_experience": number or null,
   "required_years_experience_max": number or null,
   "resume_years_experience": number,
-  "impact_score": number,
-  "resume_quality": number,
   "matched_skills": [],
   "missing_skills": [],
   "missing_skills_required": [],
@@ -145,27 +126,18 @@ Focus on:
 - Section coverage: contact signals, experience with dates, education, skills or technical terms somewhere readable.
 - Formatting red flags implied by text: unusual characters-only blocks, heavy unicode decoration, role-play formatting that might break parsers.
 - Bullet quality: action-led bullets, measurable outcomes where present.
-- Keyword coverage: there is NO job description - you MUST set keyword_coverage to null (JSON null) and MUST set matched_skills, missing_skills, missing_skills_required, and missing_skills_preferred to empty arrays [].
-- semantic_similarity: set to 70 (neutral - no role context).
-- experience_alignment: 0-100 based on coherent work history and dates; use 80 if dates are unclear.
+- Keyword coverage: there is NO job description - you MUST set matched_skills, missing_skills, missing_skills_required, and missing_skills_preferred to empty arrays [].
 - required_years_experience and required_years_experience_max: MUST be null (no JD).
 - resume_years_experience: estimate total relevant years from employment dates in the resume (number ≥ 0).
 - ats_score: 0-100 overall likelihood the resume parses cleanly and presents experience in an ATS-friendly way (not match to a specific job).
-- impact_score: from quantified achievements in bullets.
-- resume_quality: structure, bullets, clarity.
-- summary: one short sentence emphasizing structure, formatting, and ATS readability; explicitly state that no job description was used so keyword match to a specific posting was not evaluated.
+- ${ANALYZE_MATCH_SUMMARY_RULE_RESUME_ONLY}
 
 Output format (no other keys):
 {
   "ats_score": number,
-  "keyword_coverage": null,
-  "semantic_similarity": 70,
-  "experience_alignment": number,
   "required_years_experience": null,
   "required_years_experience_max": null,
   "resume_years_experience": number,
-  "impact_score": number,
-  "resume_quality": number,
   "matched_skills": [],
   "missing_skills": [],
   "missing_skills_required": [],
@@ -182,51 +154,10 @@ function extractJson(raw: string): string {
   return str.slice(start, end);
 }
 
-function computeExperienceAlignmentScore(params: {
-  requiredMin: number | null;
-  requiredMax: number | null;
-  resumeYears: number;
-  llmScore: number;
-}): number {
-  const { requiredMin, requiredMax, resumeYears, llmScore } = params;
-  const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
-
-  // Neutral when JD does not state years.
-  if (requiredMin === null) return 80;
-
-  const max =
-    requiredMax !== null &&
-    typeof requiredMax === "number" &&
-    requiredMax >= requiredMin
-      ? requiredMax
-      : null;
-
-  if (resumeYears >= requiredMin) {
-    if (max !== null) {
-      if (resumeYears <= max) {
-        const width = Math.max(1, max - requiredMin);
-        const withinRangeProgress = (resumeYears - requiredMin) / width;
-        return clamp(90 + withinRangeProgress * 8);
-      }
-      // Exceeding an upper range is still a strong match, but not auto-100.
-      return clamp(93 + Math.min(5, resumeYears - max));
-    }
-    // Minimum-only requirement; exceeding minimum should remain strong.
-    return clamp(90 + Math.min(8, resumeYears - requiredMin));
-  }
-
-  // Below minimum requirement.
-  const gap = requiredMin - resumeYears;
-  if (gap <= 1) return 72;
-  if (gap <= 2) return 60;
-  if (gap <= 4) return 45;
-  // Keep very low only when materially under requirement.
-  return clamp(Math.min(35, llmScore));
-}
-
 export type AnalyzeRequestBody = {
   resumeText: string;
   jobDescription: string;
+  targetRoleTitle?: string;
 };
 
 export async function POST(request: Request) {
@@ -237,6 +168,8 @@ export async function POST(request: Request) {
     const body = (await request.json()) as AnalyzeRequestBody;
     let resumeText = body?.resumeText;
     let jobDescription = body?.jobDescription;
+    const targetRoleTitle =
+      typeof body?.targetRoleTitle === "string" ? body.targetRoleTitle : undefined;
 
     if (typeof resumeText !== "string" || typeof jobDescription !== "string") {
       return NextResponse.json(
@@ -251,6 +184,12 @@ export async function POST(request: Request) {
     const jdEmpty = !jobDescription.trim();
     if (!resumeText.trim()) {
       return NextResponse.json({ error: "resumeText is required" }, { status: 400 });
+    }
+    if (!jdEmpty && !normalizeTargetRoleTitle(targetRoleTitle)) {
+      return NextResponse.json(
+        { error: "targetRoleTitle is required when analyzing against a job description" },
+        { status: 400 }
+      );
     }
 
     const modelCandidates = resolveAnthropicModelCandidates();
@@ -308,15 +247,36 @@ export async function POST(request: Request) {
 
       const cachedPayload = { ...cached };
       if (cachedPayload.evidence_dashboard && !jdEmpty) {
-        const hadRoleFit = (cachedPayload.evidence_dashboard.roleFit?.length ?? 0) > 0;
-        cachedPayload.evidence_dashboard = await attachRoleFitToEvidenceDashboard({
+        const hadLlmEnrichment =
+          (cachedPayload.evidence_dashboard.roleFit?.length ?? 0) > 0 &&
+          (cachedPayload.evidence_dashboard.mostMissingEvidence?.length ?? 0) > 0 &&
+          cachedPayload.evidence_dashboard.skillProofVersion === SKILL_PROOF_VERSION &&
+          cachedPayload.evidence_dashboard.riskAreasVersion === RISK_AREAS_VERSION &&
+          cachedPayload.evidence_dashboard.applicationVerdictVersion ===
+            APPLICATION_VERDICT_VERSION;
+        cachedPayload.evidence_dashboard = await enrichEvidenceDashboardWithLlm({
           dashboard: cachedPayload.evidence_dashboard,
           apiKey,
           modelCandidates,
           resumeText,
           jobDescription,
+          targetRoleTitle,
+          missingSkills: cachedPayload.missing_skills ?? [],
+          matchedSkills: cachedPayload.matched_skills ?? [],
         });
-        if (!hadRoleFit && (cachedPayload.evidence_dashboard.roleFit?.length ?? 0) > 0) {
+        const cachedProofRows =
+          cachedPayload.evidence_dashboard.skillProofAll ??
+          cachedPayload.evidence_dashboard.skillProof;
+        if (cachedProofRows.length > 0) {
+          const coverageScore = countKeywordProofCoverage(cachedProofRows).score;
+          cachedPayload.keyword_coverage = coverageScore;
+          cachedPayload.ats_score = coverageScore;
+        }
+        if (
+          !hadLlmEnrichment &&
+          ((cachedPayload.evidence_dashboard.roleFit?.length ?? 0) > 0 ||
+            (cachedPayload.evidence_dashboard.mostMissingEvidence?.length ?? 0) > 0)
+        ) {
           await setCachedAnalysisResult(cacheKey, cachedPayload);
         }
       }
@@ -422,19 +382,21 @@ ${jobDescription}`;
       );
     }
 
-    if (!isATSAnalyzeResult(result)) {
+    if (!isAnalyzeLlmPayload(result)) {
+      console.error("[analyze] Invalid LLM payload keys", Object.keys(result as object));
       return NextResponse.json(
         { error: "Analysis missing required fields" },
         { status: 502 }
       );
     }
 
+    const llmResult = result as Record<string, unknown>;
     const requiredYears =
-      result.required_years_experience === null ||
-      typeof result.required_years_experience !== "number"
+      llmResult.required_years_experience === null ||
+      typeof llmResult.required_years_experience !== "number"
         ? null
-        : Math.max(0, Math.round(result.required_years_experience));
-    const rawMax = (result as Record<string, unknown>).required_years_experience_max;
+        : Math.max(0, Math.round(llmResult.required_years_experience as number));
+    const rawMax = llmResult.required_years_experience_max;
     let requiredYearsMax: number | null =
       requiredYears === null ||
       rawMax === null ||
@@ -450,26 +412,30 @@ ${jobDescription}`;
       requiredYearsMax = null;
     }
     const resumeYears =
-      typeof result.resume_years_experience === "number"
-        ? Math.max(0, Math.round(result.resume_years_experience))
+      typeof llmResult.resume_years_experience === "number"
+        ? Math.max(0, Math.round(llmResult.resume_years_experience))
         : 0;
 
-    const missingSkills = Array.isArray(result.missing_skills) ? result.missing_skills : [];
-    const missingRequired = Array.isArray((result as Record<string, unknown>).missing_skills_required)
-      ? ((result as Record<string, unknown>).missing_skills_required as string[])
+    const missingSkills = Array.isArray(llmResult.missing_skills)
+      ? (llmResult.missing_skills as string[])
       : [];
-    const missingPreferred = Array.isArray((result as Record<string, unknown>).missing_skills_preferred)
-      ? ((result as Record<string, unknown>).missing_skills_preferred as string[])
+    const missingRequired = Array.isArray(llmResult.missing_skills_required)
+      ? (llmResult.missing_skills_required as string[])
+      : [];
+    const missingPreferred = Array.isArray(llmResult.missing_skills_preferred)
+      ? (llmResult.missing_skills_preferred as string[])
       : [];
 
-    const matchedIn = Array.isArray(result.matched_skills) ? result.matched_skills : [];
+    const matchedIn = Array.isArray(llmResult.matched_skills)
+      ? (llmResult.matched_skills as string[])
+      : [];
     const repaired = repairSkillListsAgainstResume(
       resumeText,
       matchedIn,
       missingSkills,
       missingRequired,
       missingPreferred,
-      typeof result.keyword_coverage === "number" ? result.keyword_coverage : undefined
+      typeof llmResult.keyword_coverage === "number" ? llmResult.keyword_coverage : undefined
     );
     const missingSkillsAfter = filterSkillGapPhrases(repaired.missing_skills);
     const missingRequiredAfter = filterSkillGapPhrases(repaired.missing_skills_required ?? []);
@@ -480,20 +446,11 @@ ${jobDescription}`;
       skillTotal > 0 ? Math.round((matchedSkillsAfter.length / skillTotal) * 100) : 100;
 
     const normalized: ATSAnalyzeResult = {
-      ats_score: Math.max(0, Math.min(100, Math.round(result.ats_score))),
+      ats_score: keywordCoverageAfter,
       keyword_coverage: keywordCoverageAfter,
-      semantic_similarity: Math.max(0, Math.min(100, Math.round(result.semantic_similarity))),
-      experience_alignment: computeExperienceAlignmentScore({
-        requiredMin: requiredYears,
-        requiredMax: requiredYearsMax,
-        resumeYears,
-        llmScore: result.experience_alignment,
-      }),
       required_years_experience: requiredYears,
       required_years_experience_max: requiredYearsMax,
       resume_years_experience: resumeYears,
-      impact_score: Math.max(0, Math.min(100, Math.round(result.impact_score))),
-      resume_quality: Math.max(0, Math.min(100, Math.round(result.resume_quality))),
       matched_skills: matchedSkillsAfter,
       missing_skills: missingSkillsAfter,
       missing_skills_required:
@@ -501,11 +458,16 @@ ${jobDescription}`;
           ? missingRequiredAfter
           : undefined,
       missing_skills_preferred: missingPreferredAfter.length > 0 ? missingPreferredAfter : undefined,
-      summary: typeof result.summary === "string" ? result.summary : "",
+      summary: clampAnalyzeMatchSummary(
+        typeof llmResult.summary === "string" ? llmResult.summary : ""
+      ),
     };
 
     if (jdEmpty) {
       normalized.keyword_coverage = null;
+      if (typeof llmResult.ats_score === "number") {
+        normalized.ats_score = Math.max(0, Math.min(100, Math.round(llmResult.ats_score)));
+      }
       normalized.matched_skills = [];
       normalized.missing_skills = [];
       normalized.missing_skills_required = undefined;
@@ -520,14 +482,34 @@ ${jobDescription}`;
         missingPreferred: missingPreferredAfter,
         requiredYearsExperience: requiredYears,
         resumeYearsExperience: resumeYears,
+        targetRoleTitle,
+        skillProofDisplayLimit: Math.min(
+          20,
+          matchedSkillsAfter.length + missingSkillsAfter.length
+        ),
       });
-      normalized.evidence_dashboard = await attachRoleFitToEvidenceDashboard({
+      normalized.evidence_dashboard = await enrichEvidenceDashboardWithLlm({
         dashboard: evidenceDashboard,
         apiKey,
         modelCandidates,
         resumeText,
         jobDescription,
+        targetRoleTitle,
+        missingSkills: missingSkillsAfter,
+        matchedSkills: matchedSkillsAfter,
+        skillProofDisplayLimit: Math.min(
+          20,
+          matchedSkillsAfter.length + missingSkillsAfter.length
+        ),
       });
+      const proofRows =
+        normalized.evidence_dashboard.skillProofAll ??
+        normalized.evidence_dashboard.skillProof;
+      if (proofRows.length > 0) {
+        const coverageScore = countKeywordProofCoverage(proofRows).score;
+        normalized.keyword_coverage = coverageScore;
+        normalized.ats_score = coverageScore;
+      }
     }
 
     await setCachedAnalysisResult(cacheKey, normalized);

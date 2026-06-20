@@ -1,4 +1,5 @@
 import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
+import { resolveSkillProofRow } from "@/app/lib/jdSkillProofStatus";
 import type { KeywordScannerResultsData } from "@/app/components/KeywordScannerResultsPanel";
 
 export function buildKeywordScannerResultsData(
@@ -12,12 +13,10 @@ export function buildKeywordScannerResultsData(
   const skillProof = analyzeResult.evidence_dashboard?.skillProof ?? [];
 
   const weakCoverageAreas = skillProof
-    .filter(
-      (row) =>
-        row.strength === "weak" ||
-        row.evidenceLocation === "skills_only" ||
-        row.evidenceLocation === "summary"
-    )
+    .filter((row) => {
+      const status = resolveSkillProofRow(row).proofStatus;
+      return status === "weak" || status === "implied";
+    })
     .map((row) => row.skill)
     .filter((skill, index, all) => all.indexOf(skill) === index)
     .slice(0, 8);

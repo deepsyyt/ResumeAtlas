@@ -210,7 +210,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-[#f4f7fc]/90 text-slate-900 backdrop-blur-md supports-[backdrop-filter]:bg-[#f4f7fc]/80">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-3 px-3 sm:px-6 lg:px-8">
+      <div className="page-shell flex h-14 items-center justify-between gap-2 sm:gap-3">
         <Link href={HOME_MARKETING_PATH} className="flex min-w-0 items-center gap-2">
           <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-slate-50">
             <span className="h-3 w-3 rotate-12 border-l border-b border-slate-800" />
@@ -228,7 +228,8 @@ export function Navbar() {
             Home
           </Link>
           <Link href={CHECK_RESUME_AGAINST_JD_PATH} className={`text-sm ${navLinkClass(isTool)}`}>
-            {PRIMARY_TOOL_NAV_LABEL}
+            <span className="hidden xl:inline">{PRIMARY_TOOL_NAV_LABEL}</span>
+            <span className="xl:hidden">{PRIMARY_TOOL_NAV_LABEL_SHORT}</span>
           </Link>
           <Link href="/faq" className={`text-sm ${navLinkClass(isFaq)}`}>
             FAQ

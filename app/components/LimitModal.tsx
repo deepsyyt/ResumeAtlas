@@ -42,7 +42,7 @@ export function LimitModal({
           </p>
         )}
         {isQuotaUser && (
-          <p className="mt-2 text-sm text-slate-500">Your free scans reset in a rolling 24‑hour window.</p>
+          <p className="mt-2 text-sm text-slate-500">Your free scan resets in a rolling 24‑hour window.</p>
         )}
         <div className="mt-6 flex gap-3">
           {isQuotaAnonymous && onSignInClick && (

@@ -4,9 +4,76 @@ import { useEffect, useState, type ReactNode } from "react";
 import { getScoreStyle } from "@/app/lib/scoreColors";
 import type { EvidenceStrength } from "@/app/lib/resumeEvidenceScore";
 import {
+  ANALYSIS_OPTIMIZE_STEPS,
   ANALYSIS_REPORT_HEADING,
-  ANALYSIS_REPORT_SUBTITLE,
+  APPLICATION_VERDICT_TITLE,
+  KEYWORD_COVERAGE_SCORE_SUBTITLE,
+  KEYWORD_COVERAGE_SCORE_TITLE,
+  OPTIMIZE_CTA_LABEL,
 } from "@/app/lib/evidenceMetricCopy";
+import type { ApplicationVerdict } from "@/app/lib/applicationVerdict";
+import type { KeywordCoverageVerdict } from "@/app/lib/skillProofLlm";
+import type { KeywordCoverageMetricInput } from "@/app/lib/evidenceMetricCopy";
+import { getKeywordCoverageStyle } from "@/app/lib/scoreColors";
+import { OptimizeHubVisual } from "@/app/components/OptimizeHubVisual";
+import { ShortlistGauge } from "@/app/components/ShortlistGauge";
+
+type OptimizeCtaProps = {
+  onClick: () => void;
+  children?: ReactNode;
+  className?: string;
+  size?: "sm" | "md" | "lg";
+  disabled?: boolean;
+  variant?: "green" | "purple";
+  showSparkle?: boolean;
+};
+
+export function OptimizeCta({
+  onClick,
+  children = OPTIMIZE_CTA_LABEL,
+  className = "",
+  size = "md",
+  disabled = false,
+  variant = "green",
+  showSparkle = false,
+}: OptimizeCtaProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={`optimize-cta optimize-cta-${size} ${
+        variant === "purple" ? "optimize-cta-purple" : ""
+      } ${className}`}
+    >
+      <span className="optimize-cta-label">
+        {showSparkle ? <span className="optimize-cta-sparkle" aria-hidden>✨ </span> : null}
+        {children}
+      </span>
+      <span className="optimize-cta-chevrons" aria-hidden>
+        <svg viewBox="0 0 24 24" fill="none" className="optimize-cta-chevron-svg">
+          <path
+            d="M8 6l6 6-6 6"
+            stroke="currentColor"
+            strokeWidth="2.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M14 6l6 6-6 6"
+            stroke="currentColor"
+            strokeWidth="2.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
+    </button>
+  );
+}
+
+/** @deprecated Use OptimizeCta */
+export const PremiumOptimizeCta = OptimizeCta;
 
 export function strengthBarPercent(strength: EvidenceStrength): number {
   switch (strength) {
@@ -104,6 +171,7 @@ type SignalMetricCardProps = {
   value: number;
   hint: string;
   index?: number;
+  style?: { hex: string; bgHex: string; label: string };
 };
 
 export function SignalMetricCard({
@@ -111,130 +179,41 @@ export function SignalMetricCard({
   value,
   hint,
   index = 0,
+  style,
 }: SignalMetricCardProps) {
-  const style = getScoreStyle(value);
-
-  return (
-    <div className="rounded-lg border border-white/90 bg-white/90 px-2 py-1.5 shadow-sm ring-1 ring-slate-100">
-      <div className="flex items-start justify-between gap-2">
-        <span className="text-[11px] font-semibold leading-snug text-slate-800">{label}</span>
-        <span
-          className="shrink-0 rounded-md px-1.5 py-0.5 text-xs font-bold tabular-nums"
-          style={{ color: style.hex, backgroundColor: style.bgHex }}
-        >
-          {value}%
-        </span>
-      </div>
-      <AnimatedScoreBar value={value} className="mt-1.5" heightClass="h-1.5" delayMs={index * 60} />
-      <p className="mt-1 text-[10px] leading-snug text-slate-600">{hint}</p>
-    </div>
-  );
-}
-
-type ScoreRingProps = {
-  value: number;
-  size?: number;
-  strokeWidth?: number;
-  delayMs?: number;
-  className?: string;
-};
-
-function ScoreRing({
-  value,
-  size = 46,
-  strokeWidth = 3.5,
-  delayMs = 0,
-  className = "",
-}: ScoreRingProps) {
-  const pct = Math.max(0, Math.min(100, Math.round(value)));
-  const style = getScoreStyle(pct);
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const [offset, setOffset] = useState(circumference);
-  const center = size / 2;
-
-  useEffect(() => {
-    const timer = window.setTimeout(
-      () => setOffset(circumference - (pct / 100) * circumference),
-      50 + delayMs
-    );
-    return () => window.clearTimeout(timer);
-  }, [pct, delayMs, circumference]);
+  const scoreStyle = style ?? getScoreStyle(value);
 
   return (
     <div
-      className={`relative shrink-0 ${className}`}
-      style={{ width: size, height: size }}
-      role="img"
-      aria-label={`${pct}%`}
+      className="rounded-lg px-2 py-1.5"
+      style={{ backgroundColor: scoreStyle.bgHex }}
     >
-      <svg width={size} height={size} className="-rotate-90" aria-hidden>
-        <circle
-          cx={center}
-          cy={center}
-          r={radius}
-          fill="none"
-          stroke="#E2E8F0"
-          strokeWidth={strokeWidth}
-        />
-        <circle
-          cx={center}
-          cy={center}
-          r={radius}
-          fill="none"
-          stroke={style.hex}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          className="transition-[stroke-dashoffset] duration-700 ease-out"
-        />
-      </svg>
-      <span
-        className="absolute inset-0 flex items-center justify-center text-[10px] font-bold tabular-nums"
-        style={{ color: style.hex }}
-      >
-        {pct}%
-      </span>
-    </div>
-  );
-}
-
-type ThemeCoverageRowProps = {
-  category: string;
-  score: number;
-  detail: string;
-  index?: number;
-  compact?: boolean;
-};
-
-export function ThemeCoverageRow({
-  category,
-  score,
-  detail,
-  index = 0,
-  compact = false,
-}: ThemeCoverageRowProps) {
-  return (
-    <li
-      className={`flex flex-col items-center rounded-lg border border-indigo-100/80 bg-white/75 text-center transition-colors hover:border-indigo-200 hover:bg-white ${
-        compact ? "px-1 py-1.5" : "px-1.5 py-2"
-      }`}
-    >
-      <ScoreRing value={score} size={compact ? 38 : 46} delayMs={120 + index * 50} />
-      <p
-        className={`w-full font-semibold leading-tight text-indigo-950 ${
-          compact ? "mt-1 text-[9px]" : "mt-1.5 text-[10px]"
-        }`}
-      >
-        {category}
-      </p>
-      {!compact ? (
-        <p className="mt-0.5 line-clamp-2 w-full text-[9px] leading-snug text-indigo-900/70">
-          {detail}
+      <div className="flex items-center justify-between gap-1.5">
+        <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight text-slate-600">
+          {label}
         </p>
-      ) : null}
-    </li>
+        <span
+          className="h-1.5 w-1.5 shrink-0 rounded-full"
+          style={{ backgroundColor: scoreStyle.hex }}
+          title={scoreStyle.label}
+          aria-hidden
+        />
+      </div>
+      <p
+        className="mt-0.5 text-sm font-semibold leading-none tabular-nums"
+        style={{ color: scoreStyle.hex }}
+      >
+        {value}%
+      </p>
+      <AnimatedScoreBar
+        value={value}
+        colorHex={scoreStyle.hex}
+        className="mt-1"
+        heightClass="h-1"
+        delayMs={index * 60}
+      />
+      <p className="mt-0.5 text-[10px] leading-snug text-slate-600">{hint}</p>
+    </div>
   );
 }
 
@@ -249,6 +228,8 @@ type IntelligenceScoreCardProps = {
   variant?: "default" | "highlight";
   footer?: React.ReactNode;
   className?: string;
+  /** Aligns with application verdict + optimize cards in the top score row. */
+  scoreRow?: boolean;
 };
 
 export function IntelligenceScoreCard({
@@ -261,9 +242,62 @@ export function IntelligenceScoreCard({
   variant = "default",
   footer,
   className = "",
+  scoreRow = false,
 }: IntelligenceScoreCardProps) {
   const style = score != null ? getScoreStyle(score) : null;
   const isHighlight = variant === "highlight";
+
+  if (scoreRow) {
+    return (
+      <div
+        className={`score-row-card score-row-card--metric flex h-full flex-col ${className}`}
+        title={labelTitle}
+      >
+        <p className="score-row-card-label">{label}</p>
+
+        {score != null && style ? (
+          <div className="score-row-card-visual w-full">
+            <div className="flex w-full items-end justify-between gap-2">
+              <span
+                className="score-row-card-value text-[1.65rem] font-bold leading-none tracking-tight sm:text-[1.85rem]"
+                style={{ color: style.hex }}
+              >
+                {score}%
+              </span>
+              {badgeLabel ? (
+                <span
+                  className="mb-0.5 inline-flex rounded-full border px-1.5 py-0.5 text-[9px] font-semibold"
+                  style={{
+                    color: style.hex,
+                    backgroundColor: `${style.bgHex}bb`,
+                    borderColor: `${style.hex}30`,
+                  }}
+                >
+                  {badgeLabel}
+                </span>
+              ) : null}
+            </div>
+            <AnimatedScoreBar
+              value={score}
+              colorHex={style.hex}
+              heightClass="h-1"
+              className="score-row-bar mt-1.5 w-full"
+            />
+          </div>
+        ) : null}
+
+        <div className="score-row-card-footer space-y-0.5">
+          {subtitle ? (
+            <p className="text-[9px] font-medium leading-snug text-slate-600">{subtitle}</p>
+          ) : null}
+          {secondaryLine ? (
+            <p className="text-[9px] leading-snug text-slate-500 line-clamp-2">{secondaryLine}</p>
+          ) : null}
+          {footer}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -348,35 +382,137 @@ export function CompactScoreCard({ title, score, subtitle, secondaryLine }: Comp
   );
 }
 
-type AnalysisReportCardProps = {
-  onOptimize: () => void;
+type ApplicationVerdictCardProps = {
+  verdict: ApplicationVerdict;
+  className?: string;
 };
 
-export function AnalysisReportCard({ onOptimize }: AnalysisReportCardProps) {
+export function ApplicationVerdictCard({ verdict, className = "" }: ApplicationVerdictCardProps) {
+  const { scoreStyle } = verdict;
+
   return (
-    <IntelligenceScoreCard
-      variant="highlight"
-      label={ANALYSIS_REPORT_HEADING}
-      subtitle={ANALYSIS_REPORT_SUBTITLE}
-      className="h-full"
-      footer={
-        <button
-          type="button"
-          onClick={onOptimize}
-          className="analysis-report-cta relative w-full overflow-hidden rounded-lg px-2 py-2 text-[10px] font-semibold text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-1"
+    <div className={`score-row-card score-row-card--verdict flex h-full flex-col ${className}`}>
+      <p className="score-row-card-label">{APPLICATION_VERDICT_TITLE}</p>
+
+      <div className="score-row-card-visual">
+        <ShortlistGauge
+          value={verdict.shortlistPct}
+          compact
+          accentHex={scoreStyle.hex}
+          className="w-full max-w-[124px]"
+        />
+        <span
+          className="score-row-card-badge inline-flex rounded-full border px-2.5 py-0.5 text-[9px] font-semibold tracking-wide backdrop-blur-sm"
+          style={{
+            color: scoreStyle.hex,
+            backgroundColor: `${scoreStyle.bgHex}d9`,
+            borderColor: `${scoreStyle.hex}28`,
+          }}
         >
-          <span
-            className="analysis-report-cta-shine pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/35 to-transparent"
-            aria-hidden
-          />
-          <span className="relative inline-flex w-full items-center justify-center gap-1">
-            Optimize for this job
-            <span aria-hidden className="text-[11px] leading-none opacity-90">
-              →
-            </span>
+          {verdict.badgeLabel}
+        </span>
+      </div>
+
+      <div className="score-row-card-footer space-y-0.5">
+        <p className="line-clamp-2 text-[9px] font-semibold leading-snug text-slate-900">
+          {verdict.headline}
+        </p>
+        {verdict.subline ? (
+          <p className="line-clamp-2 text-[9px] leading-snug text-slate-700">{verdict.subline}</p>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+type KeywordCoverageScoreCardProps = {
+  score: number;
+  verdict: KeywordCoverageVerdict;
+  className?: string;
+};
+
+export function KeywordCoverageScoreCard({
+  score,
+  verdict,
+  className = "",
+}: KeywordCoverageScoreCardProps) {
+  const scoreStyle = getKeywordCoverageStyle(score);
+
+  return (
+    <div className={`score-row-card score-row-card--metric flex h-full flex-col ${className}`}>
+      <p className="score-row-card-label">{KEYWORD_COVERAGE_SCORE_TITLE}</p>
+
+      <div className="score-row-card-visual !items-center">
+        <ShortlistGauge
+          value={score}
+          compact
+          accentHex={scoreStyle.hex}
+          className="w-full max-w-[124px]"
+        />
+        <span
+          className="score-row-card-badge inline-flex rounded-full border px-2.5 py-0.5 text-[9px] font-semibold tracking-wide backdrop-blur-sm"
+          style={{
+            color: scoreStyle.hex,
+            backgroundColor: `${scoreStyle.bgHex}d9`,
+            borderColor: `${scoreStyle.hex}28`,
+          }}
+        >
+          {verdict.badgeLabel}
+        </span>
+      </div>
+
+      <div className="score-row-card-footer space-y-0.5">
+        <p className="line-clamp-2 text-[9px] font-semibold leading-snug text-slate-900">
+          {verdict.headline}
+        </p>
+        {verdict.reason ? (
+          <p className="line-clamp-2 text-[9px] leading-snug text-slate-700">{verdict.reason}</p>
+        ) : null}
+        <p className="text-[9px] leading-snug text-slate-600">{KEYWORD_COVERAGE_SCORE_SUBTITLE}</p>
+      </div>
+    </div>
+  );
+}
+
+type AnalysisReportCardProps = {
+  onOptimize: () => void;
+  verdict: ApplicationVerdict;
+};
+
+export function AnalysisReportCard({ onOptimize, verdict }: AnalysisReportCardProps) {
+  const { shortlistPct, optimizedShortlistPct, shortlistUplift } = verdict;
+
+  return (
+    <div className="score-row-card flex h-full flex-col">
+      <p className="score-row-card-label">{ANALYSIS_REPORT_HEADING}</p>
+
+      <div className="score-row-card-visual !min-h-[7.5rem] !items-stretch !justify-center px-0.5">
+        <OptimizeHubVisual
+          value={optimizedShortlistPct}
+          steps={ANALYSIS_OPTIMIZE_STEPS}
+          className="w-full"
+        />
+      </div>
+
+      <div className="score-row-card-footer space-y-2 pt-2">
+        <div className="flex flex-wrap items-baseline justify-center gap-1.5 text-center">
+          <span className="text-sm font-bold tabular-nums text-slate-700">{shortlistPct}%</span>
+          <span className="text-slate-300" aria-hidden>
+            →
           </span>
-        </button>
-      }
-    />
+          <span className="text-sm font-bold tabular-nums text-emerald-600">
+            ~{optimizedShortlistPct}%
+          </span>
+          {shortlistUplift > 0 ? (
+            <span className="text-[10px] font-semibold text-emerald-600">
+              (+{shortlistUplift})
+            </span>
+          ) : null}
+        </div>
+        <OptimizeCta onClick={onOptimize} size="lg" className="w-full">
+          {OPTIMIZE_CTA_LABEL}
+        </OptimizeCta>
+      </div>
+    </div>
   );
 }

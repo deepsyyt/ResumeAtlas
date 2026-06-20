@@ -3,22 +3,24 @@
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 
-const IDLE_MESSAGE = "Your analysis report will appear like below";
-const ANALYZING_MESSAGE = "Generating your analysis report";
+export const PREVIEW_IDLE_MESSAGE = "See your analysis instantly";
+export const PREVIEW_ANALYZING_MESSAGE = "Generating your report";
 
 type Props = {
   isAnalyzing?: boolean;
   className?: string;
   darkSurface?: boolean;
+  compact?: boolean;
 };
 
 export function TypewriterStatus({
   isAnalyzing = false,
   className = "",
   darkSurface = false,
+  compact = false,
 }: Props) {
   const reduceMotion = useReducedMotion();
-  const fullText = isAnalyzing ? ANALYZING_MESSAGE : IDLE_MESSAGE;
+  const fullText = isAnalyzing ? PREVIEW_ANALYZING_MESSAGE : PREVIEW_IDLE_MESSAGE;
   const [visibleChars, setVisibleChars] = useState(reduceMotion ? fullText.length : 0);
 
   useEffect(() => {
@@ -47,7 +49,9 @@ export function TypewriterStatus({
     <p
       className={`tracking-[-0.02em] ${
         darkSurface
-          ? "text-lg font-bold leading-snug sm:text-xl lg:text-[1.375rem]"
+          ? compact
+            ? "text-xs font-bold leading-snug sm:text-sm"
+            : "text-base font-bold leading-snug sm:text-lg"
           : "text-sm font-semibold sm:text-base"
       } ${className}`}
       aria-live="polite"

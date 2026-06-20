@@ -2,7 +2,7 @@ import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import {
   atsShortlistLikelihoodLine,
   evidenceInterviewLikelihoodLine,
-  EXPERIENCE_ALIGNMENT_LABEL,
+  TOP_REJECTION_RISKS_TITLE,
   snapshotSummaryLine,
 } from "@/app/lib/evidenceMetricCopy";
 import { getATSBadgeLabel } from "@/app/lib/scoreColors";
@@ -46,7 +46,7 @@ export function buildShareIntroMessage(args: ShareRecruiterReportArgs): string {
 }
 
 export async function fetchAnalysisReportPdfBlob(
-  args: ShareRecruiterReportArgs & { experienceAlignmentScore?: number }
+  args: ShareRecruiterReportArgs
 ): Promise<Blob> {
   const res = await fetch("/api/analysis-report-pdf", {
     method: "POST",
@@ -54,8 +54,6 @@ export async function fetchAnalysisReportPdfBlob(
     body: JSON.stringify({
       analyzeResult: args.analyzeResult,
       evidenceDashboard: args.evidenceDashboard,
-      experienceAlignmentScore: args.experienceAlignmentScore,
-      experienceAlignmentSubtitle: args.experienceAlignmentSubtitle,
     }),
   });
   if (!res.ok) {
@@ -91,7 +89,7 @@ export async function sharePdfOnLinkedIn(args: {
   downloadPdfBlob(args.blob);
   const note =
     args.introMessage +
-    "\n\nThe full color PDF report was downloaded — please attach it to your message.";
+    "\n\nThe full color PDF report was downloaded. Please attach it to your message.";
   try {
     await navigator.clipboard.writeText(note);
   } catch {
@@ -102,8 +100,6 @@ export async function sharePdfOnLinkedIn(args: {
 export type ShareRecruiterReportArgs = {
   analyzeResult: ATSAnalyzeResult;
   evidenceDashboard: EvidenceDashboard;
-  experienceAlignmentSubtitle?: string;
-  experienceAlignmentScore?: number;
   toolUrl?: string;
 };
 
@@ -140,25 +136,23 @@ export function buildShareRecruiterReportText(args: ShareRecruiterReportArgs): s
   lines.push("");
   lines.push("Match scores");
   lines.push(
-    `• Evidence Match: ${evidence}% (${getATSBadgeLabel(evidence)}) — ${evidenceInterviewLikelihoodLine(evidence)}`
+    `• Evidence Match: ${evidence}% (${getATSBadgeLabel(evidence)}), ${evidenceInterviewLikelihoodLine(evidence)}`
   );
   lines.push(
-    `• ATS keyword reference: ${ats}% — ${atsShortlistLikelihoodLine(ats)}`
+    `• ATS keyword reference: ${ats}%, ${atsShortlistLikelihoodLine(ats)}`
   );
-  if (typeof r.keyword_coverage === "number") {
-    lines.push(`• Keyword coverage: ${r.keyword_coverage}%`);
-  }
-  if (typeof r.experience_alignment === "number") {
-    const yearsNote = args.experienceAlignmentSubtitle?.trim();
-    lines.push(
-      `• ${EXPERIENCE_ALIGNMENT_LABEL}: ${r.experience_alignment}%${yearsNote ? ` — ${yearsNote}` : ""}`
-    );
-  }
   lines.push("");
   lines.push("Evidence signals");
   lines.push(`• ${snapshotSummaryLine(dash)}`);
   for (const skillLine of formatSkillLists(r)) {
     lines.push(`• ${skillLine}`);
+  }
+  if (dash.mostMissingEvidence && dash.mostMissingEvidence.length > 0) {
+    lines.push("");
+    lines.push(TOP_REJECTION_RISKS_TITLE);
+    dash.mostMissingEvidence.slice(0, 5).forEach((item, index) => {
+      lines.push(`${index + 1}. ${item}`);
+    });
   }
   if (dash.riskAreas.length > 0) {
     lines.push("");
@@ -175,7 +169,7 @@ export function buildShareRecruiterReportText(args: ShareRecruiterReportArgs): s
     }
   }
   lines.push("");
-  lines.push("—");
+  lines.push("---");
   lines.push(
     "This summary reflects documented résumé evidence against the job description. It supports screening conversations and is not a substitute for interview evaluation or background verification."
   );

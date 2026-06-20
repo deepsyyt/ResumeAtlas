@@ -37,7 +37,7 @@ export function HomeBrowseByRoleSection() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto w-full max-w-5xl px-4 py-5 sm:px-6 sm:py-7 lg:px-8">
+      <div className="page-shell py-5 sm:py-7">
         <div className="max-w-2xl">
           <h2
             id="home-browse-by-role-heading"

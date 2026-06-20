@@ -85,7 +85,7 @@ export function CompetitorComparisonPage({ config, benchmarkDisclaimer }: Props)
   return (
     <main className="min-h-screen bg-white pb-24 text-slate-900 lg:pb-0">
       <section className="border-b border-slate-200 bg-slate-50/60">
-        <div className="mx-auto max-w-4xl px-4 pb-10 pt-6 sm:px-6 sm:pb-12 sm:pt-8 lg:px-8">
+        <div className="page-prose-wide pb-10 pt-6 sm:pb-12 sm:pt-8">
           <nav aria-label="Breadcrumb" className="mb-3 text-left text-[11px] text-slate-500 sm:text-xs">
             <Link href="/" className="text-sky-700 underline underline-offset-2 hover:text-sky-900">
               Home
@@ -123,7 +123,7 @@ export function CompetitorComparisonPage({ config, benchmarkDisclaimer }: Props)
         </div>
       </section>
 
-      <div className="mx-auto max-w-4xl space-y-12 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <div className="page-prose-wide space-y-12 py-10 sm:py-14">
         <section id="quick-verdict">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">Quick verdict</h2>
           <p className="mt-2 text-sm text-slate-600">

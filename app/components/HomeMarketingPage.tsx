@@ -40,7 +40,7 @@ export function HomeMarketingPage() {
       <HomeStep1PreviewSection />
       <HomeOptimizedResumePreviewSection />
 
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+      <div className="page-shell py-8 sm:py-10 lg:py-12">
         <section aria-labelledby="home-capabilities-heading" className="text-center">
           <h2
             id="home-capabilities-heading"

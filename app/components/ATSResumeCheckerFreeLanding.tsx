@@ -25,7 +25,7 @@ export function ATSResumeCheckerFreeLanding() {
   return (
     <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50/90 to-white">
-        <div className="mx-auto max-w-4xl px-4 py-12 text-center sm:px-6 sm:py-14 lg:px-8">
+        <div className="page-prose-wide py-12 text-center sm:py-14">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-800">
             ATS parser · readability · formatting · compatibility
           </p>
@@ -69,7 +69,7 @@ export function ATSResumeCheckerFreeLanding() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl space-y-12 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+      <div className="page-prose space-y-12 py-10 sm:py-12">
         <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
           <h2 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
             {TOOL_CLUSTER_ATS_FREE.differentiatorHeading}

@@ -111,7 +111,7 @@ export const DIAGNOSTIC_PRIMITIVES: readonly DiagnosticPrimitive[] = [
     shortDefinition:
       "Whether your responsibilities read like the role in the posting, not just keyword overlap.",
     gate: "C",
-    analyzerResponseKeys: ["semantic_similarity"],
+    analyzerResponseKeys: ["evidence_dashboard"],
     relatedPrimitiveIds: ["posting_vocabulary_coverage", "evidence_density"],
     glossaryOrder: 50,
   },
@@ -122,7 +122,7 @@ export const DIAGNOSTIC_PRIMITIVES: readonly DiagnosticPrimitive[] = [
     shortDefinition:
       "How much outcome proof (scope, metrics, ownership) appears where recruiters skim first.",
     gate: "C",
-    analyzerResponseKeys: ["impact_score"],
+    analyzerResponseKeys: ["evidence_dashboard"],
     relatedPrimitiveIds: ["skim_friction", "truth_envelope"],
     glossaryOrder: 60,
   },
@@ -133,7 +133,7 @@ export const DIAGNOSTIC_PRIMITIVES: readonly DiagnosticPrimitive[] = [
     shortDefinition:
       "How quickly a recruiter can extract role, impact, and relevance in the first pass.",
     gate: "D",
-    analyzerResponseKeys: ["resume_quality"],
+    analyzerResponseKeys: ["ats_score"],
     relatedPrimitiveIds: ["parse_hygiene", "evidence_density"],
     glossaryOrder: 70,
   },

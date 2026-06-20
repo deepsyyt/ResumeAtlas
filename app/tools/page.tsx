@@ -104,7 +104,7 @@ export default function ToolsPage() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14">
+        <div className="page-prose py-12 sm:py-14">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
             Free ATS Resume Tools
           </h1>
@@ -125,7 +125,7 @@ export default function ToolsPage() {
           </p>
         </div>
       </section>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+      <div className="page-prose py-10 space-y-10">
         <section>
           <h2 className="text-lg font-semibold text-slate-900">Free checkers</h2>
           <ul className="mt-4 space-y-4">

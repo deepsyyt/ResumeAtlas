@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function BusinessAnalystVsDataAnalystResumePage() {
   return (
     <main className="min-h-screen bg-white text-slate-900">
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="page-prose py-12 sm:py-16">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           Business Analyst vs Data Analyst Resume
         </h1>

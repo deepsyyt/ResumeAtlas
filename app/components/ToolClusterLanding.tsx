@@ -54,18 +54,18 @@ export function ToolClusterLanding({
       {!hidePrimaryHero ? (
         <>
       <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 text-center">
+        <div className="page-prose-wide py-10 sm:py-12 text-center">
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
             {config.h1}
           </h1>
-          <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-4 text-base sm:text-lg text-slate-600 page-prose-sm leading-relaxed">
             {config.intro}
           </p>
         </div>
       </section>
 
       <section className="border-b border-slate-200 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 text-center">
+        <div className="page-prose-wide py-5 sm:py-6 text-center">
           <p className="text-sm sm:text-base text-slate-900">
             <strong>{config.topStripStrong}</strong>
           </p>
@@ -101,7 +101,7 @@ export function ToolClusterLanding({
 
       {!isJdWorkbench ? (
         <section className="border-b border-slate-200 bg-sky-50/40">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+          <div className="page-prose-wide py-5 sm:py-6">
             <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
               {config.differentiatorHeading}
             </h2>
@@ -118,8 +118,8 @@ export function ToolClusterLanding({
 
       {isJdWorkbench && !homePageMode ? (
         <div className="border-b border-slate-200 bg-white">
-          <div className="mx-auto max-w-4xl px-4 py-6 text-center sm:px-6 sm:text-left lg:px-8">
-            <p className="mx-auto max-w-3xl text-sm text-slate-600">
+          <div className="page-prose-wide py-6 text-center sm:text-left">
+            <p className="mx-auto max-w-3xl text-sm text-slate-600 sm:mx-0">
               Want sample JD match examples and role keyword checklists first? See{" "}
               <Link
                 href={OPTIMIZE_RESUME_FOR_JD_PATH}
@@ -141,7 +141,7 @@ export function ToolClusterLanding({
       ) : null}
 
       <div
-        className={`max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 ${homePageMode ? "py-5 sm:py-6" : "py-8 sm:py-10"}`}
+        className={`page-prose space-y-8 ${homePageMode ? "py-5 sm:py-6" : "py-8 sm:py-10"}`}
       >
         {isJdWorkbench ? (
           <>

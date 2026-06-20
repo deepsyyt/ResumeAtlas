@@ -39,8 +39,8 @@ export function PostingFitSsrShell() {
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_55%_at_50%_-15%,rgba(56,189,248,0.14),transparent)]"
           aria-hidden
         />
-        <div className="relative mx-auto max-w-7xl px-4 pb-8 pt-8 sm:px-6 sm:pb-10 sm:pt-9 lg:px-8 lg:pb-10 lg:pt-10">
-          <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10 xl:gap-12">
+        <div className="relative page-shell pb-8 pt-8 sm:pb-10 sm:pt-9 lg:pb-10 lg:pt-10">
+          <div className="grid min-w-0 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:gap-8 xl:gap-10">
             <div className="text-center lg:py-1 lg:text-left">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-800">
                 {eyebrow}
@@ -55,7 +55,7 @@ export function PostingFitSsrShell() {
               <ul className="mx-auto mt-6 hidden max-w-md space-y-2 text-left text-sm text-slate-700 lg:mx-0 lg:block">
                 {[
                   "Job description match score (Evidence Match)",
-                  "Skill-by-skill proof map and topic coverage",
+                  "JD skill proof map and topic coverage",
                   "Optimize thin bullets without inventing experience",
                 ].map((line) => (
                   <li key={line} className="flex gap-2 leading-snug">

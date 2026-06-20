@@ -11,11 +11,16 @@ import {
   JOB_DESCRIPTION_MAX_WORDS,
   RESUME_TEXT_MAX_WORDS,
 } from "@/app/lib/inputWordLimits";
+import {
+  TARGET_ROLE_TITLE_MAX_CHARS,
+} from "@/app/lib/roleFitArchetypes";
+import { ANALYSIS_QUOTA_LIMITS } from "@/app/lib/quota/constants";
 export const ROLE_LEVELS = ["Entry", "Mid", "Senior", "Leadership"] as const;
 
 export type GenerateInputs = {
   resumeText: string;
   jobDescription: string;
+  targetRoleTitle?: string;
   country?: "USA" | "Canada" | "UK";
   roleLevel?: string;
   customRoleLevel?: string;
@@ -46,6 +51,8 @@ type ResumeFormProps = {
   showShareFriendsCta?: boolean;
   /** Dark-sidebar workbench: elevated card on violet rail. */
   variant?: "default" | "workbench";
+  /** Split workbench column: fill height, no outer scroll. */
+  splitPanelLayout?: boolean;
 };
 
 const inputClass =
@@ -139,15 +146,17 @@ export function ResumeForm({
   isLoggingInForMoreScans = false,
   showShareFriendsCta = false,
   variant = "default",
+  splitPanelLayout = false,
 }: ResumeFormProps) {
   const isWorkbench = variant === "workbench";
   const lastAnalyzeClickAtRef = useRef(0);
   const isAtsCompliance = analysisMode === "atsCompliance";
   const isKeywordScanner = analysisMode === "keywordScanner";
-  const { register, handleSubmit, control, setValue } = useForm<GenerateInputs>({
+  const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<GenerateInputs>({
     defaultValues: {
       resumeText: "",
       jobDescription: "",
+      targetRoleTitle: "",
       country: "USA",
       roleLevel: "Mid",
       customRoleLevel: "",
@@ -187,6 +196,7 @@ export function ResumeForm({
     onGenerate({
       resumeText: data.resumeText,
       jobDescription: data.jobDescription,
+      targetRoleTitle: data.targetRoleTitle?.trim() ?? "",
     });
   };
 
@@ -235,11 +245,13 @@ export function ResumeForm({
     : isKeywordScanner
       ? "border-emerald-100/90 bg-emerald-50/90 text-emerald-900"
       : "border-indigo-100/90 bg-indigo-50/90 text-indigo-900";
+  const signedInScanAllowance = ANALYSIS_QUOTA_LIMITS.user;
+  const signedInScanNoun = signedInScanAllowance === 1 ? "scan" : "scans";
   const loginIntentCopy = isAtsCompliance
-    ? "Log in to unlock 5 more free ATS compatibility scans."
+    ? `Log in to unlock ${signedInScanAllowance} more free ATS compatibility ${signedInScanNoun}.`
     : isKeywordScanner
-      ? "Log in to unlock 5 more free keyword gap analyses."
-      : "Log in to unlock 5 more free analyses.";
+      ? `Log in to unlock ${signedInScanAllowance} more free keyword gap ${signedInScanAllowance === 1 ? "analysis" : "analyses"}.`
+      : `Log in to unlock ${signedInScanAllowance} more free ${signedInScanAllowance === 1 ? "analysis" : "analyses"}.`;
 
   const handleLoginForMoreScans = () => {
     if (!onLoginForMoreScans) return;
@@ -247,21 +259,39 @@ export function ResumeForm({
   };
 
   const accent = formAccent(analysisMode);
-  const pasteCardShell = (step: 1 | 2) =>
-    `rounded-2xl border p-3 shadow-sm ring-1 sm:p-3.5 ${
+  const pasteCardShell = (step: 1 | 2) => {
+    if (splitPanelLayout) {
+      return "";
+    }
+    return `rounded-2xl border p-3 shadow-sm ring-1 sm:p-3.5 ${
       step === 1 ? accent.pasteCard1 : accent.pasteCard2
     }`;
+  };
+  const splitTextareaClass =
+    `h-40 min-h-40 max-h-40 w-full shrink-0 resize-none overflow-y-auto preview-panel-scroll rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 outline-none transition disabled:bg-slate-50 disabled:text-slate-500 ${accent.fieldFocus}`;
   const textareaClass =
-    `w-full min-h-[7.5rem] resize-y rounded-xl border border-slate-200/70 bg-white/95 px-3.5 py-3 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 ` +
-    `shadow-inner shadow-slate-900/[0.02] outline-none transition disabled:bg-slate-50 disabled:text-slate-500 ${accent.fieldFocus}`;
+    `w-full rounded-xl border bg-white/95 px-3.5 py-3 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 ` +
+    `shadow-inner shadow-slate-900/[0.02] outline-none transition disabled:bg-slate-50 disabled:text-slate-500 ${accent.fieldFocus}` +
+    (splitPanelLayout
+      ? ""
+      : " min-h-[7.5rem] resize-y border-slate-200/70");
+
+  const pasteFieldWrapClass = splitPanelLayout ? "flex shrink-0 flex-col gap-1" : "";
 
   const shellClass = isWorkbench
     ? "relative overflow-hidden rounded-2xl bg-transparent"
-    : `relative overflow-hidden rounded-2xl border border-white/80 bg-white/95 shadow-lg ring-1 backdrop-blur-sm ${accent.shell}`;
+    : splitPanelLayout
+      ? "relative flex flex-col bg-white"
+      : `relative overflow-hidden rounded-2xl border border-white/80 bg-white/95 shadow-lg ring-1 backdrop-blur-sm ${accent.shell}`;
 
   const headerClass = isWorkbench
     ? "px-0.5 pb-2"
-    : `border-b ${accent.divider} bg-gradient-to-br ${accent.header} px-3 py-2.5 sm:px-4 sm:py-3`;
+    : splitPanelLayout
+      ? `shrink-0 border-b border-slate-100 px-4 py-2 sm:px-5`
+      : `border-b ${accent.divider} bg-gradient-to-br ${accent.header} px-3 py-2.5 sm:px-4 sm:py-3`;
+
+  const splitSectionTitleClass = "text-[13px] font-semibold tracking-tight text-slate-900";
+  const splitSectionDividerClass = "shrink-0 border-b border-slate-200/90 pb-2";
 
   const submitClass =
     "flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-semibold tracking-[-0.01em] text-white shadow-sm transition " +
@@ -274,12 +304,99 @@ export function ResumeForm({
       atLimit ? "font-semibold text-amber-700" : "text-slate-400"
     }`;
 
+  const pasteSectionClass = (step: 1 | 2) => {
+    if (splitPanelLayout) {
+      return "flex shrink-0 flex-col gap-2";
+    }
+    return pasteCardShell(step);
+  };
+
+  const formBodyClass = splitPanelLayout
+    ? "px-4 py-3 sm:px-5 sm:py-4"
+    : "px-3 py-3 sm:px-4 sm:py-4";
+
+  const formClass = splitPanelLayout
+    ? "flex flex-col gap-5 pb-1"
+    : "space-y-3";
+
   const shareCard =
     isLoggedIn && showShareFriendsCta ? (
       <div className="mt-1.5">
         <ShareFriendsCta tone={analysisMode} layout="sidebar" />
       </div>
     ) : null;
+
+  const showTargetRoleField = !isAtsCompliance;
+  const targetRoleInputClass =
+    `w-full rounded-xl border bg-white/95 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 ` +
+    `shadow-inner shadow-slate-900/[0.02] outline-none transition disabled:bg-slate-50 disabled:text-slate-500 ${accent.fieldFocus}` +
+    (splitPanelLayout ? " rounded-lg border-slate-200 shadow-none" : " border-slate-200/70");
+
+  const splitPanelTargetRole = showTargetRoleField ? (
+    <div className="flex shrink-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-2.5">
+      <label
+        className="shrink-0 text-[11px] font-medium text-slate-600"
+        htmlFor="resumeatlas-target-role"
+      >
+        Role <span className="text-rose-600">*</span>
+      </label>
+      <input
+        {...register("targetRoleTitle", {
+          required: "Enter the target role title.",
+          validate: (value) =>
+            String(value ?? "").trim().length > 0 || "Enter the target role title.",
+        })}
+        id="resumeatlas-target-role"
+        type="text"
+        required
+        maxLength={TARGET_ROLE_TITLE_MAX_CHARS}
+        className={`${targetRoleInputClass} min-w-0 flex-1 py-2`}
+        placeholder="e.g. Senior GenAI Engineering Manager"
+        disabled={isGenerating}
+        aria-invalid={errors.targetRoleTitle ? true : undefined}
+      />
+      {errors.targetRoleTitle ? (
+        <p className="text-[10px] font-medium text-rose-700 sm:col-span-2" role="alert">
+          {errors.targetRoleTitle.message}
+        </p>
+      ) : null}
+    </div>
+  ) : null;
+
+  const targetRoleField = showTargetRoleField ? (
+    <>
+      <label
+        className="text-[11px] font-semibold text-slate-800"
+        htmlFor="resumeatlas-target-role"
+      >
+        Target role title <span className="text-rose-600">*</span>
+      </label>
+      <input
+        {...register("targetRoleTitle", {
+          required: "Enter the target role title.",
+          validate: (value) =>
+            String(value ?? "").trim().length > 0 || "Enter the target role title.",
+        })}
+        id="resumeatlas-target-role"
+        type="text"
+        required
+        maxLength={TARGET_ROLE_TITLE_MAX_CHARS}
+        className={`${targetRoleInputClass} mt-1`}
+        placeholder="e.g. Senior GenAI Engineering Manager"
+        disabled={isGenerating}
+        aria-invalid={errors.targetRoleTitle ? true : undefined}
+      />
+      {errors.targetRoleTitle ? (
+        <p className="mt-1 text-[10px] font-medium text-rose-700" role="alert">
+          {errors.targetRoleTitle.message}
+        </p>
+      ) : null}
+    </>
+  ) : null;
+
+  const defaultTargetRoleField = showTargetRoleField ? (
+    <div className="mb-2.5">{targetRoleField}</div>
+  ) : null;
 
   if (isWorkbench) {
     return (
@@ -343,6 +460,7 @@ export function ResumeForm({
               </div>
               <span className={`text-[10px] font-semibold ${accent.pasteHint2}`}>Paste job description</span>
             </div>
+            {defaultTargetRoleField}
             <Controller
               name="jobDescription"
               control={control}
@@ -425,31 +543,39 @@ export function ResumeForm({
         </div>
       )}
 
-      <header className={headerClass}>
+      <header className={`${headerClass}${splitPanelLayout ? " shrink-0" : ""}`}>
         {!isWorkbench ? (
           <>
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-              <p className={`text-[11px] font-bold tracking-[-0.01em] ${accent.eyebrow}`}>
+            <div className={`flex flex-wrap items-center gap-x-2 gap-y-0.5${splitPanelLayout ? " text-left" : ""}`}>
+              <p className={`text-[11px] font-bold tracking-[-0.01em] ${splitPanelLayout ? "text-slate-800" : accent.eyebrow}`}>
                 {isAtsCompliance
                   ? "ATS compatibility scan"
                   : isKeywordScanner
                     ? "Keyword gap scan"
                     : "Resume vs job match"}
               </p>
-              <span className="hidden text-slate-300 sm:inline" aria-hidden>
-                ·
-              </span>
-              <p className="flex flex-wrap items-center gap-1 text-[10px] font-medium text-slate-600">
-                <span className="rounded-full bg-white/80 px-1.5 py-0.5 ring-1 ring-slate-200/90">
-                  Free
-                </span>
-                <span className="rounded-full bg-white/80 px-1.5 py-0.5 ring-1 ring-slate-200/90">
-                  Paste only
-                </span>
-                <span className="rounded-full bg-white/80 px-1.5 py-0.5 ring-1 ring-slate-200/90">
-                  No signup
-                </span>
-              </p>
+              {!splitPanelLayout ? (
+                <>
+                  <span className="hidden text-slate-300 sm:inline" aria-hidden>
+                    ·
+                  </span>
+                  <p className="flex flex-wrap items-center gap-1 text-[10px] font-medium text-slate-600">
+                    <span className="rounded-full bg-white/80 px-1.5 py-0.5 ring-1 ring-slate-200/90">
+                      Free
+                    </span>
+                    <span className="rounded-full bg-white/80 px-1.5 py-0.5 ring-1 ring-slate-200/90">
+                      Paste only
+                    </span>
+                    <span className="rounded-full bg-white/80 px-1.5 py-0.5 ring-1 ring-slate-200/90">
+                      No signup
+                    </span>
+                  </p>
+                </>
+              ) : (
+                <p className="text-[10px] font-medium text-slate-500">
+                  Free · Paste only · No signup
+                </p>
+              )}
             </div>
           </>
         ) : null}
@@ -474,7 +600,9 @@ export function ResumeForm({
                 {isWorkbench
                   ? "free"
                   : isLoggedIn
-                    ? "free scans today"
+                    ? quota.limit === 1
+                      ? "free scan today"
+                      : "free scans today"
                     : "free scan this month"}
               </span>
             </p>
@@ -507,23 +635,29 @@ export function ResumeForm({
             ) : null}
           </div>
         ) : null}
-        {shareCard}
+        {shareCard && !splitPanelLayout ? shareCard : null}
       </header>
 
-      <div className={isWorkbench ? "px-0.5 py-1" : "px-3 py-3 sm:px-4 sm:py-4"}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-          <section className={pasteCardShell(1)}>
-            <div className="mb-2.5 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2.5">
-                <span className={stepBadgeClass} aria-hidden>
-                  1
-                </span>
-                <h3 className={stepTitleClass}>Your resume</h3>
+      <div className={formBodyClass}>
+        <form onSubmit={handleSubmit(onSubmit)} className={formClass}>
+          <section className={pasteSectionClass(1)}>
+            {splitPanelLayout ? (
+              <div className={splitSectionDividerClass}>
+                <h3 className={splitSectionTitleClass}>Your resume</h3>
               </div>
-              <span className={`text-[10px] font-semibold sm:text-[11px] ${accent.pasteHint1}`}>
-                Paste resume
-              </span>
-            </div>
+            ) : (
+              <div className="mb-2.5 flex shrink-0 items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5">
+                  <span className={stepBadgeClass} aria-hidden>
+                    1
+                  </span>
+                  <h3 className={stepTitleClass}>Your resume</h3>
+                </div>
+                <span className={`text-[10px] font-semibold sm:text-[11px] ${accent.pasteHint1}`}>
+                  Paste resume
+                </span>
+              </div>
+            )}
             <Controller
               name="resumeText"
               control={control}
@@ -531,55 +665,81 @@ export function ResumeForm({
               render={({ field }) => {
                 const wc = countWords(field.value);
                 return (
-                  <>
-                    <textarea
-                      {...field}
-                      id="resumeatlas-resume-text"
-                      rows={4}
-                      className={textareaClass}
-                      placeholder="Paste your full resume here…"
-                      disabled={isGenerating}
-                      onChange={(e) => {
-                        field.onChange(
-                          clipToWordLimit(e.target.value, RESUME_TEXT_MAX_WORDS)
-                        );
-                      }}
-                    />
-                    <p className={`mt-1.5 text-right ${wordCountClass(wc >= RESUME_TEXT_MAX_WORDS)}`}>
+                  <div className={pasteFieldWrapClass}>
+                    {splitPanelLayout ? (
+                      <textarea
+                        {...field}
+                        id="resumeatlas-resume-text"
+                        className={splitTextareaClass}
+                        placeholder="Paste your full resume here…"
+                        disabled={isGenerating}
+                        onChange={(e) => {
+                          field.onChange(
+                            clipToWordLimit(e.target.value, RESUME_TEXT_MAX_WORDS)
+                          );
+                        }}
+                      />
+                    ) : (
+                      <>
+                        <textarea
+                          {...field}
+                          id="resumeatlas-resume-text"
+                          rows={4}
+                          className={textareaClass}
+                          placeholder="Paste your full resume here…"
+                          disabled={isGenerating}
+                          onChange={(e) => {
+                            field.onChange(
+                              clipToWordLimit(e.target.value, RESUME_TEXT_MAX_WORDS)
+                            );
+                          }}
+                        />
+                      </>
+                    )}
+                    <p className={`shrink-0 text-right ${splitPanelLayout ? "text-[10px]" : "mt-1.5"} ${wordCountClass(wc >= RESUME_TEXT_MAX_WORDS)}`}>
                       {wc.toLocaleString()} / {RESUME_TEXT_MAX_WORDS.toLocaleString()} words
                     </p>
-                  </>
+                  </div>
                 );
               }}
             />
           </section>
 
-          <section className={pasteCardShell(2)}>
-            <div className="mb-2.5 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2.5">
-                <span className={stepBadgeClass} aria-hidden>
-                  2
-                </span>
-                <h3 className={stepTitleClass}>
+          <section className={pasteSectionClass(2)}>
+            {splitPanelLayout ? (
+              <div className={splitSectionDividerClass}>
+                <h3 className={splitSectionTitleClass}>
                   {isKeywordScanner ? "Job posting" : isAtsCompliance ? "Job description (optional)" : "Job description"}
                 </h3>
               </div>
-              <span className={`text-[10px] font-semibold sm:text-[11px] ${accent.pasteHint2}`}>
-                Paste job description
-              </span>
-            </div>
-            {isAtsCompliance ? (
+            ) : (
+              <div className="mb-2.5 flex shrink-0 items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5">
+                  <span className={stepBadgeClass} aria-hidden>
+                    2
+                  </span>
+                  <h3 className={stepTitleClass}>
+                    {isKeywordScanner ? "Job posting" : isAtsCompliance ? "Job description (optional)" : "Job description"}
+                  </h3>
+                </div>
+                <span className={`text-[10px] font-semibold sm:text-[11px] ${accent.pasteHint2}`}>
+                  Paste job description
+                </span>
+              </div>
+            )}
+            {isAtsCompliance && !splitPanelLayout ? (
               <p className="mb-2 text-[11px] leading-snug text-slate-600 sm:text-xs">
                 Leave blank for ATS parsing and formatting only. For keyword match to a specific
                 posting, paste the job description here or use the dedicated job description
                 checker.
               </p>
             ) : null}
-            {isKeywordScanner ? (
+            {isKeywordScanner && !splitPanelLayout ? (
               <p className="mb-2 text-[11px] leading-snug text-slate-600 sm:text-xs">
                 We extract keywords from this posting and flag gaps in your resume.
               </p>
             ) : null}
+            {splitPanelLayout ? splitPanelTargetRole : defaultTargetRoleField}
             <Controller
               name="jobDescription"
               control={control}
@@ -587,36 +747,57 @@ export function ResumeForm({
               render={({ field }) => {
                 const wc = countWords(field.value);
                 return (
-                  <>
-                    <textarea
-                      {...field}
-                      id="resumeatlas-jd-text"
-                      rows={4}
-                      className={textareaClass}
-                      placeholder={
-                        isAtsCompliance
-                          ? "Optional — add a job description for keyword alignment"
-                          : isKeywordScanner
-                            ? "Paste the full job posting…"
-                            : "Paste the job description you're targeting…"
-                      }
-                      disabled={isGenerating}
-                      onChange={(e) => {
-                        field.onChange(
-                          clipToWordLimit(e.target.value, JOB_DESCRIPTION_MAX_WORDS)
-                        );
-                      }}
-                    />
-                    <p className={`mt-1.5 text-right ${wordCountClass(wc >= JOB_DESCRIPTION_MAX_WORDS)}`}>
+                  <div className={pasteFieldWrapClass}>
+                    {splitPanelLayout ? (
+                      <textarea
+                        {...field}
+                        id="resumeatlas-jd-text"
+                        className={splitTextareaClass}
+                        placeholder={
+                          isAtsCompliance
+                            ? "Optional — add a job description for keyword alignment"
+                            : isKeywordScanner
+                              ? "Paste the full job posting…"
+                              : "Paste the job description you're targeting…"
+                        }
+                        disabled={isGenerating}
+                        onChange={(e) => {
+                          field.onChange(
+                            clipToWordLimit(e.target.value, JOB_DESCRIPTION_MAX_WORDS)
+                          );
+                        }}
+                      />
+                    ) : (
+                      <textarea
+                        {...field}
+                        id="resumeatlas-jd-text"
+                        rows={4}
+                        className={textareaClass}
+                        placeholder={
+                          isAtsCompliance
+                            ? "Optional — add a job description for keyword alignment"
+                            : isKeywordScanner
+                              ? "Paste the full job posting…"
+                              : "Paste the job description you're targeting…"
+                        }
+                        disabled={isGenerating}
+                        onChange={(e) => {
+                          field.onChange(
+                            clipToWordLimit(e.target.value, JOB_DESCRIPTION_MAX_WORDS)
+                          );
+                        }}
+                      />
+                    )}
+                    <p className={`shrink-0 text-right ${splitPanelLayout ? "text-[10px]" : "mt-1.5"} ${wordCountClass(wc >= JOB_DESCRIPTION_MAX_WORDS)}`}>
                       {wc.toLocaleString()} / {JOB_DESCRIPTION_MAX_WORDS.toLocaleString()} words
                     </p>
-                  </>
+                  </div>
                 );
               }}
             />
           </section>
 
-          <div className={isWorkbench ? "pt-2" : "pt-3"}>
+          <div className={splitPanelLayout ? "shrink-0 border-t border-slate-100 pt-4" : isWorkbench ? "pt-2" : "pt-3"}>
             <button
               type="submit"
               data-analytics="analyzer_form_analyze_submit"

@@ -33,7 +33,7 @@ export function PilotKeywordsGuidePage({ slug }: Props) {
   return (
     <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="mx-auto max-w-4xl px-4 pb-10 pt-6 sm:px-6 sm:pb-12 sm:pt-8 lg:px-8">
+        <div className="page-prose-wide pb-10 pt-6 sm:pb-12 sm:pt-8">
           <SeoBreadcrumbs
             kind="keywords"
             currentLabel={`${config.roleName} Resume Keywords`}
@@ -59,7 +59,7 @@ export function PilotKeywordsGuidePage({ slug }: Props) {
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl space-y-12 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <div className="page-prose space-y-12 py-10 sm:py-14">
         <section>
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             {config.roleName} role overview

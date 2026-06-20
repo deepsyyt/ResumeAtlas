@@ -34,7 +34,7 @@ export function RelatedProblemsWidget({ entries, siteUrl }: Props) {
         className="border-t border-slate-200 bg-gradient-to-b from-slate-50/80 to-white"
         aria-labelledby="related-problems-heading"
       >
-        <div className="mx-auto max-w-3xl px-4 pb-14 pt-10 sm:px-6 lg:px-8">
+        <div className="page-prose pb-14 pt-10">
           <h2
             id="related-problems-heading"
             className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl"

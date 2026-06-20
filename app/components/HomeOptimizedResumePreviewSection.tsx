@@ -25,8 +25,8 @@ export function HomeOptimizedResumePreviewSection() {
       className="marketing-optimize-bg relative overflow-hidden border-b border-slate-200/60 bg-[#f6f8fc]"
     >
       <div className="marketing-grid-overlay pointer-events-none absolute inset-0 opacity-70" aria-hidden />
-      <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
-        <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-10 xl:gap-12">
+      <div className="relative page-shell py-10 sm:py-12">
+        <div className="grid min-w-0 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:gap-8 xl:gap-10">
           <div className="text-center lg:text-left">
             <p className="text-sm font-semibold tracking-[-0.01em] text-violet-800/90">
               {HOME_OPTIMIZE_SECTION_EYEBROW}

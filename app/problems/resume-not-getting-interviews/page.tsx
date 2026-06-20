@@ -105,7 +105,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
     <div className="min-h-screen bg-white text-slate-900">
       {/* Hero */}
       <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50/80 to-white">
-        <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-18 lg:px-8">
+        <div className="page-prose-wide py-14 text-center sm:py-18">
           <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">Resume optimization</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
             Applied to 100 Jobs but No Interviews? Fix Your Resume in 2 Minutes
@@ -138,11 +138,11 @@ export default function ResumeNotGettingInterviewsLandingPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-6 lg:px-8">
+      <div className="page-prose pt-6">
         <ResumeExampleSeoFunnel />
       </div>
 
-      <div className="mx-auto max-w-3xl px-4 pt-4 sm:px-6 lg:px-8">
+      <div className="page-prose pt-4">
         <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-4 sm:p-5">
           <h2 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
             Top reasons your resume is not getting interviews
@@ -168,7 +168,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
         </section>
       </div>
 
-      <div className="mx-auto max-w-3xl px-4 pb-6 sm:px-6 lg:px-8">
+      <div className="page-prose pb-6">
         <TopicClusterCallout />
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
           <h2 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
@@ -226,7 +226,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
 
       {/* Product preview mock */}
       <section className="border-b border-slate-100 bg-white py-12 sm:py-16" aria-labelledby="product-preview-heading">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div className="page-prose-wide">
           <div className="text-center">
             <h2 id="product-preview-heading" className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
               See what&apos;s wrong and how to fix it, instantly
@@ -288,7 +288,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
 
       {/* Feature / benefit grid */}
       <section className="py-12 sm:py-16" aria-labelledby="features-heading">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div className="page-prose-wide">
           <h2 id="features-heading" className="text-center text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             Everything you need to fix your resume, in one pass
           </h2>
@@ -311,7 +311,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
 
       {/* How it works */}
       <section className="border-y border-slate-200 bg-slate-50/50 py-12 sm:py-16" aria-labelledby="how-heading">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div className="page-prose-xl">
           <h2 id="how-heading" className="text-center text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             How it works
           </h2>
@@ -341,7 +341,7 @@ export default function ResumeNotGettingInterviewsLandingPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl space-y-14 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="page-prose space-y-14 py-12 sm:py-16">
         {/* Why resumes fail */}
         <section aria-labelledby="why-fail-heading">
           <h2 id="why-fail-heading" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">

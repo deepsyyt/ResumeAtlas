@@ -106,7 +106,7 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
     <>
       <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/60">
-        <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-16 lg:px-8">
+        <div className="page-prose-wide py-14 text-center sm:py-16">
           <SeoBreadcrumbs
             kind="guide"
             currentLabel={`${config.roleName} Resume Guide`}
@@ -196,7 +196,7 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
       </section>
 
       {!isDataAnalyst ? (
-        <div className="mx-auto max-w-3xl space-y-10 px-4 py-10 sm:px-6 lg:px-8">
+        <div className="page-prose space-y-10 py-10">
           {optimizeCluster ? (
             <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={examplePath} />
           ) : null}
@@ -238,7 +238,7 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
 
       {role === "product-manager" ? (
         <section id="full-sample" className="scroll-mt-24 border-t border-slate-200 bg-slate-50/40">
-          <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="page-prose-wide py-6">
             <h2 className="text-center text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
               Full product manager resume example (appendix)
             </h2>
@@ -251,7 +251,7 @@ export default function RoleResumeExamplePage({ params }: { params: PageParams }
         </section>
       ) : null}
 
-      <div className="mx-auto max-w-3xl space-y-10 px-4 pb-14 sm:px-6 lg:px-8">
+      <div className="page-prose space-y-10 pb-14">
         {optimizeCluster ? (
           <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={examplePath} />
         ) : null}

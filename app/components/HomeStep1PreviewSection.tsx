@@ -30,8 +30,8 @@ export function HomeStep1PreviewSection() {
       className="marketing-page-bg marketing-hero-bg relative overflow-hidden border-b border-slate-200/60"
     >
       <div className="marketing-grid-overlay pointer-events-none absolute inset-0" aria-hidden />
-      <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10 xl:gap-12">
+      <div className="relative page-shell py-10 sm:py-12 lg:py-14">
+        <div className="grid min-w-0 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:gap-8 xl:gap-10">
           <div className="text-center lg:text-left">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-700/90">
               {HOME_MARKETING_TRUST_EYEBROW}

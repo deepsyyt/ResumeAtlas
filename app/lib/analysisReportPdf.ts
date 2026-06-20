@@ -3,14 +3,13 @@ import type { ATSAnalyzeResult } from "@/app/lib/atsAnalyze";
 import {
   atsShortlistLikelihoodLine,
   ATS_REFERENCE_TITLE,
-  buildSignalMetrics,
   evidenceInterviewLikelihoodLine,
   RISK_AREAS_INTRO,
-  SIGNALS_SECTION_INTRO,
-  SIGNALS_SECTION_TITLE,
+  TOP_REJECTION_RISKS_INTRO,
+  TOP_REJECTION_RISKS_TITLE,
   snapshotSummaryLine,
 } from "@/app/lib/evidenceMetricCopy";
-import type { EvidenceCategoryScore, EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
+import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
 import {
   ROLE_FIT_SECTION_INTRO,
   ROLE_FIT_SECTION_TITLE,
@@ -23,8 +22,6 @@ import { getATSBadgeLabel, getScoreStyle, type ScoreStyle } from "@/app/lib/scor
 export type AnalysisReportPdfInput = {
   analyzeResult: ATSAnalyzeResult;
   evidenceDashboard: EvidenceDashboard;
-  experienceAlignmentScore?: number;
-  experienceAlignmentSubtitle?: string;
   generatedAt?: string;
 };
 
@@ -38,8 +35,6 @@ const FOOTER_H = 28;
 const FOOTER_Y = PAGE_H - MARGIN - FOOTER_H;
 
 export const PDF_AREAS_TO_STRENGTHEN_TITLE = "Areas to strengthen";
-const JD_TOPICS_SECTION_TITLE = "Topics this job cares about";
-const JD_TOPICS_SECTION_INTRO = "How much your resume talks about each theme the JD mentions.";
 
 const COLORS = {
   indigo900: "#312e81",
@@ -120,58 +115,6 @@ function drawCompactScoreCard(
 
   d.font("Helvetica").fontSize(6.5).fillColor(args.style.hex);
   d.text(args.secondaryLine, x + pad, y + h - 16, { width: w - pad * 2, lineGap: 0 });
-}
-
-function drawMetricRow(
-  d: PdfDoc,
-  x: number,
-  y: number,
-  w: number,
-  label: string,
-  value: number,
-  rowH: number,
-  hint?: string
-): void {
-  const style = getScoreStyle(value);
-  d.font("Helvetica-Bold").fontSize(7.5).fillColor(COLORS.slate900);
-  d.text(label, x, y + 2, { width: w * 0.68, lineGap: 0 });
-  d.font("Helvetica-Bold").fontSize(8.5).fillColor(style.hex);
-  d.text(`${value}%`, x + w * 0.68, y + 2, { width: w * 0.32, align: "right", lineGap: 0 });
-  drawMiniBar(d, x, y + 14, w, value, style.hex);
-
-  if (hint?.trim()) {
-    d.font("Helvetica").fontSize(6).fillColor(COLORS.slate500);
-    d.text(hint, x, y + 21, { width: w, lineGap: 0 });
-  }
-}
-
-function drawMetricsGrid(
-  d: PdfDoc,
-  x: number,
-  y: number,
-  w: number,
-  metrics: Array<{ label: string; value: number; hint?: string }>,
-  rowH: number,
-  rowGap: number
-): number {
-  const gap = 10;
-  const colW = (w - gap) / 2;
-  const rows = Math.ceil(metrics.length / 2);
-  let cursorY = y;
-
-  for (let row = 0; row < rows; row++) {
-    const left = metrics[row * 2];
-    const right = metrics[row * 2 + 1];
-    if (left) {
-      drawMetricRow(d, x, cursorY, colW, left.label, left.value, rowH, left.hint);
-    }
-    if (right) {
-      drawMetricRow(d, x + colW + gap, cursorY, colW, right.label, right.value, rowH, right.hint);
-    }
-    cursorY += rowH + rowGap;
-  }
-
-  return cursorY;
 }
 
 function drawRoleFitTable(
@@ -269,6 +212,40 @@ function drawAreasToStrengthenBox(
   return y + boxH;
 }
 
+function drawTopRejectionRisksBox(
+  d: PdfDoc,
+  x: number,
+  y: number,
+  w: number,
+  items: string[]
+): number {
+  const pad = 8;
+  const intro = TOP_REJECTION_RISKS_INTRO;
+  const bullets = items.map((item, index) => `${index + 1}. ${item}`).join("\n");
+  const body = `${intro}\n\n${bullets}`;
+
+  d.font("Helvetica").fontSize(6.5).fillColor("#9f1239");
+  const textH = d.heightOfString(body, { width: w - pad * 2 - 4, lineGap: 1.5 });
+  const boxH = textH + pad * 2 + 4;
+
+  d.save();
+  d.roundedRect(x, y, w, boxH, 5).fill("#fff1f2");
+  d.roundedRect(x, y, w, boxH, 5).lineWidth(0.6).strokeColor("#fecdd3").stroke();
+  d.rect(x, y, 4, boxH).fill("#f43f5e");
+  d.restore();
+
+  d.font("Helvetica-Bold").fontSize(6.5).fillColor("#881337");
+  d.text(intro, x + pad + 4, y + pad, { width: w - pad * 2 - 4, lineGap: 1 });
+  const introH = d.heightOfString(intro, { width: w - pad * 2 - 4, lineGap: 1 });
+  d.font("Helvetica").fontSize(6.5).fillColor("#9f1239");
+  d.text(bullets, x + pad + 4, y + pad + introH + 4, {
+    width: w - pad * 2 - 4,
+    lineGap: 1.5,
+  });
+
+  return y + boxH;
+}
+
 function drawSkillPills(d: PdfDoc, x: number, y: number, w: number, skills: string[]): number {
   const compact = skills.length > 18;
   const gap = compact ? 4 : 5;
@@ -297,56 +274,6 @@ function drawSkillPills(d: PdfDoc, x: number, y: number, w: number, skills: stri
   }
 
   return cy + pillH;
-}
-
-function drawJdTopicsGrid(
-  d: PdfDoc,
-  x: number,
-  y: number,
-  w: number,
-  categories: EvidenceCategoryScore[]
-): number {
-  const cols = Math.min(4, Math.max(1, categories.length));
-  const gap = 6;
-  const cardW = (w - gap * (cols - 1)) / cols;
-  const cardH = 40;
-  const rows = Math.ceil(categories.length / cols);
-  let cursorY = y;
-
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      const index = row * cols + col;
-      if (index >= categories.length) break;
-
-      const cat = categories[index];
-      const style = getScoreStyle(cat.score);
-      const cx = x + col * (cardW + gap);
-      const cy = cursorY;
-
-      d.save();
-      d.roundedRect(cx, cy, cardW, cardH, 4).fill(COLORS.white);
-      d.roundedRect(cx, cy, cardW, cardH, 4).lineWidth(0.5).strokeColor(COLORS.indigo100).stroke();
-      d.restore();
-
-      d.font("Helvetica-Bold").fontSize(6.5).fillColor(COLORS.indigo900);
-      d.text(cat.category, cx + 5, cy + 4, { width: cardW - 10, align: "center", lineGap: 0 });
-
-      d.font("Helvetica-Bold").fontSize(9).fillColor(style.hex);
-      d.text(`${cat.score}%`, cx + 5, cy + 13, { width: cardW - 10, align: "center", lineGap: 0 });
-
-      drawMiniBar(d, cx + 6, cy + 24, cardW - 12, cat.score, style.hex, 3);
-
-      d.font("Helvetica").fontSize(5).fillColor(COLORS.slate500);
-      d.text(truncateText(cat.detail, 55), cx + 4, cy + 29, {
-        width: cardW - 8,
-        align: "center",
-        lineGap: 0,
-      });
-    }
-    cursorY += cardH + gap;
-  }
-
-  return cursorY;
 }
 
 export function renderAnalysisReportPdf(input: AnalysisReportPdfInput): Promise<Buffer> {
@@ -424,86 +351,31 @@ export function renderAnalysisReportPdf(input: AnalysisReportPdfInput): Promise<
   });
   y += summaryH + 12;
 
-  const colGap = 14;
-  const leftColW = w * 0.58;
-  const rightColW = w - leftColW - colGap;
-  const rightX = left + leftColW + colGap;
   const bodyTop = y;
 
-  const metrics = buildSignalMetrics(
-    dash,
-    input.experienceAlignmentScore != null
-      ? {
-          score: input.experienceAlignmentScore,
-          subtitle: input.experienceAlignmentSubtitle ?? "",
-        }
-      : null
-  ).map((m) => ({
-    label: m.label,
-    value: m.value,
-    hint: m.key === "experienceAlignment" ? m.hint : undefined,
-  }));
-
-  if (typeof r.keyword_coverage === "number") {
-    metrics.push({ label: "Keyword coverage", value: r.keyword_coverage, hint: undefined });
-  }
-
   const roleFitRows = dash.roleFit ?? [];
+  const mostMissingEvidence = dash.mostMissingEvidence ?? [];
   const riskAreas = dash.riskAreas ?? [];
   const matchedSkills = r.matched_skills ?? [];
-  const jdTopics = dash.categories ?? [];
-
-  const metricRows = Math.ceil(metrics.length / 2);
-  const roleFitRowH = roleFitRows.length > 0 ? 16 : 0;
-  const areasCount = Math.max(riskAreas.length, 1);
   const hasSkills = matchedSkills.length > 0;
-  const hasTopics = jdTopics.length > 0;
-  const topicCols = Math.min(4, Math.max(1, jdTopics.length));
-  const topicRows = hasTopics ? Math.ceil(jdTopics.length / topicCols) : 0;
-  const skillsPerRow = Math.max(4, Math.floor(w / 72));
-  const skillRowCount = hasSkills ? Math.ceil(matchedSkills.length / skillsPerRow) : 0;
-  const skillPillRowH = matchedSkills.length > 18 ? 17 : 21;
 
-  const bottomSectionsH =
-    (hasTopics ? 15 + 10 + topicRows * 46 + 10 : 0) +
-    (riskAreas.length > 0 ? 15 + 20 + areasCount * 14 + 24 : 0) +
-    (hasSkills ? 15 + skillRowCount * skillPillRowH : 0) +
-    8;
-  const metricsAvailableH = FOOTER_Y - bodyTop - bottomSectionsH - (roleFitRows.length > 0 ? 30 + 16 + roleFitRows.length * roleFitRowH : 40);
-  const metricRowH = Math.max(26, Math.min(34, Math.floor(metricsAvailableH / metricRows) - 4));
-  const metricRowGap = Math.max(4, Math.min(8, Math.floor((metricsAvailableH - metricRows * metricRowH) / Math.max(metricRows - 1, 1))));
-
-  let leftY = drawSectionLabel(doc, left, bodyTop, leftColW, SIGNALS_SECTION_TITLE);
+  let contentY = drawSectionLabel(doc, left, bodyTop, w, "Evidence snapshot");
   doc.font("Helvetica").fontSize(6.5).fillColor(COLORS.indigo700);
-  doc.text(snapshotSummaryLine(dash), left, leftY, { width: leftColW, lineGap: 1 });
-  leftY += doc.heightOfString(snapshotSummaryLine(dash), { width: leftColW, lineGap: 1 }) + 4;
-  doc.font("Helvetica").fontSize(6).fillColor(COLORS.slate500);
-  doc.text(SIGNALS_SECTION_INTRO, left, leftY, { width: leftColW, lineGap: 1 });
-  leftY += doc.heightOfString(SIGNALS_SECTION_INTRO, { width: leftColW, lineGap: 1 }) + 8;
-
-  leftY = drawMetricsGrid(doc, left, leftY, leftColW, metrics, metricRowH, metricRowGap);
-
-  let rightY = drawSectionLabel(doc, rightX, bodyTop, rightColW, ROLE_FIT_SECTION_TITLE);
-  doc.font("Helvetica").fontSize(6).fillColor(COLORS.slate500);
-  doc.text(truncateText(ROLE_FIT_SECTION_INTRO, 120), rightX, rightY, { width: rightColW, lineGap: 1 });
-  rightY += doc.heightOfString(truncateText(ROLE_FIT_SECTION_INTRO, 120), { width: rightColW, lineGap: 1 }) + 6;
+  doc.text(snapshotSummaryLine(dash), left, contentY, { width: w, lineGap: 1 });
+  contentY += doc.heightOfString(snapshotSummaryLine(dash), { width: w, lineGap: 1 }) + 10;
 
   if (roleFitRows.length > 0) {
-    rightY = drawRoleFitTable(doc, rightX, rightY, rightColW, roleFitRows, roleFitRowH) + 4;
-  } else {
-    doc.font("Helvetica").fontSize(6.5).fillColor(COLORS.slate500);
-    doc.text("No role-fit verdicts available.", rightX, rightY, { width: rightColW });
-    rightY += 16;
+    contentY = drawSectionLabel(doc, left, contentY, w, ROLE_FIT_SECTION_TITLE) + 2;
+    doc.font("Helvetica").fontSize(6).fillColor(COLORS.slate500);
+    doc.text(truncateText(ROLE_FIT_SECTION_INTRO, 160), left, contentY, { width: w, lineGap: 1 });
+    contentY += doc.heightOfString(truncateText(ROLE_FIT_SECTION_INTRO, 160), { width: w, lineGap: 1 }) + 6;
+    contentY = drawRoleFitTable(doc, left, contentY, w, roleFitRows, 16) + 10;
   }
 
-  let contentY = Math.max(leftY, rightY) + 10;
-
-  if (hasTopics) {
-    contentY = drawSectionLabel(doc, left, contentY, w, JD_TOPICS_SECTION_TITLE) + 2;
-    doc.font("Helvetica").fontSize(6).fillColor(COLORS.slate500);
-    doc.text(JD_TOPICS_SECTION_INTRO, left, contentY, { width: w, lineGap: 0.5 });
-    contentY += doc.heightOfString(JD_TOPICS_SECTION_INTRO, { width: w, lineGap: 0.5 }) + 6;
-    contentY = drawJdTopicsGrid(doc, left, contentY, w, jdTopics) + 8;
+  if (mostMissingEvidence.length > 0) {
+    contentY = drawSectionLabel(doc, left, contentY, w, TOP_REJECTION_RISKS_TITLE) + 4;
+    contentY =
+      drawTopRejectionRisksBox(doc, left, contentY, w, mostMissingEvidence.slice(0, 5)) + 10;
   }
 
   if (riskAreas.length > 0) {

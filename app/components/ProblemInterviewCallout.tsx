@@ -24,7 +24,7 @@ export function ProblemInterviewCallout() {
       className="border-t border-slate-200 bg-slate-50"
       aria-label="Job search help"
     >
-      <div className="mx-auto max-w-7xl px-4 py-3.5 sm:px-6 lg:px-8">
+      <div className="page-shell py-3.5 sm:py-3.5">
         <p className="text-center text-sm text-slate-700 sm:text-left">
           {resolved.prefix}
           <Link

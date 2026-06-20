@@ -39,7 +39,7 @@ export function RoleOptimizerPage({ role }: Props) {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="mx-auto max-w-4xl px-4 pb-8 pt-6 text-center sm:px-6 sm:pb-10 sm:pt-8 lg:px-8">
+        <div className="page-prose-wide pb-8 pt-6 text-center sm:pb-10 sm:pt-8">
           <nav aria-label="Breadcrumb" className="mb-4 text-left text-sm text-slate-600">
             <ol className="flex flex-wrap items-center gap-1.5">
               <li>
@@ -88,11 +88,11 @@ export function RoleOptimizerPage({ role }: Props) {
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+      <div className="page-prose py-8 sm:py-10">
         <JdDemonstrationSection role={role} hideCta />
       </div>
 
-      <div className="mx-auto max-w-3xl space-y-10 px-4 pb-10 sm:px-6 sm:pb-12 lg:px-8">
+      <div className="page-prose space-y-10 pb-10 sm:pb-12">
         <RoleKeywordChecklistSection role={role} />
 
         <section id="intro" className={sectionClass}>
@@ -176,7 +176,7 @@ export function RoleOptimizerPage({ role }: Props) {
         <OptimizePagesToolCta roleName={role.roleName} />
       </div>
 
-      <div className="mx-auto max-w-3xl space-y-10 px-4 pb-14 sm:px-6 lg:px-8">
+      <div className="page-prose space-y-10 pb-14">
         <section id="faq" className={sectionClass}>
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             {role.roleName} resume optimization FAQ

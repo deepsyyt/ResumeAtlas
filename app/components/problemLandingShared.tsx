@@ -91,7 +91,7 @@ export function ProductPreviewSection({ id = "product-preview-heading", emphasis
 
   return (
     <section className="border-b border-slate-100 bg-white py-12 sm:py-16" aria-labelledby={id}>
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="page-prose-wide">
         <div className="text-center">
           <h2 id={id} className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
             {title}
@@ -168,7 +168,7 @@ export function ProductPreviewSection({ id = "product-preview-heading", emphasis
 export function BenefitsProductSection() {
   return (
     <section className="py-12 sm:py-16" aria-labelledby="benefits-product-heading">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="page-prose-wide">
         <h2
           id="benefits-product-heading"
           className="text-center text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl"
@@ -194,7 +194,7 @@ export function BenefitsProductSection() {
 export function HowItWorksSection() {
   return (
     <section className="border-y border-slate-200 bg-slate-50/50 py-12 sm:py-16" aria-labelledby="how-it-works-heading">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <div className="page-prose-xl">
         <h2 id="how-it-works-heading" className="text-center text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
           How it works
         </h2>
@@ -224,7 +224,7 @@ export function HowItWorksSection() {
 export function BeforeAfterVisualSection() {
   return (
     <section className="py-12 sm:py-16" aria-labelledby="before-after-visual-heading">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="page-prose-wide">
         <h2 id="before-after-visual-heading" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
           Before vs after
         </h2>
@@ -288,7 +288,7 @@ export function FlexibilitySection() {
       className="border-t border-slate-200 bg-slate-50/50 py-12 sm:py-16"
       aria-labelledby="flexibility-heading"
     >
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="page-prose-wide">
         <h2 id="flexibility-heading" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
           AI optimization without losing control
         </h2>
@@ -325,7 +325,7 @@ export function FlexibilitySection() {
 export function TimeSavingSection() {
   return (
     <section className="py-12 sm:py-16" aria-labelledby="time-saving-heading">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="page-prose-wide">
         <h2 id="time-saving-heading" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
           From hours of rewriting to done in minutes
         </h2>

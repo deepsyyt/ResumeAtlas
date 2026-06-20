@@ -125,7 +125,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
     <main className="min-h-screen bg-white text-slate-900">
       <section className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-b from-slate-50 via-white to-white">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-sky-50/80 to-transparent" />
-        <div className="relative mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+        <div className="relative page-prose py-12 sm:py-16">
           <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">
             {hub.roleName} · Resume bullets hub
           </p>
@@ -208,7 +208,7 @@ export default function ResumeBulletHubPage({ params }: { params: PageParams }) 
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="page-prose space-y-12 py-12">
         <section id="level-previews" className="scroll-mt-24 space-y-16">
           {RESUME_BULLET_LEVELS.map((level) => (
             <ResumeBulletLevelEmbed key={level} role={role} level={level} />

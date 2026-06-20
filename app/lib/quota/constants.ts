@@ -1,7 +1,7 @@
 /** Free ATS analysis limits per rolling quota window (see ANALYSIS_QUOTA_WINDOW_MS). */
 export const ANALYSIS_QUOTA_LIMITS = {
   anonymous: 1,
-  user: 5,
+  user: 1,
 } as const;
 
 /** Rolling window length per scope. Anonymous: 30-day month; signed-in: 24 hours. */

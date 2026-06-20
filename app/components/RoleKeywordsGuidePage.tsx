@@ -108,7 +108,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
   return (
     <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-slate-50/50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-10 sm:pb-12">
+        <div className="page-prose-wide pt-6 sm:pt-8 pb-10 sm:pb-12">
           <SeoBreadcrumbs
             kind="keywords"
             currentLabel={`${config.roleName} Resume Keywords`}
@@ -124,7 +124,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               label={CONTENT_LAST_UPDATED_LABEL}
             />
             {isDataAnalystKeywordsPage ? (
-              <div className="mt-5 mx-auto max-w-2xl rounded-xl border border-sky-200 bg-sky-50/70 p-4 text-left sm:p-5">
+              <div className="mt-5 rounded-xl border border-sky-200 bg-sky-50/70 p-4 text-left sm:p-5">
                 <p className="text-xs font-semibold uppercase tracking-wide text-sky-900">
                   Most important data analyst resume keywords
                 </p>
@@ -146,7 +146,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             {heroAnswer ? (
               <div
                 id="hero-keywords"
-                className="mt-5 mx-auto max-w-2xl rounded-xl border border-sky-200 bg-sky-50/70 p-4 text-left sm:p-5 scroll-mt-20"
+                className="mt-5 rounded-xl border border-sky-200 bg-sky-50/70 p-4 text-left sm:p-5 scroll-mt-20"
               >
                 <h2 className="text-lg font-semibold tracking-tight text-slate-900">{heroAnswer.primaryH2}</h2>
                 <ul className="mt-3 columns-1 sm:columns-2 gap-x-6 list-disc pl-5 text-sm text-slate-800 space-y-1">
@@ -182,7 +182,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                 </ul>
               </div>
             ) : null}
-            <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="mt-4 text-base sm:text-lg text-slate-600 page-prose-sm">
               {heroIntro ?? (
                 <>
                   {introFreshnessEcho}
@@ -193,12 +193,12 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               )}
             </p>
             {scopeNote ? (
-              <p className="mt-3 text-sm text-amber-900/90 max-w-2xl mx-auto rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2">
+              <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2 text-sm text-amber-900/90">
                 {scopeNote}
               </p>
             ) : null}
             {isDataAnalystKeywordsPage ? (
-              <p className="mt-3 text-sm text-slate-600 max-w-2xl mx-auto">
+              <p className="mt-3 text-sm text-slate-600 page-prose-sm">
                 Wrong role?{" "}
                 <Link
                   href="/business-analyst-resume-keywords"
@@ -224,7 +224,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               </p>
             ) : null}
             {isBusinessAnalystKeywordsPage ? (
-              <p className="mt-3 text-sm text-slate-600 max-w-2xl mx-auto">
+              <p className="mt-3 text-sm text-slate-600 page-prose-sm">
                 Wrong role?{" "}
                 <Link
                   href="#business-systems-analyst-keywords"
@@ -250,10 +250,10 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               </p>
             ) : null}
             {!pageLayout.compactHero ? (
-              <p className="mt-3 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto">{exactQueryMatchLine}</p>
+              <p className="mt-3 text-sm sm:text-base text-slate-700 page-prose-sm">{exactQueryMatchLine}</p>
             ) : null}
             {!pageLayout.compactHero ? (
-              <p className="mt-3 text-sm text-slate-700 max-w-2xl mx-auto">
+              <p className="mt-3 text-sm text-slate-700 page-prose-sm">
                 For resume examples, templates, and bullet banks, use the{" "}
                 <Link
                   href={mergedGuidePath}
@@ -314,7 +314,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
             </div>
             {!pageLayout.compactHero ? (
               <>
-                <p className="mt-4 text-sm font-medium text-slate-800 max-w-2xl mx-auto">
+                <p className="mt-4 text-sm font-medium text-slate-800 page-prose-sm">
                   Check if your resume includes these keywords →{" "}
                   <Link
                     href="/check-resume-against-job-description#ats-checker-form"
@@ -323,12 +323,12 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                     scan your resume for missing keywords
                   </Link>
                 </p>
-                <p className="mt-3 text-sm text-slate-600 max-w-2xl mx-auto">
+                <p className="mt-3 text-sm text-slate-600 page-prose-sm">
                   For this role, ATS scans usually reward specific tooling such as{" "}
                   {roleContent.tools.slice(0, 4).join(", ")} and verbs like{" "}
                   {roleContent.domainVerbs.slice(0, 3).join(", ")}.
                 </p>
-                <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-left max-w-2xl mx-auto">
+                <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-left page-prose-sm">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                     JD vs resume quick comparison
                   </p>
@@ -353,7 +353,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
         </div>
       </section>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
+      <div className="page-prose py-10 sm:py-14 space-y-12">
         {optimizeCluster && !pageLayout.compactHero ? (
           <RoleOptimizeClusterNav cluster={optimizeCluster} currentPath={keywordsPublicPath} />
         ) : null}

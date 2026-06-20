@@ -27,11 +27,11 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
     "Need a resume worded alternative? ResumeAtlas vs Resume Worded compared: free JD match, no subscription, truth-based bullets, $2.99 export. Best free alternative to Resume Worded in 2026.",
   lastUpdatedLabel: COMPARISON_FRESHNESS_NOTE,
   heroAnswer:
-    "Resume Worded is a popular resume scoring platform with a free partial report and Pro plans for targeted resume matching, line-by-line feedback, and AI rewrites. ResumeAtlas is a free resume worded alternative for comparing your resume to a job description: evidence match, keyword gaps, impact metrics, and bullet suggestions, no signup. Signed-in users get truth-based one-click optimization (5 runs per rolling day). You only pay $2.99 when you export a tailored resume, no monthly subscription. This page is a side-by-side decision guide, not a sales pitch.",
+    "Resume Worded is a popular resume scoring platform with a free partial report and Pro plans for targeted resume matching, line-by-line feedback, and AI rewrites. ResumeAtlas is a free resume worded alternative for comparing your resume to a job description: evidence match, keyword gaps, impact metrics, and bullet suggestions, no signup. Signed-in users get truth-based one-click optimization (1 run per rolling day). You only pay $2.99 when you export a tailored resume, no monthly subscription. This page is a side-by-side decision guide, not a sales pitch.",
   verdictSummary:
     "Choose ResumeAtlas when you want free resume-vs-JD analysis with metrics-rich feedback, truth-based optimization (no invented skills), and a simple $2.99 export with no subscription. Choose Resume Worded when you want recruiter-style resume scoring, LinkedIn review, sample bullet libraries, and Pro templates in a monthly or annual subscription.",
   quickVerdictPoints: [
-    "ResumeAtlas fits resume worded alternative searches when you want paste-and-compare on one screen, metrics in the analysis (evidence match, impact coverage, which job skills you prove in bullets), truth-based one-click optimize (5 free runs per rolling day when signed in), and a $2.99 per-resume export with no subscription.",
+    "ResumeAtlas fits resume worded alternative searches when you want paste-and-compare on one screen, metrics in the analysis (evidence match, impact coverage, which job skills you prove in bullets), truth-based one-click optimize (1 free run per rolling day when signed in), and a $2.99 per-resume export with no subscription.",
     "Resume Worded fits when you want Score My Resume grading, LinkedIn feedback, and Pro tools like Targeted Resume and Magic Write in one subscription.",
     "Neither percentage is directly comparable. ResumeAtlas emphasizes provable bullets and honest gaps for one posting; Resume Worded emphasizes overall resume quality scores and Pro-gated line-by-line fixes.",
   ],
@@ -65,12 +65,12 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
     },
     {
       feature: "Free usage",
-      resumeAtlas: "5 compare + optimize runs per rolling day (signed in); 1/month without signup",
+      resumeAtlas: "1 compare + optimize run per rolling day (signed in); 1/month without signup",
       jobscan: "Free Score My Resume preview; detailed fixes and Targeted Resume on Pro",
     },
     {
       feature: "Export / rewrite help",
-      resumeAtlas: "Truth-based one-click optimize (5 free/day signed in); export $2.99/resume (PDF + editable)",
+      resumeAtlas: "Truth-based one-click optimize (1 free/day signed in); export $2.99/resume (PDF + editable)",
       jobscan: "Magic Write and AI rewrites on Pro; templates on Pro",
     },
   ],
@@ -93,7 +93,7 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
       },
       {
         label: "Suggestions",
-        resumeAtlas: "Truth-based optimize aligns matched skills to the JD, no invented experience (5 free runs per rolling day when signed in); export $2.99/resume",
+        resumeAtlas: "Truth-based optimize aligns matched skills to the JD, no invented experience (1 free run per rolling day when signed in); export $2.99/resume",
         jobscan: "Keyword and bullet suggestions; Magic Write rewrites on Pro",
       },
     ],
@@ -105,7 +105,7 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
       "Free core resume-vs-JD analysis, no signup required",
       "Paste resume + JD: match signals, keyword gaps, impact metrics, and bullet suggestions",
       "Metrics include evidence match, bullets with metrics, architecture and deployment signals",
-      "Signed in: truth-based one-click optimize, 5 free runs per rolling day",
+      "Signed in: truth-based one-click optimize, 1 free run per rolling day",
       "Optimization aligns skills you already matched; never invents experience",
       "Only paid step: $2.99 per tailored resume export (PDF + editable), less than a coffee",
       "No monthly subscription",
@@ -121,7 +121,7 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
     resumeAtlas: [
       "Free core compare without signup: metrics-rich readout before you pay anything",
       "Truth-based optimization: aligns matched skills to the JD; never invents experience",
-      "One-click optimize included (5 free runs per rolling day when signed in)",
+      "One-click optimize included (1 free run per rolling day when signed in)",
       "Simple pricing: $2.99 per resume export, no subscription lock-in",
     ],
     jobscan: [
@@ -146,11 +146,11 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
   audience: [
     {
       persona: "Job seekers comparing one posting at a time",
-      pick: "ResumeAtlas for free JD match + one-click optimize (5/day signed in); Resume Worded Pro if you also want LinkedIn + general resume scoring in one subscription",
+      pick: "ResumeAtlas for free JD match + one-click optimize (1/day signed in); Resume Worded Pro if you also want LinkedIn + general resume scoring in one subscription",
     },
     {
       persona: "Students and early-career applicants",
-      pick: "ResumeAtlas: free analysis and 5 optimize runs/day; pay $2.99 only when you export a final resume",
+      pick: "ResumeAtlas: free analysis and 1 optimize run/day; pay $2.99 only when you export a final resume",
     },
     {
       persona: "Software engineers and data scientists",
@@ -198,7 +198,7 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
     {
       question: "Is there a free alternative to Resume Worded?",
       answer:
-        "Yes. ResumeAtlas offers free resume-vs-job-description analysis without signup: evidence match, keyword gaps, impact metrics, and bullet suggestions. Signed-in users get 5 truth-based optimize runs per rolling day. Export is $2.99 per resume with no subscription. Resume Worded also has a free partial score; compare what each free tier actually unlocks before you rely on either for a full search.",
+        "Yes. ResumeAtlas offers free resume-vs-job-description analysis without signup: evidence match, keyword gaps, impact metrics, and bullet suggestions. Signed-in users get 1 truth-based optimize run per rolling day. Export is $2.99 per resume with no subscription. Resume Worded also has a free partial score; compare what each free tier actually unlocks before you rely on either for a full search.",
     },
     {
       question: "Does ResumeAtlas invent skills to match a job description?",
@@ -233,7 +233,7 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
     {
       question: "ResumeAtlas vs Resume Worded pricing",
       answer:
-        "ResumeAtlas: free core resume-vs-JD analysis (no signup), 5 optimize runs per rolling day when signed in, $2.99 per resume export, no subscription. Resume Worded: free partial score; Pro from about $49/month with Targeted Resume, Magic Write, and templates. Verify current Resume Worded prices at resumeworded.com before checkout.",
+        "ResumeAtlas: free core resume-vs-JD analysis (no signup), 1 optimize run per rolling day when signed in, $2.99 per resume export, no subscription. Resume Worded: free partial score; Pro from about $49/month with Targeted Resume, Magic Write, and templates. Verify current Resume Worded prices at resumeworded.com before checkout.",
     },
   ],
   internalLinks: [

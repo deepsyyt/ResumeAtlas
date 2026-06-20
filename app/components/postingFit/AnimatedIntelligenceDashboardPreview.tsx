@@ -1,8 +1,9 @@
 "use client";
 
+import { useReducedMotion } from "framer-motion";
 import { HeroDashboardPreview } from "@/app/components/postingFit/HeroDashboardPreview";
 import { HeroKeywordScannerPreview } from "@/app/components/postingFit/HeroKeywordScannerPreview";
-import { TypewriterStatus } from "@/app/components/postingFit/TypewriterStatus";
+import { PREVIEW_ANALYZING_MESSAGE } from "@/app/components/postingFit/TypewriterStatus";
 
 type Props = {
   hint?: string;
@@ -11,57 +12,61 @@ type Props = {
 };
 
 /**
- * Tool-page empty preview — sample readout with intro typewriter above the demo.
+ * Tool-page empty preview — sample dashboard at ~85% zoom, up to 44rem wide.
  */
 export function AnimatedIntelligenceDashboardPreview({
   hint,
   isAnalyzing = false,
   previewVariant = "fullDashboard",
 }: Props) {
-  const Preview =
-    previewVariant === "keywordScanner" ? HeroKeywordScannerPreview : HeroDashboardPreview;
+  const reduceMotion = useReducedMotion();
+  const analyzingLabel =
+    previewVariant === "keywordScanner"
+      ? "Scanning for keyword gaps…"
+      : `${PREVIEW_ANALYZING_MESSAGE}…`;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      <div className="relative flex min-h-0 flex-1 flex-col px-3 py-3 sm:px-4 sm:py-4">
-        <div className="relative z-10 mb-3 shrink-0 text-center">
-          <div
-            className="analysis-preview-glow pointer-events-none absolute left-1/2 top-1/2 h-24 w-[min(100%,24rem)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-indigo-500/25 via-violet-500/20 to-cyan-500/25 blur-2xl"
-            aria-hidden
-          />
-          <div className="analysis-preview-intro-banner relative mx-auto max-w-xl rounded-xl border border-white/10 bg-white/[0.07] px-3 py-2.5 backdrop-blur-sm sm:px-5 sm:py-3">
-            <TypewriterStatus isAnalyzing={isAnalyzing} darkSurface />
-            {!isAnalyzing ? (
-              <span className="mt-2.5 flex items-center justify-center gap-1.5" aria-hidden>
-                <span className="analysis-preview-dot h-2 w-2 rounded-full bg-indigo-400" />
-                <span className="analysis-preview-dot h-2 w-2 rounded-full bg-violet-400" />
-                <span className="analysis-preview-dot h-2 w-2 rounded-full bg-cyan-400" />
-              </span>
-            ) : null}
-          </div>
-        </div>
+    <div
+      className={`workbench-preview-mockup relative flex w-full min-w-0 flex-col pb-1 transition duration-500 ${
+        isAnalyzing ? "preview-mockup--analyzing min-h-full flex-1" : "opacity-[0.94]"
+      }`}
+    >
+      <div
+        className={`relative w-full transition duration-300 ${
+          isAnalyzing ? "min-h-[12rem] flex-1" : ""
+        } ${
+          isAnalyzing
+            ? reduceMotion
+              ? "pointer-events-none opacity-40"
+              : "pointer-events-none scale-[0.985] opacity-40 blur-[2px]"
+            : ""
+        }`}
+        aria-hidden={isAnalyzing}
+      >
+        {previewVariant === "keywordScanner" ? (
+          <HeroKeywordScannerPreview variant="tool" />
+        ) : (
+          <HeroDashboardPreview variant="tool" hideFooter />
+        )}
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+        {isAnalyzing ? (
           <div
-            className={`flex min-h-0 flex-1 flex-col transition duration-500 ${
-              isAnalyzing ? "scale-[1.01] opacity-100" : "opacity-[0.95]"
-            }`}
+            className="preview-analyzing-overlay absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-2xl px-4"
+            role="status"
+            aria-live="polite"
+            aria-label={analyzingLabel}
           >
-            <Preview variant="tool" />
+            <div
+              className="preview-analyzing-spinner h-9 w-9 animate-spin rounded-full border-2 border-cyan-200/25 border-t-cyan-300"
+              aria-hidden
+            />
+            <p className="text-center text-sm font-semibold text-white">{analyzingLabel}</p>
           </div>
-
-          <div
-            className="generating-scan-line pointer-events-none absolute inset-x-0 top-12 bottom-10 overflow-hidden rounded-2xl"
-            aria-hidden
-          />
-          {isAnalyzing ? (
-            <div className="pointer-events-none absolute inset-0 rounded-2xl bg-indigo-400/[0.06] ring-1 ring-inset ring-indigo-400/25" />
-          ) : null}
-        </div>
+        ) : null}
       </div>
 
-      {hint ? (
-        <p className="border-t border-slate-700/60 bg-slate-900/40 px-3 py-2.5 text-center text-[11px] leading-snug text-slate-400 sm:px-4">
+      {hint && !isAnalyzing ? (
+        <p className="mt-2 shrink-0 rounded-lg border border-slate-700/50 bg-slate-900/50 px-2.5 py-2 text-center text-[10px] leading-snug text-slate-400 sm:px-3">
           {hint}
         </p>
       ) : null}

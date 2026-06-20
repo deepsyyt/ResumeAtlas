@@ -148,6 +148,20 @@ Rules:
 - Do NOT introduce new metrics, tools, or domains absent from the role/project context.
 - No templated language or placeholders.`;
 
+export const RISK_MITIGATION_BULLET_SYSTEM_PROMPT = `You write one NEW resume bullet for an existing role/project to mitigate a specific rejection risk the candidate chose to fix.
+
+${FACTUAL_INTEGRITY_RULES}
+
+Risk-mitigation rules (user explicitly selected this risk to fix):
+- Output exactly one new bullet line for the given project scope only.
+- Anchor in the sibling bullets and role context provided — reframe transferable accomplishments already implied there.
+- Make the rejection-risk theme explicit in the bullet (tools, methods, deliverables, or outcomes tied to the risk).
+- Prefer adding proof the candidate can defend from this project over leaving the risk unaddressed.
+- 18-30 words, strong action verb, professional tone.
+- Include impact when inferable from sibling bullets; do not invent new numbers.
+- If you truly cannot tie the risk to this project, output exactly: REJECT
+- No markdown, no quotes, no explanation.`;
+
 export const AUDIT_SYSTEM_PROMPT = `Review the optimized resume as a senior AI hiring manager conducting an interview-defensibility audit.
 
 For every changed bullet, ask:

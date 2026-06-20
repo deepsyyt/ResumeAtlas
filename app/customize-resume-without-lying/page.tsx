@@ -125,7 +125,7 @@ export default function CustomizeResumeWithoutLyingPage() {
   return (
     <main className="min-h-screen bg-white text-slate-900">
       <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50/90 to-white">
-        <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-18 lg:px-8">
+        <div className="page-prose-wide py-14 text-center sm:py-18">
           <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">
             Honest tailoring · ATS alignment
           </p>
@@ -152,7 +152,7 @@ export default function CustomizeResumeWithoutLyingPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl space-y-14 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <div className="page-prose space-y-14 py-10 sm:py-14">
         <section className="space-y-4">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             How to customize your resume for a job (without lying)

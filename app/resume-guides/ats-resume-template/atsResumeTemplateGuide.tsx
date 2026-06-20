@@ -200,7 +200,7 @@ export function AtsResumeTemplateGuide() {
   return (
     <main className="min-h-screen bg-white pb-24 text-slate-900 lg:pb-0">
       <section id="ats-template-hero" className="scroll-mt-28 border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
-        <div className="mx-auto max-w-6xl px-4 pb-8 pt-10 sm:px-6 sm:pb-10 sm:pt-14 lg:px-8">
+        <div className="page-shell pb-8 pt-10 sm:pb-10 sm:pt-14">
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Best ATS template resource · examples · format rules
@@ -289,7 +289,7 @@ export function AtsResumeTemplateGuide() {
 
       <AtsTemplateJumpNav />
 
-      <div className="mx-auto max-w-3xl space-y-0 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
+      <div className="page-prose space-y-0 py-6 sm:py-10">
         <section
           id="ats-template-downloads"
           className="scroll-mt-28 border-b border-slate-200 py-10"

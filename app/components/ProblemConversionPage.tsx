@@ -147,7 +147,7 @@ export function ProblemConversionPage({ config }: Props) {
     <div className="min-h-screen bg-white text-slate-900">
       {/* 1. Hero */}
       <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50/80 to-white">
-        <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-18 lg:px-8">
+        <div className="page-prose-wide py-14 text-center sm:py-18">
           <p className={`text-xs font-semibold uppercase tracking-wider ${eyebrowTone}`}>{v.heroEyebrow}</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl sm:leading-tight">
             {h1}
@@ -185,11 +185,11 @@ export function ProblemConversionPage({ config }: Props) {
         </div>
       </section>
 
-      <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-6 lg:px-8">
+      <div className="page-prose pt-6">
         <ResumeExampleSeoFunnel />
       </div>
 
-      <div className="mx-auto max-w-3xl px-4 pt-4 sm:px-6 lg:px-8">
+      <div className="page-prose pt-4">
         <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-4 sm:p-5">
           <h2 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
             Top reasons your resume is not getting interviews
@@ -244,7 +244,7 @@ export function ProblemConversionPage({ config }: Props) {
 
       {/* Unique section (per page) */}
       <section className="border-b border-slate-100 bg-white py-10 sm:py-12" aria-labelledby="unique-intent-section">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="page-prose">
           <h2 id="unique-intent-section" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             {v.uniqueSection.title}
           </h2>
@@ -257,7 +257,7 @@ export function ProblemConversionPage({ config }: Props) {
       </section>
 
       {/* 3. Problem → solution bridge + SEO body */}
-      <div className="mx-auto max-w-3xl space-y-12 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="page-prose space-y-12 py-12 sm:py-16">
         <section aria-labelledby="bridge-heading">
           <h2 id="bridge-heading" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             {v.bridgeTitle}
@@ -394,7 +394,7 @@ export function ProblemConversionPage({ config }: Props) {
       <TimeSavingSection />
 
       {/* SEO: what works + product blurb */}
-      <div className="mx-auto max-w-3xl space-y-10 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="page-prose space-y-10 py-12 sm:py-16">
         <section aria-labelledby="what-works-seo">
           <h2 id="what-works-seo" className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             {config.whatWorks.heading}
