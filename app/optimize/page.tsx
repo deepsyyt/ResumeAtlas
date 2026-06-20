@@ -444,8 +444,8 @@ export default function OptimizePage() {
     if (usageJson?.funnelStage !== "optimized") {
       setError(
         usageJson?.funnelStage === "analyzed"
-          ? "Tailor your resume first — download unlocks after that step."
-          : "Check a job, tailor your resume, then download — in that order."
+          ? "Optimize your resume first — download unlocks after that step."
+          : "Check the job, optimize your resume, then download — in that order."
       );
       return { ok: false };
     }

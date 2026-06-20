@@ -210,7 +210,7 @@ export async function assertFunnelAllowsOptimize(userId: string): Promise<
     return {
       ok: false,
       code: "APPLICATION_REQUIRED",
-      message: "Run a job check on this resume first, then tailor it.",
+      message: "Run a job check first, then optimize your resume.",
     };
   }
   if (app.state !== "analyzed") {
@@ -219,7 +219,7 @@ export async function assertFunnelAllowsOptimize(userId: string): Promise<
       code: "BAD_STATE",
       message:
         app.state === "optimized"
-          ? "Your resume is already tailored. Download it, or finish this job before starting another check."
+          ? "Your resume is already optimized. Download it, or finish this job before starting another check."
           : "Finish this job before starting another check.",
     };
   }
@@ -236,7 +236,7 @@ export async function assertFunnelAllowsDownload(userId: string): Promise<
     return {
       ok: false,
       code: "OPTIMIZE_REQUIRED",
-      message: "Tailor your resume before downloading the ATS-ready file.",
+      message: "Optimize your resume before downloading.",
     };
   }
   if (app.source === "free" && !app.downloadUnlocked) {

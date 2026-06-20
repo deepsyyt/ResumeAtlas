@@ -127,7 +127,7 @@ export async function openRazorpayPackCheckout({
     const checkoutDescription =
       checkoutTrigger === "download_gate"
         ? "ResumeAtlas — tailored resume download"
-        : `${data.credits ?? ""} job application${data.credits === 1 ? "" : "s"} (check, tailor, download)`;
+        : `${data.credits ?? ""} credit${data.credits === 1 ? "" : "s"} (check, optimize, download)`;
     void logBillingEvent("billing_razorpay_checkout_opened", {
       package_id: packageId,
       credits: pkgMeta?.credits ?? 0,

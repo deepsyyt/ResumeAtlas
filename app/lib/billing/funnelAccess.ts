@@ -33,11 +33,11 @@ export type IncompleteFunnelPayload = {
 };
 
 const FREE_EXHAUSTED_MESSAGE =
-  "You've used your free scan for this month. Get 5 job applications for $2.99 — check, tailor, and download for each posting.";
+  "You've used your free scan for this month. Get 5 credits for $2.99 — check, optimize, and download for five jobs.";
 const ANON_EXHAUSTED_MESSAGE =
-  "You've used your free scan for this month. Sign in to get 5 job applications for $2.99.";
+  "You've used your free scan for this month. Sign in to get 5 credits for $2.99.";
 const INCOMPLETE_APPLICATION_MESSAGE =
-  "Finish tailoring and downloading this resume before you start a new job check.";
+  "Finish optimizing and downloading this resume before you check another job.";
 
 function quotaExceededError(
   message: string,
@@ -139,7 +139,7 @@ export async function commitAnalysisApplication(
   if (!started.ok) {
     const msg =
       started.code === "NO_CREDITS"
-        ? "No job applications left. Buy a pack to continue."
+        ? "No credits left. Buy a pack to continue."
         : started.code === "INCOMPLETE_APPLICATION"
           ? INCOMPLETE_APPLICATION_MESSAGE
           : "Unable to start a new job check. Try again.";
@@ -168,7 +168,7 @@ export async function ensureApplicationForOptimize(
       ok: false,
       code: "ALREADY_OPTIMIZED",
       message:
-        "This resume is already tailored. Download it, or finish this job before tailoring again.",
+        "This resume is already optimized. Download it, or finish this job before optimizing again.",
     };
   }
   if (wallet.activeApplication) {
@@ -209,7 +209,7 @@ export async function ensureApplicationForOptimize(
   return {
     ok: false,
     code: "APPLICATION_REQUIRED",
-    message: "Run a job check on this resume first, then tailor it.",
+    message: "Run a job check first, then optimize your resume.",
   };
 }
 

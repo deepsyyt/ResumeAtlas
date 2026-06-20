@@ -720,7 +720,7 @@ export default function HomeClient({
               setLimitModalMessage(
                 typeof err.message === "string"
                   ? err.message
-                  : "Finish tailoring and downloading this resume before starting a new job check."
+                  : "Finish optimizing and downloading this resume before you check another job."
               );
               setLimitModalOpen(true);
               return;
@@ -767,12 +767,12 @@ export default function HomeClient({
         setSelectedRecommendedFixes(result.evidence_dashboard?.riskAreas ?? []);
         if (result.application?.creditUsed) {
           setScanCreditNotice(
-            "We've applied 1 job application from your balance for this check. Continue with tailoring to get the full value — stopping here means no tailored resume or download for this job."
+            "You used 1 credit from your pack to check this job. Next: optimize your resume for this posting, then download it. If you stop here, you only get the report — not a finished resume."
           );
           void refreshUsage();
         } else if (result.application?.source === "free" && isLoggedIn) {
           setScanCreditNotice(
-            "Your free scan is complete. Continue with tailoring next — payment is only needed when you're ready to download."
+            "Your free job check is done. Next: optimize your resume for this posting. You pay $2.99 only when you download."
           );
         } else {
           setScanCreditNotice(null);

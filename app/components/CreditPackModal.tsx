@@ -225,16 +225,16 @@ export function CreditPackModal({
             aria-live="polite"
           >
             <p className="text-sm font-semibold text-emerald-950">
-              {checkoutSuccess.packName}: {checkoutSuccess.creditsAdded} job application
-              {checkoutSuccess.creditsAdded === 1 ? "" : "s"} added to your account.
+              {checkoutSuccess.packName}: {checkoutSuccess.creditsAdded} credit
+              {checkoutSuccess.creditsAdded === 1 ? "" : "s"} added.
             </p>
             <p className="mt-2 text-sm text-slate-700">
-              You have{" "}
+              You now have{" "}
               <span className="font-semibold tabular-nums text-slate-900">
                 {checkoutSuccess.balance}
               </span>{" "}
-              left. Each one covers checking a job posting, tailoring your resume, and downloading
-              ATS-ready files — finish one job before starting the next.
+              credit{checkoutSuccess.balance === 1 ? "" : "s"} left. Each credit covers one job:
+              check your fit, optimize your resume, and download the file.
             </p>
             <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button
@@ -251,7 +251,7 @@ export function CreditPackModal({
                 onClick={() => void handleContinueToOptimization()}
                 className="rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
               >
-                {isBusy ? "Starting…" : "Tailor my resume"}
+                {isBusy ? "Starting…" : "Optimize my resume"}
               </button>
             </div>
           </div>
@@ -261,11 +261,11 @@ export function CreditPackModal({
               <>
                 <p className="mt-2 text-sm text-slate-600">
                   {showStart
-                    ? "Next step: tailor your resume for this job, then download the ATS-ready PDF."
-                    : "Sign in to save your purchases and pick up where you left off."}
+                    ? "Next: optimize your resume for this job, then download the PDF."
+                    : "Sign in to save your credits and pick up where you left off."}
                 </p>
                 <p className="mt-1 text-xs text-slate-500">
-                  One purchase = one job from check to download. Finish that job before starting another.
+                  1 credit = one job end to end (check, optimize, download). Finish that job before starting another.
                 </p>
               </>
             )}
@@ -282,7 +282,7 @@ export function CreditPackModal({
           <div className="mt-5">
             <p className="text-sm font-medium text-slate-700">
               Remaining:{" "}
-              <span className="tabular-nums text-slate-900">{creditsRemaining}</span> job application
+              <span className="tabular-nums text-slate-900">{creditsRemaining}</span> credit
               {creditsRemaining === 1 ? "" : "s"}
             </p>
             <button
@@ -291,7 +291,7 @@ export function CreditPackModal({
               onClick={() => void onStartOptimization("credit_modal_balance")}
               className="mt-3 w-full rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
             >
-              {isBusy ? "Starting…" : "Tailor my resume"}
+              {isBusy ? "Starting…" : "Optimize my resume"}
             </button>
             <p className="mt-3 text-xs text-slate-500">
               You can buy another pack after you use these up.
@@ -303,13 +303,13 @@ export function CreditPackModal({
         <div className={showStart ? "mt-8 border-t border-slate-200 pt-6" : "mt-6"}>
           <h2 className="text-2xl font-semibold text-center mb-2">
             {showStart
-              ? "Buy 5 more job applications"
-              : "Keep going — tailor your resume for 5 more jobs"}
+              ? "Buy 5 more credits"
+              : "Get 5 job checks for $2.99"}
           </h2>
           <p className="text-center text-gray-600 mb-6">
             {showStart
-              ? `You have ${creditsRemaining} left. Add 5 more anytime — they stack on your balance.`
-              : "Check each posting, get AI improvements, and download ATS-ready files. One price, five jobs."}
+              ? `You have ${creditsRemaining} credit${creditsRemaining === 1 ? "" : "s"} left. Buy 5 more anytime — they add to your balance.`
+              : "For each job: check your resume against the posting, optimize it, then download. Five jobs, one price."}
           </p>
 
           {starterPack ? (
@@ -319,14 +319,14 @@ export function CreditPackModal({
                 {formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)}
               </div>
               <div className="text-gray-600 mb-4">
-                {starterPack.credits} job applications — check, tailor, and download for each posting
+                {starterPack.credits} credits — check, optimize, and download for {starterPack.credits} jobs
               </div>
 
               <ul className="space-y-2 text-sm mb-6">
-                <li>✔ ATS check against the job description</li>
-                <li>✔ Summary and bullets tailored for that role</li>
-                <li>✔ Keywords surfaced honestly — nothing invented</li>
-                <li>✔ Download PDF + editable file when you&apos;re ready</li>
+                <li>✔ See how your resume matches the job</li>
+                <li>✔ Optimize summary and bullets for that posting</li>
+                <li>✔ Honest keyword gaps — nothing invented</li>
+                <li>✔ Download PDF + editable file when ready</li>
               </ul>
 
               <button
@@ -341,7 +341,7 @@ export function CreditPackModal({
                     ? "Signing in…"
                     : showStart
                       ? `Add 5 more — ${formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)}`
-                      : `Get ${starterPack.credits} job applications`}
+                      : `Get ${starterPack.credits} credits`}
               </button>
 
               <p className="text-xs text-center text-gray-500 mt-3">
@@ -367,7 +367,7 @@ export function CreditPackModal({
                 <div className="grid md:grid-cols-2 gap-4 mt-6 page-prose">
                   {fivePack ? (
                     <div className="border rounded-xl p-5">
-                      <h3 className="font-semibold mb-1">{fivePack.credits} job applications</h3>
+                      <h3 className="font-semibold mb-1">{fivePack.credits} credits</h3>
                       <div className="text-2xl font-bold mb-2">
                         {formatCreditPackPrice(fivePack.razorpayAmount, fivePack.currency)}
                       </div>
@@ -384,14 +384,14 @@ export function CreditPackModal({
                           ? "Opening checkout…"
                           : isStartingGoogleAuth
                             ? "Signing in…"
-                            : `Get ${fivePack.credits} job applications`}
+                            : `Get ${fivePack.credits} credits`}
                       </button>
                     </div>
                   ) : null}
 
                   {fifteenPack ? (
                     <div className="border rounded-xl p-5">
-                      <h3 className="font-semibold mb-1">{fifteenPack.credits} job applications</h3>
+                      <h3 className="font-semibold mb-1">{fifteenPack.credits} credits</h3>
                       <div className="text-2xl font-bold mb-2">
                         {formatCreditPackPrice(fifteenPack.razorpayAmount, fifteenPack.currency)}
                       </div>
@@ -408,7 +408,7 @@ export function CreditPackModal({
                           ? "Opening checkout…"
                           : isStartingGoogleAuth
                             ? "Signing in…"
-                            : `Get ${fifteenPack.credits} job applications`}
+                            : `Get ${fifteenPack.credits} credits`}
                       </button>
                     </div>
                   ) : null}
@@ -492,7 +492,7 @@ export function CreditPackModal({
 
         {!checkoutSuccess && isLoggedIn && creditsRemaining === 0 && (
           <p className="mt-4 text-xs text-slate-600">
-            You&apos;ve used all your job applications. Buy another pack to keep tailoring resumes for new postings.
+            You&apos;ve used all your credits. Buy another pack to keep optimizing resumes for new jobs.
           </p>
         )}
 
