@@ -57,9 +57,7 @@ export function buildOptimizeBenefitItems(args: {
     icon: "ats",
     title: OPTIMIZE_ATS_BADGE_LABEL,
     detail:
-      args.atsScore != null
-        ? `Structured for ATS parsing (${Math.round(args.atsScore)}% compatibility from your scan).`
-        : "Structured for ATS parsing — ready to upload to job boards and company portals.",
+      "Structured for ATS parsing — ready to upload to job boards and company portals.",
   });
 
   if (args.summaryTailored) {
