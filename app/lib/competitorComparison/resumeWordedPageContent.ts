@@ -26,7 +26,7 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
   title: `Resume Worded Alternative: ResumeAtlas vs Resume Worded (${CONTENT_FRESHNESS_YEAR})`,
   h1: "Resume Worded Alternative: ResumeAtlas vs Resume Worded",
   metaDescription:
-    "Resume not getting interviews after Resume Worded? Compare apply-readiness vs writing scores: unproven skills, rejection risks, and recommended fixes for one posting.",
+    "Resume Worded scores writing quality. ResumeAtlas shows application verdict, unproven skills, elimination risks, and job-specific fixes before you apply.",
   lastUpdatedLabel: COMPARISON_FRESHNESS_NOTE,
   heroCompetitorLine:
     "tells you whether your resume is written well — action verbs, impact language, and recruiter-style categories.",

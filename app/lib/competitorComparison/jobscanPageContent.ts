@@ -26,7 +26,7 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
   title: `Jobscan Alternative: ResumeAtlas vs Jobscan (${CONTENT_FRESHNESS_YEAR})`,
   h1: "Jobscan Alternative: ResumeAtlas vs Jobscan",
   metaDescription:
-    "Resume not getting interviews after using Jobscan? Compare apply-readiness vs keyword match: unproven skills, rejection risks, and recommended fixes — not just ATS scores.",
+    "Jobscan shows keyword match. ResumeAtlas shows application verdict, unproven skills, elimination risks, and recommended fixes for one posting before you apply.",
   lastUpdatedLabel: COMPARISON_FRESHNESS_NOTE,
   heroCompetitorLine:
     "tells you whether the right keywords are present in your resume for a job posting.",

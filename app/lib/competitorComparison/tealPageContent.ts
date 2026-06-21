@@ -26,7 +26,7 @@ export const tealComparisonPageConfig: CompetitorComparisonPageConfig = {
   title: `Teal Alternative: ResumeAtlas vs Teal (${CONTENT_FRESHNESS_YEAR})`,
   h1: "Teal Alternative: ResumeAtlas vs Teal",
   metaDescription:
-    "Resume not getting interviews with Teal? Compare apply-readiness vs job-search tracking: unproven skills, rejection risks, and recommended fixes per posting.",
+    "Teal tracks applications and match scores. ResumeAtlas shows application verdict, unproven skills, elimination risks, and recommended fixes per posting.",
   lastUpdatedLabel: COMPARISON_FRESHNESS_NOTE,
   heroCompetitorLine:
     "helps you track applications, build resumes, and check keyword match as part of a broader job-search workflow.",

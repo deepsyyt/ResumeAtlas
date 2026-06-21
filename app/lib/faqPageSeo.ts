@@ -29,18 +29,18 @@ export const FAQ_PAGE_TITLE_ABSOLUTE =
   `AI Resume Optimization FAQ: Check Resume vs Job Description & ATS Checker (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`;
 
 export const FAQ_PAGE_DESCRIPTION =
-  "Answers on checking your resume against a job description, ATS checker scores, why you're not getting interviews, application verdict, keyword gaps, and skill proof maps. ResumeAtlas FAQ.";
+  "Answers on application verdict, unproven skills, elimination risks, and job-specific fixes when checking your resume against a job description. ResumeAtlas FAQ.";
 
 export const FAQ_PAGE_OG_TITLE =
-  `AI Resume Optimization & ATS Checker FAQ (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`;
+  `Apply-Readiness & Resume vs Job Description FAQ (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`;
 
 export const FAQ_PAGE_OG_DESCRIPTION =
-  "Check resume against JD, fix keyword gaps, understand ATS scores, and learn why applications stall—plus how evidence-first optimization works. Free tool answers.";
+  "Application verdict, unproven skills, elimination risks, and recommended fixes before you apply. Answers on checking resume vs job description.";
 
-export const FAQ_PAGE_TWITTER_TITLE = "AI resume optimization FAQ: JD match, ATS checker, no interviews";
+export const FAQ_PAGE_TWITTER_TITLE = "Apply-readiness FAQ: application verdict, unproven skills, elimination risks";
 
 export const FAQ_PAGE_TWITTER_DESCRIPTION =
-  "Check resume vs job description, ATS checker help, interview gaps, application verdict, and optimization—ResumeAtlas FAQ.";
+  "Application verdict, unproven skills, elimination risks, and job-specific fixes. ResumeAtlas FAQ.";
 
 /** Visible H1 support copy (not the HTML title tag). */
 export const FAQ_PAGE_HERO_INTRO =

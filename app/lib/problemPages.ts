@@ -246,9 +246,9 @@ export const PROBLEM_PAGES: Record<ProblemSlug, ProblemPageConfig> = {
   "resume-not-getting-interviews": {
     slug: "resume-not-getting-interviews",
     primaryKeyword: "resume not getting interviews",
-    metaTitle: "Resume Not Getting Interviews? Skills Listed Aren't Proven | ResumeAtlas",
+    metaTitle: "Resume Not Getting Interviews? Unproven Skills & Elimination Risks | ResumeAtlas",
     metaDescription:
-      "Resume not getting interviews? Often requirements are mentioned in your skills section but not proven in bullets. See unproven skills, rejection risks, and fixes before you apply.",
+      "Resume not getting interviews? See whether you're ready to apply, which skills are unproven, what may eliminate you, and job-specific fixes before your next application.",
     h1: "Resume Not Getting Interviews? Requirements May Be Mentioned — Not Proven",
     hook: [
       "When your resume is not getting interviews, the problem is rarely 'write a completely new resume.' More often, job requirements appear somewhere on the page — skills, summary, or keyword-stuffed lines — but experience bullets never prove you did the work.",

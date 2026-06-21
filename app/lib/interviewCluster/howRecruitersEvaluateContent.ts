@@ -10,7 +10,7 @@ export const howRecruitersEvaluateConfig: ClusterArticleConfig = {
   title: `How Recruiters Evaluate Resumes (${CONTENT_FRESHNESS_YEAR}) | ResumeAtlas`,
   h1: "How Recruiters Evaluate Resumes",
   metaDescription:
-    "Recruiters scan resumes in seconds — not for keyword density, but for evidence you can do the job. Learn what they look for and why listed skills without proof fail.",
+    "How recruiters evaluate resumes in seconds: evidence over keyword density. Learn why unproven skills, elimination risks, and weak proof block interviews.",
   heroIntro:
     "Most resume advice optimizes for ATS parsers or writing quality. Recruiters optimize for risk reduction: can I believe this person did the work this role requires? That lens explains why many resumes with good scores still are not getting interviews.",
   sections: [

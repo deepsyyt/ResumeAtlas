@@ -9,14 +9,14 @@ import { ATS_SCORE_VS_JOB_FIT_PATH, RESUME_NOT_GETTING_INTERVIEWS_PATH } from "@
 export { ATS_SCORE_VS_JOB_FIT_PATH };
 
 export const ATS_SCORE_VS_JOB_FIT_TITLE =
-  `Why ATS Scores Are Not Enough | ATS Score vs Real Job Fit (${CONTENT_FRESHNESS_YEAR})` as const;
+  `ATS Score vs Real Job Fit | Application Verdict & Skill Proof (${CONTENT_FRESHNESS_YEAR})` as const;
 
 export const ATS_SCORE_VS_JOB_FIT_H1 = "Why ATS Scores Are Not Enough" as const;
 
 export const ATS_SCORE_VS_JOB_FIT_SUBHEAD = "ATS score vs real job fit" as const;
 
 export const ATS_SCORE_VS_JOB_FIT_META =
-  "Why ATS scores are not enough: a high keyword match does not mean interview readiness. Learn how unproven skills and rejection risks explain when your resume is not getting interviews." as const;
+  "A high ATS score doesn't mean you're ready to apply. Learn how application verdict, unproven skills, and elimination risks explain when your resume is not getting interviews." as const;
 
 export const ATS_SCORE_VS_JOB_FIT_LAST_UPDATED = COMPARISON_FRESHNESS_NOTE;
 

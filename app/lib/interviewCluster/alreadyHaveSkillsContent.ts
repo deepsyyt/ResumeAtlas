@@ -10,7 +10,7 @@ export const alreadyHaveSkillsConfig: ClusterArticleConfig = {
   title: `Have the Skills But Not Getting Interviews? (${CONTENT_FRESHNESS_YEAR}) | ResumeAtlas`,
   h1: "Already Have the Skills But Not Getting Interviews?",
   metaDescription:
-    "Background fits the job but resume is silent? Often skills are real but not proven on paper. Learn why recruiters pass and how to show evidence before you apply again.",
+    "Have the skills but not getting interviews? Your resume may not prove them. See application verdict, unproven skills, elimination risks, and fixes before you apply again.",
   heroIntro:
     "You read the posting and think: I have done this. Months later, still no interviews. The issue is rarely that you lack the skills — it is that your resume does not prove them fast enough for the specific role you want.",
   sections: [

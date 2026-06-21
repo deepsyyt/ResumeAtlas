@@ -10,7 +10,7 @@ export const skillsListedNotProvenConfig: ClusterArticleConfig = {
   title: `Skills Listed But Not Proven on Resume (${CONTENT_FRESHNESS_YEAR}) | ResumeAtlas`,
   h1: "Skills Listed But Not Proven on Your Resume",
   metaDescription:
-    "AWS, Python, LangChain on your skills list but not in bullets? Recruiters evaluate evidence, not lists. Learn why unproven skills block interviews and how to fix them.",
+    "Skills listed but not proven on your resume? Recruiters evaluate evidence, not lists. See unproven skills, elimination risks, and recommended fixes before you apply.",
   heroIntro:
     "Many resumes list AWS, Python, LangChain, or MLOps in a skills section. Recruiters do not hire lists — they hire evidence. If a skill is not demonstrated in project or work bullets, it may be treated as weak or unproven. That gap is one of the most common reasons a resume is not getting interviews.",
   sections: [

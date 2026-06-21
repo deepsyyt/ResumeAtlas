@@ -36,16 +36,16 @@ const abs = (path: string) => `${siteBase()}${path.startsWith("/") ? path : `/${
 /** Resume ↔ this job description (tailor / compare / match). Layer 1 SEO + Layer 2 apply-readiness on-page. */
 export const CLUSTER_JD_MATCH_TOOL_COPY = {
   titleAbsolute:
-    `Compare Resume to Job Description | ATS Score, Gaps & Apply Readiness${RESUME_ATLAS_TITLE_SUFFIX}`,
+    `Compare Resume to Job Description | Application Verdict & Resume Gaps${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Compare your resume to a job description free. ATS score, keyword coverage, application verdict, rejection risks, and job-specific fixes before you apply. No signup required.",
+    "Compare your resume to a job description and see whether you're ready to apply. Find unproven skills, elimination risks, missing requirements, and job-specific fixes before applying.",
   ogTitle:
-    `Compare Resume to Job Description | ATS Score, Gaps & Apply Readiness (${CONTENT_FRESHNESS_YEAR})`,
+    `Compare Resume to Job Description | Application Verdict & Resume Gaps (${CONTENT_FRESHNESS_YEAR})`,
   ogDescription:
-    "Compare your resume to a job description free. ATS score, keyword coverage, application verdict, rejection risks, and fixes before you apply.",
-  twitterTitle: "Compare resume to job description | ATS score, gaps & apply readiness",
+    "See whether you're ready to apply: application verdict, unproven skills, elimination risks, and job-specific fixes before you submit.",
+  twitterTitle: "Compare resume to job description | application verdict & resume gaps",
   twitterDescription:
-    "Application verdict, keyword coverage, elimination risks, and job-specific optimization. Free, no signup.",
+    "Application verdict, unproven skills, elimination risks, and job-specific fixes before you apply. Free, no signup.",
   h1: "Compare resume to a job description | ATS score, gaps, and apply readiness",
   intro:
     "Paste your resume and the exact job description. See whether you're likely to clear screening, what might get you rejected, which skills are proven in bullets vs listed only, and what to fix before you apply. Then optimize proof and download the version for this role.",
@@ -72,7 +72,7 @@ export const CLUSTER_JD_MATCH_TOOL_COPY = {
     "Diagnose fit → fix elimination risks → optimize proof → download the version you send.",
   webAppName: "ResumeAtlas compare resume to job description",
   webAppDescription:
-    "Evaluate whether your experience supports a specific role: application verdict, unproven skills, elimination risks, and job-specific fixes.",
+    "Compare your resume to a job description: application verdict, unproven skills, elimination risks, and job-specific fixes before you apply.",
   differentiatorHeading: "Apply readiness — before you waste time applying",
   differentiatorBody: [
     "Most tools stop at keyword lists. ResumeAtlas evaluates whether your experience supports this specific role: application verdict, elimination risks, and which skills are proven in your bullets vs listed only.",
