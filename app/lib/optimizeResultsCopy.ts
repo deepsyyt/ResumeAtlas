@@ -46,6 +46,7 @@ export function buildOptimizeBenefitItems(args: {
   selectedFixCount: number;
   unselectedFixCount: number;
   keywordCount: number;
+  impactBulletCount?: number;
   evidenceMatchDelta?: number;
   jdGapsRemaining: number;
 }): OptimizeBenefitItem[] {
@@ -65,8 +66,8 @@ export function buildOptimizeBenefitItems(args: {
     items.push({
       id: "summary",
       icon: "summary",
-      title: "Summary aligned to this role",
-      detail: "Professional summary reframed using experience you already have.",
+      title: "Summary tailored to this role",
+      detail: "Professional summary reframed and highlighted in indigo in the preview.",
     });
   }
 
@@ -98,8 +99,8 @@ export function buildOptimizeBenefitItems(args: {
     items.push({
       id: "fixes",
       icon: "fixes",
-      title: `All ${args.selectedFixCount} fix${args.selectedFixCount === 1 ? "" : "es"} you selected are in your resume`,
-      detail: "Each fix is highlighted in green in the preview.",
+      title: `${args.selectedFixCount} recommended fix${args.selectedFixCount === 1 ? "" : "es"} applied`,
+      detail: "See which bullet each fix landed on — fix terms are highlighted in green in the preview.",
     });
   }
 
@@ -116,12 +117,19 @@ export function buildOptimizeBenefitItems(args: {
     items.push({
       id: "keywords",
       icon: "keywords",
-      title: `${args.keywordCount} keyword${args.keywordCount === 1 ? "" : "s"} now show in project bullets`,
-      detail: "Recruiters and ATS scans see proof where it counts — not just a skills list.",
+      title: `${args.keywordCount} weak keyword${args.keywordCount === 1 ? "" : "s"} now proven in bullets`,
+      detail: "Previously implied or missing terms — highlighted in amber where they appear.",
     });
   }
 
-  if (args.evidenceMatchDelta != null && args.evidenceMatchDelta > 0) {
+  if (args.impactBulletCount != null && args.impactBulletCount > 0) {
+    items.push({
+      id: "match",
+      icon: "match",
+      title: `${args.impactBulletCount} bullet${args.impactBulletCount === 1 ? "" : "s"} reframed for impact`,
+      detail: "Measurable outcomes and quantification terms highlighted in violet in the preview.",
+    });
+  } else if (args.evidenceMatchDelta != null && args.evidenceMatchDelta > 0) {
     items.push({
       id: "match",
       icon: "match",
@@ -156,11 +164,17 @@ export function buildOptimizeBenefitItems(args: {
   return items;
 }
 
-export const OPTIMIZE_FIXES_SECTION_TITLE = "Fixes you selected";
+export const OPTIMIZE_FIXES_SECTION_TITLE = "Recommended fixes applied";
 export const OPTIMIZE_FIXES_SECTION_SUBTITLE =
-  "Green highlights in the preview mark each fix in your resume.";
+  "Each fix below shows the bullet it changed. Fix terms are highlighted in green in the preview.";
 
-export const OPTIMIZE_KEYWORDS_SECTION_TITLE = "Keywords recruiters scan for";
+export const OPTIMIZE_WEAK_KEYWORDS_SECTION_TITLE = "Weak keywords now proven";
+export const OPTIMIZE_WEAK_KEYWORDS_SECTION_SUBTITLE =
+  "Terms that were missing or only implied — now backed by proof in your experience bullets (highlighted in amber).";
+
+export const OPTIMIZE_IMPACT_SECTION_TITLE = "Impact quantified";
+export const OPTIMIZE_IMPACT_SECTION_SUBTITLE =
+  "Bullets reframed for measurable outcomes. Quantification terms are highlighted in violet in the preview.";
 export const OPTIMIZE_GAPS_SECTION_TITLE = "Still missing from this job";
 export const OPTIMIZE_GAPS_SECTION_SUBTITLE =
   "Not added to your resume — only include these if you truly have the experience.";

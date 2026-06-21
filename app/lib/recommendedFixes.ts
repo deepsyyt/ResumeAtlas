@@ -705,3 +705,32 @@ export function filterSelectedRecommendedFixes(
   const keys = new Set(selected.map(recommendedFixKey));
   return catalog.filter((fix) => keys.has(recommendedFixKey(fix)));
 }
+
+/** JD skills explicitly named in user-selected fixes (consent to strengthen proof). */
+export function extractSkillsFromSelectedFixes(
+  selected: Array<RecommendedFix | string>,
+  skillRows: Array<{ skill: string }> = []
+): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+
+  for (const item of selected) {
+    const tokens = recommendedFixMatchTokens(item);
+    for (const row of skillRows) {
+      const skill = row.skill.trim();
+      if (!skill) continue;
+      const key = skill.toLowerCase();
+      if (seen.has(key)) continue;
+      const matched = tokens.some((token) => {
+        if (token.length < 2) return false;
+        return key === token || key.includes(token) || token.includes(key);
+      });
+      if (matched) {
+        seen.add(key);
+        out.push(skill);
+      }
+    }
+  }
+
+  return out;
+}

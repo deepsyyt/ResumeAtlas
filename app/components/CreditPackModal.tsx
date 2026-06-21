@@ -17,14 +17,19 @@ import {
   CREDIT_PACK_EXHAUSTED_HEADLINE,
   CREDIT_PACK_EXHAUSTED_SUBHEAD,
   CREDIT_PACK_OFFER_SUBHEAD,
+  CREDIT_PACK_UPGRADE_BADGE,
+  CREDIT_PACK_UPGRADE_BENEFITS,
+  CREDIT_PACK_UPGRADE_FOOTNOTE,
+  CREDIT_PACK_UPGRADE_HEADLINE,
+  CREDIT_PACK_UPGRADE_SUBHEAD,
   CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_BODY,
-  CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_CTA,
+  CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_HEADLINE,
   CREDIT_PACK_PAYMENT_SUCCESS_CONTINUE_BODY,
   CREDIT_PACK_PAYMENT_SUCCESS_CONTINUE_CTA,
 } from "@/app/lib/evidenceMetricCopy";
-import { PaymentCtaButton } from "@/app/components/PaymentCtaButton";
-
 export type CreditPackPostPaymentAction = "analyze" | "continue";
+
+export type CreditPackModalVariant = "upgrade" | "default";
 
 export type CreditPackModalProps = {
   open: boolean;
@@ -32,6 +37,8 @@ export type CreditPackModalProps = {
   onClose: () => void;
   isLoggedIn: boolean;
   creditsRemaining: number;
+  /** Clear upgrade messaging when free scan is exhausted (vs generic pricing). */
+  variant?: CreditPackModalVariant;
   /** After checkout: analyze when scan was blocked; continue when topping up or post-analysis purchase. */
   postPaymentAction: CreditPackPostPaymentAction;
   onPostPaymentPrimary: () => void | Promise<void>;
@@ -51,6 +58,7 @@ export function CreditPackModal({
   onClose,
   isLoggedIn,
   creditsRemaining,
+  variant = "default",
   postPaymentAction,
   onPostPaymentPrimary,
   onStartOptimization,
@@ -62,7 +70,6 @@ export function CreditPackModal({
 }: CreditPackModalProps) {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
-  const [showBundles, setShowBundles] = useState(false);
   const lastPricingCardClickAtRef = useRef(0);
   const postPaymentStartLockedRef = useRef(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState<{
@@ -76,7 +83,6 @@ export function CreditPackModal({
       setLocalError(null);
       setCheckoutLoading(null);
       setCheckoutSuccess(null);
-      setShowBundles(false);
     }
   }, [open, funnelId]);
 
@@ -117,16 +123,8 @@ export function CreditPackModal({
         });
         if (result.status === "paid") {
           const pkg = getCreditPackage(packageId);
-          const displayPackName =
-            packageId === "starter"
-              ? "Optimize this resume"
-              : packageId === "jobseeker"
-                ? "5 Optimizations"
-                : packageId === "power"
-                  ? "15 Optimizations"
-                  : pkg?.name ?? pkgMeta?.name ?? "Optimization pack";
           setCheckoutSuccess({
-            packName: displayPackName,
+            packName: pkg?.name ?? pkgMeta?.name ?? "Job credits",
             creditsAdded: result.creditsGranted,
             balance: result.creditsRemaining,
           });
@@ -181,14 +179,17 @@ export function CreditPackModal({
 
   const packs = listCreditPackages();
   const starterPack = packs.find((p) => p.id === "starter") ?? null;
-  const fivePack = packs.find((p) => p.id === "jobseeker") ?? null;
-  const fifteenPack = packs.find((p) => p.id === "power") ?? null;
   const showStart = isLoggedIn && creditsRemaining > 0;
   const showPurchasePacks = !checkoutSuccess;
   const busy = isBusy || checkoutLoading !== null || isStartingGoogleAuth;
+  const isUpgradeView = variant === "upgrade" && !showStart && !checkoutSuccess;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center ${
+        isUpgradeView ? "p-2 sm:p-3" : "p-3 sm:p-4"
+      }`}
+    >
       <div
         className="absolute inset-0 bg-slate-900/50"
         onClick={() => {
@@ -200,26 +201,49 @@ export function CreditPackModal({
         aria-hidden
       />
       <div
-        className="nudge-modal-panel nudge-modal-panel--fit relative rounded-2xl bg-white p-3 shadow-xl border border-slate-200 sm:p-3.5"
+        className={`relative rounded-2xl bg-white shadow-xl border border-slate-200 ${
+          isUpgradeView
+            ? "upgrade-modal-panel w-full max-w-[21.5rem] p-3 sm:max-w-[22rem]"
+            : "nudge-modal-panel nudge-modal-panel--fit p-3 sm:p-3.5"
+        }`}
         role="dialog"
         aria-labelledby="credit-pack-title"
         aria-modal="true"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex-shrink-0 pr-16">
-          <h2 id="credit-pack-title" className="text-base font-semibold text-slate-900 leading-snug sm:text-lg">
-            {checkoutSuccess
-              ? "Payment successful"
-              : showStart
-                ? "Continue where you left off"
-                : CREDIT_PACK_EXHAUSTED_HEADLINE}
-          </h2>
+        <div className={isUpgradeView ? "pr-12" : "flex-shrink-0 pr-16"}>
+          {isUpgradeView ? (
+            <>
+              <span className="inline-flex rounded-full border border-amber-200 bg-amber-50 px-2 py-px text-[10px] font-semibold uppercase tracking-wide text-amber-950">
+                {CREDIT_PACK_UPGRADE_BADGE}
+              </span>
+              <h2
+                id="credit-pack-title"
+                className="mt-1.5 text-base font-bold tracking-tight text-slate-900"
+              >
+                {CREDIT_PACK_UPGRADE_HEADLINE}
+              </h2>
+              <p className="mt-1 text-[11px] leading-snug text-slate-500">
+                {CREDIT_PACK_UPGRADE_SUBHEAD}
+              </p>
+            </>
+          ) : (
+            <h2 id="credit-pack-title" className="text-base font-semibold text-slate-900 leading-snug sm:text-lg">
+              {checkoutSuccess
+                ? "Payment successful"
+                : showStart
+                  ? "Continue where you left off"
+                  : CREDIT_PACK_EXHAUSTED_HEADLINE}
+            </h2>
+          )}
         </div>
-        <div className="absolute right-4 top-4 sm:right-5 sm:top-5">
+        <div className={isUpgradeView ? "absolute right-3 top-3" : "absolute right-4 top-4 sm:right-5 sm:top-5"}>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+            className={`rounded-lg border border-slate-200 font-medium text-slate-700 hover:bg-slate-50 transition ${
+              isUpgradeView ? "px-2.5 py-1 text-xs" : "rounded-xl px-4 py-2 text-sm"
+            }`}
           >
             Close
           </button>
@@ -232,8 +256,14 @@ export function CreditPackModal({
             aria-live="polite"
           >
             <p className="text-sm font-semibold text-emerald-950">
-              {checkoutSuccess.packName}: {checkoutSuccess.creditsAdded} credit
-              {checkoutSuccess.creditsAdded === 1 ? "" : "s"} added.
+              {postPaymentAction === "analyze"
+                ? CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_HEADLINE(checkoutSuccess.creditsAdded)
+                : (
+                  <>
+                    {checkoutSuccess.packName}: {checkoutSuccess.creditsAdded} credit
+                    {checkoutSuccess.creditsAdded === 1 ? "" : "s"} added.
+                  </>
+                )}
             </p>
             <p className="mt-2 text-sm text-slate-700">
               {postPaymentAction === "analyze"
@@ -249,29 +279,36 @@ export function CreditPackModal({
                   </>
                 )}
             </p>
-            <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-              <button
-                type="button"
-                disabled={busy}
-                onClick={onClose}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition disabled:opacity-50"
-              >
-                Not now
-              </button>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => void handlePostPaymentPrimary()}
-                className="rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
-              >
-                {isBusy
-                  ? postPaymentAction === "analyze"
-                    ? "Analyzing…"
-                    : "Continuing…"
-                  : postPaymentAction === "analyze"
-                    ? CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_CTA
-                    : CREDIT_PACK_PAYMENT_SUCCESS_CONTINUE_CTA}
-              </button>
+            <div className="mt-4 flex justify-end">
+              {postPaymentAction === "analyze" ? (
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={onClose}
+                  className="w-full rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60 sm:w-auto"
+                >
+                  Close
+                </button>
+              ) : (
+                <div className="flex w-full flex-col-reverse gap-2 sm:w-auto sm:flex-row">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={onClose}
+                    className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition disabled:opacity-50"
+                  >
+                    Not now
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => void handlePostPaymentPrimary()}
+                    className="rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-60"
+                  >
+                    {isBusy ? "Continuing…" : CREDIT_PACK_PAYMENT_SUCCESS_CONTINUE_CTA}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ) : (
@@ -312,44 +349,78 @@ export function CreditPackModal({
 
         {!checkoutSuccess && showPurchasePacks && starterPack ? (
           <>
-            <div className={`nudge-modal-panel__body space-y-1.5 ${showStart ? "mt-3 border-t border-slate-200 pt-3" : "mt-1.5"}`}>
-              {!showStart ? (
-                <p className="text-xs text-slate-600 leading-snug">
-                  {CREDIT_PACK_EXHAUSTED_SUBHEAD}{" "}
-                  <span className="text-slate-500">{CREDIT_PACK_OFFER_SUBHEAD}</span>
-                </p>
-              ) : null}
-
-              {showStart ? (
-                <div className="text-center sm:text-left">
-                  <h3 className="text-base font-semibold tracking-tight text-slate-900 leading-snug">
-                    Buy 5 more credits
+            <div
+              className={
+                isUpgradeView
+                  ? "mt-2 space-y-2"
+                  : `nudge-modal-panel__body space-y-1.5 ${showStart ? "mt-3 border-t border-slate-200 pt-3" : "mt-1.5"}`
+              }
+            >
+              {isUpgradeView ? (
+                <div className="rounded-md border border-indigo-200/80 bg-indigo-50/50 px-2 py-1.5 ring-1 ring-indigo-100/60">
+                  <h3 className="text-[10px] font-bold uppercase tracking-wide text-indigo-950">
+                    What you get with {starterPack.credits} job credits
                   </h3>
-                  <p className="mt-0.5 text-[11px] leading-snug text-slate-600 sm:text-xs">
-                    You have {creditsRemaining} credit{creditsRemaining === 1 ? "" : "s"} left. Buy 5 more anytime.
-                    They add to your balance.
-                  </p>
+                  <ol className="mt-1 space-y-1">
+                    {CREDIT_PACK_UPGRADE_BENEFITS.map((benefit, index) => (
+                      <li key={benefit.title} className="flex gap-1.5">
+                        <span
+                          aria-hidden
+                          className="mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-[9px] font-bold text-white"
+                        >
+                          {index + 1}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-bold leading-tight text-slate-900">{benefit.title}</p>
+                          <p className="mt-px text-[10px] leading-snug text-indigo-950/70">
+                            {benefit.detail}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
                 </div>
-              ) : null}
+              ) : (
+                <>
+                  {!showStart ? (
+                    <p className="text-xs text-slate-600 leading-snug">
+                      {CREDIT_PACK_EXHAUSTED_SUBHEAD}{" "}
+                      <span className="text-slate-500">{CREDIT_PACK_OFFER_SUBHEAD}</span>
+                    </p>
+                  ) : null}
 
-              <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50 px-2.5 py-2 shadow-sm">
-                <span className="inline-block rounded-md bg-emerald-800 px-1.5 py-px text-[10px] font-bold uppercase tracking-wider text-white">
-                  Best value
-                </span>
-                <ul className="mt-1.5 space-y-1 text-[11px] leading-snug text-slate-900">
-                  {CREDIT_PACK_BENEFITS.map((benefit) => (
-                    <li key={benefit} className="flex gap-1.5">
-                      <span
-                        aria-hidden
-                        className="mt-px flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-[9px] font-bold text-white"
-                      >
-                        ✓
-                      </span>
-                      <span className="font-medium">{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  {showStart ? (
+                    <div className="text-center sm:text-left">
+                      <h3 className="text-base font-semibold tracking-tight text-slate-900 leading-snug">
+                        Buy 5 more credits
+                      </h3>
+                      <p className="mt-0.5 text-[11px] leading-snug text-slate-600 sm:text-xs">
+                        You have {creditsRemaining} credit{creditsRemaining === 1 ? "" : "s"} left. Buy 5 more anytime.
+                        They add to your balance.
+                      </p>
+                    </div>
+                  ) : null}
+
+                  <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50 px-2.5 py-2 shadow-sm">
+                    <span className="inline-block rounded-md bg-emerald-800 px-1.5 py-px text-[10px] font-bold uppercase tracking-wider text-white">
+                      Best value
+                    </span>
+                    <ul className="mt-1.5 space-y-1 text-[11px] leading-snug text-slate-900">
+                      {CREDIT_PACK_BENEFITS.map((benefit) => (
+                        <li key={benefit} className="flex gap-1.5">
+                          <span
+                            aria-hidden
+                            className="mt-px flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-[9px] font-bold text-white"
+                          >
+                            ✓
+                          </span>
+                          <span className="font-medium">{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              )}
 
               {localError ? (
                 <p className="text-sm text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
@@ -357,65 +428,7 @@ export function CreditPackModal({
                 </p>
               ) : null}
 
-              {(fivePack || fifteenPack) && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setShowBundles((prev) => !prev)}
-                    className="text-sm underline text-gray-600 block mx-auto"
-                  >
-                    Applying to multiple jobs? View bundles
-                  </button>
-
-                  {showBundles && (
-                    <div className="grid gap-3 sm:grid-cols-2 page-prose">
-                      {fivePack ? (
-                        <div className="border rounded-xl p-4">
-                          <h3 className="font-semibold mb-1">{fivePack.credits} credits</h3>
-                          <div className="text-2xl font-bold mb-2">
-                            {formatCreditPackPrice(fivePack.razorpayAmount, fivePack.currency)}
-                          </div>
-                          <p className="text-sm text-gray-600 mb-3">Best for active job search</p>
-                          <PaymentCtaButton
-                            size="md"
-                            disabled={busy && checkoutLoading !== "jobseeker"}
-                            onClick={() => handlePackageClick("jobseeker")}
-                          >
-                            {checkoutLoading === "jobseeker"
-                              ? "Opening checkout…"
-                              : isStartingGoogleAuth
-                                ? "Signing in…"
-                                : `Get ${fivePack.credits} credits`}
-                          </PaymentCtaButton>
-                        </div>
-                      ) : null}
-
-                      {fifteenPack ? (
-                        <div className="border rounded-xl p-4">
-                          <h3 className="font-semibold mb-1">{fifteenPack.credits} credits</h3>
-                          <div className="text-2xl font-bold mb-2">
-                            {formatCreditPackPrice(fifteenPack.razorpayAmount, fifteenPack.currency)}
-                          </div>
-                          <p className="text-sm text-gray-600 mb-3">For multiple roles &amp; iterations</p>
-                          <PaymentCtaButton
-                            size="md"
-                            disabled={busy && checkoutLoading !== "power"}
-                            onClick={() => handlePackageClick("power")}
-                          >
-                            {checkoutLoading === "power"
-                              ? "Opening checkout…"
-                              : isStartingGoogleAuth
-                                ? "Signing in…"
-                                : `Get ${fifteenPack.credits} credits`}
-                          </PaymentCtaButton>
-                        </div>
-                      ) : null}
-                    </div>
-                  )}
-                </>
-              )}
-
-              {!isLoggedIn ? (
+              {!isUpgradeView && !isLoggedIn ? (
                 <p className="text-[11px] text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-2.5 py-1.5 leading-snug">
                   Choose an option to continue. We&apos;ll send you to Google sign-in and return you here before
                   checkout.
@@ -423,25 +436,49 @@ export function CreditPackModal({
               ) : null}
             </div>
 
-            <div className="nudge-modal-panel__footer mt-4">
-              <div className="payment-glow-shell payment-glow-card payment-glow-card--prominent shadow-2xl">
-                <div className="payment-glow-card-inner overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-5 py-5 text-white text-center">
-                  <p className="text-sm font-semibold uppercase tracking-widest text-slate-300">
+            <div className={isUpgradeView ? "mt-2" : "nudge-modal-panel__footer mt-4"}>
+              <div
+                className={`payment-glow-shell payment-glow-card ${
+                  isUpgradeView ? "payment-glow-card--compact shadow-lg" : "payment-glow-card--prominent shadow-2xl"
+                }`}
+              >
+                <div
+                  className={`payment-glow-card-inner overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white text-center ${
+                    isUpgradeView ? "px-3.5 py-3" : "px-5 py-5"
+                  }`}
+                >
+                  <p
+                    className={`font-semibold uppercase tracking-widest text-slate-300 ${
+                      isUpgradeView ? "text-[10px]" : "text-sm"
+                    }`}
+                  >
                     {starterPack.credits} job credits
                   </p>
-                  <p className="mt-1.5 text-4xl font-bold tracking-tight leading-none sm:text-[2.75rem]">
+                  <p
+                    className={`font-bold tracking-tight leading-none ${
+                      isUpgradeView ? "mt-1 text-3xl" : "mt-1.5 text-4xl sm:text-[2.75rem]"
+                    }`}
+                  >
                     {formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)}
                   </p>
-                  <p className="mt-2 text-base font-semibold leading-snug">
-                    Check, optimize, and download for {starterPack.credits} roles
+                  <p className={`font-semibold leading-snug ${isUpgradeView ? "mt-1 text-xs" : "mt-2 text-base"}`}>
+                    {isUpgradeView
+                      ? `Analyze, optimize, and download for ${starterPack.credits} roles`
+                      : `Check, optimize, and download for ${starterPack.credits} roles`}
                   </p>
-                  <p className="mt-2.5 text-[11px] leading-snug text-slate-400">
+                  <p
+                    className={`leading-snug text-slate-400 ${
+                      isUpgradeView ? "mt-1 text-[10px]" : "mt-2.5 text-[11px]"
+                    }`}
+                  >
                     One-time payment · Secure checkout · No subscription
                   </p>
 
-                  <PaymentCtaButton
-                    className="mt-4"
-                    size="xl"
+                  <button
+                    type="button"
+                    className={`w-full rounded-xl bg-white font-semibold text-slate-900 shadow-sm transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60 ${
+                      isUpgradeView ? "mt-2.5 px-3 py-2.5 text-sm" : "mt-4 px-4 py-3.5 text-sm sm:text-base"
+                    }`}
                     disabled={busy && checkoutLoading !== "starter"}
                     onClick={() => handlePackageClick("starter")}
                   >
@@ -452,9 +489,14 @@ export function CreditPackModal({
                         : showStart
                           ? `Add 5 more for ${formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency)}`
                           : CREDIT_PACK_CTA(formatCreditPackPrice(starterPack.razorpayAmount, starterPack.currency))}
-                  </PaymentCtaButton>
+                  </button>
                 </div>
               </div>
+              {isUpgradeView ? (
+                <p className="mt-1.5 text-center text-[10px] leading-snug text-slate-500">
+                  {CREDIT_PACK_UPGRADE_FOOTNOTE}
+                </p>
+              ) : null}
             </div>
           </>
         ) : null}

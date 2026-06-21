@@ -10,6 +10,7 @@ import {
 import { SKILL_GAP_LLM_RULES, filterSkillGapPhrases } from "@/app/lib/skillGapRules";
 import { buildEvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
 import { SKILL_PROOF_VERSION, countKeywordProofCoverage } from "@/app/lib/skillProofLlm";
+import { resolveWeakUnprovenSkillsForOptimize } from "@/app/lib/jdSkillProofStatus";
 import { RISK_AREAS_VERSION } from "@/app/lib/riskAreasLlm";
 import { APPLICATION_VERDICT_VERSION } from "@/app/lib/applicationVerdictLlm";
 import { enrichEvidenceDashboardWithLlm } from "@/app/lib/enrichEvidenceDashboard";
@@ -282,6 +283,7 @@ export async function POST(request: Request) {
           const coverageScore = countKeywordProofCoverage(cachedProofRows).score;
           cachedPayload.keyword_coverage = coverageScore;
           cachedPayload.ats_score = coverageScore;
+          cachedPayload.weak_skills = resolveWeakUnprovenSkillsForOptimize(cachedProofRows);
         }
         if (
           !hadLlmEnrichment &&
@@ -524,8 +526,10 @@ ${jobDescription}`;
         normalized.evidence_dashboard.skillProof;
       if (proofRows.length > 0) {
         const coverageScore = countKeywordProofCoverage(proofRows).score;
+        // keyword_coverage is canonical for JD match; ats_score mirrors it for legacy callers.
         normalized.keyword_coverage = coverageScore;
         normalized.ats_score = coverageScore;
+        normalized.weak_skills = resolveWeakUnprovenSkillsForOptimize(proofRows);
       }
     }
 

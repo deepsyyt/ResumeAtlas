@@ -107,13 +107,36 @@ export const CREDIT_PACK_BENEFITS = [
   "Built for shortlists, not generic mass applications",
 ] as const;
 export const CREDIT_PACK_CTA = (price: string) => `Get 5 job credits for ${price}`;
+export const CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_HEADLINE = (credits: number) =>
+  `${credits} job credit${credits === 1 ? "" : "s"} added`;
 export const CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_BODY =
-  "Your credits are ready. Run your job check on the resume and job you already pasted.";
+  "Your credits are on your account. Close this window, then click Analyze when you're ready to check your next job.";
 export const CREDIT_PACK_PAYMENT_SUCCESS_CONTINUE_BODY =
   "You're all set. Use your credits whenever you're ready for the next job.";
-export const CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_CTA = "Analyze my resume";
+export const CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_CTA = "Run job check";
 export const CREDIT_PACK_PAYMENT_SUCCESS_CONTINUE_CTA = "Continue";
 export const CREDIT_PACK_FREE_SCAN_HEADLINE = "You've used your free scan";
+
+export const CREDIT_PACK_UPGRADE_BADGE = "1 free scan used";
+export const CREDIT_PACK_UPGRADE_HEADLINE = "Upgrade to continue";
+export const CREDIT_PACK_UPGRADE_SUBHEAD =
+  "Your free scan covered one full job. Analyze, optimize, and download. Upgrade to check a new job description.";
+export const CREDIT_PACK_UPGRADE_BENEFITS = [
+  {
+    title: "Analyze 5 job descriptions",
+    detail:
+      "Application verdict, keyword gaps, rejection risks, and recommended fixes for each posting you target.",
+  },
+  {
+    title: "Optimize your resume per JD",
+    detail: "Tailored summary, bullets, and selected fixes aligned to each role.",
+  },
+  {
+    title: "ATS-friendly resume download",
+    detail: "PDF and editable file for each job, ready to apply.",
+  },
+] as const;
+export const CREDIT_PACK_UPGRADE_FOOTNOTE = "Free scan resets 30 days after use. Job credits never expire.";
 
 export const LIMIT_MODAL_ANON_HEADLINE = "You've used your free scan";
 export const LIMIT_MODAL_ANON_SUBHEAD =

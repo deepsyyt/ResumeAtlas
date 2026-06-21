@@ -37,6 +37,12 @@ type StructuredResumeProps = {
   bulletReasonByKey?: Record<string, BulletRefinementReason>;
   /** Stable keys for bullets that address a selected recommended fix. */
   fixBulletKeys?: string[];
+  /** Numbered fix indices per bullet key (Fix 1, Fix 2, …). */
+  bulletFixIndicesByKey?: Record<string, number[]>;
+  /** Numbered proof indices per bullet key (Proof 1, Proof 2, …). */
+  bulletProofIndicesByKey?: Record<string, number[]>;
+  /** Numbered impact indices per bullet key (Impact 1, Impact 2). */
+  bulletImpactIndicesByKey?: Record<string, number[]>;
   /** Global fix-related terms to highlight when they appear in fix bullets. */
   fixHighlightKeywords?: string[];
   /** JD topic tags per stable bullet key (refined bullets only). */
@@ -78,7 +84,7 @@ type StructuredResumeProps = {
 function highlightKeywordsInText(
   text: string,
   keywords: string[] | undefined,
-  variant: "sky" | "amber" | "emerald" = "sky"
+  variant: "sky" | "amber" | "emerald" | "violet" = "sky"
 ): React.ReactNode[] {
   const list = keywords?.filter((k) => k.trim().length > 0) ?? [];
   if (list.length === 0) return [text];
@@ -92,8 +98,10 @@ function highlightKeywordsInText(
     variant === "emerald"
       ? "rounded bg-emerald-100 px-0.5 font-semibold text-emerald-950 ring-1 ring-emerald-200/80 print:bg-transparent print:px-0 print:font-inherit print:text-inherit print:ring-0"
       : variant === "amber"
-      ? "rounded bg-amber-100 px-0.5 font-semibold text-amber-950 ring-1 ring-amber-200/80 print:bg-transparent print:px-0 print:font-inherit print:text-inherit print:ring-0"
-      : "rounded bg-sky-100 px-0.5 font-medium text-sky-900 print:bg-transparent print:px-0 print:font-inherit print:text-inherit";
+        ? "rounded bg-amber-100 px-0.5 font-semibold text-amber-950 ring-1 ring-amber-200/80 print:bg-transparent print:px-0 print:font-inherit print:text-inherit print:ring-0"
+        : variant === "violet"
+          ? "rounded bg-violet-100 px-0.5 font-semibold text-violet-950 ring-1 ring-violet-200/80 print:bg-transparent print:px-0 print:font-inherit print:text-inherit print:ring-0"
+          : "rounded bg-sky-100 px-0.5 font-medium text-sky-900 print:bg-transparent print:px-0 print:font-inherit print:text-inherit";
 
   return parts.map((part, i) =>
     i % 2 === 1 ? (
@@ -104,6 +112,35 @@ function highlightKeywordsInText(
       part
     )
   );
+}
+
+type KeywordHighlightSet = {
+  keywords: string[];
+  variant: "emerald" | "amber" | "violet";
+};
+
+/** Apply multiple keyword highlight colors (fix → weak keyword → impact priority for overlaps). */
+function highlightKeywordSetsInText(text: string, sets: KeywordHighlightSet[]): React.ReactNode[] {
+  const active = sets.filter((s) => s.keywords.length > 0);
+  if (active.length === 0) return [text];
+  if (active.length === 1) {
+    return highlightKeywordsInText(text, active[0]!.keywords, active[0]!.variant);
+  }
+
+  let nodes: React.ReactNode[] = [text];
+  for (const set of active) {
+    const next: React.ReactNode[] = [];
+    for (const node of nodes) {
+      if (typeof node !== "string") {
+        next.push(node);
+        continue;
+      }
+      const highlighted = highlightKeywordsInText(node, set.keywords, set.variant);
+      next.push(...highlighted);
+    }
+    nodes = next;
+  }
+  return nodes;
 }
 
 function JdTopicTag({ topic }: { topic: string }) {
@@ -167,10 +204,15 @@ function ResumeListSection({
 }
 
 function highlightMetrics(
-  nodes: React.ReactNode[]
+  nodes: React.ReactNode[],
+  variant: "emerald" | "violet" = "emerald"
 ): React.ReactNode {
   const out: React.ReactNode[] = [];
   const metricRe = /(\d[\d.,]*(?:\s*[%+xX]?)?)/g;
+  const markClass =
+    variant === "violet"
+      ? "rounded bg-violet-100 px-0.5 font-semibold text-violet-950 ring-1 ring-violet-200/80 print:bg-transparent print:px-0 print:font-inherit print:text-inherit print:ring-0"
+      : "rounded bg-emerald-50 px-0.5 font-semibold text-emerald-800 print:bg-transparent print:px-0 print:font-inherit print:text-inherit";
 
   nodes.forEach((node, idx) => {
     if (typeof node !== "string") {
@@ -182,10 +224,7 @@ function highlightMetrics(
       const key = `m-${idx}-${j}`;
       if (j % 2 === 1 && part.trim().length > 0) {
         out.push(
-          <mark
-            key={key}
-            className="rounded bg-emerald-50 px-0.5 font-semibold text-emerald-800 print:bg-transparent print:px-0 print:font-inherit print:text-inherit"
-          >
+          <mark key={key} className={markClass}>
             {part}
           </mark>
         );
@@ -225,16 +264,15 @@ type ExperienceBulletRowProps = {
   refinedKeySet: Set<string>;
   newKeySet: Set<string>;
   bulletKey: string;
-  keywordSet: Set<string>;
   quantifiedSet: Set<string>;
   newBulletSet: Set<string>;
-  highlightKeywords?: string[];
   strengthenedKeywords?: string[];
   fixHighlightKeywords?: string[];
   fixKeySet: Set<string>;
   originalBullet?: string;
   refinementReason?: BulletRefinementReason;
-  jdTopicTags?: string[];
+  fixIndices?: number[];
+  impactIndices?: number[];
 };
 
 function ExperienceBulletRow({
@@ -249,19 +287,17 @@ function ExperienceBulletRow({
   refinedKeySet,
   newKeySet,
   bulletKey,
-  keywordSet,
   quantifiedSet,
   newBulletSet,
-  highlightKeywords,
   strengthenedKeywords = [],
   fixHighlightKeywords = [],
   fixKeySet,
   originalBullet,
   refinementReason,
-  jdTopicTags = [],
+  fixIndices = [],
+  impactIndices = [],
 }: ExperienceBulletRowProps) {
   const key = normalizeBulletKey(text);
-  const shouldHighlightKeyword = keywordSet.has(key);
   const ctx =
     projectIndex === undefined ? undefined : { projectIndex };
 
@@ -270,12 +306,17 @@ function ExperienceBulletRow({
   const isNewBullet = newKeySet.has(bulletKey) || newBulletSet.has(key);
   const isRewritten =
     !isNewBullet && (refinedKeySet.has(bulletKey) || highlightedSet.has(key));
-  const isKeyword = keywordSet.has(key);
-  const isQuantified = quantifiedSet.has(key);
-  const showJdTopics = (isRewritten || isNewBullet) && jdTopicTags.length > 0;
-  const hasCallout = isFixBullet || isNewBullet || isRewritten || isKeyword || isQuantified;
-  const weakKeywords =
-    isRewritten && strengthenedKeywords.length > 0 ? strengthenedKeywords : undefined;
+  const isWeakKeyword =
+    !isFixBullet &&
+    (refinementReason?.kind === "weak_keyword" || strengthenedKeywords.length > 0);
+  const isImpactBullet =
+    !isFixBullet &&
+    !isWeakKeyword &&
+    (refinementReason?.kind === "impact_polish" ||
+      impactIndices.length > 0 ||
+      quantifiedSet.has(key));
+  const isQuantified = isImpactBullet && quantifiedSet.has(key);
+
   const fixKeywords = isFixBullet
     ? Array.from(
         new Set([
@@ -286,26 +327,39 @@ function ExperienceBulletRow({
         ])
       ).filter((kw) => kw.trim().length > 0)
     : [];
-  const bulletHighlightKeywords = fixKeywords.length > 0
-    ? fixKeywords
-    : weakKeywords
-      ? weakKeywords
-      : shouldHighlightKeyword
-        ? highlightKeywords
-        : undefined;
-  const bulletHighlightVariant: "sky" | "amber" | "emerald" =
-    fixKeywords.length > 0 ? "emerald" : weakKeywords ? "amber" : "sky";
+  const weakKeywords =
+    isWeakKeyword && strengthenedKeywords.length > 0 ? strengthenedKeywords : [];
 
+  const highlightSets: KeywordHighlightSet[] = [];
+  if (fixKeywords.length > 0) {
+    highlightSets.push({ keywords: fixKeywords, variant: "emerald" });
+  }
+  if (weakKeywords.length > 0) {
+    highlightSets.push({ keywords: weakKeywords, variant: "amber" });
+  }
+
+  const hasCallout = isFixBullet || isWeakKeyword || isImpactBullet || isNewBullet;
   const calloutClass = [
     hasCallout ? "rounded-md px-2 py-1.5 print:bg-transparent print:px-0 print:py-0 print:ring-0 print:border-l-0" : "py-0.5",
     isFixBullet ? "bg-emerald-50/95 ring-1 ring-emerald-200 border-l-2 border-emerald-500" : "",
-    !isFixBullet && isNewBullet ? "bg-amber-50/90 ring-1 ring-amber-200 border-l-2 border-amber-600" : "",
-    !isFixBullet && isRewritten ? "bg-violet-50 ring-1 ring-violet-200 border-l-2 border-violet-500" : "",
-    !isFixBullet && !isNewBullet && isKeyword ? "bg-sky-100 ring-1 ring-sky-300 border-l-2 border-sky-500" : "",
-    !isFixBullet && !isNewBullet && isQuantified ? "bg-emerald-50/80 ring-1 ring-emerald-200 border-l-2 border-emerald-500" : "",
+    !isFixBullet && isWeakKeyword ? "bg-amber-50/90 ring-1 ring-amber-200 border-l-2 border-amber-500" : "",
+    !isFixBullet && !isWeakKeyword && isImpactBullet
+      ? "bg-violet-50 ring-1 ring-violet-200 border-l-2 border-violet-500"
+      : "",
+    !isFixBullet && !isWeakKeyword && !isImpactBullet && isNewBullet
+      ? "bg-slate-50 ring-1 ring-slate-200 border-l-2 border-slate-400"
+      : "",
   ]
     .filter(Boolean)
     .join(" ");
+
+  const renderedText =
+    highlightSets.length > 0
+      ? highlightKeywordSetsInText(text, highlightSets)
+      : [text];
+  const finalNodes = isImpactBullet
+    ? highlightMetrics(renderedText, "violet")
+    : renderedText.map((node, k) => <React.Fragment key={k}>{node}</React.Fragment>);
 
   return (
     <li className="m-0 flex list-none items-start gap-2">
@@ -325,14 +379,8 @@ function ExperienceBulletRow({
             className="w-full rounded-md border border-slate-300 bg-white px-2 py-1 text-sm leading-relaxed text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400"
             rows={2}
           />
-        ) : isQuantified ? (
-          highlightMetrics(
-            highlightKeywordsInText(text, bulletHighlightKeywords, bulletHighlightVariant)
-          )
         ) : (
-          highlightKeywordsInText(text, bulletHighlightKeywords, bulletHighlightVariant).map(
-            (node, k) => <React.Fragment key={k}>{node}</React.Fragment>
-          )
+          finalNodes
         )}
         {isRewritten &&
         originalBullet?.trim() &&
@@ -346,61 +394,34 @@ function ExperienceBulletRow({
             </p>
           </details>
         ) : null}
-        <span className="ml-2 inline-flex flex-wrap gap-1 align-middle print:hidden">
-          {isNewBullet && (
-            <span className="inline-flex rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
-              new
-            </span>
-          )}
-          {(isRewritten || isNewBullet) && isFixBullet ? (
-            <span
-              className="inline-flex max-w-full rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-950"
-              title={
-                refinementReason?.kind === "rejection_risk"
-                  ? refinementReason.risks.join("\n")
-                  : "Addresses a fix you selected"
-              }
-            >
-              Fix applied
-              {refinementReason?.kind === "rejection_risk" && refinementReason.risks.length > 1
-                ? ` · ${refinementReason.risks.length}`
-                : ""}
-            </span>
-          ) : isRewritten && refinementReason?.kind === "weak_keyword" ? (
-            <span
-              className="inline-flex max-w-full rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-950"
-              title="Refined to strengthen weak JD keyword proof"
-            >
-              For: {refinementReason.keywords.slice(0, 3).join(", ")}
-              {refinementReason.keywords.length > 3 ? "…" : ""}
-            </span>
-          ) : isRewritten && refinementReason?.kind === "impact_polish" ? (
-            <span
-              className="inline-flex rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-800"
-              title="Refined for stronger impact wording and measurable proof"
-            >
-              Impact polish{refinementReason.quantified ? " · metrics" : ""}
-            </span>
-          ) : showJdTopics
-            ? jdTopicTags.map((topic) => <JdTopicTag key={topic} topic={topic} />)
-            : isRewritten
-              ? (
-                <span className="inline-flex rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-800">
-                  refined
-                </span>
-                )
-              : null}
-          {isKeyword && (
-            <span className="inline-flex rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-800">
-              surfaced
-            </span>
-          )}
-          {isQuantified && (
-            <span className="inline-flex rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-800">
-              quantified
-            </span>
-          )}
-        </span>
+        {hasCallout ? (
+          <span className="ml-2 inline-flex flex-wrap gap-1 align-middle print:hidden">
+            {isFixBullet && fixIndices.length > 0 ? (
+              <span className="inline-flex rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-950">
+                Fix {fixIndices[0]}
+              </span>
+            ) : isFixBullet ? (
+              <span className="inline-flex rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-950">
+                Fix applied
+              </span>
+            ) : null}
+            {isWeakKeyword ? (
+              <span className="inline-flex rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-950">
+                Keyword proven
+              </span>
+            ) : null}
+            {isImpactBullet ? (
+              <span className="inline-flex rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-900">
+                {isQuantified ? "Impact quantified" : "Impact refined"}
+              </span>
+            ) : null}
+            {isNewBullet ? (
+              <span className="inline-flex rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-700">
+                New bullet
+              </span>
+            ) : null}
+          </span>
+        ) : null}
       </div>
     </li>
   );
@@ -422,6 +443,9 @@ export function StructuredResume({
   bulletKeywordsByKey,
   bulletReasonByKey,
   fixBulletKeys,
+  bulletFixIndicesByKey,
+  bulletProofIndicesByKey,
+  bulletImpactIndicesByKey,
   fixHighlightKeywords,
   bulletTopicTags,
   summaryTopicTags = [],
@@ -490,6 +514,8 @@ export function StructuredResume({
     strengthenedKeywords: bulletKeywordsByKey?.[bulletKey] ?? [],
     originalBullet: bulletOriginalsByKey?.[bulletKey],
     refinementReason: bulletReasonByKey?.[bulletKey],
+    fixIndices: bulletFixIndicesByKey?.[bulletKey] ?? [],
+    impactIndices: bulletImpactIndicesByKey?.[bulletKey] ?? [],
   });
 
   return (
@@ -510,34 +536,16 @@ export function StructuredResume({
             </li>
             <li className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-sm border border-emerald-300 bg-emerald-100" aria-hidden />
-              Fix applied
-            </li>
-            <li className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm border border-emerald-200 bg-emerald-50" aria-hidden />
-              Fix keyword
-            </li>
-            <li className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm border border-violet-300 bg-violet-50" aria-hidden />
-              Bullet refined
+              Recommended fix
             </li>
             <li className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-sm border border-amber-300 bg-amber-100" aria-hidden />
-              Weak keyword strengthened
+              Weak keyword proven
             </li>
             <li className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm border border-sky-300 bg-sky-100" aria-hidden />
-              Keyword surfaced
+              <span className="h-2.5 w-2.5 rounded-sm border border-violet-300 bg-violet-100" aria-hidden />
+              Impact quantified
             </li>
-            <li className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm border border-amber-300 bg-amber-50" aria-hidden />
-              New bullet
-            </li>
-            {Object.keys(bulletTopicTags ?? {}).length > 0 ? (
-              <li className="inline-flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full border border-green-300 bg-green-100" aria-hidden />
-                JD topic evidence
-              </li>
-            ) : null}
           </ul>
         </div>
       ) : null}
@@ -848,13 +856,10 @@ export function StructuredResume({
                           refinedKeySet={refinedKeySet}
                           newKeySet={newKeySet}
                           bulletKey={rowKey}
-                          keywordSet={keywordSet}
                           quantifiedSet={quantifiedSet}
                           newBulletSet={newBulletSet}
-                          highlightKeywords={highlightKeywords}
                           fixHighlightKeywords={fixKeywordsGlobal}
                           fixKeySet={fixKeySet}
-                          jdTopicTags={bulletTopicTags?.[rowKey] ?? []}
                           {...bulletEvidenceForKey(rowKey)}
                         />
                         );
@@ -900,13 +905,10 @@ export function StructuredResume({
                             refinedKeySet={refinedKeySet}
                             newKeySet={newKeySet}
                             bulletKey={rowKey}
-                            keywordSet={keywordSet}
                             quantifiedSet={quantifiedSet}
                             newBulletSet={newBulletSet}
-                            highlightKeywords={highlightKeywords}
                             fixHighlightKeywords={fixKeywordsGlobal}
                             fixKeySet={fixKeySet}
-                            jdTopicTags={bulletTopicTags?.[rowKey] ?? []}
                             {...bulletEvidenceForKey(rowKey)}
                           />
                           );

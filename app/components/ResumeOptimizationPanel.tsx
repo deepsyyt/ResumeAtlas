@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { OptimizeSkillProofSection } from "@/app/components/OptimizeSkillProofSection";
 import {
   buildOptimizeBenefitItems,
   OPTIMIZE_ATS_BADGE_LABEL,
@@ -9,43 +8,49 @@ import {
   OPTIMIZE_BENEFITS_TITLE,
   OPTIMIZE_FIXES_SECTION_SUBTITLE,
   OPTIMIZE_FIXES_SECTION_TITLE,
-  OPTIMIZE_GAPS_SECTION_SUBTITLE,
-  OPTIMIZE_GAPS_SECTION_TITLE,
   OPTIMIZE_HERO_SUBTITLE,
   OPTIMIZE_HERO_TITLE,
-  OPTIMIZE_KEYWORDS_SECTION_TITLE,
+  OPTIMIZE_IMPACT_SECTION_SUBTITLE,
+  OPTIMIZE_IMPACT_SECTION_TITLE,
+  OPTIMIZE_WEAK_KEYWORDS_SECTION_SUBTITLE,
+  OPTIMIZE_WEAK_KEYWORDS_SECTION_TITLE,
   recommendedFixShortTitle,
   type OptimizeBenefitItem,
 } from "@/app/lib/optimizeResultsCopy";
+import type { BulletRefinementReason } from "@/app/lib/optimizeBulletEvidence";
+import {
+  buildAppliedFixSummaryRows,
+  buildImpactQuantifiedRows,
+  buildWeakKeywordProvenRows,
+  countImpactRefinedBullets,
+} from "@/app/lib/optimizePreviewSummary";
 import type { AppliedFixOutcome } from "@/app/lib/recommendedFixes";
 import {
-  extractFixDisplayChips,
-  recommendedFixActionLabel,
   recommendedFixToOptimizeText,
-  resolveRecommendedFixInput,
+  resolveDashboardRecommendedFixes,
   type RecommendedFix,
 } from "@/app/lib/recommendedFixes";
-import { describeJdGapEvidence, type JdGapDetail } from "@/app/lib/skillGapRules";
-import type { OptimizedSkillProofRow } from "@/app/lib/resumeEvidenceScore";
+import type { ResumeDocument } from "@/app/lib/resumeDocument";
 
 export type ResumeOptimizationPanelProps = {
+  resume: ResumeDocument;
   surfacedKeywords: string[];
   bulletsRefined: number;
   bulletsAdded?: number;
   projectsRefined?: number;
   summaryTailored: boolean;
-  jdGapsRemaining: number;
-  jdGapDetails?: JdGapDetail[];
-  improvedSkillProof?: OptimizedSkillProofRow[];
-  evidenceMatchDelta?: number;
-  atsScoreReference?: number;
-  weakKeywordsStrengthened?: number;
+  bulletKeywordsByKey?: Record<string, string[]>;
+  bulletReasonByKey?: Record<string, BulletRefinementReason>;
+  bulletImpactIndicesByKey?: Record<string, number[]>;
+  quantifiedBullets?: string[];
+  bulletKeysByText?: Map<string, string>;
   /** Per-fix outcomes after optimize (preferred). */
   appliedFixOutcomes?: AppliedFixOutcome[];
   /** @deprecated Use appliedFixOutcomes — legacy optimize text lines. */
   selectedFixes?: string[];
   /** All recommended fixes from analyze (for unselected count). */
   availableRecommendedFixes?: RecommendedFix[];
+  atsScoreReference?: number;
   onDownloadPdf: () => void;
   onDownloadDocx: () => void;
   onScrollToPreview?: () => void;
@@ -61,7 +66,7 @@ function BenefitIconSvg({ icon }: { icon: OptimizeBenefitItem["icon"] }) {
     fixes: "bg-teal-100 text-teal-800 ring-teal-200/70",
     keywords: "bg-amber-100 text-amber-900 ring-amber-200/70",
     edit: "bg-violet-100 text-violet-800 ring-violet-200/70",
-    match: "bg-cyan-100 text-cyan-800 ring-cyan-200/70",
+    match: "bg-violet-100 text-violet-800 ring-violet-200/70",
     download: "bg-blue-100 text-blue-800 ring-blue-200/70",
     gaps: "bg-orange-100 text-orange-900 ring-orange-200/70",
     skipped: "bg-slate-100 text-slate-700 ring-slate-200/70",
@@ -142,26 +147,6 @@ function BenefitIconSvg({ icon }: { icon: OptimizeBenefitItem["icon"] }) {
           </svg>
         </span>
       );
-    case "gaps":
-      return (
-        <span className={`${base} ${tone}`} aria-hidden>
-          <svg viewBox="0 0 20 20" className={svgClass} fill="none" stroke="currentColor" strokeWidth="1.6">
-            <circle cx="10" cy="10" r="6.5" />
-            <path d="M10 7v4" strokeLinecap="round" />
-            <circle cx="10" cy="13.25" r="0.75" fill="currentColor" stroke="none" />
-          </svg>
-        </span>
-      );
-    case "skipped":
-      return (
-        <span className={`${base} ${tone}`} aria-hidden>
-          <svg viewBox="0 0 20 20" className={svgClass} fill="none" stroke="currentColor" strokeWidth="1.6">
-            <path d="M10 3.5 3.5 16h13L10 3.5z" strokeLinejoin="round" />
-            <path d="M10 8v3.5" strokeLinecap="round" />
-            <circle cx="10" cy="13.75" r="0.75" fill="currentColor" stroke="none" />
-          </svg>
-        </span>
-      );
     default:
       return (
         <span className={`${base} ${tone}`} aria-hidden>
@@ -206,20 +191,21 @@ function AtsBadge({ score }: { score?: number }) {
 }
 
 export function ResumeOptimizationPanel({
+  resume,
   surfacedKeywords,
   bulletsRefined,
   bulletsAdded = 0,
   projectsRefined = 0,
   summaryTailored,
-  jdGapsRemaining,
-  jdGapDetails = [],
-  improvedSkillProof = [],
-  evidenceMatchDelta,
-  atsScoreReference,
-  weakKeywordsStrengthened = 0,
+  bulletKeywordsByKey = {},
+  bulletReasonByKey = {},
+  bulletImpactIndicesByKey = {},
+  quantifiedBullets = [],
+  bulletKeysByText = new Map(),
   appliedFixOutcomes = [],
   selectedFixes = [],
   availableRecommendedFixes = [],
+  atsScoreReference,
   onDownloadPdf,
   onDownloadDocx,
   onScrollToPreview,
@@ -236,7 +222,18 @@ export function ResumeOptimizationPanel({
   const unselectedFixes = availableRecommendedFixes.filter(
     (fix) => !selectedSet.has(recommendedFixToOptimizeText(fix).trim().toLowerCase())
   );
-  const kwCount = surfacedKeywords.length;
+  const weakKeywordRows = buildWeakKeywordProvenRows(bulletKeywordsByKey, resume);
+  const weakKeywordCount =
+    weakKeywordRows.length > 0 ? new Set(weakKeywordRows.map((r) => r.keyword.toLowerCase())).size : surfacedKeywords.length;
+  const impactBulletCount = countImpactRefinedBullets(bulletReasonByKey, bulletImpactIndicesByKey);
+  const impactRows = buildImpactQuantifiedRows({
+    resume,
+    bulletReasonByKey,
+    bulletImpactIndicesByKey,
+    quantifiedBulletTexts: quantifiedBullets,
+    bulletKeysByText,
+  });
+  const fixRows = buildAppliedFixSummaryRows(fixOutcomes, resume);
 
   const benefits = buildOptimizeBenefitItems({
     atsScore: atsScoreReference,
@@ -246,14 +243,13 @@ export function ResumeOptimizationPanel({
     projectsRefined,
     selectedFixCount: fixOutcomes.length,
     unselectedFixCount: unselectedFixes.length,
-    keywordCount: kwCount,
-    evidenceMatchDelta,
-    jdGapsRemaining,
+    keywordCount: weakKeywordCount,
+    impactBulletCount,
+    jdGapsRemaining: 0,
   });
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Hero + download */}
       <div className="payment-glow-shell payment-glow-card shadow-md">
         <section className="payment-glow-card-inner bg-gradient-to-br from-slate-900 to-slate-800 p-4 text-white">
           <div className="flex flex-wrap items-start justify-between gap-2">
@@ -282,15 +278,11 @@ export function ResumeOptimizationPanel({
         </section>
       </div>
 
-      {/* Benefits */}
       <section className="rounded-xl border border-slate-200/90 bg-gradient-to-b from-white to-slate-50/40 p-4 shadow-sm">
         <h3 className="text-sm font-semibold tracking-tight text-slate-900">{OPTIMIZE_BENEFITS_TITLE}</h3>
         <ul className="mt-3 divide-y divide-slate-100 rounded-xl border border-slate-100 bg-white/90">
           {benefits.map((item) => (
-            <li
-              key={item.id}
-              className="flex items-center gap-3 bg-white px-3 py-2.5"
-            >
+            <li key={item.id} className="flex items-center gap-3 bg-white px-3 py-2.5">
               <BenefitIconSvg icon={item.icon} />
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-semibold leading-snug text-slate-900">{item.title}</p>
@@ -303,14 +295,13 @@ export function ResumeOptimizationPanel({
         </ul>
       </section>
 
-      {/* Selected fixes */}
-      {fixOutcomes.length > 0 ? (
-        <section className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
+      {fixRows.length > 0 ? (
+        <section className="rounded-xl border border-emerald-200/80 bg-white p-3.5 shadow-sm">
           <div className="flex items-start justify-between gap-2">
             <div>
               <h3 className="text-sm font-semibold text-slate-900">
                 {OPTIMIZE_FIXES_SECTION_TITLE}{" "}
-                <span className="font-normal text-emerald-600">({fixOutcomes.length} applied)</span>
+                <span className="font-normal text-emerald-700">({fixRows.length})</span>
               </h3>
               <p className="mt-0.5 text-[11px] leading-snug text-slate-500">
                 {OPTIMIZE_FIXES_SECTION_SUBTITLE}
@@ -327,93 +318,90 @@ export function ResumeOptimizationPanel({
             ) : null}
           </div>
           <ul className="mt-2.5 space-y-2">
-            {fixOutcomes.map((outcome) => {
-              const parsedFix = resolveRecommendedFixInput(outcome.fixText);
-              const fixKeywords = extractFixDisplayChips(
-                parsedFix ?? outcome.fixText,
-                4
-              );
-              return (
-                <li
-                  key={outcome.fixText}
-                  className="rounded-lg border border-slate-100 bg-white px-2.5 py-2 shadow-sm"
-                >
-                  <div className="flex gap-2">
-                    <span
-                      className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[9px] font-bold text-white"
-                      aria-hidden
-                    >
-                      ✓
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold leading-snug text-slate-900">
-                        {parsedFix
-                          ? recommendedFixActionLabel(parsedFix)
-                          : recommendedFixActionLabel({
-                              action: outcome.action,
-                              target: null,
-                              section: null,
-                              detail: null,
-                            })}
-                      </p>
-                      {fixKeywords.length > 0 ? (
-                        <p className="mt-1.5 flex flex-wrap gap-1">
-                          {fixKeywords.map((kw) => (
-                            <span
-                              key={`${outcome.fixText}-${kw}`}
-                              className="inline-flex rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-900 ring-1 ring-emerald-100"
-                            >
-                              {kw}
-                            </span>
-                          ))}
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
-                </li>
-              );
-            })}
+            {fixRows.map((row) => (
+              <li
+                key={`fix-${row.index}`}
+                className="rounded-lg border border-emerald-100 bg-emerald-50/40 px-2.5 py-2"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-wide text-emerald-800">
+                  Fix {row.index}
+                </p>
+                <p className="mt-0.5 text-xs font-semibold leading-snug text-slate-900">{row.fixLabel}</p>
+                {row.placementLabel ? (
+                  <p className="mt-1 text-[11px] font-medium text-slate-700">
+                    <span className="text-slate-500">Bullet: </span>
+                    {row.placementLabel}
+                  </p>
+                ) : null}
+                {row.bulletSnippet ? (
+                  <p className="mt-1 text-[11px] leading-snug text-slate-600 italic">
+                    &ldquo;{row.bulletSnippet}&rdquo;
+                  </p>
+                ) : null}
+              </li>
+            ))}
           </ul>
         </section>
       ) : null}
 
-      {/* Keywords */}
-      {kwCount > 0 ? (
-        <section className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
-          <h3 className="text-sm font-semibold text-slate-900">{OPTIMIZE_KEYWORDS_SECTION_TITLE}</h3>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {surfacedKeywords.map((kw) => (
-              <span
-                key={kw}
-                className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ${
-                  weakKeywordsStrengthened > 0
-                    ? "bg-amber-50 text-amber-950 ring-amber-200/80"
-                    : "bg-sky-50 text-sky-900 ring-sky-200/80"
-                }`}
+      {weakKeywordRows.length > 0 ? (
+        <section className="rounded-xl border border-amber-200/80 bg-white p-3.5 shadow-sm">
+          <h3 className="text-sm font-semibold text-slate-900">{OPTIMIZE_WEAK_KEYWORDS_SECTION_TITLE}</h3>
+          <p className="mt-0.5 text-[11px] leading-snug text-slate-500">
+            {OPTIMIZE_WEAK_KEYWORDS_SECTION_SUBTITLE}
+          </p>
+          <ul className="mt-2.5 space-y-2">
+            {weakKeywordRows.map((row) => (
+              <li
+                key={`${row.keyword}-${row.placementLabel}`}
+                className="rounded-lg border border-amber-100 bg-amber-50/40 px-2.5 py-2"
               >
-                {kw}
-              </span>
+                <p className="text-xs font-semibold text-slate-900">
+                  <mark className="rounded bg-amber-100 px-1 py-0.5 font-semibold text-amber-950 ring-1 ring-amber-200/80">
+                    {row.keyword}
+                  </mark>
+                </p>
+                <p className="mt-1 text-[11px] text-slate-600">
+                  <span className="font-medium text-slate-700">In: </span>
+                  {row.placementLabel}
+                </p>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
       ) : null}
 
-      {improvedSkillProof.length > 0 ? (
-        <OptimizeSkillProofSection rows={improvedSkillProof} />
-      ) : null}
-
-      {jdGapDetails.length > 0 ? (
-        <section className="rounded-xl border border-amber-200/80 bg-amber-50/40 p-3.5">
-          <h3 className="text-sm font-semibold text-amber-950">{OPTIMIZE_GAPS_SECTION_TITLE}</h3>
-          <p className="mt-0.5 text-[11px] text-amber-900/75">{OPTIMIZE_GAPS_SECTION_SUBTITLE}</p>
-          <ul className="mt-2 flex flex-wrap gap-1.5">
-            {jdGapDetails.map((gap) => (
+      {impactRows.length > 0 ? (
+        <section className="rounded-xl border border-violet-200/80 bg-white p-3.5 shadow-sm">
+          <h3 className="text-sm font-semibold text-slate-900">
+            {OPTIMIZE_IMPACT_SECTION_TITLE}{" "}
+            <span className="font-normal text-violet-700">({impactRows.length} bullet{impactRows.length === 1 ? "" : "s"})</span>
+          </h3>
+          <p className="mt-0.5 text-[11px] leading-snug text-slate-500">
+            {OPTIMIZE_IMPACT_SECTION_SUBTITLE}
+          </p>
+          <ul className="mt-2.5 space-y-2">
+            {impactRows.map((row) => (
               <li
-                key={gap.phrase}
-                className="rounded-md border border-amber-200/70 bg-white/90 px-2 py-1 text-[11px] font-medium text-amber-950"
-                title={describeJdGapEvidence(gap)}
+                key={row.placementLabel + row.bulletSnippet}
+                className="rounded-lg border border-violet-100 bg-violet-50/40 px-2.5 py-2"
               >
-                {gap.phrase}
+                <p className="text-[11px] font-semibold text-slate-800">{row.placementLabel}</p>
+                <p className="mt-0.5 text-[11px] leading-snug text-slate-600 italic">
+                  &ldquo;{row.bulletSnippet}&rdquo;
+                </p>
+                {row.quantTerms.length > 0 ? (
+                  <p className="mt-1.5 flex flex-wrap gap-1">
+                    {row.quantTerms.map((term) => (
+                      <span
+                        key={term}
+                        className="inline-flex rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-950 ring-1 ring-violet-200/80"
+                      >
+                        {term}
+                      </span>
+                    ))}
+                  </p>
+                ) : null}
               </li>
             ))}
           </ul>

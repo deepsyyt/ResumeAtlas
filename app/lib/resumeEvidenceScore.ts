@@ -24,7 +24,7 @@ import type {
   JdSkillProofStatus,
   SkillOptimizeAction,
 } from "@/app/lib/jdSkillProofStatus";
-import { selectSkillProofForDisplay } from "@/app/lib/jdSkillProofStatus";
+import { resolveSkillProofRow, selectSkillProofForDisplay } from "@/app/lib/jdSkillProofStatus";
 
 export type EvidenceStrength = "gap" | "weak" | "medium" | "strong";
 
@@ -42,12 +42,6 @@ export type JdSkillEvidenceRow = {
   /** LLM-generated why line for live keyword coverage table. */
   whyDetail?: string;
   jdRequired: boolean;
-};
-
-export type EvidenceCategoryScore = {
-  category: string;
-  score: number;
-  detail: string;
 };
 
 export type SeniorityAlignment = {
@@ -90,7 +84,6 @@ export type EvidenceDashboard = {
   skillProof: JdSkillEvidenceRow[];
   /** Full JD keyword proof list (skillProof is a capped dashboard sample). */
   skillProofAll?: JdSkillEvidenceRow[];
-  categories: EvidenceCategoryScore[];
   /** Posting domain used to frame role-specific topics and summary copy. */
   jdDomain?: JdDomain;
   /** JD-specific topic coverage — populated by LLM in /api/analyze. */
@@ -806,7 +799,9 @@ function computeSnapshot(
   const leadershipSignal = experienceSignalScore(experienceBlocks, LEADERSHIP_RE);
   const deploymentSignal = experienceSignalScore(experienceBlocks, DEPLOYMENT_RE);
 
-  const proved = skillProof.filter((s) => s.strength === "strong").length;
+  const proved = skillProof.filter(
+    (row) => resolveSkillProofRow(row).proofStatus === "proven"
+  ).length;
   const jdSkillsTotal = jdSkills.length;
   const jdSkillProof =
     jdSkillsTotal > 0 ? Math.round((proved / jdSkillsTotal) * 100) : 100;
@@ -949,7 +944,6 @@ export function buildEvidenceDashboard(args: {
       args.skillProofDisplayLimit ?? 14
     ),
     skillProofAll: skillProof,
-    categories: [],
     jdDomain,
     riskAreas,
   };
@@ -971,19 +965,6 @@ export function isEvidenceWeakBullet(bullet: string): boolean {
   if (t.length < 90 && !METRIC_RE.test(t)) return true;
   if (/^(responsible for|worked on|helped with|developed innovative)\b/i.test(t)) return true;
   return false;
-}
-
-export function evidenceStrengthLabel(strength: EvidenceStrength): string {
-  switch (strength) {
-    case "strong":
-      return "Strong";
-    case "medium":
-      return "Medium";
-    case "weak":
-      return "Weak";
-    case "gap":
-      return "Gap";
-  }
 }
 
 const STRENGTH_RANK: Record<EvidenceStrength, number> = {
@@ -1087,20 +1068,30 @@ function buildSkillImprovementNote(
 }
 
 /**
- * Optimize-only skill proof: partial or listed-only skills that strengthened after tailoring.
- * Omits honest JD gaps (unlike the intelligence dashboard full map).
+ * Optimize-only skill proof: targeted skills that strengthened after tailoring.
+ * Omits unselected missing gaps unless the skill was in optimizeTargetSkills.
  */
 export function buildOptimizedSkillProofRows(
   beforeRows: JdSkillEvidenceRow[],
-  afterRows: JdSkillEvidenceRow[]
+  afterRows: JdSkillEvidenceRow[],
+  optimizeTargetSkills?: string[]
 ): OptimizedSkillProofRow[] {
   const beforeMap = new Map(beforeRows.map((r) => [r.skill.toLowerCase(), r]));
+  const allowlist = new Set(
+    (optimizeTargetSkills ?? []).map((skill) => skill.toLowerCase().trim())
+  );
   const out: OptimizedSkillProofRow[] = [];
 
   for (const afterRow of afterRows) {
     const beforeRow = beforeMap.get(afterRow.skill.toLowerCase());
     if (!beforeRow) continue;
-    if (beforeRow.optimizeAction === "do_not_invent") continue;
+    const skillKey = afterRow.skill.toLowerCase().trim();
+    if (
+      beforeRow.optimizeAction === "do_not_invent" &&
+      !allowlist.has(skillKey)
+    ) {
+      continue;
+    }
     if (afterRow.proofStatus === "missing") continue;
     if (!skillProofImproved(beforeRow, afterRow)) continue;
 

@@ -1636,6 +1636,27 @@
   border-radius: calc(1.125rem - 4px);
 }
 
+.payment-glow-card--compact {
+  border-radius: 0.875rem;
+  padding: 2px;
+}
+
+.payment-glow-card--compact.payment-glow-shell::after {
+  box-shadow:
+    0 0 16px rgba(99, 102, 241, 0.45),
+    0 0 28px rgba(168, 85, 247, 0.32),
+    0 0 40px rgba(236, 72, 153, 0.18);
+}
+
+.payment-glow-card--compact .payment-glow-card-inner {
+  border-radius: calc(0.875rem - 2px);
+}
+
+.upgrade-modal-panel {
+  max-height: min(calc(100dvh - 1.5rem), 31rem);
+  overflow-y: auto;
+}
+
 .payment-glow-card-inner {
   position: relative;
   z-index: 1;

@@ -125,7 +125,6 @@ export const DEMO_EVIDENCE_DASHBOARD: EvidenceDashboard = {
     },
   ],
   jdDomain: "data",
-  categories: [],
   keywordCoverageVerdict: {
     badgeLabel: "Good coverage",
     headline: "8 matched · 1 missed JD keywords in your resume.",

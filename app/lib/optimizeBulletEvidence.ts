@@ -12,6 +12,13 @@ export type BulletChangeForEvidence = {
   addedKeywords: string[];
   quantified?: boolean;
   addressedRejectionRisks?: string[];
+  impactFocusIndex?: number;
+};
+
+export type BulletClaimBadgeMaps = {
+  bulletFixIndicesByKey: Record<string, number[]>;
+  bulletProofIndicesByKey: Record<string, number[]>;
+  bulletImpactIndicesByKey: Record<string, number[]>;
 };
 
 export type BulletDiffForEvidence = {
@@ -126,4 +133,79 @@ export function buildBulletEvidenceMaps(
       projectScopes: 0,
     },
   };
+}
+
+function normalizeSkillToken(text: string): string {
+  return String(text ?? "")
+    .toLowerCase()
+    .replace(/[\s_-]+/g, "");
+}
+
+function skillMatchesKeyword(skill: string, keyword: string): boolean {
+  const skillNorm = normalizeSkillToken(skill);
+  const keywordNorm = normalizeSkillToken(keyword);
+  if (!skillNorm || !keywordNorm) return false;
+  if (skillNorm === keywordNorm) return true;
+  return skillNorm.includes(keywordNorm) || keywordNorm.includes(skillNorm);
+}
+
+/** Numbered Fix / Proof / Impact badges per bullet (independent; can stack on one line). */
+export function buildBulletClaimBadgeMaps(
+  bulletChanges: BulletChangeForEvidence[],
+  bulletDiffs: BulletDiffForEvidence[],
+  selectedFixes: string[],
+  proofSkillsOrdered: string[]
+): BulletClaimBadgeMaps {
+  const fixIndexByText = new Map(
+    selectedFixes.map((fixText, index) => [fixText.trim(), index + 1] as const)
+  );
+  const proofIndexBySkill = new Map(
+    proofSkillsOrdered.map((skill, index) => [skill.toLowerCase().trim(), index + 1] as const)
+  );
+
+  const changeByImprovedKey = new Map<string, BulletChangeForEvidence>();
+  for (const change of bulletChanges) {
+    if (!change.improved.trim()) continue;
+    changeByImprovedKey.set(normalizeBulletCompareKey(change.improved), change);
+  }
+
+  const bulletFixIndicesByKey: Record<string, number[]> = {};
+  const bulletProofIndicesByKey: Record<string, number[]> = {};
+  const bulletImpactIndicesByKey: Record<string, number[]> = {};
+
+  for (const diff of bulletDiffs) {
+    if (!diff.key || !diff.improved.trim()) continue;
+    const change = changeByImprovedKey.get(normalizeBulletCompareKey(diff.improved));
+    if (!change) continue;
+
+    const fixIndices = Array.from(
+      new Set(
+        (change.addressedRejectionRisks ?? [])
+          .map((risk) => fixIndexByText.get(risk.trim()))
+          .filter((index): index is number => typeof index === "number" && index > 0)
+      )
+    ).sort((a, b) => a - b);
+    if (fixIndices.length > 0) bulletFixIndicesByKey[diff.key] = fixIndices;
+
+    const proofIndices = Array.from(
+      new Set(
+        (change.addedKeywords ?? [])
+          .flatMap((keyword) => {
+            const matches: number[] = [];
+            for (const [skillKey, proofIndex] of Array.from(proofIndexBySkill.entries())) {
+              if (skillMatchesKeyword(skillKey, keyword)) matches.push(proofIndex);
+            }
+            return matches;
+          })
+          .filter((index) => index > 0)
+      )
+    ).sort((a, b) => a - b);
+    if (proofIndices.length > 0) bulletProofIndicesByKey[diff.key] = proofIndices;
+
+    if (change.impactFocusIndex && change.impactFocusIndex > 0) {
+      bulletImpactIndicesByKey[diff.key] = [change.impactFocusIndex];
+    }
+  }
+
+  return { bulletFixIndicesByKey, bulletProofIndicesByKey, bulletImpactIndicesByKey };
 }

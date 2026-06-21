@@ -27,6 +27,8 @@ export type ATSAnalyzeResult = {
   missing_skills_required?: string[];
   /** Missing skills the JD lists as preferred/nice-to-have. When set, UI shows Required vs Preferred. */
   missing_skills_preferred?: string[];
+  /** Skills in the keyword-coverage weak bucket (mentioned, not proven). Set when evidence_dashboard exists. */
+  weak_skills?: string[];
   summary: string;
   /** Optional before/after bullet preview for conversion. Null if skipped (no bullets or already strong). */
   bullet_preview?: BulletPreview | null;

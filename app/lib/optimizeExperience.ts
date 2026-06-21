@@ -1,4 +1,4 @@
-import type { ResumeExperience, ResumeProject } from "@/app/lib/resumeDocument";
+import type { ResumeDocument, ResumeExperience, ResumeProject } from "@/app/lib/resumeDocument";
 import { acceptBulletRewrite } from "@/app/lib/resumeTypography";
 
 export type RecomposedProject = {
@@ -249,4 +249,28 @@ export function countRefinedScopesFromBulletKeys(keys: string[]): number {
     }
   }
   return scopes.size;
+}
+
+/** Human label for a bullet key (company / role / project). */
+export function resolveBulletPlacementLabel(
+  resume: ResumeDocument,
+  bulletKey: string
+): string | null {
+  const parts = bulletKey.split(":");
+  const expIndex = Number.parseInt(parts[0] ?? "", 10);
+  if (!Number.isFinite(expIndex)) return null;
+  const exp = resume.experience[expIndex];
+  if (!exp) return null;
+
+  const company = exp.company?.trim();
+  const role = exp.role?.trim();
+  const scopePart = parts[1];
+  if (scopePart?.startsWith("p")) {
+    const projectIndex = Number.parseInt(scopePart.slice(1), 10);
+    const projectTitle = exp.projects?.[projectIndex]?.title?.trim();
+    if (projectTitle) return projectTitle;
+  }
+
+  if (company && role) return `${role} · ${company}`;
+  return company ?? role ?? null;
 }

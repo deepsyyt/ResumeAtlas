@@ -51,7 +51,6 @@ export async function enrichEvidenceDashboardWithLlm(args: {
     ...roleFitDashboard,
     mostMissingEvidence: missingDashboard.mostMissingEvidence,
     missingEvidenceVersion: missingDashboard.missingEvidenceVersion,
-    categories: [],
     skillProof: skillProofDashboard.skillProof,
     skillProofAll: skillProofDashboard.skillProofAll,
     skillProofVersion: skillProofDashboard.skillProofVersion,
@@ -89,8 +88,5 @@ export async function enrichOptimizeEvidenceDashboards(args: {
   before: EvidenceDashboard;
   after: EvidenceDashboard;
 }): Promise<{ before: EvidenceDashboard; after: EvidenceDashboard }> {
-  return {
-    before: { ...args.before, categories: [] },
-    after: { ...args.after, categories: [] },
-  };
+  return args;
 }

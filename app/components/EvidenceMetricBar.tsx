@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { getScoreStyle } from "@/app/lib/scoreColors";
-import type { EvidenceStrength } from "@/app/lib/resumeEvidenceScore";
 import {
   ANALYSIS_OPTIMIZE_STEPS,
   ANALYSIS_REPORT_HEADING,
@@ -77,32 +76,6 @@ export function OptimizeCta({
 
 /** @deprecated Use OptimizeCta */
 export const PremiumOptimizeCta = OptimizeCta;
-
-export function strengthBarPercent(strength: EvidenceStrength): number {
-  switch (strength) {
-    case "strong":
-      return 100;
-    case "medium":
-      return 62;
-    case "weak":
-      return 28;
-    case "gap":
-      return 0;
-  }
-}
-
-export function strengthBarHex(strength: EvidenceStrength): string {
-  switch (strength) {
-    case "strong":
-      return "#16A34A";
-    case "medium":
-      return "#0EA5E9";
-    case "weak":
-      return "#F59E0B";
-    case "gap":
-      return "#94A3B8";
-  }
-}
 
 type AnimatedScoreBarProps = {
   value: number;

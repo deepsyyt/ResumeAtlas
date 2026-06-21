@@ -1,4 +1,3 @@
-import type { EvidenceCategoryScore } from "@/app/lib/resumeEvidenceScore";
 import { classifyBulletEvidenceSignals } from "@/app/lib/resumeEvidenceScore";
 
 export type RewriteSignalKey = "impact" | "architecture" | "deployment" | "leadership";
@@ -19,8 +18,7 @@ const SIGNAL_THEME_MAP: Partial<Record<RewriteSignalKey, string>> = {
 };
 
 export function buildRewriteEvidenceSummary(
-  bulletDiffs: Array<{ original: string; improved: string }>,
-  jdCategories: EvidenceCategoryScore[] = []
+  bulletDiffs: Array<{ original: string; improved: string }>
 ): RewriteEvidenceSummary {
   const signalsGained: Record<RewriteSignalKey, number> = {
     impact: 0,
@@ -60,13 +58,10 @@ export function buildRewriteEvidenceSummary(
     }
   }
 
-  const jdThemeNames = new Set(jdCategories.map((c) => c.category));
   const themesAddressed = (Object.keys(signalsGained) as RewriteSignalKey[])
-    .filter(
-      (key) => signalsGained[key] > 0 || signalsStrengthened[key] > 0
-    )
+    .filter((key) => signalsGained[key] > 0 || signalsStrengthened[key] > 0)
     .map((key) => SIGNAL_THEME_MAP[key])
-    .filter((name): name is string => Boolean(name && jdThemeNames.has(name)));
+    .filter((name): name is string => Boolean(name));
 
   return {
     bulletsRewritten: rewritten.length,

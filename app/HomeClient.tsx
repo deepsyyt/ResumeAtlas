@@ -9,7 +9,7 @@ import { ResumePreview } from "@/app/components/ResumePreview";
 import { IntelligencePanel } from "@/app/components/IntelligencePanel";
 import { AnalysisPreviewIntroBanner } from "@/app/components/postingFit/AnalysisPreviewIntroBanner";
 import { LimitModal } from "@/app/components/LimitModal";
-import { CreditPackModal } from "@/app/components/CreditPackModal";
+import { CreditPackModal, type CreditPackModalVariant } from "@/app/components/CreditPackModal";
 import { OptimizeConversionModal } from "@/app/components/OptimizeConversionModal";
 import { OptimizeOAuthResumeModal } from "@/app/components/OptimizeOAuthResumeModal";
 import { OptimizeDashboardNudgeModal } from "@/app/components/OptimizeDashboardNudgeModal";
@@ -261,6 +261,7 @@ export default function HomeClient({
   const [limitModalMessage, setLimitModalMessage] = useState("");
   const [limitModalQuotaScope, setLimitModalQuotaScope] = useState<LimitModalQuotaScope>(null);
   const [creditModalOpen, setCreditModalOpen] = useState(false);
+  const [creditModalVariant, setCreditModalVariant] = useState<CreditPackModalVariant>("default");
   const [optimizeConversionModalOpen, setOptimizeConversionModalOpen] = useState(false);
   const [conversionModalBusy, setConversionModalBusy] = useState(false);
   const [conversionModalError, setConversionModalError] = useState<string | null>(null);
@@ -609,6 +610,7 @@ export default function HomeClient({
       setOptimizeConversionModalOpen(true);
     } else {
       setOptimizeConversionModalOpen(false);
+      setCreditModalVariant("default");
       setCreditModalOpen(true);
     }
     // Clean the URL so refresh doesn't re-open the modal (stay on same page).
@@ -730,19 +732,6 @@ export default function HomeClient({
           return;
         }
         if (!res.ok) {
-          if (res.status === 409) {
-            const err = (data as { error?: { code?: string; message?: string } })?.error;
-            if (typeof err === "object" && err?.code === "INCOMPLETE_FUNNEL") {
-              setLimitModalQuotaScope(isLoggedIn ? "user" : null);
-              setLimitModalMessage(
-                typeof err.message === "string"
-                  ? err.message
-                  : "Finish optimizing and downloading this resume before you check another job."
-              );
-              setLimitModalOpen(true);
-              return;
-            }
-          }
           if (res.status === 429) {
             const err = (data as {
               error?: {
@@ -758,6 +747,7 @@ export default function HomeClient({
               const q = err.quota as AnalysisQuotaStatus;
               setAnalysisQuota(q);
               if (err.purchaseRequired && isLoggedIn) {
+                setCreditModalVariant("upgrade");
                 setCreditModalOpen(true);
                 return;
               }
@@ -948,7 +938,6 @@ export default function HomeClient({
           jobDescription,
           analyzeResult,
           funnelId: activeFunnelId ?? undefined,
-          selectedSkills: [],
           selectedRejectionRisks: selectedRecommendedFixes.map(recommendedFixToOptimizeText),
           optimizeRunId: createOptimizeRunId(),
         });
@@ -1518,9 +1507,11 @@ export default function HomeClient({
               onDismiss={() => trackOptimizePromptDismissed("credit_pack")}
               onClose={() => {
                 setCreditModalOpen(false);
+                setCreditModalVariant("default");
               }}
               isLoggedIn={isLoggedIn}
               creditsRemaining={usage?.creditsRemaining ?? 0}
+              variant={creditModalVariant}
               postPaymentAction={creditPackPostPaymentAction}
               onPostPaymentPrimary={onCreditModalPostPaymentPrimary}
               onStartOptimization={onCreditModalStartOptimize}

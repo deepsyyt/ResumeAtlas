@@ -280,3 +280,20 @@ export function filterSkillProofRowsBySelection(
   const selected = new Set(selectedSkills.map((s) => s.toLowerCase().trim()));
   return rows.filter((row) => selected.has(row.skill.toLowerCase().trim()));
 }
+
+/** Skills in the keyword-coverage "weak" bucket — mentioned but not proven (includes implied). */
+export function resolveWeakUnprovenSkillsForOptimize(
+  rows: JdSkillEvidenceRow[]
+): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const row of rows) {
+    const { proofStatus } = resolveSkillProofRow(row);
+    if (proofStatus !== "weak" && proofStatus !== "implied") continue;
+    const key = row.skill.toLowerCase().trim();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(row.skill.trim());
+  }
+  return out;
+}

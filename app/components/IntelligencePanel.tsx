@@ -262,9 +262,6 @@ export function IntelligencePanel({
   const evidenceDashboard = analyzeResult?.evidence_dashboard;
   const matchedSkills = analyzeResult?.matched_skills ?? [];
   const missingSkills = analyzeResult?.missing_skills ?? [];
-  const missingRequired = analyzeResult?.missing_skills_required ?? [];
-  const missingPreferred = analyzeResult?.missing_skills_preferred ?? [];
-  const hasRequiredPreferred = missingRequired.length > 0 || missingPreferred.length > 0;
   const keywordScannerData =
     isKeywordScanner && analyzeResult && analysisUsedJobDescription
       ? buildKeywordScannerResultsData(analyzeResult)
@@ -513,98 +510,12 @@ export function IntelligencePanel({
         </>
       ) : null}
 
-      {analysisUsedJobDescription || matchedSkills.length > 0 || missingSkills.length > 0 ? (
-        <>
-          {!isKeywordScanner && !evidenceDashboard ? (
-          <div className="mt-3 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
-              Matched skills
-            </p>
-            {matchedSkills.length ? (
-              <div className="flex flex-wrap gap-2">
-                {matchedSkills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium"
-                    style={{ backgroundColor: "#ECFDF5", color: "#16A34A" }}
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-xs text-slate-500">No explicit skill matches detected yet.</p>
-            )}
-          </div>
-          ) : null}
-
-          {!isKeywordScanner && !evidenceDashboard ? (
-          <div className="mt-2.5 rounded-xl bg-slate-50/80 px-2.5 py-2.5">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
-              Missing skills (from JD)
-            </p>
-            {!missingSkills.length ? (
-              <p className="text-xs text-slate-600" style={{ color: "#16A34A" }}>
-                No major missing skills detected compared to the JD.
-              </p>
-            ) : hasRequiredPreferred ? (
-              <div className="space-y-2">
-                {missingRequired.length > 0 && (
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-red-700 mb-1.5">
-                      Required
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {missingRequired.map((skill) => (
-                        <span
-                          key={skill}
-                          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
-                          style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
-                        >
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#EF4444]" aria-hidden />
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {missingPreferred.length > 0 && (
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-700 mb-1.5">
-                      Preferred
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {missingPreferred.map((skill) => (
-                        <span
-                          key={skill}
-                          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
-                          style={{ backgroundColor: "#FFFBEB", color: "#D97706" }}
-                        >
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#D97706]" aria-hidden />
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {missingSkills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium"
-                    style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#EF4444]" aria-hidden />
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-          ) : null}
-        </>
+      {analysisUsedJobDescription && !evidenceDashboard && !isKeywordScanner ? (
+        <div className="mt-3 rounded-xl border border-amber-200/80 bg-amber-50/40 px-3 py-2.5">
+          <p className="text-xs text-amber-950">
+            Full proof dashboard is loading. Re-run analysis if this persists.
+          </p>
+        </div>
       ) : null}
     </section>
   );

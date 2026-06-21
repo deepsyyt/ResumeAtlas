@@ -27,7 +27,7 @@ import { DownloadPaymentModal } from "@/app/components/DownloadPaymentModal";
 import { DownloadPaymentSuccessModal } from "@/app/components/DownloadPaymentSuccessModal";
 import { buildRefinementEvidence } from "@/app/lib/resumeFactualAudit";
 import { makeExperienceBulletKey, countRefinedScopesFromBulletKeys } from "@/app/lib/optimizeExperience";
-import { buildBulletEvidenceMaps } from "@/app/lib/optimizeBulletEvidence";
+import { buildBulletClaimBadgeMaps, buildBulletEvidenceMaps } from "@/app/lib/optimizeBulletEvidence";
 import { extractFixHighlightKeywords, resolveDashboardRecommendedFixes, type AppliedFixOutcome } from "@/app/lib/recommendedFixes";
 import {
   OPTIMIZE_CACHE_KEY,
@@ -52,7 +52,6 @@ type OptimizeInput = {
   jobDescription: string;
   analyzeResult: ATSAnalyzeResult;
   funnelId?: string;
-  selectedSkills?: string[];
   selectedRejectionRisks?: string[];
   /** Structured resume parsed on the client via /api/parse-resume. */
   parsedResume?: ResumeDocument;
@@ -65,8 +64,6 @@ type OptimizeResult = {
   scoreAfter: number;
   evidenceMatchDelta?: number;
   atsScoreReference?: number;
-  roleAlignmentScore?: number;
-  matchedStrengthScore?: number;
   addedKeywords: string[];
   bulletImprovements: number;
   bulletsAdded?: number;
@@ -84,28 +81,6 @@ type OptimizeResult = {
   selectedRejectionRisks?: string[];
   addressedRejectionRisks?: string[];
   appliedFixOutcomes?: AppliedFixOutcome[];
-  insights?: {
-    strongMatches?: string[];
-    missingCritical?: string[];
-    jdGapDetails?: Array<{
-      phrase: string;
-      jdSource: "required" | "preferred" | "target";
-      inOriginalResume: boolean;
-      inOptimizedResume: boolean;
-    }>;
-    dominantIntents?: string[];
-  };
-  alignmentInsights?: {
-    coverageBreakdown?: {
-      covered?: string[];
-      missing?: string[];
-    };
-  };
-  targetSkillCoverage?: {
-    total: number;
-    coveredBefore: number;
-    coveredAfter: number;
-  };
   refinementEvidence?: {
     refinedBullets: string[];
     newBullets: string[];
@@ -121,10 +96,6 @@ type OptimizeResult = {
       inOriginalResume: boolean;
       inOptimizedResume: boolean;
     }>;
-  };
-  evidenceDashboard?: {
-    before: import("@/app/lib/resumeEvidenceScore").EvidenceDashboard;
-    after: import("@/app/lib/resumeEvidenceScore").EvidenceDashboard;
   };
   improvedSkillProof?: import("@/app/lib/resumeEvidenceScore").OptimizedSkillProofRow[];
 };
@@ -324,7 +295,6 @@ export default function OptimizePage() {
             jobDescription: parsed.jobDescription,
             analyzeResult: parsed.analyzeResult,
             structuredResume,
-            selectedSkills: parsed.selectedSkills,
             selectedRejectionRisks: selectedFixes,
           }),
         });
@@ -735,14 +705,10 @@ export default function OptimizePage() {
     : result.optimizedResume;
   const parsedAfter =
     editableResume ?? resumeDocumentFromHeuristicParsed(parseResumeToJSON(afterContent));
-  const jdGapsFallback =
-    result.insights?.missingCritical ??
-    result.alignmentInsights?.coverageBreakdown?.missing ??
-    [];
   const evidence =
     result.refinementEvidence ??
     (input.parsedResume && parsedAfter
-      ? buildRefinementEvidence(input.parsedResume, parsedAfter, jdGapsFallback)
+      ? buildRefinementEvidence(input.parsedResume, parsedAfter, [])
       : undefined);
   const strengthenedSkills = (result.improvedSkillProof ?? []).map((row) => row.skill);
   const quantifiedBullets = result.quantifiedBullets ?? [];
@@ -760,16 +726,13 @@ export default function OptimizePage() {
   const originalSummary =
     evidence?.originalSummary ??
     (input.parsedResume?.summary?.trim() || undefined);
-  const jdGaps = evidence?.jdGaps ?? jdGapsFallback;
-  const jdGapDetails =
-    evidence?.jdGapDetails ??
-    result.insights?.jdGapDetails ??
-    jdGaps.map((phrase) => ({
-      phrase,
-      jdSource: "required" as const,
-      inOriginalResume: false,
-      inOptimizedResume: false,
-    }));
+  const jdGaps: string[] = [];
+  const jdGapDetails: Array<{
+    phrase: string;
+    jdSource: "required" | "preferred" | "target";
+    inOriginalResume: boolean;
+    inOptimizedResume: boolean;
+  }> = [];
   const keywordBulletsFromChanges = bulletChanges
     .filter((c) => c.addedKeywords.length > 0)
     .map((c) => c.improved);
@@ -819,10 +782,18 @@ export default function OptimizePage() {
   const bulletDiffsKeyed = bulletDiffsWithKeys.filter(
     (d): d is { original: string; improved: string; key: string } => Boolean(d.key)
   );
-  const { bulletOriginalsByKey, bulletKeywordsByKey, bulletReasonByKey, strengthenedWeakKeywords } =
-    buildBulletEvidenceMaps(bulletChanges, bulletDiffsKeyed);
   const selectedRejectionRisks =
     result.selectedRejectionRisks ?? input.selectedRejectionRisks ?? [];
+  const { bulletOriginalsByKey, bulletKeywordsByKey, bulletReasonByKey, strengthenedWeakKeywords } =
+    buildBulletEvidenceMaps(bulletChanges, bulletDiffsKeyed);
+  const proofSkillsOrdered = (result.improvedSkillProof ?? []).map((row) => row.skill);
+  const { bulletFixIndicesByKey, bulletProofIndicesByKey, bulletImpactIndicesByKey } =
+    buildBulletClaimBadgeMaps(
+      bulletChanges,
+      bulletDiffsKeyed,
+      selectedRejectionRisks,
+      proofSkillsOrdered
+    );
   const appliedFixOutcomes = result.appliedFixOutcomes ?? [];
   const fixBulletKeys = Array.from(
     new Set([
@@ -856,6 +827,10 @@ export default function OptimizePage() {
   const keywordBullets = Array.from(
     new Set([...keywordBulletsFromChanges, ...keywordBulletsFromFinalResume])
   );
+  const bulletKeysByText = new Map<string, string>();
+  for (const diff of bulletDiffsKeyed) {
+    bulletKeysByText.set(diff.improved.trim().toLowerCase(), diff.key);
+  }
 
   return (
     <div className="flex-1 bg-slate-50 py-6 pb-20 sm:py-8 print:min-h-0 print:bg-white print:py-0">
@@ -895,9 +870,12 @@ export default function OptimizePage() {
             <div className="print:hidden space-y-1">
               <h2 className="text-sm font-semibold text-slate-700">Your tailored resume</h2>
               <p className="max-w-2xl text-xs leading-relaxed text-slate-500">
-                Green highlights show fixes you selected and the keywords they added. Click{" "}
-                <span className="font-medium">Edit</span> on any section to adjust wording before you
-                download.
+                Colors map to what changed:{" "}
+                <span className="font-medium text-indigo-700">indigo</span> = summary tailored,{" "}
+                <span className="font-medium text-emerald-700">green</span> = fix applied,{" "}
+                <span className="font-medium text-amber-700">amber</span> = weak keyword proven,{" "}
+                <span className="font-medium text-violet-700">violet</span> = impact quantified.
+                Click <span className="font-medium">Edit</span> to adjust wording before you download.
               </p>
             </div>
             <StructuredResume
@@ -916,6 +894,9 @@ export default function OptimizePage() {
               bulletKeywordsByKey={bulletKeywordsByKey}
               bulletReasonByKey={bulletReasonByKey}
               fixBulletKeys={fixBulletKeys}
+              bulletFixIndicesByKey={bulletFixIndicesByKey}
+              bulletProofIndicesByKey={bulletProofIndicesByKey}
+              bulletImpactIndicesByKey={bulletImpactIndicesByKey}
               fixHighlightKeywords={fixHighlightKeywords}
               showOptimizationLegend
               editable
@@ -1046,24 +1027,25 @@ export default function OptimizePage() {
           {/* Optimization summary */}
           <div className="space-y-2 print:hidden">
             <ResumeOptimizationPanel
+              resume={parsedAfter}
               surfacedKeywords={showKeywords}
               bulletsRefined={result.bulletImprovements}
               bulletsAdded={result.bulletsAdded ?? 0}
               projectsRefined={projectsRefined}
               summaryTailored={result.summaryOptimized === true}
-              jdGapsRemaining={jdGaps.length}
-              jdGapDetails={jdGapDetails}
-              weakKeywordsStrengthened={strengthenedWeakKeywords.length}
+              bulletKeywordsByKey={bulletKeywordsByKey}
+              bulletReasonByKey={bulletReasonByKey}
+              bulletImpactIndicesByKey={bulletImpactIndicesByKey}
+              quantifiedBullets={quantifiedBullets}
+              bulletKeysByText={bulletKeysByText}
               appliedFixOutcomes={appliedFixOutcomes}
               selectedFixes={selectedRejectionRisks}
-              availableRecommendedFixes={resolveDashboardRecommendedFixes(
-                input.analyzeResult.evidence_dashboard?.riskAreas ?? []
-              )}
-              improvedSkillProof={result.improvedSkillProof}
-              evidenceMatchDelta={result.evidenceMatchDelta}
               atsScoreReference={
                 result.atsScoreReference ?? input.analyzeResult.ats_score
               }
+              availableRecommendedFixes={resolveDashboardRecommendedFixes(
+                input.analyzeResult.evidence_dashboard?.riskAreas ?? []
+              )}
               onScrollToPreview={() => {
                 document
                   .getElementById("optimized-resume-preview")

@@ -45,7 +45,7 @@ import {
   sanitizeResumeDocumentProse,
   sanitizeResumeProse,
 } from "@/app/lib/resumeTypography";
-import { filterSkillGapPhrases, type JdGapDetail, type JdGapSource } from "@/app/lib/skillGapRules";
+import { filterSkillGapPhrases } from "@/app/lib/skillGapRules";
 import {
   buildAppliedFixOutcomes,
   pickBestBulletKeyForRecommendedFix,
@@ -72,32 +72,30 @@ import {
   type OptimizedSkillProofRow,
 } from "@/app/lib/resumeEvidenceScore";
 import {
-  buildSkillOptimizePlan,
-  filterSkillProofRowsBySelection,
   formatSkillActionBlock,
+  resolveSkillProofRow,
   skillOptimizeActionPrompt,
   type SkillOptimizeAction,
 } from "@/app/lib/jdSkillProofStatus";
+import {
+  deriveSelectedFixesFromRequest,
+  deriveWeakSkillsFromAnalyze,
+  mergeSelectedFixSkillsIntoOptimizePlan,
+  type OptimizeAnalyzeSnapshot,
+} from "@/app/lib/optimizeTargets";
+import { isWeakBulletForImpact } from "@/app/lib/weakBulletImpact";
 
 export type OptimizeRequestBody = {
   resumeText: string;
   jobDescription: string;
-  analyzeResult: {
+  analyzeResult: OptimizeAnalyzeSnapshot & {
     ats_score: number;
-    missing_skills?: string[];
-    missing_skills_required?: string[];
-    missing_skills_preferred?: string[];
-    matched_skills?: string[];
-    keyword_coverage?: number;
-    required_years_experience?: number | null;
-    resume_years_experience?: number | null;
+    weak_skills?: string[];
   };
   /** Structured resume parsed on the client via /api/parse-resume. */
   structuredResume?: ResumeDocument;
   /** Optional debug mode to inspect optimization planning. */
   debug?: boolean;
-  /** When set, only these JD skills are targeted for bullet rewrites. */
-  selectedSkills?: string[];
   /** Rejection risks the user wants surfaced in project bullets where supported. */
   selectedRejectionRisks?: string[];
 };
@@ -116,8 +114,6 @@ export type OptimizeResponse = {
   evidenceMatchDelta: number;
   /** ATS score from analyze step (reference only). */
   atsScoreReference?: number;
-  roleAlignmentScore?: number;
-  matchedStrengthScore?: number;
   addedKeywords: string[];
   /** Existing bullets rewritten (not net-new lines). */
   bulletImprovements: number;
@@ -137,6 +133,7 @@ export type OptimizeResponse = {
     addedKeywords: string[];
     quantified: boolean;
     addressedRejectionRisks?: string[];
+    impactFocusIndex?: number;
   }[];
   /** Rejection risks the user selected before optimize. */
   selectedRejectionRisks?: string[];
@@ -144,36 +141,9 @@ export type OptimizeResponse = {
   addressedRejectionRisks?: string[];
   /** Per selected fix: whether it landed in the resume and which bullet changed. */
   appliedFixOutcomes?: AppliedFixOutcome[];
-  alignmentInsights?: {
-    coverageBreakdown: {
-      covered: string[];
-      missing: string[];
-    };
-  };
-  /** Same JD-optimization targets as the bullet pass; before/after literal coverage counts. */
-  targetSkillCoverage?: {
-    total: number;
-    coveredBefore: number;
-    coveredAfter: number;
-  };
-  /** Estimated keyword-coverage % after optimization (capped), when analyze provided a baseline. */
-  keywordCoverage?: { before: number; after: number };
-  /** Estimated impact/metrics emphasis score after optimization, when analyze provided a baseline. */
-  impactScore?: { before: number; after: number };
-  insights?: {
-    strongMatches: string[];
-    missingCritical: string[];
-    jdGapDetails?: JdGapDetail[];
-    dominantIntents: string[];
-  };
   /** Post-audit diff vs pre-optimization resume for preview highlights. */
   refinementEvidence?: RefinementEvidence;
   /** Proof-based strength before and after optimization. */
-  evidenceDashboard?: {
-    before: EvidenceDashboard;
-    after: EvidenceDashboard;
-  };
-  /** Partial/list-only proof skills strengthened during optimization (not full JD gap map). */
   improvedSkillProof?: OptimizedSkillProofRow[];
   debug?: {
     coveragePlan?: {
@@ -418,6 +388,7 @@ type BulletChangeInternal = {
   addedKeywords: string[];
   quantified: boolean;
   addressedRejectionRisks: string[];
+  impactFocusIndex?: number;
 };
 
 type RecomposedExperience = {
@@ -432,15 +403,6 @@ function normalizeSummaryForCompare(raw: string | undefined): string {
     .trim()
     .toLowerCase();
 }
-
-type IntentCluster = {
-  name: string;
-  skills: string[];
-};
-
-type MapSkillsToIntentsResult = {
-  intents: IntentCluster[];
-};
 
 function normalizeExpandedMap(
   expanded: ExpandedSkillMap | null | undefined
@@ -474,35 +436,6 @@ function isSkillCovered(
 ): boolean {
   const variants = [skill, ...(expanded[skill] || [])];
   return variants.some((v) => textLower.includes(v.toLowerCase()));
-}
-
-function buildJdGapDetails(
-  phrases: string[],
-  opts: {
-    requiredPhrases: string[];
-    preferredPhrases: string[];
-    originalLower: string;
-    optimizedLower: string;
-    expanded: ExpandedSkillMap;
-  }
-): JdGapDetail[] {
-  const requiredSet = new Set(opts.requiredPhrases.map((s) => s.toLowerCase()));
-  const preferredSet = new Set(opts.preferredPhrases.map((s) => s.toLowerCase()));
-
-  return phrases.map((phrase) => {
-    const key = phrase.toLowerCase();
-    const jdSource: JdGapSource = requiredSet.has(key)
-      ? "required"
-      : preferredSet.has(key)
-        ? "preferred"
-        : "target";
-    return {
-      phrase,
-      jdSource,
-      inOriginalResume: isSkillCovered(opts.originalLower, phrase, opts.expanded),
-      inOptimizedResume: isSkillCovered(opts.optimizedLower, phrase, opts.expanded),
-    };
-  });
 }
 
 function normalizeInlineText(text: string): string {
@@ -702,7 +635,8 @@ function upsertBulletChange(
   baseline: string,
   improved: string,
   addedKeywords: string[],
-  addressedRejectionRisks: string[] = []
+  addressedRejectionRisks: string[] = [],
+  impactFocusIndex?: number
 ) {
   const prev = map[key];
   const existingKeywords = new Set<string>(prev?.addedKeywords ?? []);
@@ -720,70 +654,8 @@ function upsertBulletChange(
     quantified:
       hasImpactMetric(improved) && !hasImpactMetric(prev?.original ?? baseline),
     addressedRejectionRisks: Array.from(existingRisks),
+    impactFocusIndex: prev?.impactFocusIndex ?? impactFocusIndex,
   };
-}
-
-function computeAlignmentScoreSemantic(
-  optimizedText: string,
-  requiredSkills: string[],
-  optionalSkills: string[],
-  expanded: ExpandedSkillMap
-): number {
-  const lower = optimizedText.toLowerCase();
-
-  const reqMatches = requiredSkills.filter((s) =>
-    isSkillCovered(lower, s, expanded)
-  ).length;
-  const optMatches = optionalSkills.filter((s) =>
-    isSkillCovered(lower, s, expanded)
-  ).length;
-
-  const reqScore = requiredSkills.length
-    ? reqMatches / requiredSkills.length
-    : 0;
-  const optScore = optionalSkills.length
-    ? optMatches / optionalSkills.length
-    : 0;
-
-  const coverage = reqScore * 0.7 + optScore * 0.3;
-  return Math.min(95, Math.round(60 + coverage * 35));
-}
-
-function isSkillStronglyCovered(
-  textLower: string,
-  skill: string,
-  expanded: ExpandedSkillMap
-): boolean {
-  const variants = [skill, ...(expanded[skill] || [])];
-  let matchCount = 0;
-  for (const v of variants) {
-    if (v && textLower.includes(v.toLowerCase())) matchCount++;
-  }
-  return matchCount >= 1;
-}
-
-type SkillCandidate = { skill: string; required: boolean; score: number };
-
-function baseSkillScore(
-  skill: string,
-  required: boolean,
-  jdLower: string
-): number {
-  const s = skill.toLowerCase();
-  let score = 0;
-  if (required) score += 3;
-  const re = new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g");
-  const occ = (jdLower.match(re) || []).length;
-  if (occ >= 2) score += 2;
-  else if (occ === 1) score += 1;
-  if (
-    /\b(risk|fraud|chargeback|dispute|compliance|governance|kpi|metric|operations?|workflow|decision)\b/i.test(
-      s
-    )
-  ) {
-    score += 2;
-  }
-  return score;
 }
 
 async function expandSkillsSemantically(
@@ -874,135 +746,6 @@ function parseStrictJsonFromLLM(text: string): any | null {
     return JSON.parse(clean);
   } catch {
     return null;
-  }
-}
-
-function fallbackIntentClustering(
-  jobDescription: string,
-  targetSkills: string[]
-): IntentCluster[] {
-  const jdLower = (jobDescription || "").toLowerCase();
-  const has = (re: RegExp) => re.test(jdLower);
-
-  const clusters: { name: string; re: RegExp }[] = [
-    { name: "Risk & Investigation", re: /\b(risk|fraud|chargeback|dispute|investigation|anomaly)\b/i },
-    { name: "Operations & KPIs", re: /\b(operations?|workflow|process|kpi|metrics?|performance|throughput|sla)\b/i },
-    { name: "Compliance & Governance", re: /\b(compliance|governance|regulation|policy|audit)\b/i },
-    { name: "Stakeholder & Vendor Management", re: /\b(vendor|stakeholder|partner|cross[- ]functional|collaboration)\b/i },
-    { name: "Decision Systems & Analytics", re: /\b(decision|insight|analytics?|model|prediction|dashboard)\b/i },
-  ];
-
-  const used = new Set<string>();
-  const intents: IntentCluster[] = [];
-
-  for (const c of clusters) {
-    const skills = targetSkills.filter((s) => {
-      const v = (s || "").toLowerCase();
-      if (!v || used.has(s)) return false;
-      return c.re.test(v);
-    });
-    for (const s of skills) used.add(s);
-    if (skills.length > 0) intents.push({ name: c.name, skills });
-  }
-
-  const remaining = targetSkills.filter((s) => !used.has(s));
-  if (remaining.length > 0) {
-    intents.push({
-      name: has(/risk|fraud/i) ? "Risk & Investigation" : "Operations & KPIs",
-      skills: remaining,
-    });
-  }
-
-  return intents.slice(0, 6);
-}
-
-async function mapSkillsToIntents(
-  jobDescription: string,
-  targetSkills: string[],
-  apiKey: string | undefined,
-  model: string,
-  llm: Pick<OptimizeLlmBudget, "intentMaxTokens" | "intentJdChars">
-): Promise<IntentCluster[]> {
-  if (!targetSkills.length) return [];
-  if (!apiKey) return fallbackIntentClustering(jobDescription, targetSkills);
-
-  const SYSTEM = `You are a resume strategist converting skills into intent clusters.
-Return 4-6 clusters that are domain intents (not generic categories).
-Each input skill must appear in exactly one cluster (best effort).
-Use natural intent names like:
-- Risk & Investigation
-- Operations & KPIs
-- Compliance & Governance
-- Stakeholder & Vendor Management
-- Decision Systems & Analytics
-
-OUTPUT STRICT JSON:
-{
-  "intents": [
-    { "name": "...", "skills": ["..."] }
-  ]
-}`;
-
-  const jd = jobDescription.slice(0, llm.intentJdChars);
-  const userPrompt = `JOB DESCRIPTION:
-${jd}
-
-TARGET SKILLS:
-${targetSkills.join(", ")}
-
-TASK:
-Cluster the target skills into intent clusters that best match the job description.`;
-
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: llm.intentMaxTokens,
-        temperature: 0.2,
-        system: SYSTEM,
-        messages: [{ role: "user" as const, content: userPrompt }],
-      }),
-    });
-
-    if (!response.ok) return fallbackIntentClustering(jobDescription, targetSkills);
-
-    const data = (await response.json().catch(() => null)) as
-      | { content?: { type: string; text?: string }[] }
-      | null;
-
-    const raw = data?.content?.find((c) => c.type === "text")?.text ?? "";
-    const parsed = parseStrictJsonFromLLM(raw) as MapSkillsToIntentsResult | null;
-    const intents = parsed?.intents ?? null;
-    if (!Array.isArray(intents) || intents.length === 0) return fallbackIntentClustering(jobDescription, targetSkills);
-
-    // sanitize + ensure every skill is represented at least once
-    const seenSkills = new Set<string>();
-    const cleaned: IntentCluster[] = [];
-
-    for (const it of intents) {
-      const name = it && typeof (it as any).name === "string" ? String((it as any).name).trim() : "";
-      const skills = Array.isArray((it as any).skills)
-        ? (it as any).skills.filter((s: any) => typeof s === "string").map((s: string) => s.trim()).filter(Boolean)
-        : [];
-      if (!name || skills.length === 0) continue;
-
-      const uniqSkills = skills.filter((s: string) => !seenSkills.has(s));
-      for (const s of uniqSkills) seenSkills.add(s);
-      if (uniqSkills.length > 0) cleaned.push({ name, skills: uniqSkills });
-    }
-
-    const remaining = targetSkills.filter((s) => !seenSkills.has(s));
-    if (remaining.length > 0) cleaned.push({ name: cleaned[0]?.name || "Operations & KPIs", skills: remaining });
-
-    return cleaned.slice(0, 6);
-  } catch {
-    return fallbackIntentClustering(jobDescription, targetSkills);
   }
 }
 
@@ -2010,46 +1753,47 @@ export async function POST(request: Request) {
       ? analyzeResult.matched_skills.filter((s) => typeof s === "string" && s.trim().length > 0).map((s) => s.trim())
       : [];
 
-    // Rank skills; cap count by OPTIMIZE_DEPTH budget (token / cost control).
-    const jdLower = jobDescription.toLowerCase();
-    const candidates: SkillCandidate[] = [];
-    for (const s of missingRequired) {
-      const skill = s.trim();
-      if (!skill) continue;
-      candidates.push({ skill, required: true, score: baseSkillScore(skill, true, jdLower) });
-    }
-    for (const s of missingSkills) {
-      const skill = s.trim();
-      if (!skill || missingRequired.includes(skill)) continue;
-      candidates.push({ skill, required: false, score: baseSkillScore(skill, false, jdLower) });
-    }
-    candidates.sort((a, b) => b.score - a.score);
-
+    // Skill proof rows from analyze (weak_skills drive bullet targets).
     const maxTarget = budget.maxTargetSkills;
     const explicitSkillGaps =
       missingRequired.length > 0 || missingSkills.length > 0;
 
-    const jdSkillProofAll = buildJdSkillProofRows({
-      resumeText,
-      structuredResume: body.structuredResume,
-      matchedSkills,
-      missingSkills,
-      missingRequired,
-      missingPreferred,
-    });
-    const skillOptimizePlan = buildSkillOptimizePlan(jdSkillProofAll);
-    let proofSkills = skillOptimizePlan.optimizableSkills.slice(0, maxTarget);
-    const gapSkills = skillOptimizePlan.doNotInvent.slice(0, maxTarget);
-    const skillActionBySkill = skillOptimizePlan.actionBySkill;
-    let optimizableSkillRows = jdSkillProofAll.filter(
-      (row) => row.optimizeAction !== "do_not_invent"
-    );
+    const analyzeSnapshot = analyzeResult as OptimizeAnalyzeSnapshot & {
+      weak_skills?: string[];
+    };
+    const skillProofRows =
+      analyzeSnapshot.evidence_dashboard?.skillProofAll ??
+      analyzeSnapshot.evidence_dashboard?.skillProof ??
+      buildJdSkillProofRows({
+        resumeText,
+        structuredResume: body.structuredResume,
+        matchedSkills,
+        missingSkills,
+        missingRequired,
+        missingPreferred,
+      });
 
-    const selectedRejectionRisks = Array.isArray(body.selectedRejectionRisks)
-      ? body.selectedRejectionRisks.filter(
-          (risk): risk is string => typeof risk === "string" && risk.trim().length > 0
-        )
-      : [];
+    let proofSkills = (
+      analyzeSnapshot.weak_skills?.length
+        ? analyzeSnapshot.weak_skills
+        : deriveWeakSkillsFromAnalyze(analyzeSnapshot)
+    ).slice(0, maxTarget);
+
+    const skillActionBySkill: Record<string, SkillOptimizeAction> = {};
+    for (const row of skillProofRows) {
+      const { optimizeAction } = resolveSkillProofRow(row);
+      skillActionBySkill[row.skill.toLowerCase().trim()] = optimizeAction;
+    }
+
+    let optimizableSkillRows = skillProofRows.filter((row) => {
+      const { proofStatus } = resolveSkillProofRow(row);
+      return proofStatus === "weak" || proofStatus === "implied";
+    });
+
+    const selectedRejectionRisks = deriveSelectedFixesFromRequest({
+      analyzeResult: analyzeSnapshot,
+      selectedRejectionRisks: body.selectedRejectionRisks,
+    });
 
     if (selectedRejectionRisks.length === 0) {
       return NextResponse.json(
@@ -2061,52 +1805,29 @@ export async function POST(request: Request) {
       );
     }
 
-    if (Array.isArray(body.selectedSkills)) {
-      const selectedSkills = body.selectedSkills.filter(
-        (skill): skill is string => typeof skill === "string" && skill.trim().length > 0
-      );
-      if (selectedSkills.length === 0 && selectedRejectionRisks.length === 0) {
-        proofSkills = [];
-        optimizableSkillRows = [];
-      } else if (selectedSkills.length > 0) {
-        const selectedLower = new Set(selectedSkills.map((skill) => skill.toLowerCase().trim()));
-        proofSkills = proofSkills.filter((skill) =>
-          selectedLower.has(skill.toLowerCase().trim())
-        );
-        optimizableSkillRows = filterSkillProofRowsBySelection(
-          optimizableSkillRows,
-          selectedSkills
-        );
-      }
-    }
+    const mergedPlan = mergeSelectedFixSkillsIntoOptimizePlan({
+      proofSkills,
+      skillActionBySkill,
+      optimizableSkillRows,
+      jdSkillProofAll: skillProofRows,
+      selectedRejectionRisks,
+      maxTarget,
+    });
+    proofSkills = mergedPlan.proofSkills;
+    Object.assign(skillActionBySkill, mergedPlan.skillActionBySkill);
+    optimizableSkillRows = mergedPlan.optimizableSkillRows;
 
-    if (proofSkills.length === 0) {
-      proofSkills = dedupeSkillsPreserveOrder(matchedSkills).slice(0, maxTarget);
-    }
-    if (proofSkills.length === 0) {
-      proofSkills = extractJdAnchorPhrases(
-        `${jobDescription}\n${resumeText.slice(0, budget.resumeAnchorChars)}`,
-        maxTarget
-      ).filter((phrase) => resumeText.toLowerCase().includes(phrase.toLowerCase()));
-    }
-
-    let requiredSkills = candidates.filter((c) => c.required).map((c) => c.skill);
-    let optionalSkills = candidates.filter((c) => !c.required).map((c) => c.skill);
-    if (requiredSkills.length === 0 && optionalSkills.length === 0 && gapSkills.length > 0) {
-      optionalSkills = [...gapSkills];
-    }
+    const optimizeTargetSkills = proofSkills;
+    const optimizeTargetLower = new Set(
+      optimizeTargetSkills.map((skill) => skill.toLowerCase().trim())
+    );
 
     const skillsForExpansion = Array.from(
-      new Set([...proofSkills, ...matchedSkills, ...gapSkills])
+      new Set([...optimizeTargetSkills, ...matchedSkills])
     ).slice(0, budget.expansionSkillCap);
     const expandedMap = await expandSkillsSemantically(jobDescription, skillsForExpansion, apiKey, model, {
       expandMaxTokens: budget.expandMaxTokens,
       expandJdChars: budget.expandJdChars,
-    });
-
-    const intentClusters = await mapSkillsToIntents(jobDescription, proofSkills, apiKey, model, {
-      intentMaxTokens: budget.intentMaxTokens,
-      intentJdChars: budget.intentJdChars,
     });
 
     // Role-aware recomposition layer (single LLM call) before bullet-level polish.
@@ -2115,8 +1836,8 @@ export async function POST(request: Request) {
         baseStructured,
         jobDescription,
         optimizableSkillRows.slice(0, maxTarget),
-        gapSkills,
-        missingRequired,
+        [],
+        [],
         matchedSkills,
         explicitSkillGaps,
         {
@@ -2146,8 +1867,8 @@ export async function POST(request: Request) {
         const summaryOnly = await rewriteSummaryOnlyForJd(
           baseStructured,
           jobDescription,
-          proofSkills,
-          missingRequired,
+          optimizeTargetSkills,
+          [],
           matchedSkills,
           budget.recomposeJdChars,
           apiKey,
@@ -2234,10 +1955,7 @@ export async function POST(request: Request) {
         selectedRejectionRisks
       );
       const requiredNeedingNewBullets = coveragePlan.skillsNeedingNewBullets.filter(
-        (skill) =>
-          missingRequired.some(
-            (req) => req.toLowerCase().trim() === skill.toLowerCase().trim()
-          )
+        (skill) => optimizeTargetLower.has(skill.toLowerCase().trim())
       );
       const maxNewBullets = Math.min(
         budget.maxRequiredNewBullets,
@@ -2272,6 +1990,7 @@ export async function POST(request: Request) {
       );
       let quantUsed = 0;
       let rewriteSuccesses = 0;
+      let impactFocusAssigned = 0;
 
       for (const item of rewriteQueue) {
         if (rewriteSuccesses >= rewriteBudget) break;
@@ -2328,13 +2047,23 @@ export async function POST(request: Request) {
               ...(item.targetRisks ?? []),
             ])
           );
+          let impactFocusIndex: number | undefined;
+          if (
+            impactFocusAssigned < 2 &&
+            isWeakBulletForImpact(original) &&
+            (shouldQuantify || hasImpactMetric(improved))
+          ) {
+            impactFocusAssigned += 1;
+            impactFocusIndex = impactFocusAssigned;
+          }
           upsertBulletChange(
             bulletChangeMap,
             key,
             baselineByKey[key] ?? original,
             improved,
             addedForThisBullet,
-            addressedRisks
+            addressedRisks,
+            impactFocusIndex
           );
           if (hasImpactMetric(improved) && !hasImpactMetric(original)) {
             quantUsed++;
@@ -2524,84 +2253,6 @@ export async function POST(request: Request) {
       return inOptimized && !inOriginal;
     });
 
-    const covered: string[] = [];
-    const missing: string[] = [];
-    for (const skill of proofSkills) {
-      if (isSkillCovered(optimizedTextLower, skill, expandedMap)) {
-        covered.push(skill);
-      } else {
-        missing.push(skill);
-      }
-    }
-
-    const targetSkillCoverage =
-      proofSkills.length > 0
-        ? {
-            total: proofSkills.length,
-            coveredBefore: proofSkills.filter((skill) =>
-              isSkillCovered(originalTextLower, skill, expandedMap)
-            ).length,
-            coveredAfter: proofSkills.filter((skill) =>
-              isSkillCovered(optimizedTextLower, skill, expandedMap)
-            ).length,
-          }
-        : undefined;
-
-    const roleAlignmentScore = computeAlignmentScoreSemantic(
-      optimizedText,
-      requiredSkills,
-      optionalSkills,
-      expandedMap
-    );
-
-    const optimizedLowerForInsights = optimizedTextLower;
-
-    // Strength preservation: how much of the previously matched skills remain in the optimized resume.
-    const stronglyMatched = matchedSkills.filter((s) =>
-      isSkillStronglyCovered(optimizedLowerForInsights, s, expandedMap)
-    );
-    const matchedStrengthScore =
-      matchedSkills.length > 0
-        ? Math.min(
-            95,
-            Math.round(50 + (stronglyMatched.length / matchedSkills.length) * 45)
-          )
-        : undefined;
-
-    const missingCritical = filterSkillGapPhrases(
-      missingRequired.filter((s) => !isSkillCovered(optimizedLowerForInsights, s, expandedMap))
-    ).slice(0, 6);
-
-    const jdGapDetails = buildJdGapDetails(missingCritical, {
-      requiredPhrases: missingRequired,
-      preferredPhrases: missingPreferred,
-      originalLower: originalTextLower,
-      optimizedLower: optimizedLowerForInsights,
-      expanded: expandedMap,
-    });
-
-    const dominantIntents = (() => {
-      if (!intentClusters || intentClusters.length === 0) return [];
-      const scored = intentClusters
-        .map((it) => {
-          const coveredCount = it.skills.filter((sk) =>
-            isSkillCovered(optimizedLowerForInsights, sk, expandedMap)
-          ).length;
-          return { name: it.name, coveredCount };
-        })
-        .sort((a, b) => b.coveredCount - a.coveredCount);
-      const topNonZero = scored.filter((s) => s.coveredCount > 0).slice(0, 3);
-      if (topNonZero.length > 0) return topNonZero.map((s) => s.name);
-      return scored.slice(0, 1).map((s) => s.name);
-    })();
-
-    const insights = {
-      strongMatches: stronglyMatched.slice(0, 8),
-      missingCritical,
-      jdGapDetails,
-      dominantIntents,
-    };
-
     optimizedStructured = syncResumeSkills(
       finalizeResumeSkillSections(optimizedStructured)
     );
@@ -2621,8 +2272,8 @@ export async function POST(request: Request) {
     const refinementEvidence = buildRefinementEvidence(
       resumeSnapshotBeforeOptimization,
       optimizedStructured,
-      missingCritical,
-      jdGapDetails
+      [],
+      []
     );
 
     let evidenceDashboard = {
@@ -2658,53 +2309,29 @@ export async function POST(request: Request) {
     }
 
     const proofRequiredSet = new Set(
-      filterSkillGapPhrases(missingRequired ?? []).map((s) => s.toLowerCase())
+      filterSkillGapPhrases(missingRequired ?? [])
+        .filter((skill) => optimizeTargetLower.has(skill.toLowerCase().trim()))
+        .map((s) => s.toLowerCase())
     );
     const improvedSkillProof = buildOptimizedSkillProofRows(
       buildSkillProofForSkills(
-        proofSkills,
+        optimizeTargetSkills,
         resumeText,
         resumeSnapshotBeforeOptimization,
         proofRequiredSet
       ),
       buildSkillProofForSkills(
-        proofSkills,
+        optimizeTargetSkills,
         optimizedText,
         optimizedStructured,
         proofRequiredSet
-      )
+      ),
+      optimizeTargetSkills
     );
 
     const scoreBefore = evidenceDashboard.before.evidenceMatch;
     const scoreAfter = evidenceDashboard.after.evidenceMatch;
     const evidenceMatchDelta = scoreAfter - scoreBefore;
-
-    const kwBefore =
-      typeof analyzeResult.keyword_coverage === "number"
-        ? Math.max(0, Math.min(100, Math.round(analyzeResult.keyword_coverage)))
-        : undefined;
-    const jdProofDelta =
-      evidenceDashboard.after.snapshot.jdSkillProof -
-      evidenceDashboard.before.snapshot.jdSkillProof;
-    const keywordCoverage =
-      kwBefore === undefined
-        ? undefined
-        : {
-            before: kwBefore,
-            after: Math.min(100, Math.max(0, kwBefore + jdProofDelta)),
-          };
-
-    const impBefore = Math.max(
-      0,
-      Math.min(100, Math.round(evidenceDashboard.before.snapshot.impactCoverage))
-    );
-    const impactDelta =
-      evidenceDashboard.after.snapshot.impactCoverage -
-      evidenceDashboard.before.snapshot.impactCoverage;
-    const impactScore = {
-      before: impBefore,
-      after: Math.min(100, Math.max(0, impBefore + impactDelta)),
-    };
 
     const response: OptimizeResponse = {
       optimizedResume: optimizedText,
@@ -2712,8 +2339,6 @@ export async function POST(request: Request) {
       scoreAfter,
       evidenceMatchDelta,
       atsScoreReference: analyzeResult.ats_score,
-      roleAlignmentScore,
-      matchedStrengthScore,
       addedKeywords,
       bulletImprovements,
       bulletsAdded,
@@ -2730,15 +2355,7 @@ export async function POST(request: Request) {
           : undefined,
       appliedFixOutcomes:
         appliedFixOutcomes.length > 0 ? appliedFixOutcomes : undefined,
-      alignmentInsights: {
-        coverageBreakdown: { covered, missing },
-      },
-      targetSkillCoverage,
-      keywordCoverage,
-      impactScore,
-      insights,
       refinementEvidence,
-      evidenceDashboard,
       improvedSkillProof,
       ...(debugEnabled
         ? {

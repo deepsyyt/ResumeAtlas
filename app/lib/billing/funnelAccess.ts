@@ -31,17 +31,10 @@ export type ApplicationCommitResult = {
   creditUsed: boolean;
 };
 
-export type IncompleteFunnelPayload = {
-  code: "INCOMPLETE_FUNNEL";
-  message: string;
-};
-
 const FREE_EXHAUSTED_MESSAGE =
   "You've used your free scan for this month. Get 5 job credits for $2.99: check, optimize, and download for five jobs.";
 const ANON_EXHAUSTED_MESSAGE =
   "You've used your free scan for this month. Sign in to get 5 job credits for $2.99.";
-const INCOMPLETE_APPLICATION_MESSAGE =
-  "Finish optimizing and downloading this resume before you check another job.";
 
 function quotaExceededError(
   message: string,
@@ -56,17 +49,6 @@ function quotaExceededError(
     message,
     quota,
     ...(purchaseRequired ? { purchaseRequired: true } : {}),
-  };
-  return err;
-}
-
-function incompleteApplicationError(): Error & { funnelPayload: IncompleteFunnelPayload } {
-  const err = new Error(INCOMPLETE_APPLICATION_MESSAGE) as Error & {
-    funnelPayload: IncompleteFunnelPayload;
-  };
-  err.funnelPayload = {
-    code: "INCOMPLETE_FUNNEL",
-    message: INCOMPLETE_APPLICATION_MESSAGE,
   };
   return err;
 }
@@ -86,10 +68,6 @@ export async function assertCanRunAnalysisOrThrow(
   }
 
   const wallet = await getFunnelWallet(actor.userId);
-  if (wallet.activeApplication) {
-    throw incompleteApplicationError();
-  }
-
   if (wallet.creditsRemaining > 0) {
     return { actor, source: "pack", quotaStatus: null };
   }
@@ -116,11 +94,7 @@ export async function commitAnalysisApplication(
       analysisResult
     );
     if (!started.ok) {
-      throw new Error(
-        started.code === "INCOMPLETE_APPLICATION"
-          ? INCOMPLETE_APPLICATION_MESSAGE
-          : "Could not save your job check. Please try again."
-      );
+      throw new Error("Could not save your job check. Please try again.");
     }
     return {
       applicationId: started.applicationId,
@@ -144,9 +118,7 @@ export async function commitAnalysisApplication(
     const msg =
       started.code === "NO_CREDITS"
         ? "No credits left. Buy a pack to continue."
-        : started.code === "INCOMPLETE_APPLICATION"
-          ? INCOMPLETE_APPLICATION_MESSAGE
-          : "Unable to start a new job check. Try again.";
+        : "Unable to start a new job check. Try again.";
     throw new Error(msg);
   }
   return {
@@ -218,21 +190,6 @@ export async function ensureApplicationForOptimize(
   if (wallet.activeApplication?.state === "analyzed") {
     return { ok: true };
   }
-  if (wallet.activeApplication?.state === "optimized") {
-    return {
-      ok: false,
-      code: "ALREADY_OPTIMIZED",
-      message:
-        "This resume is already optimized. Download it, or finish this job before optimizing again.",
-    };
-  }
-  if (wallet.activeApplication) {
-    return {
-      ok: false,
-      code: "INCOMPLETE_FUNNEL",
-      message: INCOMPLETE_APPLICATION_MESSAGE,
-    };
-  }
 
   const actor = {
     userId,
@@ -247,7 +204,6 @@ export async function ensureApplicationForOptimize(
     return startApplicationFromAnalysis(userId, resumeText, jobDescription, analysisResult);
   }
 
-  // Anonymous scan → sign-in → optimize: link the existing scan without a second job check.
   const { anonymousId } = await getOrCreateAnonymousAnalysisIdentity();
   if (
     anonymousId &&

@@ -28,8 +28,7 @@ export type ApplicationVerdict = {
   optimizeCtaLabel: string;
   /** Breakdown for optional debug/tooltips. */
   inputs: {
-    topicsAvg: number;
-    skillsInBulletsPct: number;
+    keywordProofPct: number;
     rejectionRiskCount: number;
   };
 };
@@ -38,15 +37,7 @@ function clampPct(n: number): number {
   return Math.max(0, Math.min(100, Math.round(n)));
 }
 
-function averageTopicScore(dashboard: EvidenceDashboard): number {
-  const topics = dashboard.categories;
-  if (topics.length > 0) {
-    return topics.reduce((sum, t) => sum + t.score, 0) / topics.length;
-  }
-  return dashboard.snapshot.jdSkillProof;
-}
-
-function skillsMatchedInBulletsPct(dashboard: EvidenceDashboard): number {
+function keywordProofPct(dashboard: EvidenceDashboard): number {
   const { jdSkillsProved, jdSkillsTotal, jdSkillProof } = dashboard.snapshot;
   if (jdSkillsTotal > 0) {
     return clampPct((jdSkillsProved / jdSkillsTotal) * 100);
@@ -75,14 +66,12 @@ function tierFromShortlist(pct: number): ApplicationVerdictTier {
 
 function estimateOptimizedShortlist(args: {
   current: number;
-  topicsAvg: number;
-  skillsInBulletsPct: number;
+  keywordProofPct: number;
   riskCount: number;
 }): number {
-  const topicGap = Math.max(0, 72 - args.topicsAvg);
-  const skillGap = Math.max(0, 78 - args.skillsInBulletsPct);
+  const skillGap = Math.max(0, 78 - args.keywordProofPct);
   const riskBonus = Math.min(12, args.riskCount * 3);
-  const uplift = Math.min(28, topicGap * 0.35 + skillGap * 0.4 + riskBonus);
+  const uplift = Math.min(28, skillGap * 0.75 + riskBonus);
   return clampPct(Math.min(88, args.current + uplift));
 }
 
@@ -119,7 +108,7 @@ function tierCopy(tier: ApplicationVerdictTier, shortlistPct: number, optimizedP
         shouldApply: true,
         applyLabel: "Apply after quick polish",
         optimizeHeadline: "Increase your shortlist odds before you apply",
-        optimizeSubline: `You're at ~${shortlistPct}% shortlist odds. Optimization targets the rejection risks and weak topic proof holding you back, typically ~${optimizedPct}%.`,
+        optimizeSubline: `You're at ~${shortlistPct}% shortlist odds. Optimization targets weak keyword proof and selected fixes, typically ~${optimizedPct}%.`,
         optimizeCtaLabel: OPTIMIZE_CTA_LABEL,
       };
     case "cautious":
@@ -130,7 +119,7 @@ function tierCopy(tier: ApplicationVerdictTier, shortlistPct: number, optimizedP
         shouldApply: false,
         applyLabel: "Optimize before applying",
         optimizeHeadline: "Don't apply yet, raise shortlist odds first",
-        optimizeSubline: `~${shortlistPct}% shortlist chance today. Fix topic gaps and move skills into work bullets to reach ~${optimizedPct}% before submitting.`,
+        optimizeSubline: `~${shortlistPct}% shortlist chance today. Strengthen weak skills in work bullets to reach ~${optimizedPct}% before submitting.`,
         optimizeCtaLabel: OPTIMIZE_CTA_LABEL,
       };
     case "poor":
@@ -166,8 +155,7 @@ function mergeApplicationVerdictLlm(
     typeof llm.shortlistPct === "number" ? clampPct(llm.shortlistPct) : base.shortlistPct;
   const optimizedShortlistPct = estimateOptimizedShortlist({
     current: shortlistPct,
-    topicsAvg: base.inputs.topicsAvg,
-    skillsInBulletsPct: base.inputs.skillsInBulletsPct,
+    keywordProofPct: base.inputs.keywordProofPct,
     riskCount: base.inputs.rejectionRiskCount,
   });
   const shortlistUplift = Math.max(0, optimizedShortlistPct - shortlistPct);
@@ -192,19 +180,16 @@ function mergeApplicationVerdictLlm(
 }
 
 function computeApplicationVerdictHeuristic(dashboard: EvidenceDashboard): ApplicationVerdict {
-  const topicsAvg = clampPct(averageTopicScore(dashboard));
-  const skillsInBulletsPct = skillsMatchedInBulletsPct(dashboard);
+  const proofPct = clampPct(keywordProofPct(dashboard));
   const rejectionRiskCount = dashboard.mostMissingEvidence?.length ?? dashboard.riskAreas.length;
   const riskFactor = rejectionRiskFactor(dashboard);
 
-  const rawShortlist =
-    topicsAvg * 0.45 + skillsInBulletsPct * 0.4 + riskFactor * 0.15;
+  const rawShortlist = proofPct * 0.85 + riskFactor * 0.15;
   const shortlistPct = clampPct(rawShortlist);
   const tier = tierFromShortlist(shortlistPct);
   const optimizedShortlistPct = estimateOptimizedShortlist({
     current: shortlistPct,
-    topicsAvg,
-    skillsInBulletsPct,
+    keywordProofPct: proofPct,
     riskCount: rejectionRiskCount,
   });
   const shortlistUplift = Math.max(0, optimizedShortlistPct - shortlistPct);
@@ -216,8 +201,7 @@ function computeApplicationVerdictHeuristic(dashboard: EvidenceDashboard): Appli
     shortlistUplift,
     scoreStyle: getScoreStyle(shortlistPct),
     inputs: {
-      topicsAvg,
-      skillsInBulletsPct,
+      keywordProofPct: proofPct,
       rejectionRiskCount,
     },
     ...tierCopy(tier, shortlistPct, optimizedShortlistPct),
