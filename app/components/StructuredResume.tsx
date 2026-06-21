@@ -391,10 +391,11 @@ function ExperienceBulletRow({
   const isFixBullet =
     fixKeySet.has(bulletKey) || refinementReason?.kind === "rejection_risk";
   const isNewBullet = newKeySet.has(bulletKey) || newBulletSet.has(key);
+  const trimmedOriginal = originalBullet?.trim() ?? "";
   const hasViewableOriginal =
     !isNewBullet &&
-    Boolean(originalBullet?.trim()) &&
-    originalBullet.trim().toLowerCase() !== text.toLowerCase();
+    trimmedOriginal.length > 0 &&
+    trimmedOriginal.toLowerCase() !== text.toLowerCase();
   const fixKeywords = isFixBullet ? filterTermsPresentInText(text, bulletFixHighlightKeywords) : [];
   const isImpactBullet =
     impactIndices.length > 0 || refinementReason?.kind === "impact_polish";

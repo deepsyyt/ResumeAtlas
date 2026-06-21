@@ -179,7 +179,7 @@ export function dedupeBulletKeywordsGlobally(
   }
 
   const next: Record<string, string[]> = {};
-  for (const { bulletKey, keyword } of keywordOwners.values()) {
+  for (const { bulletKey, keyword } of Array.from(keywordOwners.values())) {
     const list = next[bulletKey] ?? [];
     if (!list.some((kw) => normalizeKeywordToken(kw) === normalizeKeywordToken(keyword))) {
       list.push(keyword);
