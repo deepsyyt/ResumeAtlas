@@ -5,7 +5,10 @@ import { formatSkillGroupLine, getSkillGroups } from "@/app/lib/resumeDocument";
 import { sanitizeResumeProse } from "@/app/lib/resumeTypography";
 import { makeExperienceBulletKey } from "@/app/lib/optimizeExperience";
 import type { BulletRefinementReason } from "@/app/lib/optimizeBulletEvidence";
-import { extractFixHighlightKeywords } from "@/app/lib/recommendedFixes";
+import {
+  filterTermsPresentInText,
+  strictTermHighlightPattern,
+} from "@/app/lib/resumeTermMatch";
 import React from "react";
 
 type StructuredResumeProps = {
@@ -45,6 +48,8 @@ type StructuredResumeProps = {
   bulletImpactIndicesByKey?: Record<string, number[]>;
   /** Global fix-related terms to highlight when they appear in fix bullets. */
   fixHighlightKeywords?: string[];
+  /** Per-bullet fix proof terms (Jenkins, CI/CD, etc.) — preferred over global highlights. */
+  bulletFixHighlightKeywordsByKey?: Record<string, string[]>;
   /** JD topic tags per stable bullet key (refined bullets only). */
   bulletTopicTags?: Record<string, string[]>;
   /** JD topic tags for tailored summary. */
@@ -89,10 +94,15 @@ function highlightKeywordsInText(
   const list = keywords?.filter((k) => k.trim().length > 0) ?? [];
   if (list.length === 0) return [text];
 
-  const escaped = list
-    .map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+  const useStrictBoundaries = variant === "amber" || variant === "emerald" || variant === "violet";
+  const present = useStrictBoundaries ? filterTermsPresentInText(text, list) : list;
+  if (present.length === 0) return [text];
+
+  const escaped = present
+    .map((k) => (useStrictBoundaries ? strictTermHighlightPattern(k) : k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")))
+    .filter((p) => p.length > 0)
     .sort((a, b) => b.length - a.length);
-  const re = new RegExp(`(${escaped.join("|")})`, "gi");
+  const re = new RegExp(`(${escaped.join("|")})`, useStrictBoundaries ? "gi" : "gi");
   const parts = text.split(re);
   const markClass =
     variant === "emerald"
@@ -106,6 +116,28 @@ function highlightKeywordsInText(
   return parts.map((part, i) =>
     i % 2 === 1 ? (
       <mark key={`kw-${variant}-${i}`} className={markClass}>
+        {part}
+      </mark>
+    ) : (
+      part
+    )
+  );
+}
+
+/** Word-safe highlighting for fix proof terms (avoids matching "app" inside unrelated words). */
+function highlightFixTermsInText(text: string, terms: string[]): React.ReactNode[] {
+  const list = filterTermsPresentInText(text, terms);
+  if (list.length === 0) return [text];
+
+  const patterns = list.map((term) => strictTermHighlightPattern(term)).filter((p) => p.length > 0);
+  const re = new RegExp(`(${patterns.join("|")})`, "gi");
+  const parts = text.split(re);
+  const markClass =
+    "rounded bg-emerald-100 px-0.5 font-semibold text-emerald-950 ring-1 ring-emerald-200/80 print:bg-transparent print:px-0 print:font-inherit print:text-inherit print:ring-0";
+
+  return parts.map((part, i) =>
+    i % 2 === 1 ? (
+      <mark key={`fix-${i}`} className={markClass}>
         {part}
       </mark>
     ) : (
@@ -267,7 +299,7 @@ type ExperienceBulletRowProps = {
   quantifiedSet: Set<string>;
   newBulletSet: Set<string>;
   strengthenedKeywords?: string[];
-  fixHighlightKeywords?: string[];
+  bulletFixHighlightKeywords?: string[];
   fixKeySet: Set<string>;
   originalBullet?: string;
   refinementReason?: BulletRefinementReason;
@@ -290,7 +322,7 @@ function ExperienceBulletRow({
   quantifiedSet,
   newBulletSet,
   strengthenedKeywords = [],
-  fixHighlightKeywords = [],
+  bulletFixHighlightKeywords = [],
   fixKeySet,
   originalBullet,
   refinementReason,
@@ -306,57 +338,75 @@ function ExperienceBulletRow({
   const isNewBullet = newKeySet.has(bulletKey) || newBulletSet.has(key);
   const isRewritten =
     !isNewBullet && (refinedKeySet.has(bulletKey) || highlightedSet.has(key));
-  const isWeakKeyword =
-    !isFixBullet &&
-    (refinementReason?.kind === "weak_keyword" || strengthenedKeywords.length > 0);
+  const weakKeywordHighlightTerms =
+    strengthenedKeywords.length > 0
+      ? strengthenedKeywords
+      : refinementReason?.kind === "weak_keyword"
+        ? refinementReason.keywords
+        : [];
+  const fixKeywords = isFixBullet ? filterTermsPresentInText(text, bulletFixHighlightKeywords) : [];
+  const weakKeywords = filterTermsPresentInText(text, weakKeywordHighlightTerms);
+  const isWeakKeyword = !isFixBullet && weakKeywords.length > 0;
   const isImpactBullet =
-    !isFixBullet &&
-    !isWeakKeyword &&
-    (refinementReason?.kind === "impact_polish" ||
-      impactIndices.length > 0 ||
-      quantifiedSet.has(key));
-  const isQuantified = isImpactBullet && quantifiedSet.has(key);
+    !isFixBullet && impactIndices.length > 0;
+  const isQuantified =
+    isImpactBullet &&
+    (quantifiedSet.has(key) ||
+      (refinementReason?.kind === "impact_polish" && refinementReason.quantified) ||
+      impactIndices.length > 0);
 
-  const fixKeywords = isFixBullet
-    ? Array.from(
-        new Set([
-          ...extractFixHighlightKeywords(
-            refinementReason?.kind === "rejection_risk" ? refinementReason.risks : []
-          ),
-          ...fixHighlightKeywords,
-        ])
-      ).filter((kw) => kw.trim().length > 0)
-    : [];
-  const weakKeywords =
-    isWeakKeyword && strengthenedKeywords.length > 0 ? strengthenedKeywords : [];
+  const hasFixProof = fixKeywords.length > 0;
+  const showFixCallout = isFixBullet && (hasFixProof || fixIndices.length > 0);
 
   const highlightSets: KeywordHighlightSet[] = [];
-  if (fixKeywords.length > 0) {
+  if (!hasFixProof && fixKeywords.length > 0) {
     highlightSets.push({ keywords: fixKeywords, variant: "emerald" });
   }
   if (weakKeywords.length > 0) {
     highlightSets.push({ keywords: weakKeywords, variant: "amber" });
   }
 
-  const hasCallout = isFixBullet || isWeakKeyword || isImpactBullet || isNewBullet;
+  const hasCallout =
+    showFixCallout || isWeakKeyword || isImpactBullet || isNewBullet;
   const calloutClass = [
     hasCallout ? "rounded-md px-2 py-1.5 print:bg-transparent print:px-0 print:py-0 print:ring-0 print:border-l-0" : "py-0.5",
-    isFixBullet ? "bg-emerald-50/95 ring-1 ring-emerald-200 border-l-2 border-emerald-500" : "",
-    !isFixBullet && isWeakKeyword ? "bg-amber-50/90 ring-1 ring-amber-200 border-l-2 border-amber-500" : "",
-    !isFixBullet && !isWeakKeyword && isImpactBullet
+    showFixCallout ? "bg-emerald-50/95 ring-1 ring-emerald-200 border-l-2 border-emerald-500" : "",
+    !showFixCallout && isImpactBullet
       ? "bg-violet-50 ring-1 ring-violet-200 border-l-2 border-violet-500"
       : "",
-    !isFixBullet && !isWeakKeyword && !isImpactBullet && isNewBullet
+    !showFixCallout && !isImpactBullet && isWeakKeyword
+      ? "bg-amber-50/90 ring-1 ring-amber-200 border-l-2 border-amber-500"
+      : "",
+    !showFixCallout && !isWeakKeyword && !isImpactBullet && isNewBullet
       ? "bg-slate-50 ring-1 ring-slate-200 border-l-2 border-slate-400"
       : "",
   ]
     .filter(Boolean)
     .join(" ");
 
-  const renderedText =
-    highlightSets.length > 0
-      ? highlightKeywordSetsInText(text, highlightSets)
-      : [text];
+  let renderedText: React.ReactNode[];
+  if (hasFixProof) {
+    const base =
+      weakKeywords.length > 0
+        ? highlightKeywordSetsInText(text, [{ keywords: weakKeywords, variant: "amber" }])
+        : [text];
+    renderedText = base.flatMap((node, i) =>
+      typeof node === "string"
+        ? highlightFixTermsInText(node, fixKeywords).map((part, j) =>
+            typeof part === "string" ? (
+              part
+            ) : (
+              <React.Fragment key={`fix-wrap-${i}-${j}`}>{part}</React.Fragment>
+            )
+          )
+        : [<React.Fragment key={`node-${i}`}>{node}</React.Fragment>]
+    );
+  } else if (highlightSets.length > 0) {
+    renderedText = highlightKeywordSetsInText(text, highlightSets);
+  } else {
+    renderedText = [text];
+  }
+
   const finalNodes = isImpactBullet
     ? highlightMetrics(renderedText, "violet")
     : renderedText.map((node, k) => <React.Fragment key={k}>{node}</React.Fragment>);
@@ -396,11 +446,11 @@ function ExperienceBulletRow({
         ) : null}
         {hasCallout ? (
           <span className="ml-2 inline-flex flex-wrap gap-1 align-middle print:hidden">
-            {isFixBullet && fixIndices.length > 0 ? (
+            {showFixCallout && fixIndices.length > 0 ? (
               <span className="inline-flex rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-950">
                 Fix {fixIndices[0]}
               </span>
-            ) : isFixBullet ? (
+            ) : showFixCallout ? (
               <span className="inline-flex rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-950">
                 Fix applied
               </span>
@@ -412,7 +462,11 @@ function ExperienceBulletRow({
             ) : null}
             {isImpactBullet ? (
               <span className="inline-flex rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-900">
-                {isQuantified ? "Impact quantified" : "Impact refined"}
+                {impactIndices.length > 0
+                  ? `Impact ${impactIndices[0]}`
+                  : isQuantified
+                    ? "Impact quantified"
+                    : "Impact refined"}
               </span>
             ) : null}
             {isNewBullet ? (
@@ -446,7 +500,7 @@ export function StructuredResume({
   bulletFixIndicesByKey,
   bulletProofIndicesByKey,
   bulletImpactIndicesByKey,
-  fixHighlightKeywords,
+  bulletFixHighlightKeywordsByKey,
   bulletTopicTags,
   summaryTopicTags = [],
   showOptimizationLegend = false,
@@ -493,10 +547,6 @@ export function StructuredResume({
     [newBullets]
   );
   const fixKeySet = React.useMemo(() => new Set(fixBulletKeys ?? []), [fixBulletKeys]);
-  const fixKeywordsGlobal = React.useMemo(
-    () => (fixHighlightKeywords ?? []).filter((kw) => kw.trim().length > 0),
-    [fixHighlightKeywords]
-  );
   const certifications = resume.certifications ?? [];
   const awards = resume.awards ?? [];
   const additionalSections = resume.additionalSections ?? [];
@@ -512,6 +562,7 @@ export function StructuredResume({
 
   const bulletEvidenceForKey = (bulletKey: string) => ({
     strengthenedKeywords: bulletKeywordsByKey?.[bulletKey] ?? [],
+    bulletFixHighlightKeywords: bulletFixHighlightKeywordsByKey?.[bulletKey] ?? [],
     originalBullet: bulletOriginalsByKey?.[bulletKey],
     refinementReason: bulletReasonByKey?.[bulletKey],
     fixIndices: bulletFixIndicesByKey?.[bulletKey] ?? [],
@@ -544,7 +595,7 @@ export function StructuredResume({
             </li>
             <li className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-sm border border-violet-300 bg-violet-100" aria-hidden />
-              Impact quantified
+              Impact enhanced
             </li>
           </ul>
         </div>
@@ -858,7 +909,6 @@ export function StructuredResume({
                           bulletKey={rowKey}
                           quantifiedSet={quantifiedSet}
                           newBulletSet={newBulletSet}
-                          fixHighlightKeywords={fixKeywordsGlobal}
                           fixKeySet={fixKeySet}
                           {...bulletEvidenceForKey(rowKey)}
                         />
@@ -907,7 +957,6 @@ export function StructuredResume({
                             bulletKey={rowKey}
                             quantifiedSet={quantifiedSet}
                             newBulletSet={newBulletSet}
-                            fixHighlightKeywords={fixKeywordsGlobal}
                             fixKeySet={fixKeySet}
                             {...bulletEvidenceForKey(rowKey)}
                           />

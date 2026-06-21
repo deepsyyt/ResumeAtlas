@@ -233,6 +233,13 @@ export function makeExperienceBulletKey(
     : `${expIndex}:p${projectIndex}:${bulletIndex}`;
 }
 
+export function projectIndexFromBulletKey(bulletKey: string): number | undefined {
+  const scopePart = bulletKey.split(":")[1];
+  if (!scopePart?.startsWith("p")) return undefined;
+  const projectIndex = Number.parseInt(scopePart.slice(1), 10);
+  return Number.isFinite(projectIndex) ? projectIndex : undefined;
+}
+
 /** Distinct project/role scopes touched by refined bullet keys (`exp:pN:…` or `exp:bullet`). */
 export function countRefinedScopesFromBulletKeys(keys: string[]): number {
   const scopes = new Set<string>();

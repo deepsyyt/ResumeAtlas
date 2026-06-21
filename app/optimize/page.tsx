@@ -27,8 +27,16 @@ import { DownloadPaymentModal } from "@/app/components/DownloadPaymentModal";
 import { DownloadPaymentSuccessModal } from "@/app/components/DownloadPaymentSuccessModal";
 import { buildRefinementEvidence } from "@/app/lib/resumeFactualAudit";
 import { makeExperienceBulletKey, countRefinedScopesFromBulletKeys } from "@/app/lib/optimizeExperience";
-import { buildBulletClaimBadgeMaps, buildBulletEvidenceMaps } from "@/app/lib/optimizeBulletEvidence";
-import { extractFixHighlightKeywords, resolveDashboardRecommendedFixes, type AppliedFixOutcome } from "@/app/lib/recommendedFixes";
+import {
+  buildBulletClaimBadgeMaps,
+  buildBulletEvidenceMaps,
+  enrichWeakKeywordMapsFromSkillProof,
+  enrichWeakKeywordMapsFromWeakSkills,
+} from "@/app/lib/optimizeBulletEvidence";
+import { deriveWeakSkillsFromAnalyze } from "@/app/lib/optimizeTargets";
+import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
+import { strictTermMatchesInText } from "@/app/lib/resumeTermMatch";
+import { buildBulletFixHighlightKeywordsByKey, resolveDashboardRecommendedFixes, type AppliedFixOutcome } from "@/app/lib/recommendedFixes";
 import {
   OPTIMIZE_CACHE_KEY,
   OPTIMIZE_DONE_KEY,
@@ -677,7 +685,7 @@ export default function OptimizePage() {
             {error || "No resume data found. Run an ATS analysis and click Optimize Resume to open this page."}
           </p>
           <Link
-            href="/"
+            href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
             className="mt-4 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
           >
             Back to analyzer
@@ -692,7 +700,7 @@ export default function OptimizePage() {
       <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 px-4 py-12">
         <div className="mx-auto max-w-md rounded-xl border border-slate-200 bg-white p-6 text-center shadow-sm">
           <p className="text-slate-700">Unable to generate optimized resume. Please try again from the analyzer.</p>
-          <Link href="/" className="mt-4 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+          <Link href={CHECK_RESUME_AGAINST_JD_FORM_HREF} className="mt-4 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
             Back to analyzer
           </Link>
         </div>
@@ -786,6 +794,21 @@ export default function OptimizePage() {
     result.selectedRejectionRisks ?? input.selectedRejectionRisks ?? [];
   const { bulletOriginalsByKey, bulletKeywordsByKey, bulletReasonByKey, strengthenedWeakKeywords } =
     buildBulletEvidenceMaps(bulletChanges, bulletDiffsKeyed);
+  if ((result.improvedSkillProof ?? []).length > 0) {
+    enrichWeakKeywordMapsFromSkillProof(
+      parsedAfter,
+      bulletKeywordsByKey,
+      bulletReasonByKey,
+      result.improvedSkillProof ?? []
+    );
+  }
+  const analyzeWeakSkills = deriveWeakSkillsFromAnalyze(input.analyzeResult);
+  const weakSkillsProvenInResume = enrichWeakKeywordMapsFromWeakSkills(
+    parsedAfter,
+    analyzeWeakSkills,
+    bulletKeywordsByKey,
+    bulletReasonByKey
+  );
   const proofSkillsOrdered = (result.improvedSkillProof ?? []).map((row) => row.skill);
   const { bulletFixIndicesByKey, bulletProofIndicesByKey, bulletImpactIndicesByKey } =
     buildBulletClaimBadgeMaps(
@@ -798,19 +821,21 @@ export default function OptimizePage() {
   const fixBulletKeys = Array.from(
     new Set([
       ...appliedFixOutcomes
-        .map((o) => o.bulletKey)
-        .filter((key): key is string => Boolean(key)),
+        .filter((o) => o.applied && o.bulletKey)
+        .map((o) => o.bulletKey as string),
       ...Object.entries(bulletReasonByKey)
         .filter(([, reason]) => reason.kind === "rejection_risk")
         .map(([key]) => key),
     ])
   );
-  const fixHighlightKeywords = extractFixHighlightKeywords(
-    selectedRejectionRisks
-  ).filter((kw) => afterContent.toLowerCase().includes(kw.toLowerCase()));
-  const showKeywords = (
-    strengthenedWeakKeywords.length > 0 ? strengthenedWeakKeywords : strengthenedSkills
-  ).filter((kw) => afterContent.toLowerCase().includes(kw.toLowerCase()));
+  const showKeywords = Array.from(
+    new Set([
+      ...strengthenedWeakKeywords,
+      ...weakSkillsProvenInResume,
+      ...strengthenedSkills,
+      ...(result.addedKeywords ?? []),
+    ])
+  ).filter((kw) => strictTermMatchesInText(afterContent, kw));
   const keywordBulletsFromFinalResume = parsedAfter.experience.flatMap((exp) => {
     const top = (exp.bullets ?? []).filter((b) => {
       const lower = String(b ?? "").toLowerCase();
@@ -831,6 +856,23 @@ export default function OptimizePage() {
   for (const diff of bulletDiffsKeyed) {
     bulletKeysByText.set(diff.improved.trim().toLowerCase(), diff.key);
   }
+  for (let idx = 0; idx < parsedAfter.experience.length; idx++) {
+    const exp = parsedAfter.experience[idx];
+    for (let j = 0; j < (exp.bullets ?? []).length; j++) {
+      const text = String(exp.bullets?.[j] ?? "").trim().toLowerCase();
+      if (text) bulletKeysByText.set(text, makeExperienceBulletKey(idx, j));
+    }
+    for (let pIdx = 0; pIdx < (exp.projects ?? []).length; pIdx++) {
+      for (let j = 0; j < (exp.projects?.[pIdx]?.bullets ?? []).length; j++) {
+        const text = String(exp.projects?.[pIdx]?.bullets?.[j] ?? "").trim().toLowerCase();
+        if (text) bulletKeysByText.set(text, makeExperienceBulletKey(idx, j, pIdx));
+      }
+    }
+  }
+  const bulletFixHighlightKeywordsByKey = buildBulletFixHighlightKeywordsByKey({
+    bulletChanges,
+    bulletKeyByImproved: bulletKeysByText,
+  });
 
   return (
     <div className="flex-1 bg-slate-50 py-6 pb-20 sm:py-8 print:min-h-0 print:bg-white print:py-0">
@@ -848,7 +890,7 @@ export default function OptimizePage() {
               </p>
             </div>
             <Link
-              href="/"
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm ring-1 ring-black/10 transition hover:bg-slate-800 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 sm:px-3.5 sm:py-2.5"
             >
               <span
@@ -874,7 +916,7 @@ export default function OptimizePage() {
                 <span className="font-medium text-indigo-700">indigo</span> = summary tailored,{" "}
                 <span className="font-medium text-emerald-700">green</span> = fix applied,{" "}
                 <span className="font-medium text-amber-700">amber</span> = weak keyword proven,{" "}
-                <span className="font-medium text-violet-700">violet</span> = impact quantified.
+                <span className="font-medium text-violet-700">violet</span> = impact enhanced.
                 Click <span className="font-medium">Edit</span> to adjust wording before you download.
               </p>
             </div>
@@ -897,7 +939,7 @@ export default function OptimizePage() {
               bulletFixIndicesByKey={bulletFixIndicesByKey}
               bulletProofIndicesByKey={bulletProofIndicesByKey}
               bulletImpactIndicesByKey={bulletImpactIndicesByKey}
-              fixHighlightKeywords={fixHighlightKeywords}
+              bulletFixHighlightKeywordsByKey={bulletFixHighlightKeywordsByKey}
               showOptimizationLegend
               editable
               onUpdateResumeMeta={(patch) =>
@@ -1029,6 +1071,7 @@ export default function OptimizePage() {
             <ResumeOptimizationPanel
               resume={parsedAfter}
               surfacedKeywords={showKeywords}
+              targetedWeakSkills={analyzeWeakSkills}
               bulletsRefined={result.bulletImprovements}
               bulletsAdded={result.bulletsAdded ?? 0}
               projectsRefined={projectsRefined}

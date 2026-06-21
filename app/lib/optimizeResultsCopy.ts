@@ -166,7 +166,7 @@ export function buildOptimizeBenefitItems(args: {
 
 export const OPTIMIZE_FIXES_SECTION_TITLE = "Recommended fixes applied";
 export const OPTIMIZE_FIXES_SECTION_SUBTITLE =
-  "Each fix below shows the bullet it changed. Fix terms are highlighted in green in the preview.";
+  "What each selected fix addressed. Matching bullets are labeled in green in the preview.";
 
 export const OPTIMIZE_WEAK_KEYWORDS_SECTION_TITLE = "Weak keywords now proven";
 export const OPTIMIZE_WEAK_KEYWORDS_SECTION_SUBTITLE =
@@ -174,7 +174,7 @@ export const OPTIMIZE_WEAK_KEYWORDS_SECTION_SUBTITLE =
 
 export const OPTIMIZE_IMPACT_SECTION_TITLE = "Impact quantified";
 export const OPTIMIZE_IMPACT_SECTION_SUBTITLE =
-  "Bullets reframed for measurable outcomes. Quantification terms are highlighted in violet in the preview.";
+  "Up to 2 weak project bullets reframed with a concrete metric from your experience (highlighted in violet in the preview).";
 export const OPTIMIZE_GAPS_SECTION_TITLE = "Still missing from this job";
 export const OPTIMIZE_GAPS_SECTION_SUBTITLE =
   "Not added to your resume — only include these if you truly have the experience.";

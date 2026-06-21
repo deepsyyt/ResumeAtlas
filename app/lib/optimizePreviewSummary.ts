@@ -6,6 +6,7 @@ import {
   resolveRecommendedFixInput,
 } from "@/app/lib/recommendedFixes";
 import type { ResumeDocument } from "@/app/lib/resumeDocument";
+import { strictSkillMatchesInBullet } from "@/app/lib/resumeTermMatch";
 
 export type AppliedFixSummaryRow = {
   index: number;
@@ -101,12 +102,13 @@ export function buildWeakKeywordProvenRows(
 ): WeakKeywordProvenRow[] {
   const rows: WeakKeywordProvenRow[] = [];
   for (const [bulletKey, keywords] of Object.entries(bulletKeywordsByKey)) {
-    const placementLabel = resolveBulletPlacementLabel(resume, bulletKey);
-    if (!placementLabel) continue;
+    const placementLabel =
+      resolveBulletPlacementLabel(resume, bulletKey) ?? "Experience bullet";
     const bulletText = bulletTextForKey(resume, bulletKey) ?? "";
     for (const keyword of keywords) {
       const kw = keyword.trim();
       if (!kw) continue;
+      if (!strictSkillMatchesInBullet(kw, bulletText)) continue;
       rows.push({
         keyword: kw,
         placementLabel,
@@ -129,23 +131,17 @@ export function buildImpactQuantifiedRows(args: {
 
   const addRow = (bulletKey: string, bulletText: string) => {
     if (seenKeys.has(bulletKey)) return;
+    const quantTerms = extractQuantificationTerms(bulletText);
+    if (quantTerms.length === 0) return;
     seenKeys.add(bulletKey);
     const placementLabel = resolveBulletPlacementLabel(args.resume, bulletKey);
     if (!placementLabel) return;
-    const quantTerms = extractQuantificationTerms(bulletText);
-    if (quantTerms.length === 0 && !args.bulletReasonByKey[bulletKey]) return;
     rows.push({
       placementLabel,
       bulletSnippet: snippet(bulletText, 110),
       quantTerms,
     });
   };
-
-  for (const [bulletKey, reason] of Object.entries(args.bulletReasonByKey)) {
-    if (reason.kind !== "impact_polish") continue;
-    const text = bulletTextForKey(args.resume, bulletKey) ?? "";
-    if (text.trim()) addRow(bulletKey, text);
-  }
 
   for (const bulletKey of Object.keys(args.bulletImpactIndicesByKey)) {
     const text = bulletTextForKey(args.resume, bulletKey) ?? "";
@@ -157,19 +153,12 @@ export function buildImpactQuantifiedRows(args: {
     if (key) addRow(key, text);
   }
 
-  return rows;
+  return rows.sort((a, b) => a.placementLabel.localeCompare(b.placementLabel));
 }
 
 export function countImpactRefinedBullets(
-  bulletReasonByKey: Record<string, BulletRefinementReason>,
+  _bulletReasonByKey: Record<string, BulletRefinementReason>,
   bulletImpactIndicesByKey: Record<string, number[]>
 ): number {
-  const keys = new Set<string>();
-  for (const [key, reason] of Object.entries(bulletReasonByKey)) {
-    if (reason.kind === "impact_polish") keys.add(key);
-  }
-  for (const key of Object.keys(bulletImpactIndicesByKey)) {
-    keys.add(key);
-  }
-  return keys.size;
+  return Object.keys(bulletImpactIndicesByKey).length;
 }

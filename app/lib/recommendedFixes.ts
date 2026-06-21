@@ -1,6 +1,7 @@
 import type { ApplicationVerdict } from "@/app/lib/applicationVerdict";
 import { parseResumeToJSON } from "@/app/lib/resumeParser";
 import { rejectionRiskThemeTokens } from "@/app/lib/rejectionRiskOptimize";
+import { strictTermMatchesInText } from "@/app/lib/resumeTermMatch";
 
 export type RecommendedFixSection = "experience" | "summary" | "skills" | "projects";
 
@@ -65,6 +66,28 @@ const FIX_KEYWORD_STOP = new Set([
   "new",
   "line",
   "lines",
+]);
+
+/** Too generic to count as proof a recommended fix was applied. */
+const GENERIC_FIX_PROOF_TERMS = new Set([
+  "deployment",
+  "production",
+  "product",
+  "application",
+  "app",
+  "web",
+  "tooling",
+  "exposure",
+  "pipeline",
+  "monitoring",
+  "document",
+  "work",
+  "designed",
+  "built",
+  "using",
+  "experience",
+  "product",
+  "analytics",
 ]);
 
 /** Coaching / filler terms — omit from post-optimize fix chip rows. */
@@ -371,21 +394,94 @@ export function recommendedFixBulletScore(bulletText: string, fix: RecommendedFi
   return hits * 6 + (short ? 2 : 0) + (noNumber ? 1 : 0);
 }
 
+/** Concrete tools / methods from a fix that must appear in an applied bullet. */
+export function extractFixProofTerms(fix: RecommendedFix | string, max = 8): string[] {
+  const chips = extractFixDisplayChips(fix, max);
+  const specific = chips.filter(
+    (term) => !GENERIC_FIX_PROOF_TERMS.has(term.toLowerCase().trim())
+  );
+  return specific.length > 0 ? specific : chips;
+}
+
+export function fixTermMatchesInText(text: string, term: string): boolean {
+  return strictTermMatchesInText(text, term);
+}
+
 export function recommendedFixAddressedInBullet(
   bulletText: string,
   fix: RecommendedFix | string
 ): boolean {
-  if (recommendedFixBulletScore(bulletText, fix) >= 3) return true;
-  const parsed = resolveRecommendedFixInput(fix);
+  const proofTerms = extractFixProofTerms(fix, 8);
+  if (proofTerms.length > 0) {
+    const hits = proofTerms.filter((term) => fixTermMatchesInText(bulletText, term));
+    return hits.length >= 1;
+  }
+
   const lower = String(bulletText ?? "").toLowerCase();
-  if (parsed?.target && lower.includes(parsed.target.toLowerCase())) {
-    return recommendedFixMatchTokens(fix).some(
-      (token) => token.length >= 4 && lower.includes(token)
+  return recommendedFixMatchTokens(fix).some(
+    (token) =>
+      token.length >= 7 &&
+      !GENERIC_FIX_PROOF_TERMS.has(token) &&
+      lower.includes(token)
+  );
+}
+
+/** True when the rewrite surfaces fix-specific proof that was not already in the original. */
+export function recommendedFixNewlyAddressedInRewrite(
+  original: string,
+  improved: string,
+  fix: RecommendedFix | string
+): boolean {
+  if (!recommendedFixAddressedInBullet(improved, fix)) return false;
+  const proofTerms = extractFixProofTerms(fix, 8);
+  if (proofTerms.length === 0) {
+    return (
+      !original.trim() || !recommendedFixAddressedInBullet(original, fix)
     );
   }
-  return recommendedFixMatchTokens(fix).some(
-    (token) => token.length >= 5 && lower.includes(token)
+  const newlyIntroduced = proofTerms.filter(
+    (term) =>
+      fixTermMatchesInText(improved, term) && !fixTermMatchesInText(original, term)
   );
+  if (newlyIntroduced.length > 0) return true;
+  return (
+    !original.trim() ||
+    !proofTerms.some((term) => fixTermMatchesInText(original, term))
+  );
+}
+
+/** Highlight only fix-specific terms that actually appear in this bullet (word-safe). */
+export function extractFixHighlightKeywordsForAppliedFix(
+  fix: RecommendedFix | string,
+  bulletText: string
+): string[] {
+  const proofTerms = extractFixProofTerms(fix, 8);
+  return proofTerms
+    .filter((term) => fixTermMatchesInText(bulletText, term))
+    .sort((a, b) => b.length - a.length);
+}
+
+export function buildBulletFixHighlightKeywordsByKey(args: {
+  bulletChanges: Array<{
+    improved: string;
+    addressedRejectionRisks?: string[];
+  }>;
+  bulletKeyByImproved: Map<string, string>;
+}): Record<string, string[]> {
+  const out: Record<string, string[]> = {};
+  for (const change of args.bulletChanges) {
+    if (!change.improved.trim()) continue;
+    const bulletKey = args.bulletKeyByImproved.get(
+      change.improved.trim().toLowerCase()
+    );
+    if (!bulletKey) continue;
+    for (const fixText of change.addressedRejectionRisks ?? []) {
+      const terms = extractFixHighlightKeywordsForAppliedFix(fixText, change.improved);
+      if (terms.length === 0) continue;
+      out[bulletKey] = Array.from(new Set([...(out[bulletKey] ?? []), ...terms]));
+    }
+  }
+  return out;
 }
 
 export function recommendedFixesForBullet(
@@ -409,14 +505,95 @@ export function recommendedFixesBetterAddressedInRewrite(
   if (selectedFixes.length === 0) return [];
   const out: string[] = [];
   for (const fix of selectedFixes) {
-    if (
-      recommendedFixAddressedInBullet(improved, fix) &&
-      (!original.trim() || !recommendedFixAddressedInBullet(original, fix))
-    ) {
+    if (recommendedFixNewlyAddressedInRewrite(original, improved, fix)) {
       out.push(fix);
     }
   }
   return out;
+}
+
+export type ExclusiveFixAssignment =
+  | { fixText: string; mode: "rewrite"; bulletKey: string }
+  | {
+      fixText: string;
+      mode: "new_bullet";
+      expIndex: number;
+      projectIndex?: number;
+    };
+
+export function planExclusiveFixAssignments(args: {
+  selectedFixes: string[];
+  bullets: Array<{
+    bulletKey: string;
+    text: string;
+    expIndex: number;
+    projectIndex?: number;
+  }>;
+  pickPlacement: (fix: string) => { expIndex: number; projectIndex?: number } | null;
+}): ExclusiveFixAssignment[] {
+  const usedBulletKeys = new Set<string>();
+  const out: ExclusiveFixAssignment[] = [];
+
+  for (const fixText of args.selectedFixes) {
+    const placement =
+      args.pickPlacement(fixText) ??
+      (args.bullets[0]
+        ? { expIndex: args.bullets[0].expIndex, projectIndex: args.bullets[0].projectIndex }
+        : null);
+    if (!placement) continue;
+
+    const inPlacement = args.bullets.filter(
+      (b) =>
+        b.expIndex === placement.expIndex &&
+        (placement.projectIndex === undefined
+          ? b.projectIndex === undefined
+          : b.projectIndex === placement.projectIndex)
+    );
+    const candidatePool = inPlacement.length > 0 ? inPlacement : args.bullets;
+    const bestKey = pickBestBulletKeyForRecommendedFix(
+      candidatePool,
+      fixText,
+      usedBulletKeys
+    );
+
+    if (bestKey) {
+      out.push({ fixText, mode: "rewrite", bulletKey: bestKey });
+      usedBulletKeys.add(bestKey);
+      continue;
+    }
+
+    out.push({
+      fixText,
+      mode: "new_bullet",
+      expIndex: placement.expIndex,
+      projectIndex: placement.projectIndex,
+    });
+  }
+
+  return out;
+}
+
+export function isFixAppliedInBulletChanges(
+  bulletChanges: Array<{
+    original: string;
+    improved: string;
+    addressedRejectionRisks?: string[];
+  }>,
+  fixText: string
+): boolean {
+  for (const change of bulletChanges) {
+    if (!(change.addressedRejectionRisks ?? []).includes(fixText)) continue;
+    if (
+      recommendedFixNewlyAddressedInRewrite(
+        change.original ?? "",
+        change.improved,
+        fixText
+      )
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export function pickBestBulletKeyForRecommendedFix(
@@ -454,7 +631,10 @@ export function buildAppliedFixOutcomes(
   }>,
   bulletKeyByImproved: Map<string, string>
 ): AppliedFixOutcome[] {
-  const bulletByFix = new Map<string, { improvedBullet: string; bulletKey?: string }>();
+  const bulletByFix = new Map<
+    string,
+    { improvedBullet: string; bulletKey?: string; original: string }
+  >();
 
   for (const change of bulletChanges) {
     for (const fixText of change.addressedRejectionRisks ?? []) {
@@ -462,6 +642,7 @@ export function buildAppliedFixOutcomes(
         bulletByFix.set(fixText, {
           improvedBullet: change.improved.trim(),
           bulletKey: bulletKeyByImproved.get(change.improved.trim().toLowerCase()),
+          original: change.original.trim(),
         });
       }
     }
@@ -472,27 +653,30 @@ export function buildAppliedFixOutcomes(
     const fromMap = bulletByFix.get(fixText);
     let improvedBullet = fromMap?.improvedBullet;
     let bulletKey = fromMap?.bulletKey;
+    let original = fromMap?.original ?? "";
 
     if (!improvedBullet) {
       for (const change of bulletChanges) {
         if (!change.improved.trim()) continue;
-        if (
-          (change.addressedRejectionRisks ?? []).includes(fixText) ||
-          recommendedFixAddressedInBullet(change.improved, fixText)
-        ) {
-          improvedBullet = change.improved.trim();
-          bulletKey = bulletKeyByImproved.get(change.improved.trim().toLowerCase());
-          break;
-        }
+        if (!(change.addressedRejectionRisks ?? []).includes(fixText)) continue;
+        improvedBullet = change.improved.trim();
+        bulletKey = bulletKeyByImproved.get(change.improved.trim().toLowerCase());
+        original = change.original.trim();
+        break;
       }
     }
+
+    const applied = Boolean(
+      improvedBullet &&
+        recommendedFixNewlyAddressedInRewrite(original, improvedBullet, fixText)
+    );
 
     return {
       fixText,
       action: parsed?.action ?? fixText.slice(0, 80),
-      applied: true,
-      improvedBullet,
-      bulletKey,
+      applied,
+      improvedBullet: applied ? improvedBullet : undefined,
+      bulletKey: applied ? bulletKey : undefined,
     };
   });
 }

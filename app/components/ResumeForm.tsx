@@ -50,6 +50,12 @@ type ResumeFormProps = {
     limit: number;
     scope: string;
   } | null;
+  /** Purchased job credits (optimize + download per role). */
+  creditBalance?: {
+    remaining: number;
+    purchased: number;
+    reserved?: number;
+  } | null;
   onLoginForMoreScans?: () => void | Promise<void>;
   isLoggingInForMoreScans?: boolean;
   /** Tool workbench: show share CTA for logged-in users. */
@@ -147,6 +153,7 @@ export function ResumeForm({
   isLoggedIn,
   analysisMode = "jdMatch",
   analysisQuota,
+  creditBalance = null,
   onLoginForMoreScans,
   isLoggingInForMoreScans = false,
   showShareFriendsCta = false,
@@ -245,6 +252,40 @@ export function ResumeForm({
       : quotaTone === "amber"
         ? "border-amber-300/80 bg-gradient-to-br from-amber-50 to-amber-100/40 text-amber-950 ring-1 ring-amber-200/60"
         : "border-emerald-300/80 bg-gradient-to-br from-emerald-50 to-emerald-100/40 text-emerald-950 ring-1 ring-emerald-200/60";
+  const quotaRowClasses =
+    quotaTone === "rose"
+      ? "bg-gradient-to-br from-rose-50 to-rose-100/55 text-rose-950"
+      : quotaTone === "amber"
+        ? "bg-gradient-to-br from-amber-50 to-amber-100/45 text-amber-950"
+        : "bg-gradient-to-br from-emerald-50 to-emerald-100/45 text-emerald-950";
+
+  const showCreditBalance =
+    isLoggedIn &&
+    creditBalance != null &&
+    (creditBalance.purchased > 0 ||
+      creditBalance.remaining > 0 ||
+      (creditBalance.reserved ?? 0) > 0);
+  const creditTone =
+    creditBalance == null
+      ? null
+      : creditBalance.remaining <= 0
+        ? "rose"
+        : creditBalance.remaining === 1
+          ? "amber"
+          : "sky";
+  const creditToneClasses =
+    creditTone === "rose"
+      ? "border-rose-300/80 bg-gradient-to-br from-rose-50 to-rose-100/50 text-rose-950 ring-1 ring-rose-200/60"
+      : creditTone === "amber"
+        ? "border-amber-300/80 bg-gradient-to-br from-amber-50 to-amber-100/40 text-amber-950 ring-1 ring-amber-200/60"
+        : "border-indigo-300/80 bg-gradient-to-br from-indigo-50 to-violet-100/40 text-indigo-950 ring-1 ring-indigo-200/60";
+  const creditRowClasses =
+    creditTone === "rose"
+      ? "bg-gradient-to-br from-rose-50 to-rose-100/55 text-rose-950"
+      : creditTone === "amber"
+        ? "bg-gradient-to-br from-amber-50 to-amber-100/45 text-amber-950"
+        : "bg-gradient-to-br from-indigo-50 to-violet-100/40 text-indigo-950";
+  const creditNoun = creditBalance?.remaining === 1 ? "credit" : "credits";
   const loginRowBgClass = isAtsCompliance
     ? "border-sky-100/90 bg-sky-50/90 text-sky-900"
     : isKeywordScanner
@@ -620,12 +661,20 @@ export function ResumeForm({
           <div
             className={
               (isWorkbench ? "mt-1.5 " : "mt-2 ") +
-              `overflow-hidden rounded-lg border text-[10px] sm:text-[11px] ${quotaToneClasses}`
+              (showCreditBalance && creditBalance
+                ? "overflow-hidden rounded-lg border border-slate-200/90 text-[10px] ring-1 ring-slate-100/70 sm:text-[11px]"
+                : `overflow-hidden rounded-lg border text-[10px] sm:text-[11px] ${quotaToneClasses}`)
             }
             role="status"
             aria-live="polite"
           >
-            <p className="px-2 py-1.5 leading-snug sm:px-2.5">
+            <p
+              className={
+                showCreditBalance && creditBalance
+                  ? `px-2 py-1.5 leading-snug sm:px-2.5 ${quotaRowClasses}`
+                  : "px-2 py-1.5 leading-snug sm:px-2.5"
+              }
+            >
               <span className="font-medium">{isWorkbench ? "Scans" : "Scan allowance"}</span>
               <span className="mx-1.5 text-current/35" aria-hidden>
                 ·
@@ -643,6 +692,37 @@ export function ResumeForm({
                     : "free scan this month"}
               </span>
             </p>
+            {showCreditBalance && creditBalance ? (
+              <p
+                className={`border-t border-slate-200/80 px-2 py-1.5 leading-snug sm:px-2.5 ${creditRowClasses}`}
+              >
+                <span className="font-medium">
+                  {isWorkbench ? "Job credits" : "Optimization credits"}
+                </span>
+                <span className="mx-1.5 text-current/35" aria-hidden>
+                  ·
+                </span>
+                {creditBalance.purchased > 0 ? (
+                  <>
+                    <span className="font-semibold tabular-nums">
+                      {creditBalance.remaining}/{creditBalance.purchased}
+                    </span>{" "}
+                    <span className="font-medium opacity-90">{creditNoun} left</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="font-semibold tabular-nums">{creditBalance.remaining}</span>{" "}
+                    <span className="font-medium opacity-90">{creditNoun} left</span>
+                  </>
+                )}
+                {(creditBalance.reserved ?? 0) > 0 ? (
+                  <span className="font-medium opacity-80">
+                    {" "}
+                    ({creditBalance.reserved} in use)
+                  </span>
+                ) : null}
+              </p>
+            ) : null}
             {!isLoggedIn ? (
               <div
                 className={`flex items-center justify-between gap-2 border-t px-2 py-1.5 sm:px-2.5 ${loginRowBgClass}`}
@@ -670,6 +750,43 @@ export function ResumeForm({
                 </button>
               </div>
             ) : null}
+          </div>
+        ) : showCreditBalance && creditBalance ? (
+          <div
+            className={
+              (isWorkbench ? "mt-1.5 " : "mt-2 ") +
+              `overflow-hidden rounded-lg border text-[10px] sm:text-[11px] ${creditToneClasses}`
+            }
+            role="status"
+            aria-live="polite"
+          >
+            <p className="px-2 py-1.5 leading-snug sm:px-2.5">
+              <span className="font-medium">
+                {isWorkbench ? "Job credits" : "Optimization credits"}
+              </span>
+              <span className="mx-1.5 text-current/35" aria-hidden>
+                ·
+              </span>
+              {creditBalance.purchased > 0 ? (
+                <>
+                  <span className="font-semibold tabular-nums">
+                    {creditBalance.remaining}/{creditBalance.purchased}
+                  </span>{" "}
+                  <span className="font-medium opacity-90">{creditNoun} left</span>
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold tabular-nums">{creditBalance.remaining}</span>{" "}
+                  <span className="font-medium opacity-90">{creditNoun} left</span>
+                </>
+              )}
+              {(creditBalance.reserved ?? 0) > 0 ? (
+                <span className="font-medium opacity-80">
+                  {" "}
+                  ({creditBalance.reserved} in use)
+                </span>
+              ) : null}
+            </p>
           </div>
         ) : null}
         {shareCard && !splitPanelLayout ? shareCard : null}

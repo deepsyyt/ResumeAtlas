@@ -776,6 +776,15 @@ export default function HomeClient({
         );
         if (result.application?.creditUsed) {
           setScanCreditNotice(OPTIMIZE_NUDGE_CREDIT_NOTICE);
+          setUsage((prev) =>
+            prev?.type === "member"
+              ? {
+                  ...prev,
+                  creditsRemaining: Math.max(0, prev.creditsRemaining - 1),
+                  creditsConsumed: prev.creditsConsumed + 1,
+                }
+              : prev
+          );
           void refreshUsage();
         } else if (result.application?.source === "free") {
           setScanCreditNotice(
@@ -1408,6 +1417,15 @@ export default function HomeClient({
                 isLoggedIn={isLoggedIn}
                 analysisMode={analysisMode}
                 analysisQuota={analysisQuota}
+                creditBalance={
+                  usage?.type === "member"
+                    ? {
+                        remaining: usage.creditsRemaining,
+                        purchased: usage.creditsPurchased,
+                        reserved: usage.creditsReserved,
+                      }
+                    : null
+                }
                 onLoginForMoreScans={handleStartGoogleAuthForQuota}
                 isLoggingInForMoreScans={isStartingGoogleAuth}
                 showShareFriendsCta={isToolOnly && !isKeywordScanner}

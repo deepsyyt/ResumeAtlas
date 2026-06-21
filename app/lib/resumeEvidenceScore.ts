@@ -6,6 +6,7 @@ import {
 import { parseResumeToJSON } from "@/app/lib/resumeParser";
 import { resumeShowsSkillEvidence } from "@/app/lib/skillResumeEvidence";
 import { filterSkillGapPhrases } from "@/app/lib/skillGapRules";
+import { resumeShowsHomographOrShortSkillEvidence } from "@/app/lib/resumeTermMatch";
 import {
   detectJdRoleLevel,
   evidenceMatchWeights,
@@ -369,6 +370,10 @@ function countMentions(text: string, skill: string): number {
   const blob = text.toLowerCase();
   const key = skill.toLowerCase().trim();
   if (!key) return 0;
+
+  const homograph = resumeShowsHomographOrShortSkillEvidence(text, skill);
+  if (homograph !== null) return homograph ? 1 : 0;
+
   let count = 0;
   let idx = 0;
   while ((idx = blob.indexOf(key, idx)) !== -1) {

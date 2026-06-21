@@ -2,6 +2,10 @@
  * Strict rules for what counts as a JD skill gap / missing keyword.
  * Shared by analyze + optimize LLM prompts and post-processing filters.
  */
+import {
+  isHomographSkillTerm,
+  jdMentionsHomographSkillAsTechnical,
+} from "@/app/lib/resumeTermMatch";
 
 /** Prompt block: only technical, leadership, and soft skills may appear as missing keywords. */
 export const SKILL_GAP_LLM_RULES = `
@@ -22,6 +26,21 @@ Do NOT list as a missing keyword:
 - Company mission, values, or personality fluff ("passionate", "self-starter", "team player") unless framed as a concrete required competency.
 
 When extracting skills from the JD, apply the same three-category filter. If a phrase does not fit technical, leadership, or soft skills, omit it entirely from matched_skills and all missing_skills arrays.
+
+Homograph / short technical term rules (STRICT):
+- Short terms (≤3 characters) or words that double as common English (e.g. Go, R, C, AI, UI, UX) may ONLY be extracted when the JD clearly names them as a technology, tool, or programming language — e.g. "Golang", "Go programming", "Go (programming language)", "experience with Go", or listed in a Skills/Requirements technology list.
+- Do NOT extract "Go" from job-duty verbs or phrases ("go to market", "go deep", "will go through", "go live") — that is English, not the Go language.
+- Do NOT extract generic English words as skills even if they appear capitalized in prose.
+- Prefer the full technical name when the JD provides it (e.g. extract "Golang" or "Go programming", not bare "go" unless the JD literally lists "Go" as a skill).
+- When verifying resume evidence for homograph skills, require explicit technical usage (e.g. "Golang", capital "Go", "Go services") — never count substring matches inside unrelated words ("google", "going", "ago") or the verb "go".
+`.trim();
+
+/** Prompt block for analyze + skill-proof LLM passes. */
+export const HOMOGRAPH_SKILL_LLM_RULES = `
+Homograph skills (Go, R, C, AI, UI, UX, etc.):
+- Classify as matched/proven ONLY with explicit technical evidence in the resume (e.g. "Golang", capital "Go", "Go microservices") — NOT verb "go", NOT substrings in "google"/"going"/"ago".
+- If the JD lists Go the language but the resume only has the English verb or unrelated words, mark not_found or missing — not weak.
+- Do not treat a homograph as weak/skills-list-only unless the actual technology name appears in a skills section.
 `.trim();
 
 /** Standalone phrases that must never be treated as missing keywords (values / generic nouns). */
@@ -78,12 +97,20 @@ export function isValidSkillGapPhrase(phrase: string): boolean {
   return true;
 }
 
-export function filterSkillGapPhrases(phrases: string[]): string[] {
+export function filterSkillGapPhrases(phrases: string[], jdText?: string): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
+  const jd = String(jdText ?? "").trim();
   for (const phrase of phrases) {
     const trimmed = String(phrase ?? "").trim();
     if (!trimmed || !isValidSkillGapPhrase(trimmed)) continue;
+    if (
+      jd &&
+      isHomographSkillTerm(trimmed) &&
+      !jdMentionsHomographSkillAsTechnical(jd, trimmed)
+    ) {
+      continue;
+    }
     const dedupeKey = normalizeGapPhrase(trimmed);
     if (seen.has(dedupeKey)) continue;
     seen.add(dedupeKey);

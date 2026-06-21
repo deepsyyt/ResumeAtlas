@@ -12,11 +12,12 @@ import { selectSkillProofForDashboard } from "@/app/lib/resumeEvidenceScore";
 import { getKeywordCoverageLabel } from "@/app/lib/scoreColors";
 import type { KeywordCoverageMetricInput } from "@/app/lib/evidenceMetricCopy";
 import { parseAnthropicErrorType } from "@/app/lib/anthropicModels";
+import { HOMOGRAPH_SKILL_LLM_RULES } from "@/app/lib/skillGapRules";
 
 const API_URL = "https://api.anthropic.com/v1/messages";
 
 /** Bump when prompt/calibration changes — forces refresh of cached keyword proof rows. */
-export const SKILL_PROOF_VERSION = 2;
+export const SKILL_PROOF_VERSION = 3;
 
 export const SKILL_PROOF_LLM_MAX = 24;
 
@@ -55,6 +56,7 @@ keyword_proof rules:
 - why: one short phrase (max 72 chars) explaining the status for THIS resume and JD
 - Do NOT invent skills not in the keyword list
 - Do NOT inflate to proven when proof is skills-list-only
+- ${HOMOGRAPH_SKILL_LLM_RULES}
 - Order output the same as the keyword list`;
 
 function extractJson(raw: string): string {

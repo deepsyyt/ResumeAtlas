@@ -35,6 +35,8 @@ import type { ResumeDocument } from "@/app/lib/resumeDocument";
 export type ResumeOptimizationPanelProps = {
   resume: ResumeDocument;
   surfacedKeywords: string[];
+  /** Weak/implied skills from analyze — used for card fallback when bullet mapping is sparse. */
+  targetedWeakSkills?: string[];
   bulletsRefined: number;
   bulletsAdded?: number;
   projectsRefined?: number;
@@ -193,6 +195,7 @@ function AtsBadge({ score }: { score?: number }) {
 export function ResumeOptimizationPanel({
   resume,
   surfacedKeywords,
+  targetedWeakSkills = [],
   bulletsRefined,
   bulletsAdded = 0,
   projectsRefined = 0,
@@ -223,8 +226,14 @@ export function ResumeOptimizationPanel({
     (fix) => !selectedSet.has(recommendedFixToOptimizeText(fix).trim().toLowerCase())
   );
   const weakKeywordRows = buildWeakKeywordProvenRows(bulletKeywordsByKey, resume);
+  const weakKeywordFallback =
+    weakKeywordRows.length > 0
+      ? []
+      : (targetedWeakSkills.length > 0 ? targetedWeakSkills : surfacedKeywords);
   const weakKeywordCount =
-    weakKeywordRows.length > 0 ? new Set(weakKeywordRows.map((r) => r.keyword.toLowerCase())).size : surfacedKeywords.length;
+    weakKeywordRows.length > 0
+      ? new Set(weakKeywordRows.map((r) => r.keyword.toLowerCase())).size
+      : weakKeywordFallback.length;
   const impactBulletCount = countImpactRefinedBullets(bulletReasonByKey, bulletImpactIndicesByKey);
   const impactRows = buildImpactQuantifiedRows({
     resume,
@@ -233,7 +242,10 @@ export function ResumeOptimizationPanel({
     quantifiedBulletTexts: quantifiedBullets,
     bulletKeysByText,
   });
-  const fixRows = buildAppliedFixSummaryRows(fixOutcomes, resume);
+  const fixRows = buildAppliedFixSummaryRows(
+    fixOutcomes.filter((outcome) => outcome.applied !== false),
+    resume
+  );
 
   const benefits = buildOptimizeBenefitItems({
     atsScore: atsScoreReference,
@@ -327,46 +339,48 @@ export function ResumeOptimizationPanel({
                   Fix {row.index}
                 </p>
                 <p className="mt-0.5 text-xs font-semibold leading-snug text-slate-900">{row.fixLabel}</p>
-                {row.placementLabel ? (
-                  <p className="mt-1 text-[11px] font-medium text-slate-700">
-                    <span className="text-slate-500">Bullet: </span>
-                    {row.placementLabel}
-                  </p>
-                ) : null}
-                {row.bulletSnippet ? (
-                  <p className="mt-1 text-[11px] leading-snug text-slate-600 italic">
-                    &ldquo;{row.bulletSnippet}&rdquo;
-                  </p>
-                ) : null}
               </li>
             ))}
           </ul>
         </section>
       ) : null}
 
-      {weakKeywordRows.length > 0 ? (
+      {weakKeywordRows.length > 0 || weakKeywordFallback.length > 0 ? (
         <section className="rounded-xl border border-amber-200/80 bg-white p-3.5 shadow-sm">
           <h3 className="text-sm font-semibold text-slate-900">{OPTIMIZE_WEAK_KEYWORDS_SECTION_TITLE}</h3>
           <p className="mt-0.5 text-[11px] leading-snug text-slate-500">
             {OPTIMIZE_WEAK_KEYWORDS_SECTION_SUBTITLE}
           </p>
           <ul className="mt-2.5 space-y-2">
-            {weakKeywordRows.map((row) => (
-              <li
-                key={`${row.keyword}-${row.placementLabel}`}
-                className="rounded-lg border border-amber-100 bg-amber-50/40 px-2.5 py-2"
-              >
-                <p className="text-xs font-semibold text-slate-900">
-                  <mark className="rounded bg-amber-100 px-1 py-0.5 font-semibold text-amber-950 ring-1 ring-amber-200/80">
-                    {row.keyword}
-                  </mark>
-                </p>
-                <p className="mt-1 text-[11px] text-slate-600">
-                  <span className="font-medium text-slate-700">In: </span>
-                  {row.placementLabel}
-                </p>
-              </li>
-            ))}
+            {weakKeywordRows.length > 0
+              ? weakKeywordRows.map((row) => (
+                  <li
+                    key={`${row.keyword}-${row.placementLabel}`}
+                    className="rounded-lg border border-amber-100 bg-amber-50/40 px-2.5 py-2"
+                  >
+                    <p className="text-xs font-semibold text-slate-900">
+                      <mark className="rounded bg-amber-100 px-1 py-0.5 font-semibold text-amber-950 ring-1 ring-amber-200/80">
+                        {row.keyword}
+                      </mark>
+                    </p>
+                    <p className="mt-1 text-[11px] text-slate-600">
+                      <span className="font-medium text-slate-700">In: </span>
+                      {row.placementLabel}
+                    </p>
+                  </li>
+                ))
+              : weakKeywordFallback.map((keyword) => (
+                  <li
+                    key={keyword}
+                    className="rounded-lg border border-amber-100 bg-amber-50/40 px-2.5 py-2"
+                  >
+                    <p className="text-xs font-semibold text-slate-900">
+                      <mark className="rounded bg-amber-100 px-1 py-0.5 font-semibold text-amber-950 ring-1 ring-amber-200/80">
+                        {keyword}
+                      </mark>
+                    </p>
+                  </li>
+                ))}
           </ul>
         </section>
       ) : null}

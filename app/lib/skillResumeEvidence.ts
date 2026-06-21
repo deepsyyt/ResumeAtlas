@@ -2,6 +2,7 @@
  * Deterministic checks that a JD skill phrase appears in the resume text.
  * Used to repair LLM false negatives (skills only mentioned in projects/titles, not Skills section).
  */
+import { resumeShowsHomographOrShortSkillEvidence } from "@/app/lib/resumeTermMatch";
 
 function normalizeResumeBlob(text: string): string {
   return String(text ?? "")
@@ -134,6 +135,9 @@ function phraseRegexFromSkill(skill: string): RegExp | null {
 export function resumeShowsSkillEvidence(resumeText: string, skillPhrase: string): boolean {
   const skill = skillPhrase.trim();
   if (!skill) return false;
+
+  const homograph = resumeShowsHomographOrShortSkillEvidence(resumeText, skill);
+  if (homograph !== null) return homograph;
 
   const blob = normalizeResumeBlob(resumeText);
   const key = normalizeSkillKey(skill);

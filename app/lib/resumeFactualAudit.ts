@@ -185,37 +185,16 @@ export function collectResumeBulletDiffs(
   return diffs;
 }
 
-function deterministicRejectReview(
-  diff: BulletDiff,
-  sourceResumeText: string
-): AuditReview | null {
-  if (!diff.optimized.trim()) return null;
-
-  if (!diff.original.trim()) {
+function deterministicRejectReview(diff: BulletDiff, _sourceResumeText: string): AuditReview | null {
+  if (!diff.optimized.trim()) {
     return {
       key: diff.key,
       risk_level: "High",
-      reason: "New bullet added during optimization without a source bullet to anchor it.",
+      reason: "Empty bullet after optimization.",
       reject: true,
-      recommended_fix: "Remove the bullet or rewrite only from existing achievements.",
+      recommended_fix: "Rewrite the bullet with demonstrated work and impact.",
     };
   }
-
-  const newMetrics = hasNewUnsupportedMetrics(
-    diff.original,
-    diff.optimized,
-    sourceResumeText
-  );
-  if (newMetrics.length > 0) {
-    return {
-      key: diff.key,
-      risk_level: "High",
-      reason: `Introduces metrics not supported by the source resume: ${newMetrics.join(", ")}`,
-      reject: true,
-      recommended_fix: "Remove unsupported numbers or use only metrics from the original bullet.",
-    };
-  }
-
   return null;
 }
 

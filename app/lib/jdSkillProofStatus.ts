@@ -139,9 +139,9 @@ export function skillOptimizeActionPrompt(action: SkillOptimizeAction): string {
     case "strengthen":
       return "Strengthen — tighten existing bullet proof (metrics, scope, outcomes). Do not invent new work.";
     case "surface":
-      return "Surface — name the skill explicitly using indirect evidence already in this bullet. Do not invent new experience.";
+      return "Demonstrate — weave this skill into the work you performed (action + artifact + outcome using this skill). Do not bare-mention or skills-list it; show it as part of experience.";
     case "add_evidence":
-      return "Add evidence — move this skill from lists/summary into this bullet only if the work actually happened here.";
+      return "Demonstrate — prove this skill in this bullet as work performed (what you built, shipped, or measured using it). Move from list/summary mention into experience evidence.";
     case "do_not_invent":
       return "Do not invent — leave this skill out of bullets if unsupported.";
   }

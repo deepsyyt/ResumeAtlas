@@ -52,6 +52,8 @@ Skill extraction rules:
 - When a generic word appears as part of a more specific phrase, you MUST extract only the specific phrase, not the generic word by itself (e.g. "search relevance" or "search ranking models", not separate "search" and "relevance").
 - Do NOT infer tools, frameworks, or platforms that are not written in the JD.
 - Do NOT expand the skill list using general knowledge.
+- Homograph / short technical terms (Go, R, C, AI, UI, UX): extract ONLY when the JD explicitly names them as a technology or programming language (e.g. "Golang", "Go programming", "Go" in a Skills list). NEVER extract "Go" from English verbs ("go to market", "go deep", "go live", "will go through").
+- When verifying homograph skills in the resume, require explicit technical evidence ("Golang", capital "Go", "Go services") — never count substrings in unrelated words ("google", "going", "ago") or the English verb "go".
 
 Skill verification rules:
 - When deciding whether a skill is matched or missing, you MUST check if the skill or a close variation appears in the resume text.
@@ -456,10 +458,16 @@ ${jobDescription}`;
       missingPreferred,
       typeof llmResult.keyword_coverage === "number" ? llmResult.keyword_coverage : undefined
     );
-    const missingSkillsAfter = filterSkillGapPhrases(repaired.missing_skills);
-    const missingRequiredAfter = filterSkillGapPhrases(repaired.missing_skills_required ?? []);
-    const missingPreferredAfter = filterSkillGapPhrases(repaired.missing_skills_preferred ?? []);
-    const matchedSkillsAfter = filterSkillGapPhrases(repaired.matched_skills);
+    const missingSkillsAfter = filterSkillGapPhrases(repaired.missing_skills, jobDescription);
+    const missingRequiredAfter = filterSkillGapPhrases(
+      repaired.missing_skills_required ?? [],
+      jobDescription
+    );
+    const missingPreferredAfter = filterSkillGapPhrases(
+      repaired.missing_skills_preferred ?? [],
+      jobDescription
+    );
+    const matchedSkillsAfter = filterSkillGapPhrases(repaired.matched_skills, jobDescription);
     const skillTotal = matchedSkillsAfter.length + missingSkillsAfter.length;
     const keywordCoverageAfter =
       skillTotal > 0 ? Math.round((matchedSkillsAfter.length / skillTotal) * 100) : 100;
