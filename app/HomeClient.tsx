@@ -13,7 +13,7 @@ import { CreditPackModal, type CreditPackModalVariant } from "@/app/components/C
 import { OptimizeConversionModal } from "@/app/components/OptimizeConversionModal";
 import { OptimizeOAuthResumeModal } from "@/app/components/OptimizeOAuthResumeModal";
 import { OptimizeDashboardNudgeModal } from "@/app/components/OptimizeDashboardNudgeModal";
-import { OPTIMIZE_NUDGE_CREDIT_NOTICE } from "@/app/lib/evidenceMetricCopy";
+import { OPTIMIZE_NUDGE_CREDIT_NOTICE, LIMIT_MODAL_ANON_HEADLINE } from "@/app/lib/evidenceMetricCopy";
 import { getCreditPackage, type CreditPackageId } from "@/app/lib/billing/packages";
 import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import {
@@ -683,16 +683,10 @@ export default function HomeClient({
       }
       optimizeNudgeModalForTriggerRef.current = null;
       setIsGenerating(true);
-      setJdMatchResult(null);
-      setJdAnalysis(null);
-      setEvidenceGaps([]);
-      setAtsResult(null);
-      setAnalyzeResult(null);
-      setSelectedRecommendedFixes([]);
+
       const country = inputs.country || "USA";
       const roleLevel = inputs.roleLevel || "Mid";
       const jdTrimmed = inputs.jobDescription.trim();
-      setLastAnalysisUsedJd(!!jdTrimmed);
       const normalizedInputs: GenerateInputs = {
         resumeText: inputs.resumeText,
         jobDescription: inputs.jobDescription,
@@ -700,14 +694,52 @@ export default function HomeClient({
         country,
         roleLevel,
       };
-      setLastInputs(normalizedInputs);
-      setLastJD(inputs.jobDescription);
-      setLastRoleLevel(roleLevel);
-      const funnelId = startNewFunnel("analyze_submit");
-      setActiveFunnelIdState(funnelId);
-      void logAnalysisEvent("analyze_clicked");
-      trackAnalysisClicked(isLoggedIn ? "logged_in" : "anonymous");
+
       try {
+        const supabase = createClient();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const accessToken = session?.access_token ?? null;
+        const loggedIn = !!accessToken;
+        const [freshUsage, freshQuota] = await Promise.all([
+          fetchUsage(accessToken),
+          fetchAnalysisQuota(accessToken),
+        ]);
+        setUsage(freshUsage);
+        if (freshQuota) setAnalysisQuota(freshQuota);
+
+        if (freshQuota && !freshQuota.allowed) {
+          const packCredits =
+            loggedIn && freshUsage.type === "member" ? freshUsage.creditsRemaining : 0;
+          if (!loggedIn || packCredits <= 0) {
+            if (loggedIn) {
+              setCreditModalVariant("upgrade");
+              setCreditModalOpen(true);
+            } else {
+              setLimitModalQuotaScope(freshQuota.scope);
+              setLimitModalMessage(LIMIT_MODAL_ANON_HEADLINE);
+              setLimitModalOpen(true);
+            }
+            return;
+          }
+        }
+
+        setJdMatchResult(null);
+        setJdAnalysis(null);
+        setEvidenceGaps([]);
+        setAtsResult(null);
+        setAnalyzeResult(null);
+        setSelectedRecommendedFixes([]);
+        setLastAnalysisUsedJd(!!jdTrimmed);
+        setLastInputs(normalizedInputs);
+        setLastJD(inputs.jobDescription);
+        setLastRoleLevel(roleLevel);
+        const funnelId = startNewFunnel("analyze_submit");
+        setActiveFunnelIdState(funnelId);
+        void logAnalysisEvent("analyze_clicked");
+        trackAnalysisClicked(loggedIn ? "logged_in" : "anonymous");
+
         const headers = await getAuthHeaders();
         const res = await fetch("/api/analyze", {
           method: "POST",
@@ -744,14 +776,13 @@ export default function HomeClient({
             const quotaErr =
               typeof err === "object" && err && "code" in err && err.code === "ANALYSIS_QUOTA_EXCEEDED";
             if (quotaErr && typeof err === "object" && "quota" in err && err.quota) {
-              const q = err.quota as AnalysisQuotaStatus;
-              setAnalysisQuota(q);
+              void refreshUsage();
               if (err.purchaseRequired && isLoggedIn) {
                 setCreditModalVariant("upgrade");
                 setCreditModalOpen(true);
                 return;
               }
-              setLimitModalQuotaScope(q.scope);
+              setLimitModalQuotaScope((err.quota as AnalysisQuotaStatus).scope);
               setLimitModalMessage(
                 typeof err.message === "string" ? err.message : "You've used your free ATS scans for now."
               );

@@ -82,8 +82,8 @@ export async function commitAnalysisApplication(
   analysisResult: unknown
 ): Promise<ApplicationCommitResult | null> {
   if (access.source === "free") {
-    await recordSuccessfulAnalysis(access.actor, resumeText, jobDescription);
     if (!access.actor.userId) {
+      await recordSuccessfulAnalysis(access.actor, resumeText, jobDescription);
       return null;
     }
     const started = await startApplication(
@@ -96,6 +96,7 @@ export async function commitAnalysisApplication(
     if (!started.ok) {
       throw new Error("Could not save your job check. Please try again.");
     }
+    await recordSuccessfulAnalysis(access.actor, resumeText, jobDescription);
     return {
       applicationId: started.applicationId,
       source: started.source,
@@ -200,8 +201,16 @@ export async function ensureApplicationForOptimize(
   const quotaStatus = await getAnalysisQuotaStatus(actor);
 
   if (quotaStatus.allowed) {
-    await recordSuccessfulAnalysis(actor, resumeText, jobDescription);
-    return startApplicationFromAnalysis(userId, resumeText, jobDescription, analysisResult);
+    const started = await startApplicationFromAnalysis(
+      userId,
+      resumeText,
+      jobDescription,
+      analysisResult
+    );
+    if (started.ok) {
+      await recordSuccessfulAnalysis(actor, resumeText, jobDescription);
+    }
+    return started;
   }
 
   const { anonymousId } = await getOrCreateAnonymousAnalysisIdentity();

@@ -57,7 +57,7 @@ export function buildOptimizeBenefitItems(args: {
     icon: "ats",
     title: OPTIMIZE_ATS_BADGE_LABEL,
     detail:
-      "Structured for ATS parsing — ready to upload to job boards and company portals.",
+      "Structured for ATS parsing, ready to upload to job boards and company portals.",
   });
 
   if (args.summaryTailored) {
@@ -77,14 +77,14 @@ export function buildOptimizeBenefitItems(args: {
       detail:
         args.bulletsAdded > 0
           ? `${args.bulletsAdded} new bullet${args.bulletsAdded === 1 ? "" : "s"} also added for this role.`
-          : "Experience lines rewritten for this job — see highlights in the preview.",
+          : "Experience lines rewritten for this job. See highlights in the preview.",
     });
   } else if (args.bulletsAdded > 0) {
     items.push({
       id: "bullets",
       icon: "bullets",
       title: `${args.bulletsAdded} new bullet${args.bulletsAdded === 1 ? "" : "s"} added`,
-      detail: "New project lines added for this role — see highlights in the preview.",
+      detail: "New project lines added for this role. See highlights in the preview.",
     });
   }
 
@@ -93,7 +93,7 @@ export function buildOptimizeBenefitItems(args: {
       id: "fixes",
       icon: "fixes",
       title: `${args.selectedFixCount} recommended fix${args.selectedFixCount === 1 ? "" : "es"} applied`,
-      detail: "See which bullet each fix landed on — fix terms are highlighted in green in the preview.",
+      detail: "See which bullet each fix landed on. Fix terms are highlighted in green in the preview.",
     });
   }
 
@@ -111,7 +111,7 @@ export function buildOptimizeBenefitItems(args: {
       id: "keywords",
       icon: "keywords",
       title: `${args.keywordCount} weak keyword${args.keywordCount === 1 ? "" : "s"} now proven in bullets`,
-      detail: "Previously implied or missing terms — highlighted in amber where they appear.",
+      detail: "Previously implied or missing terms, highlighted in amber where they appear.",
     });
   }
 
@@ -120,7 +120,7 @@ export function buildOptimizeBenefitItems(args: {
       id: "impact",
       icon: "match",
       title: `${args.impactBulletCount} impact quantified bullet${args.impactBulletCount === 1 ? "" : "s"}`,
-      detail: "Concrete metrics added — highlighted in violet in the preview.",
+      detail: "Concrete metrics added, highlighted in violet in the preview.",
     });
   } else if (args.evidenceMatchDelta != null && args.evidenceMatchDelta > 0) {
     items.push({
@@ -142,7 +142,7 @@ export function buildOptimizeBenefitItems(args: {
     id: "download",
     icon: "download",
     title: "PDF for applying and editable file for tweaks",
-    detail: "Download when you're ready — no subscription required.",
+    detail: "Download when you're ready. No subscription required.",
   });
 
   if (args.jdGapsRemaining > 0) {
@@ -150,7 +150,7 @@ export function buildOptimizeBenefitItems(args: {
       id: "gaps",
       icon: "gaps",
       title: `${args.jdGapsRemaining} job requirement${args.jdGapsRemaining === 1 ? "" : "s"} still missing from your background`,
-      detail: "Left out on purpose — we don't add skills or experience you can't defend in an interview.",
+      detail: "Left out on purpose. We don't add skills or experience you can't defend in an interview.",
     });
   }
 
@@ -163,11 +163,11 @@ export const OPTIMIZE_FIXES_SECTION_SUBTITLE =
 
 export const OPTIMIZE_WEAK_KEYWORDS_SECTION_TITLE = "Weak keywords now proven";
 export const OPTIMIZE_WEAK_KEYWORDS_SECTION_SUBTITLE =
-  "Terms that were missing or only implied — now backed by proof in your experience bullets (highlighted in amber).";
+  "Terms that were missing or only implied, now backed by proof in your experience bullets (highlighted in amber).";
 
 export const OPTIMIZE_IMPACT_SECTION_TITLE = "Impact quantified";
 export const OPTIMIZE_IMPACT_SECTION_SUBTITLE =
   "Up to 2 weak project bullets reframed with a concrete metric from your experience (highlighted in violet in the preview).";
 export const OPTIMIZE_GAPS_SECTION_TITLE = "Still missing from this job";
 export const OPTIMIZE_GAPS_SECTION_SUBTITLE =
-  "Not added to your resume — only include these if you truly have the experience.";
+  "Not added to your resume. Only include these if you truly have the experience.";

@@ -51,19 +51,17 @@ export const OPTIMIZE_ALIGN_BENEFITS = [
 export const OPTIMIZE_NUDGE_CREDIT_NOTICE =
   "1 credit applied. Next step: optimize so this resume is interview-ready for this posting.";
 
-export const DOWNLOAD_UNLOCK_EYEBROW = "Ready to apply?";
-export const DOWNLOAD_UNLOCK_TITLE = "Download your interview-ready resume";
+export const DOWNLOAD_UNLOCK_EYEBROW = "Optimized for this job";
+export const DOWNLOAD_UNLOCK_TITLE = "Pay to download your resume";
 export const DOWNLOAD_UNLOCK_BODY =
-  "You have already aligned this resume to the job. Unlock the file you send, plus 5 full job runs to repeat the process without starting over.";
-export const DOWNLOAD_UNLOCK_BENEFITS_TITLE = "What $2.99 unlocks";
+  "Your tailored file is ready. Complete a one-time payment to download it and unlock job credits for future roles.";
+export const DOWNLOAD_UNLOCK_BENEFITS_TITLE = (price: string) => `What ${price} unlocks`;
 export const DOWNLOAD_UNLOCK_BENEFITS = [
-  "PDF and editable file for this optimized resume",
-  "5 job credits included: check, optimize, and download per role",
+  "PDF and editable file download for current optimized resume",
+  "Plus 5 job credits included: check, optimize, and download per role",
   "ATS-friendly export built for screening systems",
-  "Stop spray-and-pray. Align each application instead of mass-applying and burning out",
+  "Align each application instead of mass-applying with generic resume",
 ] as const;
-export const DOWNLOAD_UNLOCK_OUTCOME =
-  "Get shortlisted for roles you fit, not exhausted applying to ones you don't.";
 export const DOWNLOAD_UNLOCK_PRICE_HEADLINE = "5 aligned resumes. One price.";
 export const DOWNLOAD_UNLOCK_PRICE_SUBLINE = (price: string, credits: number) =>
   `${price} · ${credits} jobs end-to-end (scan, optimize, download)`;
@@ -120,20 +118,21 @@ export const CREDIT_PACK_FREE_SCAN_HEADLINE = "You've used your free scan";
 export const CREDIT_PACK_UPGRADE_BADGE = "1 free scan used";
 export const CREDIT_PACK_UPGRADE_HEADLINE = "Upgrade to continue";
 export const CREDIT_PACK_UPGRADE_SUBHEAD =
-  "Your free scan covered one full job. Analyze, optimize, and download. Upgrade to check a new job description.";
+  "Your free scan covered one job. Add credits to check, optimize, and download for your next role.";
+export const CREDIT_PACK_UPGRADE_BENEFITS_TITLE = (credits: number) =>
+  `What you get with ${credits} credits`;
 export const CREDIT_PACK_UPGRADE_BENEFITS = [
   {
-    title: "Analyze 5 job descriptions",
-    detail:
-      "Application verdict, keyword gaps, rejection risks, and recommended fixes for each posting you target.",
+    title: "Check up to 5 job postings",
+    detail: "Apply, skip, or optimize with a clear read on each role.",
   },
   {
-    title: "Optimize your resume per JD",
-    detail: "Tailored summary, bullets, and selected fixes aligned to each role.",
+    title: "Optimize your resume for each job",
+    detail: "Tailor bullets and address rejection risks for that posting.",
   },
   {
-    title: "ATS-friendly resume download",
-    detail: "PDF and editable file for each job, ready to apply.",
+    title: "Download when you're ready to apply",
+    detail: "ATS-ready PDF and editable file per role.",
   },
 ] as const;
 export const CREDIT_PACK_UPGRADE_FOOTNOTE = "Free scan resets 30 days after use. Job credits never expire.";

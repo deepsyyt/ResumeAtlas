@@ -868,6 +868,26 @@
     flex-shrink: 0;
   }
 
+  .nudge-modal-panel--download {
+    display: block;
+    width: min(100%, 27rem);
+    max-height: none;
+    overflow: visible;
+  }
+
+  .nudge-modal-panel--upgrade {
+    width: min(100%, 24rem);
+    max-height: calc(100dvh - 1.25rem);
+    overflow-y: auto;
+  }
+
+  .nudge-modal-panel--download .nudge-modal-panel__body,
+  .nudge-modal-panel--download .nudge-modal-panel__footer {
+    min-height: auto;
+    flex: none;
+    overflow: visible;
+  }
+
   .nudge-modal-panel--fit {
     display: block;
     max-height: none;
@@ -1733,6 +1753,79 @@
 }
 
 .payment-cta-button:focus-visible {
+  outline: 2px solid #c084fc;
+  outline-offset: 2px;
+}
+
+.payment-cta-button--solid {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  cursor: pointer;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.08),
+    0 4px 14px rgba(15, 23, 42, 0.18);
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.payment-cta-button--solid-lg {
+  padding: 0.95rem 1.25rem;
+  font-size: 0.9375rem;
+}
+
+@media (min-width: 640px) {
+  .payment-cta-button--solid-lg {
+    font-size: 1rem;
+  }
+}
+
+.payment-cta-button--solid-md {
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+}
+
+.payment-cta-button--solid-xl {
+  padding: 1.05rem 1.5rem;
+  font-size: 1rem;
+}
+
+@media (min-width: 640px) {
+  .payment-cta-button--solid-xl {
+    font-size: 1.0625rem;
+  }
+}
+
+.payment-cta-button--solid:hover:not(:disabled) {
+  background: #f1f5f9;
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.1),
+    0 8px 24px rgba(15, 23, 42, 0.22);
+}
+
+.payment-cta-button--solid:active:not(:disabled) {
+  transform: translateY(0);
+  background: #e2e8f0;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.1),
+    0 2px 8px rgba(15, 23, 42, 0.14);
+}
+
+.payment-cta-button--solid:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.payment-cta-button--solid:focus-visible {
   outline: 2px solid #c084fc;
   outline-offset: 2px;
 }
