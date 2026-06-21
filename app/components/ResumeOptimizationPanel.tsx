@@ -161,6 +161,25 @@ function BenefitIconSvg({ icon }: { icon: OptimizeBenefitItem["icon"] }) {
   }
 }
 
+function CompletionCheckIcon({ tone }: { tone: "emerald" | "amber" | "violet" }) {
+  const toneClass =
+    tone === "emerald"
+      ? "bg-emerald-600 ring-emerald-100"
+      : tone === "amber"
+        ? "bg-amber-500 ring-amber-100"
+        : "bg-violet-600 ring-violet-100";
+  return (
+    <span
+      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white ring-2 ${toneClass}`}
+      aria-hidden
+    >
+      <svg viewBox="0 0 12 12" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M2.5 6l2.5 2.5 4.5-5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  );
+}
+
 function AtsBadge({ score }: { score?: number }) {
   const [open, setOpen] = useState(false);
   return (
@@ -333,12 +352,17 @@ export function ResumeOptimizationPanel({
             {fixRows.map((row) => (
               <li
                 key={`fix-${row.index}`}
-                className="rounded-lg border border-emerald-100 bg-emerald-50/40 px-2.5 py-2"
+                className="flex gap-2.5 rounded-lg border border-emerald-100 bg-emerald-50/40 px-2.5 py-2"
               >
-                <p className="text-[10px] font-bold uppercase tracking-wide text-emerald-800">
-                  Fix {row.index}
-                </p>
-                <p className="mt-0.5 text-xs font-semibold leading-snug text-slate-900">{row.fixLabel}</p>
+                <CompletionCheckIcon tone="emerald" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-bold uppercase tracking-wide text-emerald-800">
+                    Fix {row.index}
+                  </p>
+                  <p className="mt-0.5 text-xs font-semibold leading-snug text-slate-900">
+                    {row.fixLabel}
+                  </p>
+                </div>
               </li>
             ))}
           </ul>
@@ -356,29 +380,35 @@ export function ResumeOptimizationPanel({
               ? weakKeywordRows.map((row) => (
                   <li
                     key={`${row.keyword}-${row.placementLabel}`}
-                    className="rounded-lg border border-amber-100 bg-amber-50/40 px-2.5 py-2"
+                    className="flex gap-2.5 rounded-lg border border-amber-100 bg-amber-50/40 px-2.5 py-2"
                   >
-                    <p className="text-xs font-semibold text-slate-900">
-                      <mark className="rounded bg-amber-100 px-1 py-0.5 font-semibold text-amber-950 ring-1 ring-amber-200/80">
-                        {row.keyword}
-                      </mark>
-                    </p>
-                    <p className="mt-1 text-[11px] text-slate-600">
-                      <span className="font-medium text-slate-700">In: </span>
-                      {row.placementLabel}
-                    </p>
+                    <CompletionCheckIcon tone="emerald" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-semibold text-slate-900">
+                        <mark className="rounded bg-amber-100 px-1 py-0.5 font-semibold text-amber-950 ring-1 ring-amber-200/80">
+                          {row.keyword}
+                        </mark>
+                      </p>
+                      <p className="mt-1 text-[11px] text-slate-600">
+                        <span className="font-medium text-slate-700">In: </span>
+                        {row.placementLabel}
+                      </p>
+                    </div>
                   </li>
                 ))
               : weakKeywordFallback.map((keyword) => (
                   <li
                     key={keyword}
-                    className="rounded-lg border border-amber-100 bg-amber-50/40 px-2.5 py-2"
+                    className="flex gap-2.5 rounded-lg border border-amber-100 bg-amber-50/40 px-2.5 py-2"
                   >
-                    <p className="text-xs font-semibold text-slate-900">
-                      <mark className="rounded bg-amber-100 px-1 py-0.5 font-semibold text-amber-950 ring-1 ring-amber-200/80">
-                        {keyword}
-                      </mark>
-                    </p>
+                    <CompletionCheckIcon tone="emerald" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-semibold text-slate-900">
+                        <mark className="rounded bg-amber-100 px-1 py-0.5 font-semibold text-amber-950 ring-1 ring-amber-200/80">
+                          {keyword}
+                        </mark>
+                      </p>
+                    </div>
                   </li>
                 ))}
           </ul>
@@ -398,12 +428,14 @@ export function ResumeOptimizationPanel({
             {impactRows.map((row) => (
               <li
                 key={row.placementLabel + row.bulletSnippet}
-                className="rounded-lg border border-violet-100 bg-violet-50/40 px-2.5 py-2"
+                className="flex gap-2.5 rounded-lg border border-violet-100 bg-violet-50/40 px-2.5 py-2"
               >
-                <p className="text-[11px] font-semibold text-slate-800">{row.placementLabel}</p>
-                <p className="mt-0.5 text-[11px] leading-snug text-slate-600 italic">
-                  &ldquo;{row.bulletSnippet}&rdquo;
-                </p>
+                <CompletionCheckIcon tone="violet" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-semibold text-slate-800">{row.placementLabel}</p>
+                  <p className="mt-0.5 text-[11px] leading-snug text-slate-600 italic">
+                    &ldquo;{row.bulletSnippet}&rdquo;
+                  </p>
                 {row.quantTerms.length > 0 ? (
                   <p className="mt-1.5 flex flex-wrap gap-1">
                     {row.quantTerms.map((term) => (
@@ -416,6 +448,7 @@ export function ResumeOptimizationPanel({
                     ))}
                   </p>
                 ) : null}
+                </div>
               </li>
             ))}
           </ul>

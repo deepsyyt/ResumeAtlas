@@ -1,5 +1,6 @@
-import { makeExperienceBulletKey } from "@/app/lib/optimizeExperience";
+import { makeExperienceBulletKey, resolveBulletTextByKey } from "@/app/lib/optimizeExperience";
 import type { ResumeDocument } from "@/app/lib/resumeDocument";
+import { collectResumeBulletDiffs } from "@/app/lib/resumeFactualAudit";
 import type { OptimizedSkillProofRow } from "@/app/lib/resumeEvidenceScore";
 import { strictSkillMatchesInBullet } from "@/app/lib/resumeTermMatch";
 
@@ -12,6 +13,7 @@ export function normalizeBulletCompareKey(text: string): string {
 }
 
 export type BulletChangeForEvidence = {
+  bulletKey?: string;
   original: string;
   improved: string;
   addedKeywords: string[];
@@ -51,6 +53,32 @@ export type BulletRefinementBreakdown = {
 
 function skillMatchesBulletText(skill: string, bulletText: string): boolean {
   return strictSkillMatchesInBullet(skill, bulletText);
+}
+
+function findBulletKeyForExactText(resume: ResumeDocument, text: string): string | null {
+  const target = normalizeBulletCompareKey(text);
+  if (!target) return null;
+
+  for (let idx = 0; idx < resume.experience.length; idx++) {
+    const exp = resume.experience[idx];
+    if (!exp) continue;
+    for (let j = 0; j < (exp.bullets ?? []).length; j++) {
+      const bulletText = String(exp.bullets?.[j] ?? "");
+      if (normalizeBulletCompareKey(bulletText) === target) {
+        return makeExperienceBulletKey(idx, j);
+      }
+    }
+    for (let pIdx = 0; pIdx < (exp.projects ?? []).length; pIdx++) {
+      for (let j = 0; j < (exp.projects?.[pIdx]?.bullets ?? []).length; j++) {
+        const bulletText = String(exp.projects?.[pIdx]?.bullets?.[j] ?? "");
+        if (normalizeBulletCompareKey(bulletText) === target) {
+          return makeExperienceBulletKey(idx, j, pIdx);
+        }
+      }
+    }
+  }
+
+  return null;
 }
 
 function findBulletKeyForProvenSkill(
@@ -95,6 +123,91 @@ function findBulletKeyForProvenSkill(
   return bestKey;
 }
 
+function normalizeKeywordToken(keyword: string): string {
+  return keyword.toLowerCase().trim();
+}
+
+function isKeywordAssignedElsewhere(
+  bulletKeywordsByKey: Record<string, string[]>,
+  keyword: string,
+  exceptKey?: string
+): boolean {
+  const norm = normalizeKeywordToken(keyword);
+  if (!norm) return false;
+  for (const [key, keywords] of Object.entries(bulletKeywordsByKey)) {
+    if (exceptKey && key === exceptKey) continue;
+    if (keywords.some((kw) => normalizeKeywordToken(kw) === norm)) return true;
+  }
+  return false;
+}
+
+/**
+ * Each weak keyword may appear on at most one bullet. A single bullet may still
+ * carry many keywords.
+ */
+export function dedupeBulletKeywordsGlobally(
+  resume: ResumeDocument,
+  bulletKeywordsByKey: Record<string, string[]>,
+  bulletReasonByKey: Record<string, BulletRefinementReason>
+): Record<string, string[]> {
+  const keywordOwners = new Map<string, { bulletKey: string; keyword: string }>();
+
+  for (const [bulletKey, keywords] of Object.entries(bulletKeywordsByKey)) {
+    const bulletText = resolveBulletTextByKey(resume, bulletKey) ?? "";
+    for (const keyword of keywords) {
+      const kw = keyword.trim();
+      if (!kw || !strictSkillMatchesInBullet(kw, bulletText)) continue;
+
+      const norm = normalizeKeywordToken(kw);
+      const existing = keywordOwners.get(norm);
+      if (!existing) {
+        keywordOwners.set(norm, { bulletKey, keyword: kw });
+        continue;
+      }
+
+      const preferred = findBulletKeyForProvenSkill(resume, kw);
+      const candidates = [existing.bulletKey, bulletKey];
+      const winner =
+        preferred && candidates.includes(preferred)
+          ? preferred
+          : existing.bulletKey;
+      keywordOwners.set(norm, {
+        bulletKey: winner,
+        keyword: kw,
+      });
+    }
+  }
+
+  const next: Record<string, string[]> = {};
+  for (const { bulletKey, keyword } of keywordOwners.values()) {
+    const list = next[bulletKey] ?? [];
+    if (!list.some((kw) => normalizeKeywordToken(kw) === normalizeKeywordToken(keyword))) {
+      list.push(keyword);
+      next[bulletKey] = list;
+    }
+  }
+
+  for (const key of Object.keys(bulletKeywordsByKey)) {
+    if (next[key]) {
+      bulletKeywordsByKey[key] = next[key]!;
+    } else {
+      delete bulletKeywordsByKey[key];
+    }
+  }
+
+  for (const [key, reason] of Object.entries(bulletReasonByKey)) {
+    if (reason.kind !== "weak_keyword") continue;
+    const keywords = next[key];
+    if (keywords && keywords.length > 0) {
+      bulletReasonByKey[key] = { kind: "weak_keyword", keywords };
+    } else {
+      delete bulletReasonByKey[key];
+    }
+  }
+
+  return bulletKeywordsByKey;
+}
+
 /** Map improved skill-proof rows to per-bullet weak-keyword metadata (client/API fallback). */
 export function enrichWeakKeywordMapsFromSkillProof(
   resume: ResumeDocument,
@@ -105,8 +218,10 @@ export function enrichWeakKeywordMapsFromSkillProof(
   for (const row of improvedSkillProof) {
     const skill = row.skill?.trim();
     if (!skill) continue;
+    if (isKeywordAssignedElsewhere(bulletKeywordsByKey, skill)) continue;
     const key = findBulletKeyForProvenSkill(resume, skill, row.evidenceHint);
     if (!key) continue;
+    if (isKeywordAssignedElsewhere(bulletKeywordsByKey, skill, key)) continue;
 
     const merged = new Set(
       (bulletKeywordsByKey[key] ?? []).map((kw) => kw.toLowerCase().trim())
@@ -141,9 +256,11 @@ export function enrichWeakKeywordMapsFromWeakSkills(
     if (!skill) continue;
     const skillKey = skill.toLowerCase();
     if (seenSkills.has(skillKey)) continue;
+    if (isKeywordAssignedElsewhere(bulletKeywordsByKey, skill)) continue;
 
     const key = findBulletKeyForProvenSkill(resume, skill);
     if (!key) continue;
+    if (isKeywordAssignedElsewhere(bulletKeywordsByKey, skill, key)) continue;
     seenSkills.add(skillKey);
     proven.push(skill);
 
@@ -237,13 +354,13 @@ export function buildBulletEvidenceMaps(
       rejectionRiskBulletCount += 1;
       for (const risk of risks) allAddressedRisks.add(risk);
       if (keywords.length > 0) weakKeywordBulletCount += 1;
-    } else if (impactFocusIndex > 0) {
-      if (keywords.length > 0) weakKeywordBulletCount += 1;
-      bulletReasonByKey[diff.key] = { kind: "impact_polish", quantified };
-      impactPolishBulletCount += 1;
     } else if (keywords.length > 0) {
       bulletReasonByKey[diff.key] = { kind: "weak_keyword", keywords };
       weakKeywordBulletCount += 1;
+    }
+    if (impactFocusIndex > 0) {
+      bulletReasonByKey[diff.key] = { kind: "impact_polish", quantified };
+      impactPolishBulletCount += 1;
     }
     if (quantified) quantifiedBulletCount += 1;
   }
@@ -267,6 +384,62 @@ export function buildBulletEvidenceMaps(
   };
 }
 
+/** Fill missing before/after keys and originals from structured resume diffs and bullet changes. */
+export function supplementBulletEvidenceFromResumeDiff(
+  before: ResumeDocument | undefined,
+  after: ResumeDocument,
+  bulletChanges: BulletChangeForEvidence[],
+  maps: {
+    bulletOriginalsByKey: Record<string, string>;
+    refinedBulletKeys: string[];
+    newBulletKeys: string[];
+  }
+): {
+  bulletOriginalsByKey: Record<string, string>;
+  refinedBulletKeys: string[];
+  newBulletKeys: string[];
+} {
+  const bulletOriginalsByKey = { ...maps.bulletOriginalsByKey };
+  const refinedSet = new Set(maps.refinedBulletKeys);
+  const newSet = new Set(maps.newBulletKeys);
+
+  if (before) {
+    for (const diff of collectResumeBulletDiffs(before, after)) {
+      if (diff.original.trim()) {
+        bulletOriginalsByKey[diff.key] = diff.original;
+        refinedSet.add(diff.key);
+      } else if (diff.optimized.trim()) {
+        newSet.add(diff.key);
+      }
+    }
+  }
+
+  for (const change of bulletChanges) {
+    if (!change.improved.trim()) continue;
+    const key = findBulletKeyForExactText(after, change.improved);
+    if (!key) continue;
+
+    if (!change.original.trim()) {
+      newSet.add(key);
+      continue;
+    }
+
+    if (
+      normalizeBulletCompareKey(change.original) !==
+      normalizeBulletCompareKey(change.improved)
+    ) {
+      bulletOriginalsByKey[key] = change.original.trim();
+      refinedSet.add(key);
+    }
+  }
+
+  return {
+    bulletOriginalsByKey,
+    refinedBulletKeys: Array.from(refinedSet),
+    newBulletKeys: Array.from(newSet),
+  };
+}
+
 function normalizeSkillToken(text: string): string {
   return String(text ?? "")
     .toLowerCase()
@@ -286,7 +459,8 @@ export function buildBulletClaimBadgeMaps(
   bulletChanges: BulletChangeForEvidence[],
   bulletDiffs: BulletDiffForEvidence[],
   selectedFixes: string[],
-  proofSkillsOrdered: string[]
+  proofSkillsOrdered: string[],
+  resume?: ResumeDocument
 ): BulletClaimBadgeMaps {
   const fixIndexByText = new Map(
     selectedFixes.map((fixText, index) => [fixText.trim(), index + 1] as const)
@@ -295,21 +469,27 @@ export function buildBulletClaimBadgeMaps(
     proofSkillsOrdered.map((skill, index) => [skill.toLowerCase().trim(), index + 1] as const)
   );
 
-  const changeByImprovedKey = new Map<string, BulletChangeForEvidence>();
-  for (const change of bulletChanges) {
-    if (!change.improved.trim()) continue;
-    changeByImprovedKey.set(normalizeBulletCompareKey(change.improved), change);
+  const diffKeyByImproved = new Map<string, string>();
+  for (const diff of bulletDiffs) {
+    if (!diff.key || !diff.improved.trim()) continue;
+    diffKeyByImproved.set(normalizeBulletCompareKey(diff.improved), diff.key);
   }
 
   const bulletFixIndicesByKey: Record<string, number[]> = {};
   const bulletProofIndicesByKey: Record<string, number[]> = {};
   const bulletImpactIndicesByKey: Record<string, number[]> = {};
 
-  for (const diff of bulletDiffs) {
-    if (!diff.key || !diff.improved.trim()) continue;
-    const change = changeByImprovedKey.get(normalizeBulletCompareKey(diff.improved));
-    if (!change) continue;
+  const resolveBulletKey = (change: BulletChangeForEvidence): string | undefined => {
+    if (change.bulletKey?.trim()) return change.bulletKey.trim();
+    const fromDiff = diffKeyByImproved.get(normalizeBulletCompareKey(change.improved));
+    if (fromDiff) return fromDiff;
+    if (resume) {
+      return findBulletKeyForExactText(resume, change.improved) ?? undefined;
+    }
+    return undefined;
+  };
 
+  const assignIndices = (key: string, change: BulletChangeForEvidence) => {
     const fixIndices = Array.from(
       new Set(
         (change.addressedRejectionRisks ?? [])
@@ -317,7 +497,7 @@ export function buildBulletClaimBadgeMaps(
           .filter((index): index is number => typeof index === "number" && index > 0)
       )
     ).sort((a, b) => a - b);
-    if (fixIndices.length > 0) bulletFixIndicesByKey[diff.key] = fixIndices;
+    if (fixIndices.length > 0) bulletFixIndicesByKey[key] = fixIndices;
 
     const proofIndices = Array.from(
       new Set(
@@ -332,11 +512,18 @@ export function buildBulletClaimBadgeMaps(
           .filter((index) => index > 0)
       )
     ).sort((a, b) => a - b);
-    if (proofIndices.length > 0) bulletProofIndicesByKey[diff.key] = proofIndices;
+    if (proofIndices.length > 0) bulletProofIndicesByKey[key] = proofIndices;
 
     if (change.impactFocusIndex && change.impactFocusIndex > 0) {
-      bulletImpactIndicesByKey[diff.key] = [change.impactFocusIndex];
+      bulletImpactIndicesByKey[key] = [change.impactFocusIndex];
     }
+  };
+
+  for (const change of bulletChanges) {
+    if (!change.improved.trim()) continue;
+    const key = resolveBulletKey(change);
+    if (!key) continue;
+    assignIndices(key, change);
   }
 
   return { bulletFixIndicesByKey, bulletProofIndicesByKey, bulletImpactIndicesByKey };

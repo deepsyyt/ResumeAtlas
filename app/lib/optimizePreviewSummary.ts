@@ -101,6 +101,7 @@ export function buildWeakKeywordProvenRows(
   resume: ResumeDocument
 ): WeakKeywordProvenRow[] {
   const rows: WeakKeywordProvenRow[] = [];
+  const seenKeywords = new Set<string>();
   for (const [bulletKey, keywords] of Object.entries(bulletKeywordsByKey)) {
     const placementLabel =
       resolveBulletPlacementLabel(resume, bulletKey) ?? "Experience bullet";
@@ -108,7 +109,10 @@ export function buildWeakKeywordProvenRows(
     for (const keyword of keywords) {
       const kw = keyword.trim();
       if (!kw) continue;
+      const kwNorm = kw.toLowerCase();
+      if (seenKeywords.has(kwNorm)) continue;
       if (!strictSkillMatchesInBullet(kw, bulletText)) continue;
+      seenKeywords.add(kwNorm);
       rows.push({
         keyword: kw,
         placementLabel,

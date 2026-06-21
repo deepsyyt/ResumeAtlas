@@ -233,6 +233,31 @@ export function makeExperienceBulletKey(
     : `${expIndex}:p${projectIndex}:${bulletIndex}`;
 }
 
+export function resolveBulletTextByKey(
+  resume: ResumeDocument,
+  bulletKey: string
+): string | undefined {
+  const parts = bulletKey.split(":");
+  const expIndex = Number.parseInt(parts[0] ?? "", 10);
+  if (!Number.isFinite(expIndex)) return undefined;
+  const exp = resume.experience[expIndex];
+  if (!exp) return undefined;
+
+  const scopePart = parts[1];
+  if (scopePart?.startsWith("p")) {
+    const projectIndex = Number.parseInt(scopePart.slice(1), 10);
+    const bulletIndex = Number.parseInt(parts[2] ?? "", 10);
+    if (!Number.isFinite(projectIndex) || !Number.isFinite(bulletIndex)) return undefined;
+    const text = String(exp.projects?.[projectIndex]?.bullets?.[bulletIndex] ?? "").trim();
+    return text || undefined;
+  }
+
+  const bulletIndex = Number.parseInt(scopePart ?? "", 10);
+  if (!Number.isFinite(bulletIndex)) return undefined;
+  const text = String(exp.bullets?.[bulletIndex] ?? "").trim();
+  return text || undefined;
+}
+
 export function projectIndexFromBulletKey(bulletKey: string): number | undefined {
   const scopePart = bulletKey.split(":")[1];
   if (!scopePart?.startsWith("p")) return undefined;

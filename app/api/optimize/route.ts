@@ -134,6 +134,7 @@ export type OptimizeResponse = {
   quantifiedBullets?: string[];
   /** Detailed per-bullet changes for UI explanation. */
   bulletChanges?: {
+    bulletKey?: string;
     original: string;
     improved: string;
     addedKeywords: string[];
@@ -562,6 +563,12 @@ function buildBulletRewriteQueue(
   const coveragePlan = buildCoveragePlan(proofSkills, bullets, expanded);
   const queue: BulletRewriteQueueItem[] = [];
   const seen = new Set<string>();
+  const skillsClaimedByPlan = new Set<string>();
+  for (const skills of Object.values(coveragePlan.existingBulletMappings)) {
+    for (const skill of skills) {
+      skillsClaimedByPlan.add(skill.toLowerCase().trim());
+    }
+  }
 
   for (const [bulletKey, skills] of Object.entries(coveragePlan.existingBulletMappings)) {
     const b = bullets.find((x) => x.bulletKey === bulletKey);
@@ -586,6 +593,8 @@ function buildBulletRewriteQueue(
     if (seen.has(b.bulletKey)) continue;
     const textLower = b.text.toLowerCase();
     const localSkills = proofSkills.filter((skill) => {
+      const skillNorm = skill.toLowerCase().trim();
+      if (skillsClaimedByPlan.has(skillNorm)) return false;
       const tokens = tokenizeSkill(skill);
       return (
         isSkillCovered(textLower, skill, expanded) ||
@@ -595,7 +604,8 @@ function buildBulletRewriteQueue(
     if (!isWeakBullet(b.text) && localSkills.length === 0) {
       continue;
     }
-    const assignedSkills = (localSkills.length > 0 ? localSkills : proofSkills).slice(0, 6);
+    if (localSkills.length === 0) continue;
+    const assignedSkills = localSkills.slice(0, 6);
     const riskBoost = selectedRejectionRisks.reduce(
       (sum, risk) => sum + recommendedFixBulletScore(b.text, risk),
       0
@@ -2121,6 +2131,7 @@ export async function POST(request: Request) {
         };
       }
       let rewriteSuccesses = 0;
+      const provenSkillsGlobal = new Set<string>();
 
       for (const item of rewriteQueue) {
         if (rewriteSuccesses >= rewriteBudget) break;
@@ -2128,6 +2139,10 @@ export async function POST(request: Request) {
         if (bulletsReservedForFixes.has(key)) continue;
         const b = orderedBullets.find((x) => x.bulletKey === key);
         if (!b) continue;
+        const skillsToProve = assigned.filter(
+          (skill) => !provenSkillsGlobal.has(skill.toLowerCase().trim())
+        );
+        if (skillsToProve.length === 0) continue;
         const original = normalizeInlineText(improvedMap[key] ?? b.text);
 
         const globalStyleForThisBullet: GlobalStyle = {
@@ -2137,7 +2152,7 @@ export async function POST(request: Request) {
         const improved = normalizeInlineText(
           await rewriteBullet(
             original,
-            assigned,
+            skillsToProve,
             apiKey,
             model,
             false,
@@ -2147,7 +2162,7 @@ export async function POST(request: Request) {
               company: b.company,
               role: b.role,
               projectTitle: b.projectTitle,
-              skillActions: item.skillActions,
+              skillActions: skillActionsForSkills(skillsToProve, skillActionBySkill),
             }
           )
         );
@@ -2156,10 +2171,15 @@ export async function POST(request: Request) {
           improvedMap[key] = improved;
 
           const improvedLower = improved.toLowerCase();
-          const provenInImproved = assigned.filter((kw) =>
+          const provenInImproved = skillsToProve.filter((kw) =>
             isSkillCovered(improvedLower, kw, expandedMap)
           );
-          const addedForThisBullet = provenInImproved;
+          const addedForThisBullet = provenInImproved.filter(
+            (kw) => !provenSkillsGlobal.has(kw.toLowerCase().trim())
+          );
+          for (const kw of addedForThisBullet) {
+            provenSkillsGlobal.add(kw.toLowerCase().trim());
+          }
           upsertBulletChange(
             bulletChangeMap,
             key,
@@ -2249,6 +2269,8 @@ export async function POST(request: Request) {
       // New bullets for uncovered intents/skills (capped for latency).
       for (let i = 0; i < maxNewBullets; i++) {
         const skill = requiredNeedingNewBullets[i]!;
+        const skillNorm = skill.toLowerCase().trim();
+        if (provenSkillsGlobal.has(skillNorm)) continue;
         if (baseStructured.experience.length === 0) break;
         const expIndex = pickBestExperienceIndexForSkill(
           baseStructured.experience,
@@ -2281,6 +2303,7 @@ export async function POST(request: Request) {
         if (existing.has(next) || isSimilar(next, Array.from(existing))) continue;
         const bulletKey = appendBulletToExperience(exp, expIndex, next, skill);
         improvedMap[bulletKey] = next;
+        provenSkillsGlobal.add(skillNorm);
         upsertBulletChange(bulletChangeMap, bulletKey, "", next, [skill]);
       }
     }
@@ -2384,7 +2407,10 @@ export async function POST(request: Request) {
       }
     }
 
-    const bulletChanges = Object.values(bulletChangeMap);
+    const bulletChanges = Object.entries(bulletChangeMap).map(([bulletKey, change]) => ({
+      bulletKey,
+      ...change,
+    }));
     const bulletKeyByImproved = new Map<string, string>();
     for (const [key, text] of Object.entries(improvedMap)) {
       const norm = normalizeInlineText(text).toLowerCase();

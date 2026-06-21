@@ -284,6 +284,61 @@ function normalizeBulletKey(text: string): string {
   return sanitizeBulletText(text).toLowerCase();
 }
 
+const OPTIMIZATION_LEGEND_ITEMS = [
+  {
+    label: "Summary tailored",
+    chipClass:
+      "border-indigo-600 bg-indigo-100 text-indigo-950 ring-indigo-300/80",
+  },
+  {
+    label: "Recommended fix",
+    chipClass:
+      "border-emerald-600 bg-emerald-100 text-emerald-950 ring-emerald-300/80",
+  },
+  {
+    label: "Weak keyword proven",
+    chipClass: "border-amber-500 bg-amber-100 text-amber-950 ring-amber-300/80",
+  },
+  {
+    label: "Impact enhanced",
+    chipClass:
+      "border-violet-700 bg-violet-200 text-violet-950 ring-violet-400/70",
+  },
+  {
+    label: "New bullet",
+    chipClass: "border-sky-600 bg-sky-100 text-sky-950 ring-sky-300/80",
+  },
+] as const;
+
+/** Compact color key for the optimize preview — sits above the resume card. */
+export function OptimizationHighlightLegend({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={`rounded-xl border border-slate-200/90 bg-gradient-to-br from-white to-slate-50 px-3 py-3 shadow-sm print:hidden sm:px-4 ${className}`}
+    >
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <ul className="flex flex-wrap items-center gap-2">
+          {OPTIMIZATION_LEGEND_ITEMS.map((item) => (
+            <li
+              key={item.label}
+              className={`inline-flex items-center rounded-md border-l-[3px] px-2.5 py-1 text-[11px] font-semibold shadow-sm ring-1 ${item.chipClass}`}
+            >
+              {item.label}
+            </li>
+          ))}
+        </ul>
+        <p className="shrink-0 whitespace-nowrap text-[10px] text-slate-500 sm:text-[11px] lg:ml-auto">
+          Use{" "}
+          <span className="mx-0.5 inline-flex rounded border border-slate-300 bg-white px-1.5 py-px text-[10px] font-bold uppercase tracking-wide text-slate-800 shadow-sm ring-1 ring-slate-200/80">
+            Edit
+          </span>{" "}
+          on any section before you download.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 type ExperienceBulletRowProps = {
   text: string;
   bulletIndex: number;
@@ -336,19 +391,21 @@ function ExperienceBulletRow({
   const isFixBullet =
     fixKeySet.has(bulletKey) || refinementReason?.kind === "rejection_risk";
   const isNewBullet = newKeySet.has(bulletKey) || newBulletSet.has(key);
-  const isRewritten =
-    !isNewBullet && (refinedKeySet.has(bulletKey) || highlightedSet.has(key));
+  const hasViewableOriginal =
+    !isNewBullet &&
+    Boolean(originalBullet?.trim()) &&
+    originalBullet.trim().toLowerCase() !== text.toLowerCase();
+  const fixKeywords = isFixBullet ? filterTermsPresentInText(text, bulletFixHighlightKeywords) : [];
+  const isImpactBullet =
+    impactIndices.length > 0 || refinementReason?.kind === "impact_polish";
   const weakKeywordHighlightTerms =
     strengthenedKeywords.length > 0
       ? strengthenedKeywords
       : refinementReason?.kind === "weak_keyword"
         ? refinementReason.keywords
         : [];
-  const fixKeywords = isFixBullet ? filterTermsPresentInText(text, bulletFixHighlightKeywords) : [];
   const weakKeywords = filterTermsPresentInText(text, weakKeywordHighlightTerms);
-  const isWeakKeyword = !isFixBullet && weakKeywords.length > 0;
-  const isImpactBullet =
-    !isFixBullet && impactIndices.length > 0;
+  const isWeakKeyword = !isImpactBullet && !isFixBullet && weakKeywords.length > 0;
   const isQuantified =
     isImpactBullet &&
     (quantifiedSet.has(key) ||
@@ -356,7 +413,8 @@ function ExperienceBulletRow({
       impactIndices.length > 0);
 
   const hasFixProof = fixKeywords.length > 0;
-  const showFixCallout = isFixBullet && (hasFixProof || fixIndices.length > 0);
+  const showFixBadge = isFixBullet && (hasFixProof || fixIndices.length > 0);
+  const showFixBackground = isFixBullet && !isImpactBullet;
 
   const highlightSets: KeywordHighlightSet[] = [];
   if (!hasFixProof && fixKeywords.length > 0) {
@@ -367,18 +425,18 @@ function ExperienceBulletRow({
   }
 
   const hasCallout =
-    showFixCallout || isWeakKeyword || isImpactBullet || isNewBullet;
+    showFixBackground || isWeakKeyword || isImpactBullet || isNewBullet;
   const calloutClass = [
     hasCallout ? "rounded-md px-2 py-1.5 print:bg-transparent print:px-0 print:py-0 print:ring-0 print:border-l-0" : "py-0.5",
-    showFixCallout ? "bg-emerald-50/95 ring-1 ring-emerald-200 border-l-2 border-emerald-500" : "",
-    !showFixCallout && isImpactBullet
-      ? "bg-violet-50 ring-1 ring-violet-200 border-l-2 border-violet-500"
+    showFixBackground ? "bg-emerald-50/95 ring-1 ring-emerald-200 border-l-[3px] border-emerald-600" : "",
+    isImpactBullet
+      ? "bg-violet-100 ring-1 ring-violet-300 border-l-[3px] border-violet-700"
       : "",
-    !showFixCallout && !isImpactBullet && isWeakKeyword
-      ? "bg-amber-50/90 ring-1 ring-amber-200 border-l-2 border-amber-500"
+    !isImpactBullet && isWeakKeyword
+      ? "bg-amber-50/90 ring-1 ring-amber-200 border-l-[3px] border-amber-500"
       : "",
-    !showFixCallout && !isWeakKeyword && !isImpactBullet && isNewBullet
-      ? "bg-slate-50 ring-1 ring-slate-200 border-l-2 border-slate-400"
+    !isImpactBullet && !isWeakKeyword && isNewBullet
+      ? "bg-sky-50 ring-1 ring-sky-200 border-l-[3px] border-sky-600"
       : "",
   ]
     .filter(Boolean)
@@ -432,25 +490,23 @@ function ExperienceBulletRow({
         ) : (
           finalNodes
         )}
-        {isRewritten &&
-        originalBullet?.trim() &&
-        originalBullet.trim().toLowerCase() !== text.toLowerCase() ? (
+        {hasViewableOriginal ? (
           <details className="mt-1.5 print:hidden">
             <summary className="cursor-pointer text-[10px] font-semibold text-slate-500 hover:text-slate-700">
               View original bullet
             </summary>
             <p className="mt-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs leading-relaxed text-slate-600">
-              {originalBullet.trim()}
+              {originalBullet!.trim()}
             </p>
           </details>
         ) : null}
         {hasCallout ? (
           <span className="ml-2 inline-flex flex-wrap gap-1 align-middle print:hidden">
-            {showFixCallout && fixIndices.length > 0 ? (
+            {showFixBadge && fixIndices.length > 0 ? (
               <span className="inline-flex rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-950">
                 Fix {fixIndices[0]}
               </span>
-            ) : showFixCallout ? (
+            ) : showFixBadge ? (
               <span className="inline-flex rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-950">
                 Fix applied
               </span>
@@ -461,7 +517,7 @@ function ExperienceBulletRow({
               </span>
             ) : null}
             {isImpactBullet ? (
-              <span className="inline-flex rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-900">
+              <span className="inline-flex rounded-full bg-violet-200 px-1.5 py-0.5 text-[10px] font-semibold text-violet-950 ring-1 ring-violet-300/80">
                 {impactIndices.length > 0
                   ? `Impact ${impactIndices[0]}`
                   : isQuantified
@@ -470,8 +526,8 @@ function ExperienceBulletRow({
               </span>
             ) : null}
             {isNewBullet ? (
-              <span className="inline-flex rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-700">
-                New bullet
+              <span className="inline-flex rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-semibold text-sky-950 ring-1 ring-sky-300/80">
+                New
               </span>
             ) : null}
           </span>
@@ -575,31 +631,7 @@ export function StructuredResume({
         scrollable ? "max-h-[70vh] overflow-auto" : ""
       }`}
     >
-      {showOptimizationLegend ? (
-        <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50/90 p-3 print:hidden">
-          <p className="text-[10px] font-bold uppercase tracking-wide text-slate-700">
-            Highlight key
-          </p>
-          <ul className="mt-2 flex flex-wrap gap-2 text-[10px] text-slate-600">
-            <li className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm border border-indigo-300 bg-indigo-50" aria-hidden />
-              Summary tailored
-            </li>
-            <li className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm border border-emerald-300 bg-emerald-100" aria-hidden />
-              Recommended fix
-            </li>
-            <li className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm border border-amber-300 bg-amber-100" aria-hidden />
-              Weak keyword proven
-            </li>
-            <li className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm border border-violet-300 bg-violet-100" aria-hidden />
-              Impact enhanced
-            </li>
-          </ul>
-        </div>
-      ) : null}
+      {showOptimizationLegend ? <OptimizationHighlightLegend className="mb-4" /> : null}
       {/* Header */}
       <header className="border-b border-slate-200 pb-4 mb-4">
         {editable ? (

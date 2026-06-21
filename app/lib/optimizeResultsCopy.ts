@@ -71,27 +71,22 @@ export function buildOptimizeBenefitItems(args: {
     });
   }
 
-  const bulletParts: string[] = [];
   if (args.bulletsRefined > 0) {
-    bulletParts.push(
-      `${args.bulletsRefined} bullet${args.bulletsRefined === 1 ? "" : "s"} strengthened`
-    );
-  }
-  if (args.bulletsAdded > 0) {
-    bulletParts.push(
-      `${args.bulletsAdded} new project bullet${args.bulletsAdded === 1 ? "" : "s"} added`
-    );
-  }
-  if (bulletParts.length > 0) {
-    const scope =
-      args.projectsRefined > 0
-        ? ` across ${args.projectsRefined} project${args.projectsRefined === 1 ? "" : "s"}`
-        : "";
     items.push({
       id: "bullets",
       icon: "bullets",
-      title: bulletParts.join(" and ") + scope,
-      detail: "Impact-focused lines in the projects that best match this job.",
+      title: `${args.bulletsRefined} bullet${args.bulletsRefined === 1 ? "" : "s"} redefined`,
+      detail:
+        args.bulletsAdded > 0
+          ? `${args.bulletsAdded} new bullet${args.bulletsAdded === 1 ? "" : "s"} also added for this role.`
+          : "Experience lines rewritten for this job — see highlights in the preview.",
+    });
+  } else if (args.bulletsAdded > 0) {
+    items.push({
+      id: "bullets",
+      icon: "bullets",
+      title: `${args.bulletsAdded} new bullet${args.bulletsAdded === 1 ? "" : "s"} added`,
+      detail: "New project lines added for this role — see highlights in the preview.",
     });
   }
 
@@ -124,10 +119,10 @@ export function buildOptimizeBenefitItems(args: {
 
   if (args.impactBulletCount != null && args.impactBulletCount > 0) {
     items.push({
-      id: "match",
+      id: "impact",
       icon: "match",
-      title: `${args.impactBulletCount} bullet${args.impactBulletCount === 1 ? "" : "s"} reframed for impact`,
-      detail: "Measurable outcomes and quantification terms highlighted in violet in the preview.",
+      title: `${args.impactBulletCount} impact quantified bullet${args.impactBulletCount === 1 ? "" : "s"}`,
+      detail: "Concrete metrics added — highlighted in violet in the preview.",
     });
   } else if (args.evidenceMatchDelta != null && args.evidenceMatchDelta > 0) {
     items.push({

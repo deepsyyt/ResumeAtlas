@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { OptimizationProcessingScreen } from "@/app/components/OptimizationProcessingScreen";
 import { ResumeOptimizationPanel } from "@/app/components/ResumeOptimizationPanel";
-import { StructuredResume } from "@/app/components/StructuredResume";
+import { StructuredResume, OptimizationHighlightLegend } from "@/app/components/StructuredResume";
 import { parseResumeToJSON } from "@/app/lib/resumeParser";
 import { openRazorpayPackCheckout } from "@/app/lib/billing/razorpayPackCheckout";
 import {
@@ -26,12 +26,14 @@ import {
 import { DownloadPaymentModal } from "@/app/components/DownloadPaymentModal";
 import { DownloadPaymentSuccessModal } from "@/app/components/DownloadPaymentSuccessModal";
 import { buildRefinementEvidence } from "@/app/lib/resumeFactualAudit";
-import { makeExperienceBulletKey, countRefinedScopesFromBulletKeys } from "@/app/lib/optimizeExperience";
+import { makeExperienceBulletKey, countRefinedScopesFromBulletKeys, resolveBulletTextByKey } from "@/app/lib/optimizeExperience";
 import {
   buildBulletClaimBadgeMaps,
   buildBulletEvidenceMaps,
   enrichWeakKeywordMapsFromSkillProof,
   enrichWeakKeywordMapsFromWeakSkills,
+  supplementBulletEvidenceFromResumeDiff,
+  dedupeBulletKeywordsGlobally,
 } from "@/app/lib/optimizeBulletEvidence";
 import { deriveWeakSkillsFromAnalyze } from "@/app/lib/optimizeTargets";
 import { CHECK_RESUME_AGAINST_JD_FORM_HREF } from "@/app/lib/internalLinks";
@@ -80,11 +82,13 @@ type OptimizeResult = {
   optimizedStructuredResume?: ResumeDocument;
   quantifiedBullets?: string[];
   bulletChanges?: {
+    bulletKey?: string;
     original: string;
     improved: string;
     addedKeywords: string[];
     quantified: boolean;
     addressedRejectionRisks?: string[];
+    impactFocusIndex?: number;
   }[];
   selectedRejectionRisks?: string[];
   addressedRejectionRisks?: string[];
@@ -726,11 +730,6 @@ export default function OptimizePage() {
     bulletChanges
       .filter((c) => c.original.trim().length > 0 && c.improved !== c.original)
       .map((c) => c.improved);
-  const newBullets =
-    evidence?.newBullets ??
-    bulletChanges
-      .filter((c) => c.original.trim().length === 0 && c.improved.trim().length > 0)
-      .map((c) => c.improved);
   const originalSummary =
     evidence?.originalSummary ??
     (input.parsedResume?.summary?.trim() || undefined);
@@ -782,18 +781,48 @@ export default function OptimizePage() {
     }
     return { original: diff.original, improved: diff.improved };
   });
-  const refinedBulletKeys = (
+  const refinedBulletKeysBase =
     evidence?.refinedBulletKeys ??
-    bulletDiffsWithKeys.map((d) => d.key).filter((k): k is string => Boolean(k))
-  );
-  const projectsRefined = countRefinedScopesFromBulletKeys(refinedBulletKeys);
+    bulletDiffsWithKeys.map((d) => d.key).filter((k): k is string => Boolean(k));
+  const newBulletKeysBase =
+    evidence?.newBulletKeys ??
+    bulletDiffsWithKeys
+      .filter((d) => !d.original.trim())
+      .map((d) => d.key)
+      .filter((k): k is string => Boolean(k));
   const bulletDiffsKeyed = bulletDiffsWithKeys.filter(
     (d): d is { original: string; improved: string; key: string } => Boolean(d.key)
   );
   const selectedRejectionRisks =
     result.selectedRejectionRisks ?? input.selectedRejectionRisks ?? [];
-  const { bulletOriginalsByKey, bulletKeywordsByKey, bulletReasonByKey, strengthenedWeakKeywords } =
-    buildBulletEvidenceMaps(bulletChanges, bulletDiffsKeyed);
+  const evidenceMaps = buildBulletEvidenceMaps(bulletChanges, bulletDiffsKeyed);
+  const supplementedEvidence = supplementBulletEvidenceFromResumeDiff(
+    input.parsedResume,
+    parsedAfter,
+    bulletChanges,
+    {
+      bulletOriginalsByKey: evidenceMaps.bulletOriginalsByKey,
+      refinedBulletKeys: refinedBulletKeysBase,
+      newBulletKeys: newBulletKeysBase,
+    }
+  );
+  const bulletOriginalsByKey = supplementedEvidence.bulletOriginalsByKey;
+  const refinedBulletKeys = supplementedEvidence.refinedBulletKeys;
+  const newBulletKeys = supplementedEvidence.newBulletKeys;
+  const bulletKeywordsByKey = evidenceMaps.bulletKeywordsByKey;
+  const bulletReasonByKey = evidenceMaps.bulletReasonByKey;
+  const projectsRefined = countRefinedScopesFromBulletKeys(refinedBulletKeys);
+  const newBulletsForPreview = Array.from(
+    new Set([
+      ...(evidence?.newBullets ??
+        bulletChanges
+          .filter((c) => c.original.trim().length === 0 && c.improved.trim().length > 0)
+          .map((c) => c.improved)),
+      ...newBulletKeys
+        .map((key) => resolveBulletTextByKey(parsedAfter, key))
+        .filter((text): text is string => Boolean(text)),
+    ])
+  );
   if ((result.improvedSkillProof ?? []).length > 0) {
     enrichWeakKeywordMapsFromSkillProof(
       parsedAfter,
@@ -809,13 +838,18 @@ export default function OptimizePage() {
     bulletKeywordsByKey,
     bulletReasonByKey
   );
+  dedupeBulletKeywordsGlobally(parsedAfter, bulletKeywordsByKey, bulletReasonByKey);
+  const strengthenedWeakKeywordsUnique = Array.from(
+    new Set(Object.values(bulletKeywordsByKey).flatMap((keywords) => keywords))
+  );
   const proofSkillsOrdered = (result.improvedSkillProof ?? []).map((row) => row.skill);
   const { bulletFixIndicesByKey, bulletProofIndicesByKey, bulletImpactIndicesByKey } =
     buildBulletClaimBadgeMaps(
       bulletChanges,
       bulletDiffsKeyed,
       selectedRejectionRisks,
-      proofSkillsOrdered
+      proofSkillsOrdered,
+      parsedAfter
     );
   const appliedFixOutcomes = result.appliedFixOutcomes ?? [];
   const fixBulletKeys = Array.from(
@@ -830,7 +864,7 @@ export default function OptimizePage() {
   );
   const showKeywords = Array.from(
     new Set([
-      ...strengthenedWeakKeywords,
+      ...strengthenedWeakKeywordsUnique,
       ...weakSkillsProvenInResume,
       ...strengthenedSkills,
       ...(result.addedKeywords ?? []),
@@ -909,26 +943,19 @@ export default function OptimizePage() {
         <div className="page-split-grid print:block">
           {/* Optimized resume */}
           <div className="space-y-2 print:space-y-0" id="optimized-resume-preview">
-            <div className="print:hidden space-y-1">
-              <h2 className="text-sm font-semibold text-slate-700">Your tailored resume</h2>
-              <p className="max-w-2xl text-xs leading-relaxed text-slate-500">
-                Colors map to what changed:{" "}
-                <span className="font-medium text-indigo-700">indigo</span> = summary tailored,{" "}
-                <span className="font-medium text-emerald-700">green</span> = fix applied,{" "}
-                <span className="font-medium text-amber-700">amber</span> = weak keyword proven,{" "}
-                <span className="font-medium text-violet-700">violet</span> = impact enhanced.
-                Click <span className="font-medium">Edit</span> to adjust wording before you download.
-              </p>
+            <div className="print:hidden space-y-2">
+              <h2 className="text-sm font-semibold text-slate-800">Your tailored resume</h2>
+              <OptimizationHighlightLegend />
             </div>
             <StructuredResume
               resume={parsedAfter}
               highlightKeywords={showKeywords}
               quantifiedBullets={quantifiedBullets}
               highlightedBullets={highlightedBullets}
-              refinedBulletKeys={evidence?.refinedBulletKeys}
-              newBulletKeys={evidence?.newBulletKeys}
+              refinedBulletKeys={refinedBulletKeys}
+              newBulletKeys={newBulletKeys}
               keywordBullets={keywordBullets}
-              newBullets={newBullets}
+              newBullets={newBulletsForPreview}
               highlightOptimizedSummary
               showJdAlignedSummaryBadge={result.summaryOptimized === true}
               originalSummary={originalSummary}
@@ -940,7 +967,6 @@ export default function OptimizePage() {
               bulletProofIndicesByKey={bulletProofIndicesByKey}
               bulletImpactIndicesByKey={bulletImpactIndicesByKey}
               bulletFixHighlightKeywordsByKey={bulletFixHighlightKeywordsByKey}
-              showOptimizationLegend
               editable
               onUpdateResumeMeta={(patch) =>
                 setEditableResume((prev) => (prev ? { ...prev, ...patch } : prev))
