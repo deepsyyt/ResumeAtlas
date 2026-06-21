@@ -1962,34 +1962,20 @@ export async function POST(request: Request) {
     const model = resolveAnthropicModelCandidates()[0] ?? "claude-haiku-4-5-20251001";
     const budget = getOptimizeLlmBudget();
 
-    // If no structured resume is provided, do not attempt to rebuild from raw text.
-    // Just return the original resume and unchanged score.
-    if (!body.structuredResume || !Array.isArray(body.structuredResume.experience)) {
-      const evidenceOnly = buildEvidenceDashboard({
-        resumeText,
-        jobDescription,
-        matchedSkills: analyzeResult.matched_skills,
-        missingSkills: analyzeResult.missing_skills,
-        missingRequired: analyzeResult.missing_skills_required,
-        missingPreferred: analyzeResult.missing_skills_preferred,
-        requiredYearsExperience: analyzeResult.required_years_experience ?? null,
-        resumeYearsExperience: analyzeResult.resume_years_experience ?? null,
-      });
-      const evidenceMatch = evidenceOnly.evidenceMatch;
-      const response: OptimizeResponse = {
-        optimizedResume: resumeText,
-        scoreBefore: evidenceMatch,
-        scoreAfter: evidenceMatch,
-        evidenceMatchDelta: 0,
-        atsScoreReference: analyzeResult.ats_score,
-        addedKeywords: [],
-        bulletImprovements: 0,
-        bulletsAdded: 0,
-        quantifiedAchievements: 0,
-        summaryOptimized: false,
-        evidenceDashboard: { before: evidenceOnly, after: evidenceOnly },
-      };
-      return NextResponse.json(response);
+    // Structured resume is required for real optimization (client parses before calling).
+    if (
+      !body.structuredResume ||
+      !Array.isArray(body.structuredResume.experience) ||
+      body.structuredResume.experience.length === 0
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "We couldn't read your resume structure. Check that work experience is present, then run Optimize again.",
+          code: "STRUCTURED_RESUME_REQUIRED",
+        },
+        { status: 400 }
+      );
     }
 
     const resumeSnapshotBeforeOptimization = JSON.parse(

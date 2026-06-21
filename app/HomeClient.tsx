@@ -63,6 +63,11 @@ import {
 } from "@/app/lib/auth/pendingAuthFlow";
 import { getActiveFunnelId, setActiveFunnelId, startNewFunnel } from "@/app/lib/funnelTracking";
 import { SHOW_AUTOMATIC_OPTIMIZER_PAYWALL_MODALS } from "@/app/lib/optimizerPaywallFlags";
+import {
+  clearOptimizeBrowserArtifacts,
+  createOptimizeRunId,
+  persistOptimizeInput,
+} from "@/app/lib/optimizeBrowserStorage";
 import { useRef } from "react";
 
 /** Horizontal flow for homepage demo; commercial compare/match SEO lives on the tool page. */
@@ -152,8 +157,6 @@ async function fetchAnalysisQuota(
   }
 }
 
-const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
-const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
 const ANALYZER_STATE_KEY = "resumeatlas_analyzer_state_v1";
 /** Tab-scoped snapshot so analysis survives Google OAuth → `/?openOptimizer=1` (independent of PERSIST_ANALYZER_STATE). */
 const POST_OAUTH_ANALYZER_KEY = "resumeatlas_post_oauth_analyze_v1";
@@ -887,6 +890,7 @@ export default function HomeClient({
     void flowId;
     try {
       if (typeof window !== "undefined") {
+        clearOptimizeBrowserArtifacts();
         writePostOauthAnalyzerSnapshot({
           lastInputs,
           lastJD: lastJD ?? lastInputs.jobDescription,
@@ -939,23 +943,15 @@ export default function HomeClient({
       const jobDescription = lastJD ?? lastInputs.jobDescription;
       // Parse-resume runs on /optimize so navigation is not blocked (localhost parse can take several seconds).
       if (typeof window !== "undefined") {
-        try {
-          const payload = JSON.stringify({
-            resumeText,
-            jobDescription,
-            analyzeResult,
-            funnelId: activeFunnelId ?? undefined,
-            selectedSkills: [],
-            selectedRejectionRisks: selectedRecommendedFixes.map(recommendedFixToOptimizeText),
-          });
-          window.sessionStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
-          window.localStorage.setItem(OPTIMIZE_INPUT_KEY, payload);
-          window.sessionStorage.removeItem("resumeatlas_optimize_done");
-          window.sessionStorage.removeItem(OPTIMIZE_CACHE_KEY);
-          window.localStorage.removeItem(OPTIMIZE_CACHE_KEY);
-        } catch {
-          // ignore
-        }
+        persistOptimizeInput({
+          resumeText,
+          jobDescription,
+          analyzeResult,
+          funnelId: activeFunnelId ?? undefined,
+          selectedSkills: [],
+          selectedRejectionRisks: selectedRecommendedFixes.map(recommendedFixToOptimizeText),
+          optimizeRunId: createOptimizeRunId(),
+        });
       }
       void fetch("/api/optimize-event", {
         method: "POST",

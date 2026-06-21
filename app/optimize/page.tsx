@@ -29,9 +29,12 @@ import { buildRefinementEvidence } from "@/app/lib/resumeFactualAudit";
 import { makeExperienceBulletKey, countRefinedScopesFromBulletKeys } from "@/app/lib/optimizeExperience";
 import { buildBulletEvidenceMaps } from "@/app/lib/optimizeBulletEvidence";
 import { extractFixHighlightKeywords, resolveDashboardRecommendedFixes, type AppliedFixOutcome } from "@/app/lib/recommendedFixes";
-
-const OPTIMIZE_INPUT_KEY = "resumeatlas_optimize_input";
-const OPTIMIZE_CACHE_KEY = "resumeatlas_optimize_cache";
+import {
+  OPTIMIZE_CACHE_KEY,
+  OPTIMIZE_DONE_KEY,
+  OPTIMIZE_INPUT_KEY,
+  cacheMatchesOptimizeRun,
+} from "@/app/lib/optimizeBrowserStorage";
 
 type OptimizeCacheV1 = {
   result: OptimizeResult;
@@ -40,6 +43,8 @@ type OptimizeCacheV1 = {
   jobDescription?: string;
   /** When set, cache must only hydrate for the same signed-in user (shared-device safety). */
   cachedForUserId?: string;
+  /** Must match optimize input run id for a fresh launch. */
+  optimizeRunId?: string;
 };
 
 type OptimizeInput = {
@@ -51,6 +56,7 @@ type OptimizeInput = {
   selectedRejectionRisks?: string[];
   /** Structured resume parsed on the client via /api/parse-resume. */
   parsedResume?: ResumeDocument;
+  optimizeRunId?: string;
 };
 
 type OptimizeResult = {
@@ -204,9 +210,10 @@ export default function OptimizePage() {
           if (!cache?.result?.optimizedResume) return false;
           if (cache.cachedForUserId && uid && cache.cachedForUserId !== uid) return false;
           if (!sameResumeAndJob(cache, parsed)) return false;
+          if (!cacheMatchesOptimizeRun(cache, parsed)) return false;
           setResult(cache.result);
           setEditableResume(cache.editableResume ?? resumeFromOptimizeResult(cache.result));
-          window.sessionStorage.setItem("resumeatlas_optimize_done", "1");
+          window.sessionStorage.setItem(OPTIMIZE_DONE_KEY, "1");
           setHydrating(false);
           trackOptimizationCompleted({
             jobId:
@@ -240,13 +247,15 @@ export default function OptimizePage() {
         try {
           const staleSession = window.sessionStorage.getItem(OPTIMIZE_CACHE_KEY);
           const staleLocal = window.localStorage.getItem(OPTIMIZE_CACHE_KEY);
+          const isStaleCache = (c: OptimizeCacheV1) =>
+            !sameResumeAndJob(c, parsed) || !cacheMatchesOptimizeRun(c, parsed);
           if (staleSession) {
             const c = JSON.parse(staleSession) as OptimizeCacheV1;
-            if (!sameResumeAndJob(c, parsed)) window.sessionStorage.removeItem(OPTIMIZE_CACHE_KEY);
+            if (isStaleCache(c)) window.sessionStorage.removeItem(OPTIMIZE_CACHE_KEY);
           }
           if (staleLocal) {
             const c = JSON.parse(staleLocal) as OptimizeCacheV1;
-            if (!sameResumeAndJob(c, parsed)) window.localStorage.removeItem(OPTIMIZE_CACHE_KEY);
+            if (isStaleCache(c)) window.localStorage.removeItem(OPTIMIZE_CACHE_KEY);
           }
         } catch {
           window.sessionStorage.removeItem(OPTIMIZE_CACHE_KEY);
@@ -281,6 +290,18 @@ export default function OptimizePage() {
               structuredResume = parseData.resume;
             }
           }
+        }
+
+        if (
+          !structuredResume ||
+          !Array.isArray(structuredResume.experience) ||
+          structuredResume.experience.length === 0
+        ) {
+          setHydrating(false);
+          setError(
+            "We couldn't read your resume structure. Check that work experience is present, then run Optimize again from the analyzer."
+          );
+          return;
         }
 
         if (cancelled) return;
@@ -327,6 +348,13 @@ export default function OptimizePage() {
                 : "Select at least one recommended fix before optimizing."
             );
           }
+          if (res.status === 400 && errBody.code === "STRUCTURED_RESUME_REQUIRED") {
+            throw new Error(
+              typeof errBody.error === "string"
+                ? errBody.error
+                : "We couldn't read your resume structure. Run Optimize again from the analyzer."
+            );
+          }
           throw new Error(
             typeof errBody.error === "string" ? errBody.error : "Optimization failed"
           );
@@ -345,13 +373,14 @@ export default function OptimizePage() {
             scoreAfter: data.scoreAfter,
             restoredFromCache: false,
           });
-          window.sessionStorage.setItem("resumeatlas_optimize_done", "1");
+          window.sessionStorage.setItem(OPTIMIZE_DONE_KEY, "1");
           const cachePayload: OptimizeCacheV1 = {
             result: data,
             editableResume: nextEditable,
             resumeText: parsed.resumeText,
             jobDescription: parsed.jobDescription,
             cachedForUserId: uid ?? undefined,
+            optimizeRunId: parsed.optimizeRunId,
           };
           const serialized = JSON.stringify(cachePayload);
           try {
@@ -397,6 +426,7 @@ export default function OptimizePage() {
         resumeText: input.resumeText,
         jobDescription: input.jobDescription,
         cachedForUserId: uid,
+        optimizeRunId: input.optimizeRunId,
       };
       const serialized = JSON.stringify(payload);
       try {
