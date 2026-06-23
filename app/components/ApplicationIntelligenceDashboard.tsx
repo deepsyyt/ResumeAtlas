@@ -554,7 +554,7 @@ function truncateLine(text: string, max = 140): string {
   return `${t.slice(0, max - 1).trim()}…`;
 }
 
-function HighlightedAfter({ text, highlights }: { text: string; highlights: string[] }) {
+function HighlightedAfter({ text, highlights }: { text: string; highlights: readonly string[] }) {
   if (highlights.length === 0) return <>{text}</>;
   const parts = splitTextByStrictHighlights(text, highlights);
   return (

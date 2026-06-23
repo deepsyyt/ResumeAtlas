@@ -139,7 +139,7 @@ const PERCENT_HIGHLIGHT_PATTERN = String.raw`\d+(?:\.\d+)?%`;
 /** Build a regex that highlights only whole-word terms present in `text`. */
 export function buildStrictHighlightRegex(
   text: string,
-  terms: string[],
+  terms: readonly string[],
   options?: { includePercents?: boolean }
 ): RegExp | null {
   const present = filterTermsPresentInText(text, terms).sort((a, b) => b.length - a.length);
@@ -158,7 +158,7 @@ export function buildStrictHighlightRegex(
 /** Split text into segments; odd indices are strict whole-word highlight matches. */
 export function splitTextByStrictHighlights(
   text: string,
-  terms: string[],
+  terms: readonly string[],
   options?: { includePercents?: boolean }
 ): string[] {
   const re = buildStrictHighlightRegex(text, terms, options);
@@ -167,7 +167,7 @@ export function splitTextByStrictHighlights(
 }
 
 /** Keep only terms that strictly appear in the text (for safe UI highlighting). */
-export function filterTermsPresentInText(text: string, terms: string[]): string[] {
+export function filterTermsPresentInText(text: string, terms: readonly string[]): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
   for (const raw of terms) {
