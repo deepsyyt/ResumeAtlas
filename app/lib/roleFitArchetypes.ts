@@ -121,6 +121,20 @@ export function verdictLabelFor(verdict: RoleFitVerdict): string {
   }
 }
 
+/** Shorter labels for the dashboard role-fit table so rows fit without scrolling. */
+export function verdictLabelCompactFor(verdict: RoleFitVerdict): string {
+  switch (verdict) {
+    case "strong":
+      return "Strong match";
+    case "good":
+      return "Good";
+    case "moderate":
+      return "Moderate";
+    case "needs_depth":
+      return "Needs depth";
+  }
+}
+
 /** Map LLM verdict strings to canonical enum + display label. */
 export function parseRoleFitVerdict(raw: string): RoleFitVerdict | null {
   const normalized = raw.trim().toLowerCase();
@@ -146,13 +160,13 @@ export function parseRoleFitVerdict(raw: string): RoleFitVerdict | null {
 export function roleFitVerdictStyle(verdict: RoleFitVerdict): { hex: string; bgHex: string } {
   switch (verdict) {
     case "strong":
-      return { hex: "#16A34A", bgHex: "#ECFDF5" };
+      return { hex: "#14532D", bgHex: "#BBF7D0" };
     case "good":
-      return { hex: "#22C55E", bgHex: "#F0FDF4" };
+      return { hex: "#166534", bgHex: "#DCFCE7" };
     case "moderate":
-      return { hex: "#EAB308", bgHex: "#FEFCE8" };
+      return { hex: "#A16207", bgHex: "#FDE68A" };
     case "needs_depth":
-      return { hex: "#F97316", bgHex: "#FFF7ED" };
+      return { hex: "#C2410C", bgHex: "#FED7AA" };
   }
 }
 

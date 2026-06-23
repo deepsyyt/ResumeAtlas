@@ -87,6 +87,9 @@ export {
   SKILLS_LISTED_NOT_PROVEN_PATH,
   ALREADY_HAVE_SKILLS_PATH,
   HOW_RECRUITERS_EVALUATE_PATH,
+  WHAT_JOBS_SHOULD_I_APPLY_FOR_PATH,
+  HIGH_ATS_SCORE_NO_INTERVIEWS_PATH,
+  INTERVIEW_CLUSTER_TIER2_CORE,
 } from "@/app/lib/interviewCluster/paths";
 
 /** Primary nav label for the workbench tool. */

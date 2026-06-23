@@ -1,0 +1,25 @@
+---
+description: Load ResumeAtlas project memory from /ai-context before any work
+alwaysApply: true
+---
+
+# ResumeAtlas project memory
+
+At the **start of every session**, read **all** files in `/ai-context` before editing product copy, SEO, billing, analytics, or architecture:
+
+1. `ai-context/product-rules.md` — product truth, analysis + optimization benefits, free/paid boundaries
+2. `ai-context/pricing.md` — Razorpay, starter pack, download gate
+3. `ai-context/architecture.md` — system design, funnels, components
+4. `ai-context/seo-structure.md` — 68 URLs, clusters, authority pages
+5. `ai-context/analytics.md` — GA4 funnel events
+
+## Positioning (non-negotiable)
+
+ResumeAtlas sells **both** apply-readiness **analysis** and **job-specific optimization** — never position as analysis-only.
+
+- **Analysis:** verdict + shortlist odds, role fit for this posting, elimination risks, skill proof map, keyword coverage, selectable recommended fixes
+- **Optimization:** JD summary, listed-only → proven, user-selected rejection fixes, impact quantification, editable preview, PDF/DOCX
+- **Free tier:** 1 scan / 30 days (no signup) · optimize free after sign-in · **pay only to download**
+- **Billing UI:** only `starter` pack ($2.99 / ₹249, 5 credits) is enabled
+
+Canonical benefit copy lives in `app/lib/productBenefits.ts`.

@@ -134,6 +134,38 @@ export function strictTermMatchesInText(text: string, term: string): boolean {
   return new RegExp(pattern, "i").test(haystack);
 }
 
+const PERCENT_HIGHLIGHT_PATTERN = String.raw`\d+(?:\.\d+)?%`;
+
+/** Build a regex that highlights only whole-word terms present in `text`. */
+export function buildStrictHighlightRegex(
+  text: string,
+  terms: string[],
+  options?: { includePercents?: boolean }
+): RegExp | null {
+  const present = filterTermsPresentInText(text, terms).sort((a, b) => b.length - a.length);
+  const patterns = present
+    .map((term) => strictTermHighlightPattern(term))
+    .filter((pattern) => pattern.length > 0);
+
+  if (options?.includePercents !== false && new RegExp(PERCENT_HIGHLIGHT_PATTERN).test(text)) {
+    patterns.push(PERCENT_HIGHLIGHT_PATTERN);
+  }
+
+  if (patterns.length === 0) return null;
+  return new RegExp(`(${patterns.join("|")})`, "gi");
+}
+
+/** Split text into segments; odd indices are strict whole-word highlight matches. */
+export function splitTextByStrictHighlights(
+  text: string,
+  terms: string[],
+  options?: { includePercents?: boolean }
+): string[] {
+  const re = buildStrictHighlightRegex(text, terms, options);
+  if (!re) return [text];
+  return text.split(re);
+}
+
 /** Keep only terms that strictly appear in the text (for safe UI highlighting). */
 export function filterTermsPresentInText(text: string, terms: string[]): string[] {
   const seen = new Set<string>();

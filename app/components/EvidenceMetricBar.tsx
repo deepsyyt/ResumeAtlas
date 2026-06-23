@@ -6,7 +6,6 @@ import {
   ANALYSIS_OPTIMIZE_STEPS,
   ANALYSIS_REPORT_HEADING,
   APPLICATION_VERDICT_TITLE,
-  KEYWORD_COVERAGE_SCORE_SUBTITLE,
   KEYWORD_COVERAGE_SCORE_TITLE,
   OPTIMIZE_CTA_LABEL,
 } from "@/app/lib/evidenceMetricCopy";
@@ -310,19 +309,25 @@ export function CompactScoreCard({ title, score, subtitle, secondaryLine }: Comp
 type ApplicationVerdictCardProps = {
   verdict: ApplicationVerdict;
   className?: string;
+  showGaugeRing?: boolean;
 };
 
-export function ApplicationVerdictCard({ verdict, className = "" }: ApplicationVerdictCardProps) {
+export function ApplicationVerdictCard({
+  verdict,
+  className = "",
+  showGaugeRing = true,
+}: ApplicationVerdictCardProps) {
   const { scoreStyle } = verdict;
 
   return (
-    <div className={`score-row-card score-row-card--verdict flex h-full flex-col ${className}`}>
+    <div className={`score-row-card score-row-card--verdict dashboard-kpi-card flex h-full flex-col ${className}`}>
       <p className="score-row-card-label">{APPLICATION_VERDICT_TITLE}</p>
 
       <div className="score-row-card-visual">
         <ShortlistGauge
           value={verdict.shortlistPct}
           compact
+          showRing={showGaugeRing}
           accentHex={scoreStyle.hex}
           className="w-full max-w-[124px]"
         />
@@ -354,23 +359,26 @@ type KeywordCoverageScoreCardProps = {
   score: number;
   verdict: KeywordCoverageVerdict;
   className?: string;
+  showGaugeRing?: boolean;
 };
 
 export function KeywordCoverageScoreCard({
   score,
   verdict,
   className = "",
+  showGaugeRing = true,
 }: KeywordCoverageScoreCardProps) {
   const scoreStyle = getKeywordCoverageStyle(score);
 
   return (
-    <div className={`score-row-card score-row-card--metric flex h-full flex-col ${className}`}>
+    <div className={`score-row-card score-row-card--metric dashboard-kpi-card flex h-full flex-col ${className}`}>
       <p className="score-row-card-label">{KEYWORD_COVERAGE_SCORE_TITLE}</p>
 
-      <div className="score-row-card-visual !items-center">
+      <div className="score-row-card-visual">
         <ShortlistGauge
           value={score}
           compact
+          showRing={showGaugeRing}
           accentHex={scoreStyle.hex}
           className="w-full max-w-[124px]"
         />
@@ -390,10 +398,6 @@ export function KeywordCoverageScoreCard({
         <p className="line-clamp-2 text-[9px] font-semibold leading-snug text-slate-900">
           {verdict.headline}
         </p>
-        {verdict.reason ? (
-          <p className="line-clamp-2 text-[9px] leading-snug text-slate-700">{verdict.reason}</p>
-        ) : null}
-        <p className="text-[9px] leading-snug text-slate-600">{KEYWORD_COVERAGE_SCORE_SUBTITLE}</p>
       </div>
     </div>
   );

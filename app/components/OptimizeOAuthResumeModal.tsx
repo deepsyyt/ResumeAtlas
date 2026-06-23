@@ -1,29 +1,28 @@
 "use client";
 
-import {
-  OptimizeAlignCard,
-  type AlignBulletPreview,
-} from "@/app/components/OptimizeAlignCard";
+import { OptimizeNudgeModalContent } from "@/app/components/OptimizeNudgeModalContent";
 import { OptimizeCta } from "@/app/components/EvidenceMetricBar";
 import type { ApplicationVerdict } from "@/app/lib/applicationVerdict";
 import type { RecommendedFix } from "@/app/lib/recommendedFixes";
-import { LOGIN_NUDGE_BANNER, LOGIN_NUDGE_HEADLINE, OPTIMIZE_CTA_LABEL_HERO } from "@/app/lib/evidenceMetricCopy";
+import {
+  LOGIN_NUDGE_BANNER,
+  LOGIN_NUDGE_HEADLINE,
+  OPTIMIZE_CTA_LABEL_HERO,
+  OPTIMIZE_NUDGE_PRIVACY_FOOTER,
+} from "@/app/lib/evidenceMetricCopy";
 
 export type OptimizeOAuthResumeModalProps = {
   open: boolean;
-  /** User chose not to optimize right now */
   onDismiss: () => void;
-  /** User confirms optimization after sign-in */
   onStartOptimization: () => void | Promise<void>;
   verdict: ApplicationVerdict;
   selectedFixes: RecommendedFix[];
   allFixes: RecommendedFix[];
-  bulletPreview?: AlignBulletPreview | null;
   isBusy?: boolean;
 };
 
 /**
- * Post-OAuth modal — same compact align card as the dashboard nudge.
+ * Post-OAuth modal — same layout as the dashboard nudge.
  */
 export function OptimizeOAuthResumeModal({
   open,
@@ -32,7 +31,6 @@ export function OptimizeOAuthResumeModal({
   verdict,
   selectedFixes,
   allFixes,
-  bulletPreview = null,
   isBusy = false,
 }: OptimizeOAuthResumeModalProps) {
   if (!open) return null;
@@ -50,7 +48,7 @@ export function OptimizeOAuthResumeModal({
         }}
       />
       <div
-        className="optimize-nudge-modal relative flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_24px_64px_-16px_rgba(15,23,42,0.45)]"
+        className="optimize-nudge-modal relative flex w-full max-w-[22.5rem] flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_24px_64px_-16px_rgba(15,23,42,0.45)]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="oauth-resume-align-title"
@@ -58,31 +56,27 @@ export function OptimizeOAuthResumeModal({
         <h2 id="oauth-resume-align-title" className="sr-only">
           {LOGIN_NUDGE_HEADLINE}
         </h2>
-        <div className="optimize-nudge-modal__body px-3 py-2 sm:px-3.5 sm:py-2.5">
-          <p className="mb-2 rounded-lg border border-indigo-200/90 bg-indigo-50/90 px-2.5 py-1.5 text-[11px] leading-snug text-indigo-950 sm:text-xs">
-            {LOGIN_NUDGE_BANNER}
-          </p>
-          <OptimizeAlignCard
+
+        <div className="optimize-nudge-modal__credit optimize-nudge-modal__credit--oauth">
+          <p>{LOGIN_NUDGE_BANNER}</p>
+        </div>
+
+        <div className="optimize-nudge-modal__body px-3.5 py-2.5 sm:px-4 sm:py-3">
+          <OptimizeNudgeModalContent
+            variant="post_login"
             verdict={verdict}
             selectedFixes={selectedFixes}
             allFixes={allFixes}
-            bulletPreview={bulletPreview}
-            disabled={selectedFixes.length === 0}
-            busy={isBusy}
-            heroLayout
-            embedInModal
-            liveDashboard
-            alignModalVariant="post_login"
-            className="!static min-w-0 border-0 bg-transparent p-0 shadow-none ring-0 lg:!static"
           />
         </div>
-        <div className="optimize-nudge-modal__footer shrink-0 border-t border-slate-200/80 bg-slate-50/70 px-3 py-2 sm:px-3.5">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
+
+        <div className="optimize-nudge-modal__footer shrink-0 border-t border-slate-200/80 bg-white px-3.5 py-2.5 sm:px-4">
+          <div className="optimize-nudge-modal__footer-actions">
             <button
               type="button"
               disabled={isBusy}
               onClick={() => onDismiss()}
-              className="w-full shrink-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 sm:min-w-[6.5rem] sm:w-auto"
+              className="w-auto shrink-0 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
             >
               Not now
             </button>
@@ -97,6 +91,12 @@ export function OptimizeOAuthResumeModal({
               {isBusy ? "Starting…" : OPTIMIZE_CTA_LABEL_HERO}
             </OptimizeCta>
           </div>
+          <p className="optimize-nudge-modal__privacy">
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+              <path d="M8 1a3 3 0 0 0-3 3v2H4a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1V4a3 3 0 0 0-3-3zm1 5H7V4a1 1 0 1 1 2 0v2z" />
+            </svg>
+            {OPTIMIZE_NUDGE_PRIVACY_FOOTER}
+          </p>
         </div>
       </div>
     </div>

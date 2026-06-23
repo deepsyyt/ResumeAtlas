@@ -2,32 +2,32 @@ import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
 
 /** Sample analyze summary — matches live dashboard summary box (not verdict headline). */
 export const DEMO_ANALYZE_SUMMARY =
-  "JD needs: senior GenAI / ML engineering IC with RAG, LLM delivery, and production MLOps. Resume shows: Python, RAG, LLMs, and pipeline work in project bullets. Match: strong.";
+  "JD needs: senior GenAI / ML engineering IC with RAG, LLM delivery, and production MLOps. Resume shows: Python, RAG, and LLMs in project bullets — AWS and impact proof are thin. Match: weak.";
 
 /** Illustrative keyword coverage for empty-state / preview dashboard. */
 export const DEMO_KEYWORD_COVERAGE = {
-  score: 88,
-  matchedCount: 8,
+  score: 67,
+  matchedCount: 6,
   totalCount: 9,
-  coverageLabel: "Good coverage",
+  coverageLabel: "Moderate coverage",
 } as const;
 
 /** Illustrative evidence dashboard for empty-state Intelligence panel (GenAI DS JD). */
 export const DEMO_EVIDENCE_DASHBOARD: EvidenceDashboard = {
-  evidenceMatch: 76,
+  evidenceMatch: 68,
   snapshot: {
-    evidenceMatch: 76,
-    impactCoverage: 67,
+    evidenceMatch: 68,
+    impactCoverage: 58,
     experiencesWithMetrics: 2,
     totalExperiences: 3,
-    bulletsWithMetrics: 9,
+    bulletsWithMetrics: 7,
     totalBullets: 22,
-    architectureSignal: 72,
-    leadershipSignal: 68,
-    deploymentSignal: 81,
+    architectureSignal: 68,
+    leadershipSignal: 62,
+    deploymentSignal: 71,
     seniorityAlignment: 65,
-    jdSkillProof: 78,
-    jdSkillsProved: 7,
+    jdSkillProof: 67,
+    jdSkillsProved: 6,
     jdSkillsTotal: 9,
   },
   seniority: {
@@ -126,9 +126,9 @@ export const DEMO_EVIDENCE_DASHBOARD: EvidenceDashboard = {
   ],
   jdDomain: "data",
   keywordCoverageVerdict: {
-    badgeLabel: "Good coverage",
-    headline: "8 matched · 1 missed JD keywords in your resume.",
-    reason: "AWS is skills-list only; LangChain not found in resume.",
+    badgeLabel: "Moderate coverage",
+    headline: "6 matched · 3 thin or missing JD keywords in your resume.",
+    reason: "AWS is skills-list only; LangChain and Bedrock not found in resume.",
   },
   riskAreas: [
     {
@@ -188,4 +188,18 @@ export const DEMO_EVIDENCE_BULLET_PREVIEW = {
     "Built a Retrieval-Augmented Generation chatbot using Llama for natural language understanding and response generation.",
   after:
     "Architected and deployed a Retrieval-Augmented Generation (RAG) chatbot using Llama, ChromaDB vector search, and Flask APIs to serve 35K+ content assets with low-latency retrieval and scalable inference.",
+} as const;
+
+/** Static before/after for dashboard “See the impact” — demo and live use the same illustrative sample. */
+export const DEMO_IMPACT_PREVIEW = {
+  before: DEMO_EVIDENCE_BULLET_PREVIEW.before,
+  after: DEMO_EVIDENCE_BULLET_PREVIEW.after,
+  highlights: [
+    "Retrieval-Augmented Generation",
+    "RAG",
+    "Llama",
+    "ChromaDB",
+    "Flask",
+    "35K+",
+  ],
 } as const;

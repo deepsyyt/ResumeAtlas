@@ -3,6 +3,7 @@ import type { EvidenceStrength } from "@/app/lib/resumeEvidenceScore";
 import type { BulletRefinementBreakdown } from "@/app/lib/optimizeBulletEvidence";
 import type { KeywordCoverageVerdict } from "@/app/lib/skillProofLlm";
 import { getKeywordCoverageLabel } from "@/app/lib/scoreColors";
+import { OPTIMIZATION_BENEFIT_LINES, OPTIMIZATION_BENEFIT_MODAL_LINES } from "@/app/lib/productBenefits";
 
 export const KEYWORD_COVERAGE_SCORE_TITLE = "Keyword coverage score";
 export const KEYWORD_COVERAGE_SCORE_SUBTITLE =
@@ -13,9 +14,9 @@ export const ATS_REFERENCE_TITLE = KEYWORD_COVERAGE_SCORE_TITLE;
 /** @deprecated Use KEYWORD_COVERAGE_SCORE_SUBTITLE */
 export const ATS_REFERENCE_SUBTITLE = KEYWORD_COVERAGE_SCORE_SUBTITLE;
 
-export const ANALYSIS_REPORT_HEADING = "Increase shortlist odds";
+export const ANALYSIS_REPORT_HEADING = "Analyze fit, then optimize for this job";
 export const ANALYSIS_REPORT_SUBTITLE =
-  "Tailor project bullets to this posting with evidence-first rewrites.";
+  "Verdict and elimination risks on the left — select fixes, then optimize summary and bullets to raise shortlist odds.";
 
 export const OPTIMIZE_CTA_LABEL = "Increase shortlist odds";
 export const OPTIMIZE_CTA_LABEL_HERO = "Optimize for this job";
@@ -23,16 +24,28 @@ export const OPTIMIZE_CTA_SUBLINE = "Strengthen proof before you apply";
 export const OPTIMIZE_ALIGN_PRIVACY_NOTE = "Your data stays private. Nothing is shared with employers.";
 
 export const OPTIMIZE_NUDGE_EYEBROW = "Your gaps are clear. Now close them.";
-export const OPTIMIZE_NUDGE_HEADLINE = "Turn this check into a shortlist-ready resume";
+export const OPTIMIZE_NUDGE_HEADLINE = "Make this a shortlist-ready resume";
 export const OPTIMIZE_NUDGE_SUBHEAD =
-  "Recruiters skim in seconds. A generic resume gets filtered out. Optimize for this job so your proof shows up where it matters.";
+  "Pick your fixes and optimize in minutes. JD-tailored summary, proven skills in bullets, rejection fixes, and impact metrics.";
+export const OPTIMIZE_NUDGE_SUBHEAD_SHORT =
+  "Optimize free after sign-in — tailored summary, proven bullets, and the fixes you selected.";
+export const OPTIMIZE_NUDGE_BENEFITS_TITLE = "What you get with optimization";
+export const OPTIMIZE_NUDGE_OPTIMIZATION_POTENTIAL_LABEL = "optimization potential";
+export const OPTIMIZE_NUDGE_CURRENT_MATCH_LABEL = "Current match";
+export const OPTIMIZE_NUDGE_ESTIMATED_MATCH_LABEL = "Estimated match";
 export const OPTIMIZE_NUDGE_URGENCY =
-  "Applying to 20 jobs with one resume burns time. Aligning per job is how you land interviews.";
+  "Applying to 20 jobs with one resume burns time.";
+export const OPTIMIZE_NUDGE_URGENCY_EMPHASIS = "Aligning per job gets you shortlisted more.";
+export const OPTIMIZE_NUDGE_PRIVACY_FOOTER = "Secure • Private • Only visible to you";
+export const OPTIMIZE_NUDGE_BENEFITS = OPTIMIZATION_BENEFIT_MODAL_LINES;
+export const OPTIMIZE_NUDGE_CREDIT_APPLIED = "1 credit applied.";
 
 export const LOGIN_NUDGE_BANNER = "You're signed in. Your scan is saved.";
 export const LOGIN_NUDGE_HEADLINE = "Pick up where you left off";
 export const LOGIN_NUDGE_SUBHEAD =
-  "Your job match and recommended fixes are ready. Optimize now to turn this analysis into a resume you'd confidently send to an interview.";
+  "Your verdict, skill proof map, and recommended fixes are ready. Optimize free now — summary, proven bullets, and selected fixes for this posting.";
+export const LOGIN_NUDGE_SUBHEAD_SHORT =
+  "You're signed in — optimize free with your selected fixes for this posting.";
 
 export const OPTIMIZE_ALIGN_CARD_TITLE = "Align before you apply";
 export const OPTIMIZE_ALIGN_CARD_BODY = OPTIMIZE_NUDGE_SUBHEAD;
@@ -40,13 +53,72 @@ export const OPTIMIZE_ALIGN_CARD_HINT =
   "Select at least one recommended fix on the left.";
 export const OPTIMIZE_ALIGN_CARD_DEMO_HINT =
   "Run a check to see recommended fixes pre-selected here.";
-export const OPTIMIZE_ALIGN_BENEFITS_TITLE = "What you get when you optimize";
-export const OPTIMIZE_ALIGN_BENEFITS = [
-  "Summary and title rewritten for this role",
-  "Selected fixes applied to your strongest bullets",
-  "JD keywords surfaced with evidence, not keyword stuffing",
-  "ATS-friendly layout recruiters and systems can parse",
+export const OPTIMIZE_ALIGN_BENEFITS_TITLE = "What optimization delivers for this job";
+export const DASHBOARD_APPLICATION_READINESS_TITLE = "Application readiness";
+export const DASHBOARD_ESTIMATED_SHORTLIST_TITLE = "Estimated shortlist odds";
+export const DASHBOARD_INCREASE_CHANCES_TITLE = "Increase your chances";
+export const DASHBOARD_INCREASE_CHANCES_BULLETS = [
+  "Fix gaps that reduce your shortlist odds",
+  "Add missing proof & impact metrics",
+  "Align better with this job's expectations",
 ] as const;
+export const DASHBOARD_OPTIMIZE_NOW_CTA = "Optimize Resume Now";
+export const DASHBOARD_OPTIMIZE_NOW_SUBLINE = "Apply optimized fixes & boost your odds";
+export const DASHBOARD_COMPETITIVE_CANDIDATE_LINE = "You're a competitive candidate";
+export const DASHBOARD_TOP_HERO_CHIPS = [
+  "AI-Powered Analysis",
+  "Role-Specific Insights",
+  "ATS + Recruiter Aligned",
+  "Private & Secure",
+] as const;
+export const DASHBOARD_OPTIMIZATION_DELIVERS_TITLE = "What optimization delivers";
+export const DASHBOARD_OPTIMIZATION_DELIVERS_BENEFITS = [
+  {
+    label: "JD-aligned summary",
+    body: "Professional summary rewritten for this posting, domain, focus, and tools.",
+  },
+  {
+    label: "Listed-only → proven",
+    body: "Weak skills and keywords turned into action-demonstrated project bullets with concrete evidence.",
+  },
+  {
+    label: "Selected rejection fixes",
+    body: "Add high-signal bullets, quantification, and proof to raise shortlist odds.",
+  },
+  {
+    label: "Impact quantification",
+    body: "Tie bullets with data, metrics, and outcome results that strengthen proof.",
+  },
+  {
+    label: "Edit, then download",
+    body: "Review every change in an editable preview, then export application-ready PDF and DOCX.",
+  },
+] as const;
+export const DASHBOARD_OPTIMIZATION_IMPACT_TITLE = "See the impact of optimization";
+export const OPTIMIZE_ALIGN_BEFORE_DASHBOARD_LABEL = "Before (current resume)";
+export const OPTIMIZE_ALIGN_AFTER_DASHBOARD_LABEL = "After (with optimized fixes)";
+export const OPTIMIZE_ALIGN_BEFORE_BADGE = "Too generic, less impact";
+export const OPTIMIZE_ALIGN_AFTER_BADGE = "Stronger impact, more interviews";
+export const OPTIMIZE_ALIGN_APPLY_FIXES_TITLE = "Apply optimized fixes in one click";
+export const OPTIMIZE_ALIGN_APPLY_FIXES_BULLETS = [
+  "ATS & recruiter aligned",
+  "Role-specific optimization",
+  "Proven frameworks",
+  "Instant improvements",
+] as const;
+export const OPTIMIZE_ALIGN_IMPACT_CTA = "Optimize Now";
+export const OPTIMIZE_ALIGN_SEE_IMPROVED_RESUME = "See your improved resume";
+export const DASHBOARD_IMPACT_BEFORE_BULLETS = [
+  "Led cross-functional delivery with stakeholder alignment.",
+] as const;
+export const DASHBOARD_IMPACT_AFTER_BULLETS = [
+  "Led cross-functional delivery of scalable GenAI products, reducing inference latency by 32% using AWS.",
+] as const;
+export const DASHBOARD_REJECTION_RISKS_TITLE = "Why you might not get shortlisted";
+export const DASHBOARD_BOTTOM_CTA_HEADLINE = "Don't leave interviews on the table";
+export const DASHBOARD_BOTTOM_CTA_FOOTER = "Takes 2 minutes · 100% Safe & Private";
+export const KEYWORD_COVERAGE_DASHBOARD_TITLE = "Keyword coverage";
+export const OPTIMIZE_ALIGN_BENEFITS = OPTIMIZATION_BENEFIT_LINES;
 
 export const OPTIMIZE_NUDGE_CREDIT_NOTICE =
   "1 credit applied. Next step: optimize so this resume is interview-ready for this posting.";
@@ -84,10 +156,10 @@ export const CONVERSION_MODAL_SUBHEAD =
   "This job needs its own version of your resume. Unlock optimization plus 5 job credits to check, tailor, and download for the roles you actually want.";
 export const CONVERSION_MODAL_BENEFITS_TITLE = "Why alignment beats volume";
 export const CONVERSION_MODAL_BENEFITS = [
-  "Recruiters shortlist proof, not copy-paste resumes",
-  "Fix gaps this posting flagged",
-  "ATS-friendly output per job",
-  "Apply smarter: fewer apps, better callbacks",
+  "Full apply-readiness analysis per job",
+  "JD-tailored summary and proven bullets",
+  "Selected rejection fixes demonstrated in your projects",
+  "Editable preview and PDF/DOCX download",
 ] as const;
 export const CONVERSION_MODAL_PRICE_LABEL = "One-time unlock";
 export const CONVERSION_MODAL_PRICE_HEADLINE = (price: string) => `${price} · 5 jobs`;
@@ -99,10 +171,10 @@ export const CREDIT_PACK_EXHAUSTED_SUBHEAD =
   "You have used this run. Get 5 more full job credits: match check, optimize, and ATS-ready download for each posting.";
 export const CREDIT_PACK_OFFER_SUBHEAD = "Less time applying. More time interviewing.";
 export const CREDIT_PACK_BENEFITS = [
-  "Match score and gap list for each job",
-  "Optimize summary, bullets, and fixes per posting",
-  "Download PDF and editable file when ready",
-  "Built for shortlists, not generic mass applications",
+  "Apply-readiness analysis: verdict, risks, and skill proof map",
+  "Job-specific optimization: summary, proven bullets, selected fixes",
+  "Impact quantification and editable preview per posting",
+  "Download PDF and DOCX when ready to apply",
 ] as const;
 export const CREDIT_PACK_CTA = (price: string) => `Get 5 job credits for ${price}`;
 export const CREDIT_PACK_PAYMENT_SUCCESS_ANALYZE_HEADLINE = (credits: number) =>
@@ -123,23 +195,23 @@ export const CREDIT_PACK_UPGRADE_BENEFITS_TITLE = (credits: number) =>
   `What you get with ${credits} credits`;
 export const CREDIT_PACK_UPGRADE_BENEFITS = [
   {
-    title: "Check up to 5 job postings",
-    detail: "Apply, skip, or optimize with a clear read on each role.",
+    title: "Analyze up to 5 job postings",
+    detail: "Verdict, elimination risks, skill proof map, and recommended fixes per role.",
   },
   {
-    title: "Optimize your resume for each job",
-    detail: "Tailor bullets and address rejection risks for that posting.",
+    title: "Optimize each resume for that job",
+    detail: "JD summary, proven bullets, selected rejection fixes, and impact metrics.",
   },
   {
-    title: "Download when you're ready to apply",
-    detail: "ATS-ready PDF and editable file per role.",
+    title: "Download PDF and DOCX",
+    detail: "Editable preview first, then application-ready export per role.",
   },
 ] as const;
 export const CREDIT_PACK_UPGRADE_FOOTNOTE = "Free scan resets 30 days after use. Job credits never expire.";
 
 export const LIMIT_MODAL_ANON_HEADLINE = "You've used your free scan";
 export const LIMIT_MODAL_ANON_SUBHEAD =
-  "Sign in to save your work and unlock 5 job credits: check fit, optimize, and download an interview-ready resume for each role you target.";
+  "Sign in to optimize free for this job and unlock 5 credits: full analysis, job-specific optimization, and PDF/DOCX download for each role you target.";
 export const LIMIT_MODAL_ANON_BODY =
   "Don't keep applying with one resume. Align per job so you spend time on roles where you can actually get shortlisted.";
 export const LIMIT_MODAL_ANON_CTA = "Sign in with Google";
@@ -155,15 +227,18 @@ export const OPTIMIZE_ALIGN_PREVIEW_PLACEHOLDER =
   "Select at least one fix to preview how a work bullet may be strengthened.";
 
 export const OPTIMIZE_ALIGN_STEPS = [
-  "Optimize the professional summary and title to align with the job role",
-  "Add selected JD skills into work bullets with measurable outcomes",
-  "Address selected rejection risks in the right projects",
+  "Rewrite the professional summary for this job description",
+  "Prove listed-only skills in project bullets with demonstrated experience",
+  "Apply your selected rejection fixes in the best-matching projects",
+  "Quantify impact on thin bullets — goals achieved, scale, and outcomes",
+  "Review in the editable preview, then download PDF or DOCX",
 ] as const;
 
 export const ANALYSIS_OPTIMIZE_STEPS = [
-  "Move JD skills into work bullets",
-  "Strengthen topic proof for this role",
-  "Add measurable outcomes you already have",
+  "Read application verdict and elimination risks",
+  "Select recommended fixes to address",
+  "Optimize summary and bullets for this posting",
+  "Edit the preview, then download when ready",
 ] as const;
 
 export const APPLICATION_VERDICT_TITLE = "Application verdict";
@@ -293,8 +368,11 @@ export const RISK_AREAS_INTRO =
   "Resume changes to improve shortlist odds for this role. Optimize applies the fixes you select.";
 
 export const RECOMMENDED_FIXES_TITLE = "Recommended fixes for this role";
+export const RECOMMENDED_FIXES_IMPACT_TITLE = "Recommended fixes";
 export const RECOMMENDED_FIXES_INTRO =
   "Pre-selected for this posting. Keep at least one checked to run Optimize.";
+export const RECOMMENDED_FIXES_INTRO_COMPACT =
+  "Pre-selected for this posting · keep one checked to optimize.";
 
 export const TOP_REJECTION_RISKS_TITLE = "3 things reducing interview chances";
 export const TOP_REJECTION_RISKS_INTRO =

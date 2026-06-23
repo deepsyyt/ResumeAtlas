@@ -10,6 +10,7 @@ import {
 import {
   HOME_CAPABILITY_CARDS,
   HOME_HOW_IT_WORKS_STEPS,
+  HOME_PRODUCT_VALUE,
   type HomeContextualLink,
 } from "@/app/lib/homeMarketingContent";
 
@@ -46,11 +47,10 @@ export function HomeMarketingPage() {
             id="home-capabilities-heading"
             className="text-xl font-bold tracking-[-0.025em] text-slate-900 sm:text-2xl"
           >
-            What you get for free
+            Analysis and optimization in one flow
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            Evaluate whether to apply, fix elimination risks, optimize proof, and download — for the
-            job you paste.
+            {HOME_PRODUCT_VALUE}
           </p>
           <ul className="mt-8 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
             {HOME_CAPABILITY_CARDS.map((card) => (
@@ -83,7 +83,7 @@ export function HomeMarketingPage() {
               How it works
             </h2>
             <p className="mx-auto mt-2 max-w-xl text-sm text-slate-600">
-              Paste resume and job description — get an application verdict, then fix and download.
+              Analyze fit, select fixes, optimize for this job, then edit and download.
             </p>
           </div>
           <ol className="mt-8 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
@@ -116,8 +116,8 @@ export function HomeMarketingPage() {
               Ready to check this job?
             </h2>
             <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-slate-300 sm:text-base">
-              Compare your resume to a job description. See if you're ready to apply before you
-              spend time on the application.
+              Analyze whether you&apos;re ready to apply, optimize a job-specific resume for free
+              after sign-in, and download when you&apos;re ready.
             </p>
             <Link
               href={CHECK_RESUME_AGAINST_JD_PATH}

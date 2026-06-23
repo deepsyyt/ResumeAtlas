@@ -7,6 +7,7 @@ import {
   TOP_REJECTION_RISKS_TITLE,
 } from "@/app/lib/evidenceMetricCopy";
 import type { EvidenceDashboard } from "@/app/lib/resumeEvidenceScore";
+import type { RecommendedFix } from "@/app/lib/recommendedFixes";
 import { recommendedFixActionLabel, resolveDashboardRecommendedFixes } from "@/app/lib/recommendedFixes";
 import { ROLE_FIT_SECTION_TITLE, verdictLabelFor } from "@/app/lib/roleFitArchetypes";
 import { resolveKeywordCoverageVerdict } from "@/app/lib/skillProofLlm";
@@ -69,6 +70,7 @@ export async function fetchAnalysisReportPdfBlob(
     body: JSON.stringify({
       analyzeResult: args.analyzeResult,
       evidenceDashboard: args.evidenceDashboard,
+      selectedRecommendedFixes: args.selectedRecommendedFixes,
     }),
   });
   if (!res.ok) {
@@ -115,6 +117,7 @@ export async function sharePdfOnLinkedIn(args: {
 export type ShareRecruiterReportArgs = {
   analyzeResult: ATSAnalyzeResult;
   evidenceDashboard: EvidenceDashboard;
+  selectedRecommendedFixes?: RecommendedFix[];
   toolUrl?: string;
 };
 

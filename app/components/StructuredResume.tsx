@@ -94,15 +94,14 @@ function highlightKeywordsInText(
   const list = keywords?.filter((k) => k.trim().length > 0) ?? [];
   if (list.length === 0) return [text];
 
-  const useStrictBoundaries = variant === "amber" || variant === "emerald" || variant === "violet";
-  const present = useStrictBoundaries ? filterTermsPresentInText(text, list) : list;
+  const present = filterTermsPresentInText(text, list);
   if (present.length === 0) return [text];
 
   const escaped = present
-    .map((k) => (useStrictBoundaries ? strictTermHighlightPattern(k) : k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")))
+    .map((k) => strictTermHighlightPattern(k))
     .filter((p) => p.length > 0)
     .sort((a, b) => b.length - a.length);
-  const re = new RegExp(`(${escaped.join("|")})`, useStrictBoundaries ? "gi" : "gi");
+  const re = new RegExp(`(${escaped.join("|")})`, "gi");
   const parts = text.split(re);
   const markClass =
     variant === "emerald"
@@ -296,7 +295,7 @@ const OPTIMIZATION_LEGEND_ITEMS = [
       "border-emerald-600 bg-emerald-100 text-emerald-950 ring-emerald-300/80",
   },
   {
-    label: "Weak keyword proven",
+    label: "Keyword proven",
     chipClass: "border-amber-500 bg-amber-100 text-amber-950 ring-amber-300/80",
   },
   {
@@ -314,26 +313,24 @@ const OPTIMIZATION_LEGEND_ITEMS = [
 export function OptimizationHighlightLegend({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`rounded-xl border border-slate-200/90 bg-gradient-to-br from-white to-slate-50 px-3 py-3 shadow-sm print:hidden sm:px-4 ${className}`}
+      className={`optimization-highlight-legend rounded-xl border border-slate-200/90 bg-gradient-to-br from-white to-slate-50 px-2.5 py-2 shadow-sm print:hidden sm:px-3 ${className}`}
     >
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <ul className="flex flex-wrap items-center gap-2">
-          {OPTIMIZATION_LEGEND_ITEMS.map((item) => (
-            <li
-              key={item.label}
-              className={`inline-flex items-center rounded-md border-l-[3px] px-2.5 py-1 text-[11px] font-semibold shadow-sm ring-1 ${item.chipClass}`}
-            >
-              {item.label}
-            </li>
-          ))}
-        </ul>
-        <p className="shrink-0 whitespace-nowrap text-[10px] text-slate-500 sm:text-[11px] lg:ml-auto">
+      <div className="flex min-w-0 flex-nowrap items-center gap-1.5 sm:gap-2">
+        {OPTIMIZATION_LEGEND_ITEMS.map((item) => (
+          <span
+            key={item.label}
+            className={`inline-flex shrink-0 items-center whitespace-nowrap rounded border-l-2 px-1.5 py-0.5 text-[10px] font-semibold leading-tight ring-1 ${item.chipClass}`}
+          >
+            {item.label}
+          </span>
+        ))}
+        <span className="ml-auto shrink-0 whitespace-nowrap pl-1 text-[10px] leading-tight text-slate-500">
           Use{" "}
-          <span className="mx-0.5 inline-flex rounded border border-slate-300 bg-white px-1.5 py-px text-[10px] font-bold uppercase tracking-wide text-slate-800 shadow-sm ring-1 ring-slate-200/80">
+          <span className="mx-0.5 inline-flex rounded border border-slate-300 bg-white px-1 py-px text-[9px] font-bold uppercase tracking-wide text-slate-800 ring-1 ring-slate-200/80">
             Edit
           </span>{" "}
-          on any section before you download.
-        </p>
+          before download.
+        </span>
       </div>
     </div>
   );

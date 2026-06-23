@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   TOP_REJECTION_RISKS_FOOTER,
   TOP_REJECTION_RISKS_INTRO,
+  DASHBOARD_REJECTION_RISKS_TITLE,
 } from "@/app/lib/evidenceMetricCopy";
 import { rejectionRiskRowCopy, rejectionRisksTitle } from "@/app/lib/rejectionRiskDisplay";
 
@@ -15,7 +16,8 @@ type Props = {
   selectionEnabled?: boolean;
   selectedRisks?: string[];
   onSelectionChange?: (risks: string[]) => void;
-  variant?: "default" | "hero";
+  variant?: "default" | "hero" | "dashboard";
+  uniformActionCard?: boolean;
 };
 
 function formatRiskIndex(index: number): string {
@@ -36,25 +38,41 @@ function HeaderWarningIcon() {
   );
 }
 
-function RowIcon({ index }: { index: number }) {
+function DashboardGapIcon({ index }: { index: number }) {
   const icons = [
-    <svg key="doc" viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg key="doc" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.75">
       <path d="M6 2.5h5.2L15 6.3v11.2H6V2.5z" strokeLinejoin="round" />
       <path d="M11 2.5V6.5H15" strokeLinejoin="round" />
     </svg>,
-    <svg key="chart" viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg key="chart" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.75">
       <path d="M4 15.5V8.5M8.5 15.5V5.5M13 15.5V10M17.5 15.5V3.5" strokeLinecap="round" />
     </svg>,
-    <svg key="clip" viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M7 3.5h8v12H7V3.5z" strokeLinejoin="round" />
-      <path d="M5.5 6.5H7M5.5 9.5H7M5.5 12.5H7" strokeLinecap="round" />
-      <path d="M10.5 11.2 12 12.7l3-3.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg key="target" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.75">
+      <circle cx="10" cy="10" r="6.5" />
+      <circle cx="10" cy="10" r="2.5" />
+      <path d="M10 3.5V5M10 15v1.5M3.5 10H5M15 10h1.5" strokeLinecap="round" />
     </svg>,
   ];
 
   return (
-    <span className="rejection-risks-hero-icon rejection-risks-hero-icon--row" aria-hidden>
+    <span className="rejection-risks-dashboard-gap-icon" aria-hidden>
       {icons[index % icons.length]}
+    </span>
+  );
+}
+
+function DashboardGapsWarningIcon() {
+  return (
+    <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0" fill="currentColor" aria-hidden>
+      <path d="M8 1.2 1.4 13.2h13.2L8 1.2zm0 3.4.01 4.1H7.99V4.6H8zm-.7 6.1a.7.7 0 1 1 1.4 0 .7.7 0 0 1-1.4 0z" />
+    </svg>
+  );
+}
+
+function HeroRowIcon({ index }: { index: number }) {
+  return (
+    <span className="rejection-risks-hero-icon rejection-risks-hero-icon--row" aria-hidden>
+      <span className="text-[9px] font-bold leading-none">{index + 1}</span>
     </span>
   );
 }
@@ -68,6 +86,7 @@ export function TopRejectionRisksSection({
   selectedRisks,
   onSelectionChange,
   variant = "default",
+  uniformActionCard = false,
 }: Props) {
   const [internalSelected, setInternalSelected] = useState<Set<string>>(() => new Set());
   const itemsKey = useMemo(() => items.join("\0"), [items]);
@@ -101,41 +120,98 @@ export function TopRejectionRisksSection({
 
   if (items.length === 0) return null;
 
-  const isHero = variant === "hero";
-  const displayItems = isHero ? items.slice(0, 3) : items;
+  const displayItemsHero = items.slice(0, 3);
 
-  if (isHero) {
+  if (variant === "dashboard") {
     return (
       <section
-        className={`rejection-risks-hero-card ${className}`}
+        className={`rejection-risks-dashboard-card dashboard-content-card px-4 py-4 sm:px-5 sm:py-5 ${className}`}
         aria-labelledby="top-rejection-risks-heading"
       >
-        <div className="rejection-risks-hero-header">
+        <h3
+          id="top-rejection-risks-heading"
+          className="text-base font-bold leading-snug tracking-tight text-slate-900 sm:text-[1.05rem]"
+        >
+          {DASHBOARD_REJECTION_RISKS_TITLE}
+        </h3>
+        <p className="mt-1.5 flex items-center gap-1.5 text-[13px] font-bold text-red-600">
+          <DashboardGapsWarningIcon />
+          <span>
+            {displayItemsHero.length} critical gap{displayItemsHero.length === 1 ? "" : "s"}
+          </span>
+        </p>
+
+        <ul className="rejection-risks-dashboard-grid mt-4">
+          {displayItemsHero.map((item, index) => {
+            const copy = rejectionRiskRowCopy(item);
+            return (
+              <li key={item} className="rejection-risks-dashboard-gap-card">
+                <DashboardGapIcon index={index} />
+                <p className="rejection-risks-dashboard-gap-title">{copy.headline}</p>
+                <p className="rejection-risks-dashboard-gap-desc">{copy.description}</p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    );
+  }
+
+  const displayItems = variant === "hero" ? displayItemsHero : items;
+
+  if (variant === "hero") {
+    const sectionTitle = rejectionRisksTitle(displayItems.length);
+
+    return (
+      <section
+        className={`rejection-risks-hero-card flex h-full flex-col ${className}`}
+        aria-labelledby="top-rejection-risks-heading"
+      >
+        <div
+          className={
+            uniformActionCard
+              ? "rejection-risks-hero-header dashboard-action-card-head dashboard-action-card-head--risk"
+              : "rejection-risks-hero-header"
+          }
+        >
           <HeaderWarningIcon />
           <div className="min-w-0">
             <h3
               id="top-rejection-risks-heading"
-              className="rejection-risks-hero-title text-sm font-bold leading-tight tracking-tight text-red-600"
+              className={
+                uniformActionCard
+                  ? "rejection-risks-hero-title dashboard-action-card-title dashboard-action-card-title--risk"
+                  : "rejection-risks-hero-title text-sm font-bold leading-tight tracking-tight text-slate-900"
+              }
             >
-              {rejectionRisksTitle(displayItems.length)}
+              {sectionTitle}
             </h3>
-            <p className="rejection-risks-hero-intro mt-1 text-[10px] leading-snug text-slate-500">
+            <p
+              className={
+                uniformActionCard
+                  ? "rejection-risks-hero-intro dashboard-action-card-intro mt-1"
+                  : "rejection-risks-hero-intro mt-1 text-[10px] leading-snug text-slate-500"
+              }
+            >
               {TOP_REJECTION_RISKS_INTRO}
             </p>
           </div>
         </div>
 
-        <ul className="rejection-risks-hero-list">
+        <ul className="rejection-risks-hero-list rejection-risks-card-grid">
           {displayItems.map((item, index) => {
             const copy = rejectionRiskRowCopy(item);
             return (
-              <li key={item} className="rejection-risks-hero-row">
-                <RowIcon index={index} />
+              <li key={item} className="rejection-risks-hero-row rejection-risk-card">
+                <HeroRowIcon index={index} />
                 <div className="min-w-0 flex-1">
-                  <p className="rejection-risks-hero-row-title line-clamp-2 text-[10px] font-medium leading-snug text-slate-700">
-                    {copy.headline}
-                  </p>
-                  <p className="rejection-risks-hero-row-desc mt-0.5 line-clamp-2 text-[9px] leading-snug text-slate-500">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="rejection-risks-hero-row-title line-clamp-2 text-[11px] font-semibold leading-snug text-slate-800">
+                      {copy.headline}
+                    </p>
+                    <span className="rejection-risk-severity shrink-0" aria-hidden />
+                  </div>
+                  <p className="rejection-risks-hero-row-desc mt-1 line-clamp-2 text-[10px] leading-snug text-slate-500">
                     {copy.description}
                   </p>
                 </div>
@@ -167,7 +243,7 @@ export function TopRejectionRisksSection({
             id="top-rejection-risks-heading"
             className="text-[11px] font-bold uppercase tracking-[0.14em] text-red-600"
           >
-            {rejectionRisksTitle(displayItems.length)}
+            {rejectionRisksTitle(items.length)}
           </h3>
           {!compact ? (
             <p className="mt-0.5 text-[10px] leading-snug text-slate-600">{TOP_REJECTION_RISKS_INTRO}</p>
@@ -188,7 +264,7 @@ export function TopRejectionRisksSection({
           compact ? "rejection-risks-chevron-list-compact" : ""
         }`}
       >
-        {displayItems.map((item, index) => {
+        {items.map((item, index) => {
           const checked = selectedSet.has(riskKey(item));
           return (
             <li

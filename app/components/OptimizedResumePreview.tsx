@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { splitTextByStrictHighlights } from "@/app/lib/resumeTermMatch";
 
 export type OptimizedResumePreviewProps = {
   content: string;
@@ -11,13 +12,8 @@ export type OptimizedResumePreviewProps = {
 /** Highlight added keywords in the resume text with a subtle background. */
 function highlightKeywordsInText(text: string, keywords: string[]): React.ReactNode {
   if (!keywords || keywords.length === 0) return text;
-  const escaped = keywords
-    .filter((k) => k.trim().length > 0)
-    .map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-    .sort((a, b) => b.length - a.length);
-  if (escaped.length === 0) return text;
-  const re = new RegExp(`(${escaped.join("|")})`, "gi");
-  const parts = text.split(re);
+  const parts = splitTextByStrictHighlights(text, keywords, { includePercents: false });
+  if (parts.length === 1) return text;
   return (
     <>
       {parts.map((part, i) =>

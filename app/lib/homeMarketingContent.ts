@@ -1,44 +1,37 @@
 /** Shared homepage funnel copy (marketing `/` — commercial page; tool on workbench URL). */
 
-/** Layer 2 — product truth (apply-readiness). */
-export const HOME_MARKETING_H1 = "Know if you're ready to apply before you apply";
+import {
+  ANALYSIS_BENEFITS,
+  FREE_TIER_EYEBROW,
+  OPTIMIZATION_BENEFITS,
+  PRODUCT_PIPELINE_ONE_LINER,
+  PRODUCT_VALUE_ONE_LINER,
+} from "@/app/lib/productBenefits";
+
+/** Layer 2 — product truth (analysis + optimization). */
+export const HOME_MARKETING_H1 =
+  "Analyze fit and optimize your resume before you apply";
 
 export const HOME_MARKETING_SUBHEAD =
-  "Paste your resume and a job description. ResumeAtlas tells you whether you're likely to clear first screening, what might get you rejected, what you can realistically fix, and which version of your resume to send.";
+  "Paste your resume and a job description. ResumeAtlas shows whether you're likely to clear first screening, what might get you rejected, and which fixes to select — then optimizes a job-specific resume you can edit and download.";
 
 /** Layer 1 bridge — search-native phrase users recognize. */
 export const HOME_MARKETING_SEO_BRIDGE =
-  "Paste resume + job description. ATS score and keyword coverage, plus application verdict, elimination risks, recommended fixes, and job-specific optimization before you submit.";
+  "Free scan: ATS score, application verdict, elimination risks, skill proof map, and selectable recommended fixes. Then free optimize after sign-in — JD-tailored summary, proven bullets, and impact metrics. Pay only to download PDF or DOCX.";
 
-export const HOME_MARKETING_TRUST_EYEBROW = "100% free · no signup";
+export const HOME_MARKETING_TRUST_EYEBROW = FREE_TIER_EYEBROW;
 
-/** Layer 3 preview — what the dashboard delivers (matches live product). */
-export const HOME_MARKETING_OUTCOMES = [
-  {
-    label: "Application verdict",
-    body: "whether you're likely to clear screening for this role, or should optimize first.",
-  },
-  {
-    label: "Elimination risks",
-    body: "top reasons recruiters might skip your application for this posting.",
-  },
-  {
-    label: "Skill proof map",
-    body: "which JD skills are proven in project bullets vs listed only in your skills section.",
-  },
-  {
-    label: "Recommended fixes",
-    body: "concrete changes to strengthen proof before you hit submit.",
-  },
-] as const;
+/** Layer 3 preview — analysis outcomes (matches live dashboard). */
+export const HOME_MARKETING_OUTCOMES = ANALYSIS_BENEFITS;
 
 /** Evaluate section — first scroll after hero (search intent → dashboard). */
 export const HOME_COMPARE_SECTION_EYEBROW = "Compare resume to job description";
 
-export const HOME_COMPARE_SECTION_HEADING = "ATS score, gaps, and apply readiness in one paste";
+export const HOME_COMPARE_SECTION_HEADING =
+  "Apply-readiness analysis: ATS score, gaps, and verdict in one paste";
 
 export const HOME_COMPARE_SECTION_INTRO =
-  "You came for a resume check. What you need is an apply decision for this specific role — fit, risks, and fixes, not a generic score alone.";
+  "You came for a resume check. Get an apply decision for this specific role — verdict, risks, skill proof, and fixes you can select for optimization — not a generic score alone.";
 
 export const HOME_COMPARE_SECTION_DETAIL_LINK_PREFIX = "Open the ";
 export const HOME_COMPARE_SECTION_DETAIL_LINK_SUFFIX =
@@ -49,33 +42,16 @@ export const HOME_COMPARE_SECTION_DETAIL_LINK_ANCHOR =
 /** @deprecated Use HOME_MARKETING_OUTCOMES — kept for any legacy imports. */
 export const HOME_COMPARE_METRICS = HOME_MARKETING_OUTCOMES;
 
-/** Fix → apply section. */
-export const HOME_OPTIMIZE_SECTION_EYEBROW = "Then fix what matters and apply";
+/** Optimize section — second hero band. */
+export const HOME_OPTIMIZE_SECTION_EYEBROW = "Job-specific resume optimization";
 
 export const HOME_OPTIMIZE_SECTION_HEADING =
-  "Optimize proof for this job, edit, and download the version you send";
+  "Turn your analysis into a shortlist-ready resume for this job";
 
 export const HOME_OPTIMIZE_SECTION_INTRO =
-  "Address elimination risks and strengthen proof in bullets you already have. Review every change, tweak wording, then export an ATS-friendly file for this posting only.";
+  "Select the recommended fixes you want addressed. ResumeAtlas rewrites your summary and bullets for this posting — demonstrated experience for your selections, impact metrics on thin lines, and an editable preview before you download.";
 
-export const HOME_OPTIMIZE_POINTS = [
-  {
-    label: "Verdict-driven",
-    body: "optimize only when screening odds need a lift — or apply when you're already competitive.",
-  },
-  {
-    label: "Selected fixes",
-    body: "applied to the projects that best match this job.",
-  },
-  {
-    label: "Listed → proven",
-    body: "supported JD skills moved into work bullets with evidence, not keyword stuffing.",
-  },
-  {
-    label: "Honest gaps",
-    body: "unsupported requirements stay visible — we don't invent experience.",
-  },
-] as const;
+export const HOME_OPTIMIZE_POINTS = OPTIMIZATION_BENEFITS;
 
 export type HomeContextualLink = {
   prefix: string;
@@ -98,12 +74,12 @@ export type HomeCapabilityCard =
 export const HOME_CAPABILITY_CARDS: HomeCapabilityCard[] = [
   {
     key: "jd-compare",
-    title: "Should I apply to this job?",
+    title: "Apply-readiness analysis",
     bodyLink: {
       prefix: "",
       anchor: "Compare your resume to a job description",
       suffix:
-        " for an application verdict, elimination risks, and keyword coverage for that posting.",
+        " for an application verdict, elimination risks, skill proof map, and selectable recommended fixes.",
     },
   },
   {
@@ -112,18 +88,18 @@ export const HOME_CAPABILITY_CARDS: HomeCapabilityCard[] = [
     bodyLink: {
       prefix: "Check format and keyword overlap with our ",
       anchor: "free ATS resume checker",
-      suffix: ", then add a job description for posting-specific proof.",
+      suffix: ", then add a job description for posting-specific analysis and optimization.",
     },
   },
   {
     key: "ai-optimize",
-    title: "Fix elimination risks",
-    body: "Strengthen proof in bullets for the fixes you select — summary, keywords, and impact from work you already did.",
+    title: "Job-specific optimization",
+    body: "Free after sign-in: JD-tailored summary, listed-only skills proven in bullets, selected rejection fixes demonstrated, and impact quantification — only the fixes you select.",
   },
   {
     key: "edit-download",
-    title: "Apply with confidence",
-    body: "Edit the tailored version, then download PDF or DOCX for this role.",
+    title: "Edit and download",
+    body: "Review every change in an editable preview, then download application-ready PDF or DOCX for this role.",
   },
 ];
 
@@ -142,27 +118,33 @@ export const HOME_HOW_IT_WORKS_STEPS = [
   {
     key: "evaluate",
     emoji: "📊",
-    title: "Evaluate fit",
-    line: "Application verdict, ATS score, keyword coverage, elimination risks, and skill proof map.",
+    title: "Analyze apply-readiness",
+    line: "Application verdict, ATS score, keyword coverage, elimination risks, skill proof map, and recommended fixes.",
   },
   {
     key: "fix",
     emoji: "✨",
-    title: "Fix proof",
-    line: "Select recommended fixes and optimize bullets for this job — only what you can defend.",
+    title: "Optimize for this job",
+    line: "Select fixes and optimize free after sign-in — summary, proven bullets, rejection fixes, and impact metrics for this posting.",
   },
   {
     key: "apply",
     emoji: "⬇️",
-    title: "Edit & apply",
-    line: "Tweak the tailored resume, download, and submit the version built for this role.",
+    title: "Edit & download",
+    line: "Tweak the tailored resume in the preview, then download PDF or DOCX when you're ready to apply.",
   },
 ] as const;
 
 /** Workbench hero bullets (shared with PostingFitSsrShell and JD workbench). */
 export const WORKBENCH_HERO_BULLETS = [
-  "Your application verdict",
-  "Unproven skills",
-  "Elimination risks",
+  "Your application verdict & shortlist odds",
+  "Role fit if applying for this posting",
+  "Elimination risks & unproven skills",
   "Recommended fixes",
 ] as const;
+
+/** Shared pipeline line for CTAs and footers. */
+export const HOME_PRODUCT_PIPELINE = PRODUCT_PIPELINE_ONE_LINER;
+
+/** Shared value prop for capability sections. */
+export const HOME_PRODUCT_VALUE = PRODUCT_VALUE_ONE_LINER;

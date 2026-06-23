@@ -8,6 +8,8 @@ type ShortlistGaugeProps = {
   compact?: boolean;
   /** Tier accent for score + arc (from application verdict). */
   accentHex?: string;
+  /** When false, show percentage only (no arc). */
+  showRing?: boolean;
 };
 
 export function ShortlistGauge({
@@ -15,6 +17,7 @@ export function ShortlistGauge({
   className = "",
   compact = false,
   accentHex = "#6366f1",
+  showRing = true,
 }: ShortlistGaugeProps) {
   const gradientId = useId().replace(/:/g, "");
   const pct = Math.max(0, Math.min(100, Math.round(value)));
@@ -35,6 +38,28 @@ export function ShortlistGauge({
   }, [animatedPct, pct]);
 
   const progress = (animatedPct / 100) * arcLength;
+
+  if (!showRing) {
+    return (
+      <div
+        className={`flex flex-col items-center ${className}`}
+        role="img"
+        aria-label={`${pct}% shortlist chance`}
+      >
+        <p
+          className={`score-row-card-value font-bold tabular-nums leading-none ${
+            compact ? "text-xl" : "text-2xl sm:text-[1.75rem]"
+          }`}
+          style={{ color: accentHex }}
+        >
+          {animatedPct}
+          <span className={`font-semibold text-slate-400 ${compact ? "text-sm" : "text-lg"}`}>
+            %
+          </span>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -60,6 +85,7 @@ export function ShortlistGauge({
           stroke="#e2e8f0"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
+          className="shortlist-gauge-track"
         />
         <path
           d={pathD}

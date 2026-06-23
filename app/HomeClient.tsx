@@ -7,7 +7,6 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ResumeForm, type GenerateInputs } from "@/app/components/ResumeForm";
 import { ResumePreview } from "@/app/components/ResumePreview";
 import { IntelligencePanel } from "@/app/components/IntelligencePanel";
-import { AnalysisPreviewIntroBanner } from "@/app/components/postingFit/AnalysisPreviewIntroBanner";
 import { LimitModal } from "@/app/components/LimitModal";
 import { CreditPackModal, type CreditPackModalVariant } from "@/app/components/CreditPackModal";
 import { OptimizeConversionModal } from "@/app/components/OptimizeConversionModal";
@@ -163,9 +162,9 @@ const POST_OAUTH_ANALYZER_KEY = "resumeatlas_post_oauth_analyze_v1";
 /** Successful logged-in analyses in this tab (sessionStorage). Upgrade modal on 2nd and 4th dashboard only. */
 const LOGGED_IN_ANALYSIS_SUCCESS_COUNT_KEY = "resumeatlas_logged_in_analysis_success_count";
 /** After JD-backed dashboard renders, pause before first optimize nudge. */
-const OPTIMIZE_NUDGE_DELAY_MS = 300_000;
+const OPTIMIZE_NUDGE_DELAY_MS = 180_000;
 /** Reshow interval after dismiss (same cadence as first impression). */
-const OPTIMIZE_NUDGE_RESCHEDULE_MS = 300_000;
+const OPTIMIZE_NUDGE_RESCHEDULE_MS = 180_000;
 /** Max nudge impressions per analysis run (first at delay, then every reschedule interval after dismiss). */
 const OPTIMIZE_NUDGE_MAX_SHOWS = 3;
 
@@ -210,20 +209,20 @@ function workbenchSplitPanelColors(
 
   if (analysisMode === "atsCompliance") {
     return {
-      input: "bg-gradient-to-b from-sky-50/95 via-sky-50/50 to-indigo-50/20",
+      input: "bg-white",
       preview: previewCanvas,
       divider: previewDivider,
     };
   }
   if (analysisMode === "keywordScanner") {
     return {
-      input: "bg-gradient-to-b from-emerald-50/95 via-emerald-50/50 to-teal-50/20",
+      input: "bg-white",
       preview: previewCanvas,
       divider: previewDivider,
     };
   }
   return {
-    input: "bg-gradient-to-b from-indigo-50/95 via-indigo-50/50 to-violet-50/20",
+    input: "bg-white",
     preview: previewCanvas,
     divider: previewDivider,
   };
@@ -1467,34 +1466,24 @@ export default function HomeClient({
           <div
             className={
               useSplitPanels
-                ? `flex min-h-[min(calc(100dvh-11rem),44rem)] flex-col overflow-hidden lg:rounded-br-2xl ${splitPanels.divider}`
+                ? `flex flex-col lg:rounded-br-2xl ${splitPanels.divider}`
                 : "flex min-h-0 min-w-0 flex-col gap-4"
             }
           >
-            {useSplitPanels && !analyzeResult ? (
-              <div
-                className={`shrink-0 border-b border-slate-700/50 px-3 py-1.5 sm:px-4 ${splitPanels.preview}`}
-              >
-                <AnalysisPreviewIntroBanner
-                  isAnalyzing={isGenerating}
-                  darkSurface
-                />
-              </div>
-            ) : null}
             <div
               className={
                 useSplitPanels
-                  ? `relative min-h-0 flex-1 basis-0 overflow-hidden lg:rounded-br-2xl ${splitPanels.preview}`
+                  ? `relative lg:rounded-br-2xl ${splitPanels.preview}`
                   : "contents"
               }
             >
             <div
               className={
                 useSplitPanels
-                  ? `preview-panel-scroll preview-panel-scroll--dark flex h-full min-h-0 flex-col overflow-y-auto overscroll-contain px-2 pb-8 sm:px-3 sm:pb-10 lg:px-4 lg:pb-12 ${
+                  ? `flex flex-col px-0 pb-0 sm:pb-0 lg:pb-0 ${
                       isGenerating && !analyzeResult
                         ? "items-center justify-center pt-0"
-                        : "items-center justify-start pt-2 sm:pt-2.5"
+                        : "items-center justify-start pt-0"
                     }`
                   : "contents"
               }
@@ -1600,7 +1589,6 @@ export default function HomeClient({
                 verdict={computeApplicationVerdict(analyzeResult.evidence_dashboard)}
                 selectedFixes={selectedRecommendedFixes}
                 allFixes={resolveDashboardRecommendedFixes(analyzeResult.evidence_dashboard.riskAreas)}
-                bulletPreview={analyzeResult.bullet_preview ?? null}
               />
             ) : null}
             {analyzeResult?.evidence_dashboard ? (
@@ -1612,7 +1600,6 @@ export default function HomeClient({
                 verdict={computeApplicationVerdict(analyzeResult.evidence_dashboard)}
                 selectedFixes={selectedRecommendedFixes}
                 allFixes={resolveDashboardRecommendedFixes(analyzeResult.evidence_dashboard.riskAreas)}
-                bulletPreview={analyzeResult.bullet_preview ?? null}
                 creditNotice={scanCreditNotice}
               />
             ) : null}

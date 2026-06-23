@@ -4,9 +4,11 @@ import { TEAL_COMPARISON_PATH } from "@/app/lib/competitorComparison/tealPageCon
 import {
   ALREADY_HAVE_SKILLS_PATH,
   ATS_SCORE_VS_JOB_FIT_PATH,
+  HIGH_ATS_SCORE_NO_INTERVIEWS_PATH,
   HOW_RECRUITERS_EVALUATE_PATH,
   RESUME_NOT_GETTING_INTERVIEWS_PATH,
   SKILLS_LISTED_NOT_PROVEN_PATH,
+  WHAT_JOBS_SHOULD_I_APPLY_FOR_PATH,
 } from "@/app/lib/interviewCluster/paths";
 
 export type ClusterNavLink = {
@@ -15,12 +17,30 @@ export type ClusterNavLink = {
   description?: string;
 };
 
-/** Hub + supporting guides — the topical cluster core. */
+/**
+ * Interview pain cluster — hub first, then tier-2 moat pillars, then spokes.
+ * Expand this cluster (not role examples) for differentiation SERPs.
+ */
 export const INTERVIEW_CLUSTER_GUIDES: ClusterNavLink[] = [
   {
     path: RESUME_NOT_GETTING_INTERVIEWS_PATH,
     label: "Resume not getting interviews",
     description: "Hub — why silence happens and what to fix",
+  },
+  {
+    path: ATS_SCORE_VS_JOB_FIT_PATH,
+    label: "Why ATS scores are not enough",
+    description: "Keyword match ≠ interview readiness",
+  },
+  {
+    path: WHAT_JOBS_SHOULD_I_APPLY_FOR_PATH,
+    label: "What jobs should I apply for",
+    description: "Role fit vs wrong-title applications",
+  },
+  {
+    path: HIGH_ATS_SCORE_NO_INTERVIEWS_PATH,
+    label: "High ATS score, no interviews",
+    description: "Why 85% match still gets rejected",
   },
   {
     path: SKILLS_LISTED_NOT_PROVEN_PATH,
@@ -31,11 +51,6 @@ export const INTERVIEW_CLUSTER_GUIDES: ClusterNavLink[] = [
     path: ALREADY_HAVE_SKILLS_PATH,
     label: "Have the skills, no interviews",
     description: "When background fits but proof does not",
-  },
-  {
-    path: ATS_SCORE_VS_JOB_FIT_PATH,
-    label: "Why ATS scores are not enough",
-    description: "Keyword match ≠ interview readiness",
   },
   {
     path: HOW_RECRUITERS_EVALUATE_PATH,

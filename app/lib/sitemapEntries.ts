@@ -16,9 +16,12 @@ import { CHECK_RESUME_AGAINST_JD_PATH } from "@/app/lib/internalLinks";
 import {
   ALREADY_HAVE_SKILLS_PATH,
   ATS_SCORE_VS_JOB_FIT_PATH,
+  HIGH_ATS_SCORE_NO_INTERVIEWS_PATH,
   HOW_RECRUITERS_EVALUATE_PATH,
+  INTERVIEW_CLUSTER_TIER2_CORE,
   RESUME_NOT_GETTING_INTERVIEWS_PATH,
   SKILLS_LISTED_NOT_PROVEN_PATH,
+  WHAT_JOBS_SHOULD_I_APPLY_FOR_PATH,
 } from "@/app/lib/interviewCluster/paths";
 import {
   RESUME_BULLET_ROLES,
@@ -52,12 +55,12 @@ function priorityForPath(pathname: string): number {
     return SITEMAP_PRIORITY.TOP;
   }
   if (
-    pathname === RESUME_NOT_GETTING_INTERVIEWS_PATH ||
-    pathname === ATS_SCORE_VS_JOB_FIT_PATH
+    (INTERVIEW_CLUSTER_TIER2_CORE as readonly string[]).includes(pathname)
   ) {
     return SITEMAP_PRIORITY.CLUSTER_CORE;
   }
   if (
+    pathname === HIGH_ATS_SCORE_NO_INTERVIEWS_PATH ||
     pathname === SKILLS_LISTED_NOT_PROVEN_PATH ||
     pathname === ALREADY_HAVE_SKILLS_PATH ||
     pathname === HOW_RECRUITERS_EVALUATE_PATH ||
@@ -245,6 +248,18 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     lastModified: new Date("2026-06-20"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/ats-score-vs-real-job-fit"),
+  });
+  entries.push({
+    url: `${base}${WHAT_JOBS_SHOULD_I_APPLY_FOR_PATH}`,
+    lastModified: new Date("2026-06-22"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath(WHAT_JOBS_SHOULD_I_APPLY_FOR_PATH),
+  });
+  entries.push({
+    url: `${base}${HIGH_ATS_SCORE_NO_INTERVIEWS_PATH}`,
+    lastModified: new Date("2026-06-22"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath(HIGH_ATS_SCORE_NO_INTERVIEWS_PATH),
   });
   const legalLastMod = new Date("2026-03-23");
   for (const path of LEGAL_PATHS) {

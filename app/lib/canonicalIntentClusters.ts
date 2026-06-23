@@ -36,51 +36,44 @@ const abs = (path: string) => `${siteBase()}${path.startsWith("/") ? path : `/${
 /** Resume ↔ this job description (tailor / compare / match). Layer 1 SEO + Layer 2 apply-readiness on-page. */
 export const CLUSTER_JD_MATCH_TOOL_COPY = {
   titleAbsolute:
-    `Compare Resume to Job Description | Application Verdict & Resume Gaps${RESUME_ATLAS_TITLE_SUFFIX}`,
+    `Compare Resume to Job Description | Analyze Fit & Optimize Resume${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Compare your resume to a job description and see whether you're ready to apply. Find unproven skills, elimination risks, missing requirements, and job-specific fixes before applying.",
+    "Compare your resume to a job description: application verdict, elimination risks, skill proof map, and selectable fixes. Free optimize after sign-in — JD summary, proven bullets, impact metrics. Pay to download.",
   ogTitle:
-    `Compare Resume to Job Description | Application Verdict & Resume Gaps (${CONTENT_FRESHNESS_YEAR})`,
+    `Compare Resume to Job Description | Analyze Fit & Optimize Resume (${CONTENT_FRESHNESS_YEAR})`,
   ogDescription:
-    "See whether you're ready to apply: application verdict, unproven skills, elimination risks, and job-specific fixes before you submit.",
-  twitterTitle: "Compare resume to job description | application verdict & resume gaps",
+    "Apply-readiness analysis plus free job-specific optimization: verdict, risks, selectable fixes, tailored summary, and proven bullets before you download.",
+  twitterTitle: "Compare resume to job description | analyze fit & optimize resume",
   twitterDescription:
-    "Application verdict, unproven skills, elimination risks, and job-specific fixes before you apply. Free, no signup.",
-  h1: "Compare resume to a job description | ATS score, gaps, and apply readiness",
+    "Verdict, elimination risks, skill proof, selectable fixes, and free optimize after sign-in. Pay only to download PDF or DOCX.",
+  h1: "Compare resume to a job description | analyze fit, optimize, and apply",
   intro:
-    "Paste your resume and the exact job description. See whether you're likely to clear screening, what might get you rejected, which skills are proven in bullets vs listed only, and what to fix before you apply. Then optimize proof and download the version for this role.",
+    "Paste your resume and the exact job description. Get an application verdict, elimination risks, skill proof map, and selectable recommended fixes — then optimize a job-specific resume: tailored summary, proven bullets, selected rejection fixes, and impact metrics. Edit in the preview and download when ready.",
   heroEyebrow: "Free · compare resume to job description",
   heroH1: "Before you apply, see what may get you rejected.",
   heroIntro: "Paste your resume and a job description.",
-  heroShowLabel: "We'll show:",
-  heroBullets: [
-    "Your application verdict",
-    "Unproven skills",
-    "Elimination risks",
-    "Recommended fixes",
-  ],
   postFormOutcomesHeading: "What you'll learn in one scan",
   postFormOutcomes: [
     "Should you apply?",
     "What may eliminate you?",
     "Which skills are proven vs weak?",
-    "What should you fix first?",
-    "Which resume version should you send?",
+    "Which fixes should you select?",
+    "How will optimization tailor this resume?",
   ],
-  primaryNarrative: "Can you realistically clear this role?",
+  primaryNarrative: "Analyze fit → select fixes → optimize for this job",
   topStripStrong:
-    "Diagnose fit → fix elimination risks → optimize proof → download the version you send.",
+    "Analyze fit → select fixes → optimize summary and bullets → edit → download the version you send.",
   webAppName: "ResumeAtlas compare resume to job description",
   webAppDescription:
-    "Compare your resume to a job description: application verdict, unproven skills, elimination risks, and job-specific fixes before you apply.",
-  differentiatorHeading: "Apply readiness — before you waste time applying",
+    "Compare your resume to a job description: apply-readiness analysis, selectable fixes, and free job-specific optimization after sign-in.",
+  differentiatorHeading: "Analysis and optimization — not just keyword scores",
   differentiatorBody: [
-    "Most tools stop at keyword lists. ResumeAtlas evaluates whether your experience supports this specific role: application verdict, elimination risks, and which skills are proven in your bullets vs listed only.",
-    "Fix what you can honestly defend, leave gaps visible, then download the posting-specific file you send.",
+    "Most tools stop at keyword lists. ResumeAtlas gives an application verdict, elimination risks, skill proof map, and selectable recommended fixes — then optimizes a job-specific resume for the fixes you choose.",
+    "JD-tailored summary, listed-only skills proven in bullets, rejection fixes demonstrated with experience, impact quantification, editable preview, and PDF/DOCX download when you're ready to apply.",
   ],
   serpVariantsParagraph:
-    "People search compare resume to job description, resume match job description, ATS resume checker, resume keyword scanner, tailor resume to job description, and resume not getting interviews. This page delivers ATS score and keyword coverage, then shows application verdict, elimination risks, and fixes before you apply.",
-  howItWorksHeading: "Diagnose → fix → apply",
+    "People search compare resume to job description, resume optimizer, tailor resume to job description, ATS resume checker, and resume not getting interviews. This page delivers apply-readiness analysis and free job-specific optimization after sign-in — pay only to download.",
+  howItWorksHeading: "Analyze → optimize → download",
   whyMatchHeading: "Listed vs proven: why strong resumes still get rejected",
   resultsHeading: "What your scan shows",
 };

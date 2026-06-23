@@ -14,11 +14,14 @@ import {
   HOME_COMPARE_SECTION_DETAIL_LINK_PREFIX,
   HOME_COMPARE_SECTION_DETAIL_LINK_SUFFIX,
 } from "@/app/lib/homeMarketingContent";
+import { FREE_TIER_SCAN_TRUST } from "@/app/lib/productBenefits";
 
 const OUTCOME_BADGE_CLASSES = [
   "bg-indigo-100 text-indigo-800",
+  "bg-violet-100 text-violet-800",
   "bg-rose-100 text-rose-900",
   "bg-amber-100 text-amber-900",
+  "bg-sky-100 text-sky-900",
   "bg-emerald-100 text-emerald-900",
 ] as const;
 
@@ -83,15 +86,16 @@ export function HomeStep1PreviewSection() {
                 {CHECK_RESUME_AGAINST_JD_HERO_CTA}
               </Link>
               <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs font-medium text-slate-500 sm:text-sm lg:justify-start">
-                <span>✓ 100% free</span>
-                <span className="text-slate-300" aria-hidden>
-                  ·
-                </span>
-                <span>✓ Instant results</span>
-                <span className="text-slate-300" aria-hidden>
-                  ·
-                </span>
-                <span>✓ No signup</span>
+                {FREE_TIER_SCAN_TRUST.map((label, index) => (
+                  <span key={label} className="contents">
+                    {index > 0 ? (
+                      <span className="text-slate-300" aria-hidden>
+                        ·
+                      </span>
+                    ) : null}
+                    <span>✓ {label}</span>
+                  </span>
+                ))}
               </p>
               <p className="text-xs font-medium text-slate-500">
                 Paste-only · No file upload · Your data stays yours

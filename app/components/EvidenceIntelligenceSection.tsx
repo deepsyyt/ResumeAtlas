@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useMemo } from "react";
+import { ApplicationIntelligenceDashboard } from "@/app/components/ApplicationIntelligenceDashboard";
 import {
   ApplicationVerdictCard,
   AnimatedScoreBar,
@@ -15,7 +16,7 @@ import { SkillProofMapSection } from "@/app/components/SkillProofMapSection";
 import { OptimizeAlignCard } from "@/app/components/OptimizeAlignCard";
 import { AnalyzeMatchSummaryInsight } from "@/app/components/AnalyzeMatchSummaryInsight";
 import { computeApplicationVerdict } from "@/app/lib/applicationVerdict";
-import { SKILL_PROOF_MAP_TITLE, type KeywordCoverageMetricInput } from "@/app/lib/evidenceMetricCopy";
+import { SKILL_PROOF_MAP_TITLE, KEYWORD_COVERAGE_SCORE_TITLE, type KeywordCoverageMetricInput } from "@/app/lib/evidenceMetricCopy";
 import { resolveKeywordCoverageVerdict } from "@/app/lib/skillProofLlm";
 import type { ShareRecruiterReportArgs } from "@/app/lib/shareRecruiterReport";
 import type { BulletPreview } from "@/app/lib/atsAnalyze";
@@ -72,7 +73,8 @@ export function EvidenceIntelligenceSection({
   previewDepth,
 }: EvidenceIntelligenceSectionProps) {
   const depth = previewDepth ?? (heroPreview ? "hero" : "full");
-  const compact = previewCompact || depth === "topics" || depth === "toolScroll";
+  const useGridLayout = !heroPreview && depth !== "hero";
+  const compact = previewCompact || depth === "topics" || (!useGridLayout && depth === "toolScroll");
   const applicationVerdict = computeApplicationVerdict(dashboard);
   const recommendedFixes = useMemo(
     () => resolveDashboardRecommendedFixes(dashboard.riskAreas),
@@ -82,7 +84,7 @@ export function EvidenceIntelligenceSection({
   const subline = takeawaySubline;
   const showAtsCard = keywordCoverage != null;
   const scoreGridCols = showAtsCard ? "lg:grid-cols-2" : "";
-  const skillProofMaxRows = previewCompact ? 4 : undefined;
+  const skillProofMaxRows = useGridLayout ? undefined : previewCompact ? 4 : undefined;
   const roleFitRows =
     isDemo && previewCompact && dashboard.roleFit
       ? dashboard.roleFit.slice(0, 3)
@@ -90,24 +92,64 @@ export function EvidenceIntelligenceSection({
 
   const roleFitSection =
     roleFitRows.length > 0 ? (
-      <RoleFitVerdictSection rows={roleFitRows} compact={compact} className="mt-2" />
+      <RoleFitVerdictSection rows={roleFitRows} compact={compact || useGridLayout} className={useGridLayout ? "dashboard-grid-bottom-card mt-0 h-full !border-0 !pt-0" : "mt-2"} />
     ) : null;
 
   const hasRejectionRisks = (dashboard.mostMissingEvidence?.length ?? 0) > 0;
   const hasSkillProof = dashboard.skillProof.length > 0;
   const hasRecommendedFixes = recommendedFixes.length > 0;
   const showOptimizeCard = isDemo || !!onOptimize;
-  const useLiveActionLayout = !previewCompact;
+  const useLiveActionLayout = !previewCompact && !useGridLayout;
 
   const demoFixes = isDemo ? recommendedFixes : (selectedRecommendedFixes ?? []);
+
+  const optimizeAlignGaugeSection = showOptimizeCard ? (
+    <OptimizeAlignCard
+      verdict={applicationVerdict}
+      selectedFixes={demoFixes}
+      allFixes={recommendedFixes}
+      demo={isDemo}
+      splitSection="alignGauge"
+      className="min-w-0 h-full dashboard-kpi-card"
+    />
+  ) : null;
+
+  const optimizeBenefitsSection = showOptimizeCard ? (
+    <OptimizeAlignCard
+      verdict={applicationVerdict}
+      selectedFixes={demoFixes}
+      allFixes={recommendedFixes}
+      demo={isDemo}
+      splitSection="benefits"
+      className="min-w-0 h-full dashboard-benefits-sidebar"
+    />
+  ) : null;
+
+  const optimizePreviewActionSection = showOptimizeCard ? (
+    <OptimizeAlignCard
+      verdict={applicationVerdict}
+      selectedFixes={demoFixes}
+      allFixes={recommendedFixes}
+      bulletPreview={isDemo ? undefined : bulletPreview}
+      onOptimize={isDemo ? undefined : onOptimize}
+      disabled={isDemo ? true : optimizeDisabled}
+      busy={optimizeBusy}
+      demo={isDemo}
+      liveDashboard={!isDemo}
+      splitSection="previewAction"
+      className={useGridLayout ? "min-w-0 dashboard-grid-action-card dashboard-preview-card" : "min-w-0"}
+      uniformActionCard={useGridLayout}
+    />
+  ) : null;
 
   const rejectionRisksSection = hasRejectionRisks ? (
     <TopRejectionRisksSection
       items={dashboard.mostMissingEvidence ?? []}
       compact={compact}
-      className="min-w-0"
+      className={useGridLayout ? "min-w-0 dashboard-grid-action-card dashboard-risks-card" : "min-w-0"}
       showSelection={false}
-      variant={useLiveActionLayout ? "hero" : "default"}
+      uniformActionCard={useGridLayout}
+      variant={useGridLayout ? "hero" : useLiveActionLayout ? "hero" : "default"}
     />
   ) : null;
 
@@ -118,24 +160,37 @@ export function EvidenceIntelligenceSection({
       selectedFixes={isDemo ? undefined : (selectedRecommendedFixes ?? [])}
       onSelectionChange={isDemo ? undefined : onSelectedRecommendedFixesChange}
       demo={isDemo}
-      className="min-w-0"
+      className={useGridLayout ? "min-w-0 dashboard-grid-action-card dashboard-fixes-card" : "min-w-0"}
+      uniformActionCard={useGridLayout}
     />
   ) : null;
 
   const skillProofSection = hasSkillProof ? (
     <SkillProofMapSection
-      title={SKILL_PROOF_MAP_TITLE}
+      title={useGridLayout ? KEYWORD_COVERAGE_SCORE_TITLE : SKILL_PROOF_MAP_TITLE}
       rows={dashboard.skillProof}
       allRows={dashboard.skillProofAll ?? dashboard.skillProof}
       maxRows={skillProofMaxRows}
       parallelLayout={false}
-      variant={useLiveActionLayout ? "liveCompact" : "default"}
-      coverageSummary={useLiveActionLayout ? keywordCoverage : undefined}
-      collapsedByDefault={useLiveActionLayout}
+      variant={useGridLayout || useLiveActionLayout ? "liveCompact" : "default"}
+      coverageSummary={useGridLayout || useLiveActionLayout ? keywordCoverage : undefined}
+      collapsedByDefault={useGridLayout || useLiveActionLayout}
       showSelection={false}
-      className="mt-0"
+      className={useGridLayout ? "dashboard-grid-bottom-card mt-0 h-full" : "mt-0"}
     />
   ) : null;
+
+  const gridBottomRow =
+    hasSkillProof || roleFitRows.length > 0 ? (
+      <div className="dashboard-layer dashboard-layer--detail grid grid-cols-1 gap-5 lg:grid-cols-2 lg:items-stretch">
+        {hasSkillProof ? (
+          <div className="dashboard-grid-bottom-cell min-w-0">{skillProofSection}</div>
+        ) : null}
+        {roleFitRows.length > 0 ? (
+          <div className="dashboard-grid-bottom-cell min-w-0">{roleFitSection}</div>
+        ) : null}
+      </div>
+    ) : null;
 
   const optimizeAlignSection = showOptimizeCard ? (
     <OptimizeAlignCard
@@ -211,55 +266,72 @@ export function EvidenceIntelligenceSection({
   return (
     <div
       className={`${previewCompact ? "preview-dashboard-compact" : ""} ${
-        useLiveActionLayout && !isDemo ? "dashboard-live-stable" : ""
-      }`.trim() || undefined}
+        useGridLayout ? "dashboard-grid-layout dashboard-premium" : ""
+      } ${!useGridLayout && useLiveActionLayout && !isDemo ? "dashboard-live-stable" : ""}`.trim() || undefined}
     >
-      <div
-        className={`grid grid-cols-1 gap-2.5 ${scoreGridCols} items-stretch ${
-          compact ? "mt-1.5" : "mt-2"
-        }`}
-      >
-        <ApplicationVerdictCard verdict={applicationVerdict} className="h-full" />
-        {showAtsCard && keywordCoverage ? (
-          <KeywordCoverageScoreCard
-            score={keywordCoverage.score}
-            verdict={resolveKeywordCoverageVerdict(dashboard, keywordCoverage)}
-            className="h-full"
-          />
-        ) : null}
-      </div>
-
-      <div
-        className={`evidence-takeaway-insight flex items-start gap-2 rounded-lg transition-shadow hover:shadow-sm ${
-          compact ? "mt-1.5 px-2 py-1.5" : "mt-2 px-2.5 py-2"
-        }`}
-      >
-        <span
-          className="evidence-takeaway-insight-dot mt-0.5 h-2.5 w-2.5 shrink-0 rounded-full"
-          aria-hidden
+      {useGridLayout ? (
+        <ApplicationIntelligenceDashboard
+          dashboard={dashboard}
+          keywordCoverage={keywordCoverage}
+          isDemo={isDemo}
+          takeawayHeadline={takeawayHeadline}
+          shareReport={shareReport}
+          selectedRecommendedFixes={selectedRecommendedFixes}
+          onSelectedRecommendedFixesChange={onSelectedRecommendedFixesChange}
+          onOptimize={onOptimize}
+          optimizeDisabled={optimizeDisabled}
+          optimizeBusy={optimizeBusy}
         />
-        <div className="min-w-0">
-          <AnalyzeMatchSummaryInsight summary={headline} compact={compact} />
-          {subline ? (
-            <p className="mt-0.5 text-xs leading-snug text-slate-700">{subline}</p>
-          ) : null}
-        </div>
-      </div>
-
-      {actionPanelBlock}
-
-      {previewCompact ? (
-        scrollBelowFoldSection
       ) : (
         <>
-          {shareReport && !isDemo ? (
-            <ShareRecruiterReportCta
-              report={shareReport}
-              compact={compact}
-              className={compact ? "mt-1.5" : "mt-2"}
+          <div
+            className={`grid grid-cols-1 gap-2.5 ${scoreGridCols} items-stretch ${
+              compact ? "mt-1.5" : "mt-2"
+            }`}
+          >
+            <ApplicationVerdictCard verdict={applicationVerdict} className="h-full" />
+            {showAtsCard && keywordCoverage ? (
+              <KeywordCoverageScoreCard
+                score={keywordCoverage.score}
+                verdict={resolveKeywordCoverageVerdict(dashboard, keywordCoverage)}
+                className="h-full"
+              />
+            ) : null}
+          </div>
+
+          <div
+            className={`evidence-takeaway-insight flex items-start gap-2 rounded-lg transition-shadow hover:shadow-sm ${
+              compact ? "mt-1.5 px-2 py-1.5" : "mt-2 px-2.5 py-2"
+            }`}
+          >
+            <span
+              className="evidence-takeaway-insight-dot mt-0.5 h-2.5 w-2.5 shrink-0 rounded-full"
+              aria-hidden
             />
-          ) : null}
-          {roleFitSection}
+            <div className="min-w-0">
+              <AnalyzeMatchSummaryInsight summary={headline} compact={compact} />
+              {subline ? (
+                <p className="mt-0.5 text-xs leading-snug text-slate-700">{subline}</p>
+              ) : null}
+            </div>
+          </div>
+
+          {actionPanelBlock}
+
+          {previewCompact ? (
+            scrollBelowFoldSection
+          ) : (
+            <>
+              {shareReport && !isDemo ? (
+                <ShareRecruiterReportCta
+                  report={shareReport}
+                  compact={compact}
+                  className={compact ? "mt-1.5" : "mt-2"}
+                />
+              ) : null}
+              {roleFitSection}
+            </>
+          )}
         </>
       )}
     </div>

@@ -4,6 +4,13 @@ import { useForm, Controller } from "react-hook-form";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ShareFriendsCta } from "@/app/components/ShareFriendsCta";
+import {
+  WorkbenchPasteAnalyzeIcon,
+  WorkbenchPasteBrandHeader,
+  WorkbenchPasteQuotaCard,
+  WorkbenchPasteRejectionWhyCard,
+  WorkbenchPasteStepBadge,
+} from "@/app/components/postingFit/WorkbenchPasteFormChrome";
 import type { Resume } from "@/app/types/resume";
 import {
   CHECK_RESUME_AGAINST_JD_PRIMARY_CTA,
@@ -316,7 +323,9 @@ export function ResumeForm({
     }`;
   };
   const splitTextareaClass =
-    `h-40 min-h-40 max-h-40 w-full shrink-0 resize-none overflow-y-auto preview-panel-scroll rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 outline-none transition disabled:bg-slate-50 disabled:text-slate-500 ${accent.fieldFocus}`;
+    `w-full shrink-0 resize-none overflow-y-auto preview-panel-scroll rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 outline-none transition disabled:bg-slate-50 disabled:text-slate-500 focus:border-violet-300 focus:ring-2 focus:ring-violet-500/15`;
+  const splitResumeTextareaClass = `${splitTextareaClass} h-44 min-h-44 max-h-44`;
+  const splitJdTextareaClass = `${splitTextareaClass} h-32 min-h-32 max-h-32`;
   const textareaClass =
     `w-full rounded-xl border bg-white/95 px-3.5 py-3 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 ` +
     `shadow-inner shadow-slate-900/[0.02] outline-none transition disabled:bg-slate-50 disabled:text-slate-500 ${accent.fieldFocus}` +
@@ -329,17 +338,25 @@ export function ResumeForm({
   const shellClass = isWorkbench
     ? "relative overflow-hidden rounded-2xl bg-transparent"
     : splitPanelLayout
-      ? "relative flex flex-col bg-white"
+      ? "workbench-paste-form relative flex h-full min-h-0 flex-col overflow-y-auto overscroll-contain bg-white"
       : `relative overflow-hidden rounded-2xl border border-white/80 bg-white/95 shadow-lg ring-1 backdrop-blur-sm ${accent.shell}`;
 
   const headerClass = isWorkbench
     ? "px-0.5 pb-2"
     : splitPanelLayout
-      ? `shrink-0 border-b border-slate-100 px-4 py-2 sm:px-5`
+      ? "shrink-0 px-4 pt-4 pb-3 sm:px-5 sm:pt-5"
       : `border-b ${accent.divider} bg-gradient-to-br ${accent.header} px-3 py-2.5 sm:px-4 sm:py-3`;
 
-  const splitSectionTitleClass = "text-[13px] font-semibold tracking-tight text-slate-900";
-  const splitSectionDividerClass = "shrink-0 border-b border-slate-200/90 pb-2";
+  const splitSectionTitleClass = "text-sm font-bold tracking-tight text-slate-900";
+
+  const splitPanelSubmitLabel = isAtsCompliance
+    ? "Run ATS Check (Free)"
+    : isKeywordScanner
+      ? "Scan Keyword Gaps (Free)"
+      : "Analyze My Resume (Free)";
+
+  const splitPanelSubmitClass =
+    "workbench-paste-cta flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-3 text-sm font-semibold tracking-[-0.01em] text-white shadow-sm shadow-violet-600/20 transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-65";
 
   const submitClass =
     "flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r px-4 py-2.5 text-sm font-semibold tracking-[-0.01em] text-white shadow-sm transition " +
@@ -360,12 +377,10 @@ export function ResumeForm({
   };
 
   const formBodyClass = splitPanelLayout
-    ? "px-4 py-3 sm:px-5 sm:py-4"
+    ? "px-4 pb-4 sm:px-5 sm:pb-5"
     : "px-3 py-3 sm:px-4 sm:py-4";
 
-  const formClass = splitPanelLayout
-    ? "flex flex-col gap-5 pb-1"
-    : "space-y-3";
+  const formClass = splitPanelLayout ? "flex flex-col gap-4" : "space-y-3";
 
   const shareCard =
     isLoggedIn && showShareFriendsCta ? (
@@ -380,12 +395,12 @@ export function ResumeForm({
     `shadow-inner shadow-slate-900/[0.02] outline-none transition disabled:bg-slate-50 disabled:text-slate-500 ${accent.fieldFocus}` +
     (splitPanelLayout ? " rounded-lg border-slate-200 shadow-none" : " border-slate-200/70");
 
+  const splitPanelInputClass =
+    "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition disabled:bg-slate-50 disabled:text-slate-500 focus:border-violet-300 focus:ring-2 focus:ring-violet-500/15";
+
   const splitPanelTargetRole = showTargetRoleField ? (
-    <div className="flex shrink-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-2.5">
-      <label
-        className="shrink-0 text-[11px] font-medium text-slate-600"
-        htmlFor="resumeatlas-target-role"
-      >
+    <div className="flex shrink-0 flex-col gap-1.5">
+      <label className="text-xs font-semibold text-slate-800" htmlFor="resumeatlas-target-role">
         Role <span className="text-rose-600">*</span>
       </label>
       <input
@@ -398,13 +413,13 @@ export function ResumeForm({
         type="text"
         required
         maxLength={TARGET_ROLE_TITLE_MAX_CHARS}
-        className={`${targetRoleInputClass} min-w-0 flex-1 py-2`}
+        className={splitPanelInputClass}
         placeholder="e.g. Senior GenAI Engineering Manager"
         disabled={isGenerating}
         aria-invalid={errors.targetRoleTitle ? true : undefined}
       />
       {errors.targetRoleTitle ? (
-        <p className="text-[10px] font-medium text-rose-700 sm:col-span-2" role="alert">
+        <p className="text-[10px] font-medium text-rose-700" role="alert">
           {errors.targetRoleTitle.message}
         </p>
       ) : null}
@@ -622,7 +637,45 @@ export function ResumeForm({
       )}
 
       <header className={`${headerClass}${splitPanelLayout ? " shrink-0" : ""}`}>
-        {!isWorkbench ? (
+        {splitPanelLayout ? (
+          <>
+            <WorkbenchPasteBrandHeader planLabel={isLoggedIn ? "Member" : "Free Plan"} />
+            {quota != null && quota.limit > 0 ? (
+              <div className="mt-3">
+                <WorkbenchPasteQuotaCard
+                  scanRemaining={quota.remaining}
+                  scanLimit={quota.limit}
+                  creditRemaining={
+                    showCreditBalance && creditBalance ? creditBalance.remaining : undefined
+                  }
+                  creditTotal={
+                    showCreditBalance && creditBalance
+                      ? creditBalance.purchased > 0
+                        ? creditBalance.purchased
+                        : creditBalance.remaining
+                      : undefined
+                  }
+                  showLogin={!isLoggedIn}
+                  loginCopy={loginIntentCopy}
+                  loginCtaLabel={loginCtaLabel}
+                  onLogin={onLoginForMoreScans ? handleLoginForMoreScans : undefined}
+                  isLoggingIn={isLoggingInForMoreScans}
+                />
+              </div>
+            ) : showCreditBalance && creditBalance ? (
+              <div className="mt-3">
+                <WorkbenchPasteQuotaCard
+                  creditRemaining={creditBalance.remaining}
+                  creditTotal={
+                    creditBalance.purchased > 0
+                      ? creditBalance.purchased
+                      : creditBalance.remaining
+                  }
+                />
+              </div>
+            ) : null}
+          </>
+        ) : !isWorkbench ? (
           <>
             <div className={`flex flex-wrap items-center gap-x-2 gap-y-0.5${splitPanelLayout ? " text-left" : ""}`}>
               <p className={`text-[11px] font-bold tracking-[-0.01em] ${splitPanelLayout ? "text-slate-800" : accent.eyebrow}`}>
@@ -657,7 +710,7 @@ export function ResumeForm({
             </div>
           </>
         ) : null}
-        {quota != null && quota.limit > 0 ? (
+        {!splitPanelLayout && quota != null && quota.limit > 0 ? (
           <div
             className={
               (isWorkbench ? "mt-1.5 " : "mt-2 ") +
@@ -751,7 +804,7 @@ export function ResumeForm({
               </div>
             ) : null}
           </div>
-        ) : showCreditBalance && creditBalance ? (
+        ) : !splitPanelLayout && showCreditBalance && creditBalance ? (
           <div
             className={
               (isWorkbench ? "mt-1.5 " : "mt-2 ") +
@@ -796,8 +849,9 @@ export function ResumeForm({
         <form onSubmit={handleSubmit(onSubmit)} className={formClass}>
           <section className={pasteSectionClass(1)}>
             {splitPanelLayout ? (
-              <div className={splitSectionDividerClass}>
-                <h3 className={splitSectionTitleClass}>Your resume</h3>
+              <div className="flex items-center gap-2">
+                <WorkbenchPasteStepBadge step={1} />
+                <h3 className={splitSectionTitleClass}>Your Resume</h3>
               </div>
             ) : (
               <div className="mb-2.5 flex shrink-0 items-center justify-between gap-2">
@@ -824,7 +878,7 @@ export function ResumeForm({
                       <textarea
                         {...field}
                         id="resumeatlas-resume-text"
-                        className={splitTextareaClass}
+                        className={splitResumeTextareaClass}
                         placeholder="Paste your full resume here…"
                         disabled={isGenerating}
                         onChange={(e) => {
@@ -861,9 +915,10 @@ export function ResumeForm({
 
           <section className={pasteSectionClass(2)}>
             {splitPanelLayout ? (
-              <div className={splitSectionDividerClass}>
+              <div className="flex items-center gap-2">
+                <WorkbenchPasteStepBadge step={2} />
                 <h3 className={splitSectionTitleClass}>
-                  {isKeywordScanner ? "Job posting" : isAtsCompliance ? "Job description (optional)" : "Job description"}
+                  {isKeywordScanner ? "Job posting" : isAtsCompliance ? "Job description (optional)" : "Job Description"}
                 </h3>
               </div>
             ) : (
@@ -906,7 +961,7 @@ export function ResumeForm({
                       <textarea
                         {...field}
                         id="resumeatlas-jd-text"
-                        className={splitTextareaClass}
+                        className={splitJdTextareaClass}
                         placeholder={
                           isAtsCompliance
                             ? "Optional — add a job description for keyword alignment"
@@ -945,7 +1000,7 @@ export function ResumeForm({
                     <p className={`shrink-0 text-right ${splitPanelLayout ? "text-[10px]" : "mt-1.5"} ${wordCountClass(wc >= JOB_DESCRIPTION_MAX_WORDS)}`}>
                       {wc.toLocaleString()} / {JOB_DESCRIPTION_MAX_WORDS.toLocaleString()} words
                     </p>
-                    {showJdModeRejectionWhy ? (
+                    {!splitPanelLayout && showJdModeRejectionWhy ? (
                       <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-2.5">
                         <p className="text-[11px] font-semibold text-slate-900">
                           Why resumes get rejected
@@ -979,39 +1034,51 @@ export function ResumeForm({
             />
           </section>
 
-          <div className={splitPanelLayout ? "shrink-0 border-t border-slate-100 pt-4" : isWorkbench ? "pt-2" : "pt-3"}>
+          <div className={splitPanelLayout ? "shrink-0 pt-1" : isWorkbench ? "pt-2" : "pt-3"}>
             <button
               type="submit"
               data-analytics="analyzer_form_analyze_submit"
               disabled={isGenerating}
-              className={submitClass}
+              className={splitPanelLayout ? splitPanelSubmitClass : submitClass}
             >
-              <svg
-                aria-hidden
-                className="h-3.5 w-3.5 shrink-0 opacity-90"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              {splitPanelLayout ? (
+                <WorkbenchPasteAnalyzeIcon />
+              ) : (
+                <svg
+                  aria-hidden
+                  className="h-3.5 w-3.5 shrink-0 opacity-90"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
               <span className="whitespace-nowrap">
-                {isAtsCompliance
-                  ? "Run ATS check"
-                  : isKeywordScanner
-                    ? "Scan keyword gaps"
-                    : CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+                {splitPanelLayout
+                  ? splitPanelSubmitLabel
+                  : isAtsCompliance
+                    ? "Run ATS check"
+                    : isKeywordScanner
+                      ? "Scan keyword gaps"
+                      : CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
               </span>
             </button>
-            {!isWorkbench ? (
-              <p className="mt-1.5 text-center text-[10px] text-slate-500 sm:text-[11px]">
-                Results in seconds · no file upload · no account needed
+            {splitPanelLayout || !isWorkbench ? (
+              <p className="mt-2.5 text-center text-[10px] text-slate-500 sm:text-[11px]">
+                Results in seconds · No file upload · No account needed
               </p>
             ) : null}
           </div>
+
+          {splitPanelLayout && showJdModeRejectionWhy ? (
+            <div className="shrink-0 pt-3">
+              <WorkbenchPasteRejectionWhyCard />
+            </div>
+          ) : null}
         </form>
 
         {error && (

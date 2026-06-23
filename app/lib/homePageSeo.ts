@@ -5,12 +5,12 @@ import { getSiteUrl } from "@/app/lib/siteUrl";
 const siteBase = () => getSiteUrl().replace(/\/$/, "");
 const ogImage = () => `${siteBase()}/og-resume-checker.png`;
 
-/** Layer 1 SEO — search demand (compare, ATS, gaps). Layer 2 hero is apply-readiness (`HOME_MARKETING_H1`). */
+/** Layer 1 SEO — analysis + optimization. Layer 2 hero is apply-readiness + optimize (`HOME_MARKETING_H1`). */
 export const HOME_PAGE_TITLE_ABSOLUTE =
-  `Compare Resume to Job Description | ATS Score, Gaps & Apply Readiness${RESUME_ATLAS_TITLE_SUFFIX}`;
+  `Compare Resume to Job Description | Analyze Fit & Optimize Resume${RESUME_ATLAS_TITLE_SUFFIX}`;
 
 export const HOME_PAGE_DESCRIPTION =
-  "Compare your resume to a job description free. ATS score, keyword coverage, application verdict, rejection risks, and job-specific fixes before you apply. No signup required.";
+  "Compare your resume to a job description free. Application verdict, elimination risks, skill proof map, and selectable fixes — then free job-specific optimization after sign-in. Pay only to download PDF or DOCX.";
 
 export function buildHomeMarketingMetadata(): Metadata {
   const url = siteBase();
@@ -42,7 +42,7 @@ export function buildHomeMarketingMetadata(): Metadata {
           url: img,
           width: 1200,
           height: 630,
-          alt: "ResumeAtlas — compare resume to job description and check apply readiness",
+          alt: "ResumeAtlas — analyze resume fit and optimize for the job description",
         },
       ],
     },

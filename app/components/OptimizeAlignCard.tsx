@@ -24,11 +24,15 @@ import {
   OPTIMIZE_CTA_SUBLINE,
   LOGIN_NUDGE_HEADLINE,
   LOGIN_NUDGE_SUBHEAD,
+  LOGIN_NUDGE_SUBHEAD_SHORT,
   OPTIMIZE_NUDGE_EYEBROW,
   OPTIMIZE_NUDGE_HEADLINE,
   OPTIMIZE_NUDGE_SUBHEAD,
+  OPTIMIZE_NUDGE_SUBHEAD_SHORT,
   OPTIMIZE_NUDGE_URGENCY,
 } from "@/app/lib/evidenceMetricCopy";
+import { OPTIMIZATION_BENEFITS } from "@/app/lib/productBenefits";
+import { splitTextByStrictHighlights } from "@/app/lib/resumeTermMatch";
 import {
   extractFixHighlightKeywords,
   recommendedFixActionLabel,
@@ -61,16 +65,15 @@ type OptimizeAlignCardProps = {
   liveDashboard?: boolean;
   /** Modal copy variant for post-analysis vs post-login OAuth resume. */
   alignModalVariant?: "post_analysis" | "post_login";
+  /** Grid dashboard: render one slice of the hero card (align gauge, benefits, or preview + CTA). */
+  splitSection?: "alignGauge" | "benefits" | "previewAction";
+  uniformActionCard?: boolean;
 };
 
 function truncateLine(text: string, max = 120): string {
   const t = text.trim();
   if (t.length <= max) return t;
   return `${t.slice(0, max - 1).trim()}…`;
-}
-
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function highlightsFromFixes(fixes: RecommendedFix[]): string[] {
@@ -106,26 +109,19 @@ function buildSyntheticPreview(fixes: RecommendedFix[]): AlignBulletPreview | nu
 }
 
 function renderHighlightedAfter(text: string, highlights: string[]): ReactNode {
-  const patterns = [...highlights]
-    .filter((item) => item.trim().length > 0)
-    .sort((a, b) => b.length - a.length);
+  const terms = highlights.filter((item) => item.trim().length > 0);
+  if (terms.length === 0) return text;
 
-  if (patterns.length === 0) return text;
-
-  const regex = new RegExp(`(${patterns.map(escapeRegExp).join("|")}|\\d+%)`, "gi");
-  const parts = text.split(regex).filter((part) => part.length > 0);
-
-  return parts.map((part, index) => {
-    const isHighlight = patterns.some((pattern) => part.toLowerCase() === pattern.toLowerCase()) || /^\d+%$/.test(part);
-    if (isHighlight) {
-      return (
-        <span key={`${part}-${index}`} className="optimize-align-highlight">
-          {part}
-        </span>
-      );
-    }
-    return <span key={`${part}-${index}`}>{part}</span>;
-  });
+  const parts = splitTextByStrictHighlights(text, terms);
+  return parts.map((part, index) =>
+    index % 2 === 1 ? (
+      <span key={`${part}-${index}`} className="optimize-align-highlight">
+        {part}
+      </span>
+    ) : (
+      <span key={`${part}-${index}`}>{part}</span>
+    )
+  );
 }
 
 function SelectionPill({ label, delayMs = 0 }: { label: string; delayMs?: number }) {
@@ -174,6 +170,8 @@ export function OptimizeAlignCard({
   embedInModal = false,
   liveDashboard = false,
   alignModalVariant = "post_analysis",
+  splitSection,
+  uniformActionCard = false,
 }: OptimizeAlignCardProps) {
   const { shortlistPct, shortlistUplift } = verdict;
   const ctaDisabled = demo || disabled || busy || !onOptimize;
@@ -255,6 +253,185 @@ export function OptimizeAlignCard({
     embedInModal && alignModalVariant === "post_login"
       ? LOGIN_NUDGE_SUBHEAD
       : OPTIMIZE_NUDGE_SUBHEAD;
+
+  const previewBlock = showPreview && preview ? (
+    <div
+      key={`${preview.before}:${preview.after}`}
+      className={`${liveDashboard ? "" : "optimize-align-preview-in"} ${embedInModal ? "mt-1 space-y-1" : "mt-2 space-y-2"}`}
+    >
+      <div>
+        <p
+          className={`font-semibold uppercase tracking-wide ${
+            heroLayout || splitSection === "previewAction"
+              ? "text-[10px] text-violet-400"
+              : "text-[8px] text-slate-500"
+          }`}
+        >
+          {OPTIMIZE_ALIGN_BEFORE_LABEL}
+        </p>
+        <p
+          className={`leading-snug text-slate-800 ${
+            embedInModal ? "mt-0.5 text-[10px] line-clamp-2" : "mt-1 text-[11px]"
+          }`}
+        >
+          {truncateLine(preview.before, beforeTruncate)}
+        </p>
+      </div>
+      <div
+        className={`${
+          heroLayout || splitSection === "previewAction"
+            ? "border-t border-slate-200/80"
+            : "border-t border-emerald-200/60"
+        } ${embedInModal ? "pt-1" : "pt-2"}`}
+      >
+        <p
+          className={`font-semibold uppercase tracking-wide ${
+            heroLayout || splitSection === "previewAction"
+              ? "text-[10px] text-emerald-600"
+              : "text-[8px] text-emerald-700"
+          }`}
+        >
+          {heroLayout || splitSection === "previewAction" ? OPTIMIZE_ALIGN_AFTER_LABEL : "After"}
+        </p>
+        <p
+          className={`leading-snug text-slate-800 ${
+            embedInModal ? "mt-0.5 text-[10px] line-clamp-3" : "mt-1 text-[11px]"
+          }`}
+        >
+          {renderHighlightedAfter(truncateLine(preview.after, afterTruncate), preview.highlights ?? [])}
+        </p>
+      </div>
+    </div>
+  ) : (
+    <p className="mt-1 text-[10px] leading-snug text-slate-600">{OPTIMIZE_ALIGN_PREVIEW_PLACEHOLDER}</p>
+  );
+
+  if (splitSection === "alignGauge") {
+      return (
+      <div className={`score-row-card score-row-card--align dashboard-kpi-card flex h-full flex-col ${className}`}>
+        <p className="score-row-card-label">{OPTIMIZE_ALIGN_CARD_TITLE}</p>
+        <div className="score-row-card-visual">
+          <OptimizeAlignMetrics
+            currentPct={shortlistPct}
+            projectedPct={projectedShortlist}
+            uplift={selectedUplift}
+            compact
+            dashboardGrid
+            showRing={false}
+            className="w-full"
+          />
+        </div>
+        <div className="score-row-card-footer space-y-0.5">
+          <p className="line-clamp-2 text-[9px] font-semibold leading-snug text-slate-900">
+            Estimated shortlist odds
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (splitSection === "benefits") {
+    return (
+      <div className={`score-row-card dashboard-benefits-card flex h-full flex-col ${className}`}>
+        <p className="score-row-card-label">{OPTIMIZE_ALIGN_BENEFITS_TITLE}</p>
+        <ul className="relative z-[1] mt-2 flex-1 space-y-2">
+          {OPTIMIZATION_BENEFITS.map((benefit) => (
+            <li key={benefit.label} className="flex items-start gap-1.5 text-left">
+              <BenefitCheckIcon compact />
+              <span className="min-w-0">
+                <span className="block text-[10px] font-semibold leading-snug text-slate-900">
+                  {benefit.label}
+                </span>
+                <span className="mt-0.5 block text-[9px] leading-snug text-slate-600">{benefit.body}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  if (splitSection === "previewAction") {
+    if (uniformActionCard) {
+      return (
+        <div
+          className={`dashboard-preview-action-card dashboard-preview-split flex h-full min-w-0 flex-col overflow-hidden ${className}`}
+        >
+          <div className="dashboard-action-card-head dashboard-action-card-head--preview shrink-0">
+            <p className="dashboard-action-card-title dashboard-action-card-title--preview">
+              {OPTIMIZE_ALIGN_PREVIEW_TITLE}
+            </p>
+          </div>
+          <div className="dashboard-action-card-body dashboard-preview-body flex min-h-0 flex-1 flex-col px-5 pb-5 pt-4">
+            <div className="dashboard-preview-compare optimize-align-preview-card flex-1 transition-colors duration-300">
+              {previewBlock}
+            </div>
+            <div className="dashboard-preview-cta-zone mt-5 space-y-3 pt-1">
+              {!demo && disabled ? (
+                <p className="text-center text-[10px] text-amber-800/90">{OPTIMIZE_ALIGN_CARD_HINT}</p>
+              ) : null}
+              <OptimizeCta
+                onClick={() => onOptimize?.()}
+                size="lg"
+                disabled={ctaDisabled}
+                className="w-full"
+                variant="purple"
+                showSparkle
+                steadyChevrons={liveDashboard}
+              >
+                {busy ? "Starting…" : OPTIMIZE_CTA_LABEL_HERO}
+              </OptimizeCta>
+              <p className="text-center text-[10px] leading-snug text-slate-500">
+                Apply selected fixes &amp; see your improved resume
+              </p>
+              <p className="optimize-align-privacy-note">
+                <svg viewBox="0 0 16 16" className="h-3 w-3 shrink-0" fill="currentColor" aria-hidden>
+                  <path d="M8 1a3 3 0 0 0-3 3v2H4a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1V4a3 3 0 0 0-3-3zm1 5H7V4a1 1 0 1 1 2 0v2z" />
+                </svg>
+                {OPTIMIZE_ALIGN_PRIVACY_NOTE}
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className={`dashboard-preview-action-card flex h-full min-w-0 flex-col rounded-xl border border-violet-200/90 bg-white p-3 shadow-sm ring-1 ring-violet-100/60 ${className}`}
+      >
+        <p className="text-xs font-bold text-slate-900">{OPTIMIZE_ALIGN_PREVIEW_TITLE}</p>
+        <div className="optimize-align-preview-card mt-2 flex-1 transition-colors duration-300">
+          {previewBlock}
+        </div>
+        <div className="mt-auto space-y-2.5 pt-3">
+          {!demo && disabled ? (
+            <p className="text-center text-[10px] text-amber-800/90">{OPTIMIZE_ALIGN_CARD_HINT}</p>
+          ) : null}
+          <OptimizeCta
+            onClick={() => onOptimize?.()}
+            size="lg"
+            disabled={ctaDisabled}
+            className="w-full"
+            variant="purple"
+            showSparkle
+            steadyChevrons={liveDashboard}
+          >
+            {busy ? "Starting…" : OPTIMIZE_CTA_LABEL_HERO}
+          </OptimizeCta>
+          <p className="text-center text-[10px] leading-snug text-slate-500">
+            Apply selected fixes &amp; see your improved resume
+          </p>
+          <p className="optimize-align-privacy-note">
+            <svg viewBox="0 0 16 16" className="h-3 w-3 shrink-0" fill="currentColor" aria-hidden>
+              <path d="M8 1a3 3 0 0 0-3 3v2H4a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1V4a3 3 0 0 0-3-3zm1 5H7V4a1 1 0 1 1 2 0v2z" />
+            </svg>
+            {OPTIMIZE_ALIGN_PRIVACY_NOTE}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={shellClass}>
@@ -370,53 +547,7 @@ export function OptimizeAlignCard({
         >
           {OPTIMIZE_ALIGN_PREVIEW_TITLE}
         </p>
-        {showPreview && preview ? (
-          <div
-            key={`${preview.before}:${preview.after}`}
-            className={`${liveDashboard ? "" : "optimize-align-preview-in"} ${embedInModal ? "mt-1 space-y-1" : "mt-2 space-y-2"}`}
-          >
-            <div>
-              <p
-                className={`font-semibold uppercase tracking-wide ${
-                  heroLayout ? "text-[10px] text-violet-400" : "text-[8px] text-slate-500"
-                }`}
-              >
-                {OPTIMIZE_ALIGN_BEFORE_LABEL}
-              </p>
-              <p
-                className={`leading-snug text-slate-800 ${
-                  embedInModal ? "mt-0.5 text-[10px] line-clamp-2" : "mt-1 text-[11px]"
-                }`}
-              >
-                {truncateLine(preview.before, beforeTruncate)}
-              </p>
-            </div>
-            <div
-              className={`${
-                heroLayout ? "border-t border-slate-200/80" : "border-t border-emerald-200/60"
-              } ${embedInModal ? "pt-1" : "pt-2"}`}
-            >
-              <p
-                className={`font-semibold uppercase tracking-wide ${
-                  heroLayout ? "text-[10px] text-emerald-600" : "text-[8px] text-emerald-700"
-                }`}
-              >
-                {heroLayout ? OPTIMIZE_ALIGN_AFTER_LABEL : "After"}
-              </p>
-              <p
-                className={`leading-snug text-slate-800 ${
-                  embedInModal ? "mt-0.5 text-[10px] line-clamp-3" : "mt-1 text-[11px]"
-                }`}
-              >
-                {renderHighlightedAfter(truncateLine(preview.after, afterTruncate), preview.highlights ?? [])}
-              </p>
-            </div>
-          </div>
-        ) : (
-          <p className="mt-1 text-[10px] leading-snug text-slate-600">
-            {OPTIMIZE_ALIGN_PREVIEW_PLACEHOLDER}
-          </p>
-        )}
+        {previewBlock}
       </div>
       ) : null}
 

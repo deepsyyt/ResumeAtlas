@@ -45,6 +45,8 @@ export function resolveProblemInterviewCallout(
   }
   if (
     p === "/ats-score-vs-real-job-fit" ||
+    p === "/what-jobs-should-i-apply-for" ||
+    p === "/why-ats-score-is-high-but-no-interviews" ||
     p === "/skills-listed-but-not-proven-on-resume" ||
     p === "/already-have-the-skills-but-not-getting-interviews" ||
     p === "/how-recruiters-evaluate-resumes"

@@ -14,22 +14,22 @@ export function rejectionRiskRowCopy(item: string): RejectionRiskRow {
 
   if (lower.includes("aws") || lower.includes("mentioned but not proven")) {
     return {
-      headline: /aws/i.test(trimmed) ? trimmed : "AWS mentioned but not proven",
+      headline: "AWS experience not proven",
       description: "Recruiters look for hands-on proof, not just mentions.",
     };
   }
 
   if (lower.includes("genai") || lower.includes("llm") || lower.includes("quantif")) {
     return {
-      headline: trimmed,
+      headline: /genai/i.test(trimmed) ? "GenAI impact not quantified" : trimmed,
       description: "Impact metrics help recruiters assess seniority quickly.",
     };
   }
 
   if (lower.includes("eval") || lower.includes("experiment")) {
     return {
-      headline: trimmed,
-      description: "Experiment rigor is a differentiator for ML/AI roles.",
+      headline: "Evaluation experience missing",
+      description: "ML/AI evaluation rigor is a key differentiator.",
     };
   }
 

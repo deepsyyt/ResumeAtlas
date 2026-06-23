@@ -18,17 +18,17 @@ import {
 } from "@/app/lib/scoreColors";
 import { buildKeywordScannerResultsData } from "@/app/lib/keywordScannerResults";
 import { KeywordScannerResultsPanel } from "@/app/components/KeywordScannerResultsPanel";
-import {
-  canShareRecruiterReport,
-  type ShareRecruiterReportArgs,
-} from "@/app/lib/shareRecruiterReport";
-import { buildKeywordCoverageMetricInput } from "@/app/lib/evidenceMetricCopy";
-import { buildKeywordCoverageMetricFromSkillProof } from "@/app/lib/skillProofLlm";
+import { DashboardContent } from "@/app/components/DashboardContent";
+import { WorkbenchDashboardPreviewShell } from "@/app/components/postingFit/WorkbenchDashboardPreviewShell";
+import { resolveDashboardContentData } from "@/app/lib/dashboardContentData";
 import { EvidenceIntelligenceSection } from "@/app/components/EvidenceIntelligenceSection";
 import type { RecommendedFix } from "@/app/lib/recommendedFixes";
 import type { OptimizationClickSurface } from "@/app/lib/analyticsEvents";
 import { AnalysisPreviewIntroBanner } from "@/app/components/postingFit/AnalysisPreviewIntroBanner";
 import { AnimatedIntelligenceDashboardPreview } from "@/app/components/postingFit/AnimatedIntelligenceDashboardPreview";
+import { buildKeywordCoverageMetricInput } from "@/app/lib/evidenceMetricCopy";
+import { buildKeywordCoverageMetricFromSkillProof } from "@/app/lib/skillProofLlm";
+import { canShareRecruiterReport } from "@/app/lib/shareRecruiterReport";
 
 type IntelligencePanelProps = {
   analyzeResult: ATSAnalyzeResult | null;
@@ -63,6 +63,97 @@ type IntelligencePanelProps = {
   optimizeBusy?: boolean;
 };
 
+function WorkbenchAtsOnlyCard({
+  analyzeResult,
+  analysisUsedJobDescription,
+  isKeywordScanner,
+}: {
+  analyzeResult: ATSAnalyzeResult;
+  analysisUsedJobDescription: boolean;
+  isKeywordScanner: boolean;
+}) {
+  const atsScore = analyzeResult.ats_score ?? 0;
+  const atsStyle = getScoreStyle(atsScore);
+  const atsRingHex = getATSRingHex(atsScore);
+  const atsVerdict = getATSVerdictLines(atsScore);
+
+  return (
+    <div className="flex flex-col overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-xl shadow-black/25 ring-1 ring-slate-900/[0.04]">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-slate-100 px-2.5 py-2 sm:px-3">
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <h2 className="intelligence-panel-title">
+            {isKeywordScanner ? "Keyword scan" : "Intelligence"}
+          </h2>
+          <p className="intelligence-panel-subtitle truncate">
+            {isKeywordScanner
+              ? "Keyword gaps vs this posting"
+              : analysisUsedJobDescription
+                ? "Application verdict, elimination risks, and recommended fixes"
+                : "Resume formatting snapshot"}
+          </p>
+        </div>
+        <span className="intelligence-result-badge inline-flex shrink-0 items-center rounded-full">
+          Your result
+        </span>
+      </div>
+
+      <div className="px-2.5 pb-4 pt-1.5 sm:px-3 sm:pb-5 sm:pt-2">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full"
+              style={{ backgroundColor: atsStyle.bgHex }}
+            >
+              <div
+                className="absolute inset-0 rounded-full border-[3px]"
+                style={{ borderColor: atsRingHex }}
+              />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-white shadow-sm">
+                <span className="text-xl font-bold text-slate-900 tabular-nums">{atsScore}%</span>
+              </div>
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-slate-900">ATS readability</p>
+              <p
+                className="mt-0.5 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold"
+                style={{
+                  color: atsStyle.hex,
+                  backgroundColor: atsStyle.bgHex,
+                  borderColor: atsStyle.hex,
+                }}
+              >
+                {getATSBadgeLabel(atsScore)}
+              </p>
+            </div>
+          </div>
+          <div
+            className="flex items-start gap-2 rounded-lg border px-2.5 py-2"
+            style={{ backgroundColor: atsStyle.bgHex, borderColor: atsStyle.hex }}
+          >
+            <span
+              className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
+              style={{ backgroundColor: atsStyle.hex }}
+              aria-hidden
+            />
+            <div className="min-w-0">
+              <p className="text-xs font-semibold leading-snug text-slate-900">{atsVerdict.headline}</p>
+              <p className="mt-0.5 text-[11px] leading-snug text-slate-700">{atsVerdict.subline}</p>
+            </div>
+          </div>
+          {!analysisUsedJobDescription ? (
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"
+            >
+              {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
+            </Link>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function IntelligencePanel({
   analyzeResult,
   showFullIntelligence = true,
@@ -90,15 +181,14 @@ export function IntelligencePanel({
   const elevatedEmptyClass = previewSurface
     ? "flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-transparent"
     : "flex min-h-[min(70vh,34rem)] flex-1 flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm ring-1 ring-slate-900/[0.05]";
-  const compactToolResultShellClass = previewSurface
-    ? "flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-xl bg-transparent"
-    : "flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm ring-1 ring-slate-900/[0.05]";
   const hasAny = !!analyzeResult;
   const emptyAts = emptyStateVariant === "ats";
   const compactEmptyTitle = emptyAts
     ? "Your ATS report appears here"
     : "Your analysis report appears here";
   const isKeywordScanner = panelVariant === "keywordScanner";
+  const useWorkbenchDashboard =
+    previewSurface && !isKeywordScanner && (compactToolEmpty || compactToolResult || compactHomeEmpty);
 
   if (showLocked) {
     return (
@@ -127,6 +217,55 @@ export function IntelligencePanel({
           </div>
         </div>
       </section>
+    );
+  }
+
+  if (useWorkbenchDashboard) {
+    const hint =
+      compactEmptyHint ??
+      (compactHomeEmpty
+        ? "Paste on the left and run a check. Your scores replace the sample readout above."
+        : emptyAts
+          ? "Paste your resume on the left and run a free ATS check."
+          : "Paste resume and job description on the left, then see your application verdict and what to fix.");
+
+    const hasEvidenceDashboard = !!(
+      analyzeResult?.evidence_dashboard && analysisUsedJobDescription
+    );
+    const isAtsOnlyResult = hasAny && !hasEvidenceDashboard;
+
+    if (isAtsOnlyResult && analyzeResult) {
+      return (
+        <section className="w-full" aria-label="Your analysis report">
+          <WorkbenchDashboardPreviewShell>
+            <WorkbenchAtsOnlyCard
+              analyzeResult={analyzeResult}
+              analysisUsedJobDescription={analysisUsedJobDescription}
+              isKeywordScanner={isKeywordScanner}
+            />
+          </WorkbenchDashboardPreviewShell>
+        </section>
+      );
+    }
+
+    const dashboardData = resolveDashboardContentData(analyzeResult, analysisUsedJobDescription);
+    const showLiveOptimize = hasEvidenceDashboard && !!onOpenOptimizer;
+
+    return (
+      <DashboardContent
+        data={dashboardData}
+        variant="workbench"
+        isAnalyzing={isAnalyzing && !hasAny}
+        hint={!hasAny ? hint : undefined}
+        hideFooter={!!hasAny}
+        selectedRecommendedFixes={selectedRecommendedFixes}
+        onSelectedRecommendedFixesChange={onSelectedRecommendedFixesChange}
+        onOptimize={
+          showLiveOptimize ? () => onOpenOptimizer!("intelligence_panel") : undefined
+        }
+        optimizeDisabled={optimizeDisabled}
+        optimizeBusy={optimizeBusy}
+      />
     );
   }
 
@@ -167,31 +306,10 @@ export function IntelligencePanel({
         );
       }
 
-      if (previewSurface) {
-        return (
-          <section
-            className={`mx-auto flex w-full min-w-0 flex-1 flex-col pb-2 sm:pb-3 ${
-              isAnalyzing ? "h-full min-h-full" : ""
-            }`}
-            aria-label={compactEmptyTitle}
-          >
-            <div className={`flex w-full flex-col ${isAnalyzing ? "min-h-0 flex-1" : ""}`}>
-              <AnimatedIntelligenceDashboardPreview
-                isAnalyzing={isAnalyzing}
-                previewVariant="fullDashboard"
-              />
-            </div>
-          </section>
-        );
-      }
-
       return (
         <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden">
           <div className="shrink-0 border-b border-slate-100 px-2 pt-2 pb-2 sm:px-3 sm:pt-2.5">
-            <AnalysisPreviewIntroBanner
-              isAnalyzing={isAnalyzing}
-              darkSurface={false}
-            />
+            <AnalysisPreviewIntroBanner isAnalyzing={isAnalyzing} darkSurface={false} />
           </div>
           <section className={`${elevatedEmptyClass} flex min-h-0 flex-1 flex-col`} aria-label={compactEmptyTitle}>
             <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden p-2 pt-0 sm:p-2.5 sm:pt-0">
@@ -270,129 +388,23 @@ export function IntelligencePanel({
   const atsStyle = getScoreStyle(atsScore);
   const atsRingHex = getATSRingHex(atsScore);
   const atsVerdict = getATSVerdictLines(atsScore);
-  const shareRecruiterReport: ShareRecruiterReportArgs | null =
-    analyzeResult &&
-    evidenceDashboard &&
-    canShareRecruiterReport(analyzeResult, evidenceDashboard, analysisUsedJobDescription)
-      ? {
-          analyzeResult,
-          evidenceDashboard,
-        }
-      : null;
-  const keywordCoverageMetric =
-    buildKeywordCoverageMetricFromSkillProof(
-      evidenceDashboard?.skillProofAll ?? evidenceDashboard?.skillProof
-    ) ??
-    buildKeywordCoverageMetricInput({
-      score: keywordCoverageRaw,
-      matchedSkills,
-      missingSkills,
-    });
 
-  if (compactToolResult && previewSurface) {
+  if (isKeywordScanner && keywordScannerData && previewSurface) {
     return (
-      <section className={`${compactToolResultShellClass} h-full w-full`} aria-label="Your analysis report">
-        <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden p-2 sm:p-2.5">
-          <div className="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-            <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-xl shadow-black/25 ring-1 ring-slate-900/[0.04]">
-              <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-slate-100 px-2.5 py-2 sm:px-3">
-                <div className="flex min-w-0 flex-col gap-0.5">
-                  <h2 className="intelligence-panel-title">
-                    {isKeywordScanner ? "Keyword scan" : "Intelligence"}
-                  </h2>
-                  <p className="intelligence-panel-subtitle truncate">
-                    {isKeywordScanner
-                      ? "Keyword gaps vs this posting"
-                      : analysisUsedJobDescription
-                        ? "Application verdict, elimination risks, and recommended fixes"
-                        : "Resume formatting snapshot"}
-                  </p>
-                </div>
-                <span className="intelligence-result-badge inline-flex shrink-0 items-center rounded-full">
-                  Your result
-                </span>
+      <section className="w-full" aria-label="Your analysis report">
+        <div className="workbench-preview-mockup w-full">
+          <div className="flex flex-col overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-xl shadow-black/25 ring-1 ring-slate-900/[0.04]">
+            <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-slate-100 px-2.5 py-2 sm:px-3">
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <h2 className="intelligence-panel-title">Keyword scan</h2>
+                <p className="intelligence-panel-subtitle truncate">Keyword gaps vs this posting</p>
               </div>
-
-              <div className="preview-panel-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 pb-4 pt-1.5 sm:px-3 sm:pb-5 sm:pt-2">
-                {isKeywordScanner && keywordScannerData ? (
-                  <KeywordScannerResultsPanel data={keywordScannerData} compact />
-                ) : evidenceDashboard && analysisUsedJobDescription ? (
-                  <>
-                    <EvidenceIntelligenceSection
-                      dashboard={evidenceDashboard}
-                      keywordCoverage={keywordCoverageMetric}
-                      bulletPreview={analyzeResult?.bullet_preview ?? undefined}
-                      shareReport={shareRecruiterReport}
-                      takeawayHeadline={analyzeResult?.summary}
-                      selectedRecommendedFixes={selectedRecommendedFixes}
-                      onSelectedRecommendedFixesChange={onSelectedRecommendedFixesChange}
-                      onOptimize={
-                        onOpenOptimizer ? () => onOpenOptimizer("intelligence_panel") : undefined
-                      }
-                      optimizeDisabled={optimizeDisabled}
-                      optimizeBusy={optimizeBusy}
-                    />
-                  </>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full"
-                        style={{ backgroundColor: atsStyle.bgHex }}
-                      >
-                        <div
-                          className="absolute inset-0 rounded-full border-[3px]"
-                          style={{ borderColor: atsRingHex }}
-                        />
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-white shadow-sm">
-                          <span className="text-xl font-bold text-slate-900 tabular-nums">
-                            {atsScore}%
-                          </span>
-                        </div>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-slate-900">ATS readability</p>
-                        <p
-                          className="mt-0.5 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold"
-                          style={{
-                            color: atsStyle.hex,
-                            backgroundColor: atsStyle.bgHex,
-                            borderColor: atsStyle.hex,
-                          }}
-                        >
-                          {getATSBadgeLabel(atsScore)}
-                        </p>
-                      </div>
-                    </div>
-                    <div
-                      className="flex items-start gap-2 rounded-lg border px-2.5 py-2"
-                      style={{ backgroundColor: atsStyle.bgHex, borderColor: atsStyle.hex }}
-                    >
-                      <span
-                        className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
-                        style={{ backgroundColor: atsStyle.hex }}
-                        aria-hidden
-                      />
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold leading-snug text-slate-900">
-                          {atsVerdict.headline}
-                        </p>
-                        <p className="mt-0.5 text-[11px] leading-snug text-slate-700">
-                          {atsVerdict.subline}
-                        </p>
-                      </div>
-                    </div>
-                    {!analysisUsedJobDescription ? (
-                      <Link
-                        href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
-                        className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"
-                      >
-                        {CHECK_RESUME_AGAINST_JD_PRIMARY_CTA}
-                      </Link>
-                    ) : null}
-                  </div>
-                )}
-              </div>
+              <span className="intelligence-result-badge inline-flex shrink-0 items-center rounded-full">
+                Your result
+              </span>
+            </div>
+            <div className="px-2.5 pb-4 pt-1.5 sm:px-3 sm:pb-5 sm:pt-2">
+              <KeywordScannerResultsPanel data={keywordScannerData} compact />
             </div>
           </div>
         </div>
@@ -430,9 +442,26 @@ export function IntelligencePanel({
       {evidenceDashboard && analysisUsedJobDescription && !isKeywordScanner ? (
         <EvidenceIntelligenceSection
           dashboard={evidenceDashboard}
-          keywordCoverage={keywordCoverageMetric}
+          keywordCoverage={
+            buildKeywordCoverageMetricFromSkillProof(
+              evidenceDashboard.skillProofAll ?? evidenceDashboard.skillProof
+            ) ??
+            buildKeywordCoverageMetricInput({
+              score: keywordCoverageRaw,
+              matchedSkills,
+              missingSkills,
+            })
+          }
           bulletPreview={analyzeResult?.bullet_preview ?? undefined}
-          shareReport={shareRecruiterReport}
+          shareReport={
+            canShareRecruiterReport(analyzeResult, evidenceDashboard, analysisUsedJobDescription)
+              ? {
+                  analyzeResult,
+                  evidenceDashboard,
+                  selectedRecommendedFixes,
+                }
+              : null
+          }
           takeawayHeadline={analyzeResult?.summary}
           selectedRecommendedFixes={selectedRecommendedFixes}
           onSelectedRecommendedFixesChange={onSelectedRecommendedFixesChange}
@@ -520,4 +549,3 @@ export function IntelligencePanel({
     </section>
   );
 }
-

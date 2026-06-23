@@ -854,6 +854,76 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: "/which-jobs-am-i-qualified-for",
+        destination: "/what-jobs-should-i-apply-for",
+        permanent: true,
+      },
+      {
+        source: "/which-jobs-am-i-qualified-for/",
+        destination: "/what-jobs-should-i-apply-for",
+        permanent: true,
+      },
+      {
+        source: "/what-roles-fit-my-resume",
+        destination: "/what-jobs-should-i-apply-for",
+        permanent: true,
+      },
+      {
+        source: "/what-roles-fit-my-resume/",
+        destination: "/what-jobs-should-i-apply-for",
+        permanent: true,
+      },
+      {
+        source: "/best-jobs-based-on-my-resume",
+        destination: "/what-jobs-should-i-apply-for",
+        permanent: true,
+      },
+      {
+        source: "/best-jobs-based-on-my-resume/",
+        destination: "/what-jobs-should-i-apply-for",
+        permanent: true,
+      },
+      {
+        source: "/am-i-applying-for-the-wrong-jobs",
+        destination: "/what-jobs-should-i-apply-for",
+        permanent: true,
+      },
+      {
+        source: "/am-i-applying-for-the-wrong-jobs/",
+        destination: "/what-jobs-should-i-apply-for",
+        permanent: true,
+      },
+      {
+        source: "/high-ats-score-no-interviews",
+        destination: "/why-ats-score-is-high-but-no-interviews",
+        permanent: true,
+      },
+      {
+        source: "/high-ats-score-no-interviews/",
+        destination: "/why-ats-score-is-high-but-no-interviews",
+        permanent: true,
+      },
+      {
+        source: "/good-ats-score-no-interviews",
+        destination: "/why-ats-score-is-high-but-no-interviews",
+        permanent: true,
+      },
+      {
+        source: "/good-ats-score-no-interviews/",
+        destination: "/why-ats-score-is-high-but-no-interviews",
+        permanent: true,
+      },
+      {
+        source: "/ats-score-high-but-no-interviews",
+        destination: "/why-ats-score-is-high-but-no-interviews",
+        permanent: true,
+      },
+      {
+        source: "/ats-score-high-but-no-interviews/",
+        destination: "/why-ats-score-is-high-but-no-interviews",
+        permanent: true,
+      },
+      {
         source: "/sitemap-resume.xml",
         destination: "/sitemap.xml",
         permanent: true,

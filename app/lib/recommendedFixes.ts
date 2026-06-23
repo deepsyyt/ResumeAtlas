@@ -737,43 +737,21 @@ export function resolveDashboardRecommendedFixes(raw: unknown): RecommendedFix[]
   return dedupeRecommendedFixes(normalizeRecommendedFixes(raw));
 }
 
-/** Terms to highlight in preview for selected recommended fixes. */
+/** Terms to highlight in preview for selected recommended fixes (technical / JD-facing only). */
 export function extractFixHighlightKeywords(fixes: Array<RecommendedFix | string>): string[] {
   const out = new Set<string>();
 
   for (const item of fixes) {
     const fix = typeof item === "string" ? legacyStringToRecommendedFix(item) : item;
     if (!fix) continue;
+
+    for (const chip of extractFixDisplayChips(fix, 5)) {
+      out.add(chip);
+    }
+
     const trimmed = recommendedFixToOptimizeText(fix);
-
-    const quoted = trimmed.match(/["']([^"']{2,48})["']/g);
-    if (quoted) {
-      for (const raw of quoted) {
-        const inner = raw.slice(1, -1).trim();
-        if (inner) out.add(inner);
-      }
-    }
-
-    if (fix.target?.trim()) out.add(fix.target.trim());
-
-    const caps = trimmed.match(/\b([A-Z][a-zA-Z0-9+#/.-]{1,28}|[A-Z]{2,})\b/g);
-    if (caps) {
-      for (const token of caps) {
-        if (token.length >= 2 && !FIX_KEYWORD_STOP.has(token.toLowerCase())) {
-          out.add(token);
-        }
-      }
-    }
-
-    const percents = trimmed.match(/\d+(?:\.\d+)?%/g);
-    if (percents) {
-      for (const pct of percents) out.add(pct);
-    }
-
-    for (const token of rejectionRiskThemeTokens(trimmed)) {
-      if (token.length >= 3 && !FIX_KEYWORD_STOP.has(token.toLowerCase())) {
-        out.add(token);
-      }
+    for (const pct of trimmed.match(/\d+(?:\.\d+)?%/g) ?? []) {
+      out.add(pct);
     }
 
     const chipLower = recommendedFixActionLabel(fix).toLowerCase();

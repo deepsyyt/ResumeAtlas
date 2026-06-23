@@ -1,8 +1,4 @@
-import {
-  postingFitWebApplicationJsonLd,
-  postingFitWorkbenchBreadcrumbJsonLd,
-} from "@/app/lib/postingFitJsonLd";
-import { CLUSTER_JD_MATCH_TOOL_COPY } from "@/app/lib/canonicalIntentClusters";
+import { postingFitWebApplicationJsonLd, postingFitWorkbenchBreadcrumbJsonLd } from "@/app/lib/postingFitJsonLd";
 import { TOOL_CLUSTER_PRIMARY } from "@/app/lib/toolClusterPages";
 
 /**
@@ -17,8 +13,6 @@ export function JdWorkbenchPageChrome() {
   const eyebrow = TOOL_CLUSTER_PRIMARY.heroEyebrow;
   const pageH1 = TOOL_CLUSTER_PRIMARY.heroH1 ?? TOOL_CLUSTER_PRIMARY.h1;
   const intro = TOOL_CLUSTER_PRIMARY.heroIntro ?? TOOL_CLUSTER_PRIMARY.intro;
-  const heroShowLabel = CLUSTER_JD_MATCH_TOOL_COPY.heroShowLabel;
-  const heroBullets = CLUSTER_JD_MATCH_TOOL_COPY.heroBullets ?? [];
 
   return (
     <>
@@ -49,25 +43,6 @@ export function JdWorkbenchPageChrome() {
           <p className="mx-auto mt-1 max-w-2xl text-pretty text-[13px] leading-snug text-slate-600 sm:mx-0 sm:text-sm">
             {intro}
           </p>
-          {heroBullets.length > 0 ? (
-            <>
-              {heroShowLabel ? (
-                <p className="mx-auto mt-2 max-w-2xl text-[11px] font-medium text-slate-700 sm:mx-0 sm:text-xs">
-                  {heroShowLabel}
-                </p>
-              ) : null}
-              <ul className="mx-auto mt-1.5 flex max-w-2xl flex-wrap justify-center gap-x-4 gap-y-1 text-[11px] text-slate-700 sm:mx-0 sm:justify-start sm:text-xs">
-                {heroBullets.map((line) => (
-                  <li key={line} className="flex items-center gap-1">
-                    <span className="font-semibold text-emerald-600" aria-hidden>
-                      ✓
-                    </span>
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : null}
         </div>
       </section>
     </>

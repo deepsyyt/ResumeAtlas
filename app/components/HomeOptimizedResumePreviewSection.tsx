@@ -10,11 +10,13 @@ import {
   HOME_OPTIMIZE_SECTION_HEADING,
   HOME_OPTIMIZE_SECTION_INTRO,
 } from "@/app/lib/homeMarketingContent";
+import { FREE_TIER_OPTIMIZE_TRUST } from "@/app/lib/productBenefits";
 
 const POINT_BADGE_CLASSES = [
   "bg-indigo-100 text-indigo-800",
   "bg-violet-100 text-violet-800",
   "bg-amber-100 text-amber-900",
+  "bg-emerald-100 text-emerald-900",
   "bg-slate-200 text-slate-700",
 ] as const;
 
@@ -64,15 +66,16 @@ export function HomeOptimizedResumePreviewSection() {
                 {CHECK_RESUME_AGAINST_JD_HERO_CTA}
               </Link>
               <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs font-medium text-slate-500 sm:text-sm lg:justify-start">
-                <span>✓ 100% free</span>
-                <span className="text-slate-300" aria-hidden>
-                  ·
-                </span>
-                <span>✓ Instant results</span>
-                <span className="text-slate-300" aria-hidden>
-                  ·
-                </span>
-                <span>✓ No signup</span>
+                {FREE_TIER_OPTIMIZE_TRUST.map((label, index) => (
+                  <span key={label} className="contents">
+                    {index > 0 ? (
+                      <span className="text-slate-300" aria-hidden>
+                        ·
+                      </span>
+                    ) : null}
+                    <span>✓ {label}</span>
+                  </span>
+                ))}
               </p>
             </div>
           </div>

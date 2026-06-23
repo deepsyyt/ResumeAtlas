@@ -66,7 +66,10 @@ function groupKeywordsByStatus(rows: JdSkillEvidenceRow[]): Record<KeywordStatus
 
 function ProvenStatIcon() {
   return (
-    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-600" aria-hidden>
+    <span
+      className="keyword-coverage-stat-icon flex items-center justify-center rounded-full bg-emerald-100 text-emerald-600"
+      aria-hidden
+    >
       <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M3.5 8.5 6.5 11.5 12.5 4.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -76,8 +79,11 @@ function ProvenStatIcon() {
 
 function WeakStatIcon() {
   return (
-    <span className="flex h-7 w-7 items-center justify-center text-amber-500" aria-hidden>
-      <svg viewBox="0 0 16 16" className="h-7 w-7" fill="currentColor">
+    <span
+      className="keyword-coverage-stat-icon flex items-center justify-center rounded-full bg-amber-100 text-amber-600"
+      aria-hidden
+    >
+      <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor">
         <path d="M8 1.5 14.5 13.5H1.5L8 1.5zm0 4.25a.75.75 0 0 0-.75.75v3a.75.75 0 0 0 1.5 0v-3A.75.75 0 0 0 8 5.75zM8 11.25a.875.875 0 1 0 0 1.75.875.875 0 0 0 0-1.75z" />
       </svg>
     </span>
@@ -86,7 +92,10 @@ function WeakStatIcon() {
 
 function MissingStatIcon() {
   return (
-    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-red-100 text-red-600" aria-hidden>
+    <span
+      className="keyword-coverage-stat-icon flex items-center justify-center rounded-full bg-red-100 text-red-600"
+      aria-hidden
+    >
       <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M4 4l8 8M12 4 4 12" strokeLinecap="round" />
       </svg>
@@ -114,6 +123,8 @@ export type SkillProofMapSectionProps = {
   coverageSummary?: KeywordCoverageMetricInput;
   /** Live dashboard: start collapsed with proven/weak/missing summary only. */
   collapsedByDefault?: boolean;
+  /** Dashboard grid: keyword hero stats only — no skill table. */
+  keywordHeroOnly?: boolean;
   /** Show per-skill checkboxes for optimization selection. */
   showSelection?: boolean;
   /** When false, checkboxes are visible but disabled (sample readout). */
@@ -132,6 +143,7 @@ export function SkillProofMapSection({
   variant = "default",
   coverageSummary,
   collapsedByDefault = false,
+  keywordHeroOnly = false,
   showSelection = true,
   selectionEnabled = true,
   selectedSkills,
@@ -359,11 +371,11 @@ export function SkillProofMapSection({
                 aria-label={`${stat.count} ${stat.label.toLowerCase()}. ${stat.description}`}
               >
                 {stat.icon}
-                <span className="keyword-coverage-stat-count text-2xl font-bold leading-none tabular-nums">
+                <span className="keyword-coverage-stat-count font-bold tabular-nums">
                   {stat.count}
                 </span>
-                <span className="text-[11px] font-semibold text-slate-800">{stat.label}</span>
-                <span className="text-[9px] leading-snug text-slate-500">{stat.description}</span>
+                <span className="keyword-coverage-stat-label">{stat.label}</span>
+                <span className="keyword-coverage-stat-desc">{stat.description}</span>
               </button>
             );
           })}
@@ -478,6 +490,38 @@ export function SkillProofMapSection({
   };
 
   if (isLiveCompact) {
+    if (keywordHeroOnly) {
+      return (
+        <section
+          className={`dashboard-content-card keyword-coverage-dashboard-card ${className} px-4 py-4 sm:px-5 sm:py-5`}
+          aria-labelledby="keyword-coverage-heading"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h3
+                id="keyword-coverage-heading"
+                className="text-base font-bold leading-snug text-slate-900 sm:text-[1.05rem]"
+              >
+                {title}
+              </h3>
+              {statusSummary ? (
+                <p className="mt-1 text-[12px] text-slate-500">{statusSummary}</p>
+              ) : null}
+            </div>
+            <button
+              type="button"
+              onClick={toggleViewAllKeywords}
+              className="shrink-0 text-[12px] font-semibold text-violet-700 underline-offset-2 transition hover:text-violet-900 hover:underline"
+              aria-expanded={viewAllKeywords}
+            >
+              {viewAllKeywords ? "Hide keywords" : KEYWORD_COVERAGE_VIEW_ALL}
+            </button>
+          </div>
+          {renderKeywordCoverageHero()}
+        </section>
+      );
+    }
+
     return (
       <div
         className={`dashboard-content-card ${className} px-3 py-3`}
