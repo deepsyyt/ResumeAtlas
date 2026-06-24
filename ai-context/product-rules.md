@@ -135,6 +135,7 @@ SEO / marketing page
 
 | Concern | File |
 |---------|------|
+| **Product summary (analysis + optimization metrics)** | `ai-context/product_summary.md` |
 | **Canonical benefits (analysis + optimization)** | `app/lib/productBenefits.ts` |
 | Home marketing copy | `app/lib/homeMarketingContent.ts` |
 | Optimize prompts / evidence rules | `app/lib/optimizePrompts.ts` |

@@ -34,7 +34,7 @@ export type ApplicationCommitResult = {
 const FREE_EXHAUSTED_MESSAGE =
   "You've used your free scan for this month. Get 5 job credits for $2.99: check, optimize, and download for five jobs.";
 const ANON_EXHAUSTED_MESSAGE =
-  "You've used your free scan for this month. Sign in to get 5 job credits for $2.99.";
+  "You've used your guest free scan. Sign in with Google to run one more free scan this month.";
 
 function quotaExceededError(
   message: string,

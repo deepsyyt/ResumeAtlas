@@ -8,10 +8,11 @@ alwaysApply: true
 At the **start of every session**, read **all** files in `/ai-context` before editing product copy, SEO, billing, analytics, or architecture:
 
 1. `ai-context/product-rules.md` — product truth, analysis + optimization benefits, free/paid boundaries
-2. `ai-context/pricing.md` — Razorpay, starter pack, download gate
-3. `ai-context/architecture.md` — system design, funnels, components
-4. `ai-context/seo-structure.md` — 68 URLs, clusters, authority pages
-5. `ai-context/analytics.md` — GA4 funnel events
+2. `ai-context/product_summary.md` — user-facing benefits, analysis + optimization metrics (reference doc)
+3. `ai-context/pricing.md` — Razorpay, starter pack, download gate
+4. `ai-context/architecture.md` — system design, funnels, components
+5. `ai-context/seo-structure.md` — 68 URLs, clusters, authority pages
+6. `ai-context/analytics.md` — GA4 funnel events
 
 ## Positioning (non-negotiable)
 

@@ -209,13 +209,28 @@ export const CREDIT_PACK_UPGRADE_BENEFITS = [
 ] as const;
 export const CREDIT_PACK_UPGRADE_FOOTNOTE = "Free scan resets 30 days after use. Job credits never expire.";
 
-export const LIMIT_MODAL_ANON_HEADLINE = "You've used your free scan";
-export const LIMIT_MODAL_ANON_SUBHEAD =
-  "Sign in to optimize free for this job and unlock 5 credits: full analysis, job-specific optimization, and PDF/DOCX download for each role you target.";
-export const LIMIT_MODAL_ANON_BODY =
-  "Don't keep applying with one resume. Align per job so you spend time on roles where you can actually get shortlisted.";
-export const LIMIT_MODAL_ANON_CTA = "Sign in with Google";
-export const LIMIT_MODAL_ANON_FOOTNOTE = "Free scan resets 30 days after use.";
+export const LIMIT_MODAL_ANON_HEADLINE = "Your free scan is used";
+export const LIMIT_MODAL_ANON_SUBHEAD_PREFIX = "Sign in to get";
+export const LIMIT_MODAL_ANON_SUBHEAD_HIGHLIGHT = "1 more free";
+export const LIMIT_MODAL_ANON_SUBHEAD_SUFFIX =
+  "resume scan and continue improving your chances.";
+export const LIMIT_MODAL_ANON_PROMO = "Sign in and get 1 additional free scan";
+export const LIMIT_MODAL_ANON_BENEFITS = [
+  {
+    title: "1 additional free scan",
+    detail: "Unlock one more ATS scan instantly",
+  },
+  {
+    title: "1-click optimize",
+    detail: "Increase shortlist odds for this job",
+  },
+  {
+    title: "Compare multiple resumes",
+    detail: "Find the best version for every job",
+  },
+] as const;
+export const LIMIT_MODAL_ANON_CTA = "Continue with Google";
+export const LIMIT_MODAL_ANON_DISMISS = "Maybe later";
 export const LIMIT_MODAL_USER_FOOTNOTE = "Free scan resets 30 days after use, same as guest users.";
 export const OPTIMIZE_ALIGN_SELECTION_TITLE = "Recommended fixes";
 export const OPTIMIZE_ALIGN_PREVIEW_TITLE = "Bullet preview";
