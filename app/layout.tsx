@@ -33,6 +33,7 @@ const organizationSchema = {
   name: "ResumeAtlas",
   url: siteUrl,
   logo: `${siteUrl}/favicon.svg`,
+  // sameAs: add LinkedIn / X / ProductHunt URLs once brand handles are created
 };
 
 export const metadata: Metadata = {

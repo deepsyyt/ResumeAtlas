@@ -1,4 +1,9 @@
-import { postingFitWebApplicationJsonLd, postingFitWorkbenchBreadcrumbJsonLd } from "@/app/lib/postingFitJsonLd";
+import {
+  postingFitFaqJsonLd,
+  postingFitHowToJsonLd,
+  postingFitWebApplicationJsonLd,
+  postingFitWorkbenchBreadcrumbJsonLd,
+} from "@/app/lib/postingFitJsonLd";
 import { TOOL_CLUSTER_PRIMARY } from "@/app/lib/toolClusterPages";
 
 /**
@@ -9,6 +14,8 @@ export function JdWorkbenchPageChrome() {
   const jsonLd = [
     postingFitWorkbenchBreadcrumbJsonLd(),
     postingFitWebApplicationJsonLd(TOOL_CLUSTER_PRIMARY),
+    postingFitHowToJsonLd(),
+    postingFitFaqJsonLd(TOOL_CLUSTER_PRIMARY.faq),
   ];
   const eyebrow = TOOL_CLUSTER_PRIMARY.heroEyebrow;
   const pageH1 = TOOL_CLUSTER_PRIMARY.heroH1 ?? TOOL_CLUSTER_PRIMARY.h1;

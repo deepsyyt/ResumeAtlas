@@ -53,3 +53,45 @@ export function postingFitFaqJsonLd(
     })),
   };
 }
+
+export function postingFitHowToJsonLd(): Record<string, unknown> {
+  const toolUrl = toolClusterAbsoluteUrl(CHECK_RESUME_AGAINST_JD_PATH);
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to compare your resume to a job description",
+    description:
+      "Paste your resume and a job description to get an apply/hold verdict, shortlist odds, rejection risks, and job-specific optimization in 60 seconds.",
+    url: toolUrl,
+    step: [
+      {
+        "@type": "HowToStep",
+        position: 1,
+        name: "Paste your resume",
+        text: "Copy your resume text or upload a PDF into the resume field on ResumeAtlas.",
+        url: `${toolUrl}#ats-checker-form`,
+      },
+      {
+        "@type": "HowToStep",
+        position: 2,
+        name: "Paste the job description",
+        text: "Copy the full job posting — role, requirements, and responsibilities — into the job description field.",
+        url: `${toolUrl}#ats-checker-form`,
+      },
+      {
+        "@type": "HowToStep",
+        position: 3,
+        name: "Get your application verdict",
+        text: "ResumeAtlas returns an apply or hold verdict, shortlist probability, rejection risks tied to the posting, and a skill proof map showing skills you claim vs. skills you prove in your bullets.",
+        url: toolUrl,
+      },
+      {
+        "@type": "HowToStep",
+        position: 4,
+        name: "Optimize and download",
+        text: "Review selectable fixes, run job-specific optimization to rewrite your resume for the posting, then download an ATS-friendly PDF or DOCX.",
+        url: toolUrl,
+      },
+    ],
+  };
+}

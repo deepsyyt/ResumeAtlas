@@ -284,6 +284,22 @@ export function AtsResumeTemplateGuide() {
               </ul>
             </div>
           </div>
+
+          <div className="mx-auto mt-8 max-w-4xl rounded-xl border border-sky-200 bg-sky-50/60 px-5 py-5 sm:px-6">
+            <p className="text-sm font-semibold text-sky-900 sm:text-base">
+              Template format is step one — does it fit the specific job?
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
+              ATS scoring depends on keyword overlap with the exact posting, not just clean formatting.
+              Paste your resume and the job description to get an apply verdict, skill gaps, and rejection risks in 60 seconds.
+            </p>
+            <Link
+              href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
+              className="mt-4 inline-flex rounded-xl bg-sky-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-800"
+            >
+              Check resume vs. job description — free
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -510,34 +526,65 @@ export function AtsResumeTemplateGuide() {
             Legacy anchor: how ATS scans resumes
           </span>
           <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
-            Resume Formatting for ATS Systems
+            How ATS Systems Scan and Score Your Resume
           </h2>
           <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            The <strong>resume format for applicant tracking systems</strong> is not about design - it is
-            about text extraction. When you apply online, your file is often parsed before a human reads it: sections,
-            then keyword overlap, then rank or filter rules.
+            When you submit online, your resume passes through four stages before a recruiter reads it.
+            Understanding each stage tells you exactly where to focus — formatting first, then keyword alignment.
           </p>
-          <ul className="mt-3 list-disc pl-5 space-y-2 text-slate-700 text-sm sm:text-base">
-            <li>
-              <strong>Parsing:</strong> ATS extracts your data (name, work history, education, skills)
-              using headings and layout cues. Single-column, standard headings parse best.
+
+          <ol className="mt-5 space-y-5">
+            <li className="rounded-xl border border-slate-200 bg-white px-5 py-4">
+              <p className="text-sm font-semibold text-slate-900">Stage 1 — File ingestion and text extraction</p>
+              <p className="mt-1 text-sm text-slate-700">
+                The ATS converts your file (PDF or DOCX) into raw text. Multi-column layouts, tables, and
+                text baked into images frequently break this step — content inside those elements is silently
+                dropped, so skills and job titles can disappear before any scoring happens.
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Fix: single-column layout, text-based PDF or DOCX, no skill-bar graphics or icon rows.
+              </p>
             </li>
-            <li>
-              <strong>Keyword matching:</strong> ATS checks for overlap in skills, tools, and
-              responsibilities. Use the job&apos;s language only where it matches your real experience.
+            <li className="rounded-xl border border-slate-200 bg-white px-5 py-4">
+              <p className="text-sm font-semibold text-slate-900">Stage 2 — Section detection and field mapping</p>
+              <p className="mt-1 text-sm text-slate-700">
+                ATS identifies sections (Experience, Education, Skills, Summary) using heading labels.
+                Non-standard labels like &quot;Where I&apos;ve worked&quot; or &quot;What I know&quot; often
+                fail to map, so experience gets filed as unknown and may be excluded from scoring.
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Fix: use standard headings — Experience, Education, Skills, Summary, Certifications.
+              </p>
             </li>
-            <li>
-              <strong>Formatting rules:</strong> Columns, tables, and text inside images can break
-              extraction and hide content.
+            <li className="rounded-xl border border-slate-200 bg-white px-5 py-4">
+              <p className="text-sm font-semibold text-slate-900">Stage 3 — Keyword matching against the job description</p>
+              <p className="mt-1 text-sm text-slate-700">
+                The ATS compares your extracted text to the job posting — skills, tools, responsibilities,
+                and job titles. Keyword overlap drives the match score. Synonyms and abbreviations often
+                don&apos;t count: &quot;JS&quot; and &quot;JavaScript&quot; are treated differently
+                by most parsers.
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Fix: use the posting&apos;s exact terminology in your summary, skills, and bullet points — only where the experience is real.
+              </p>
             </li>
-            <li>
-              <strong>Scoring & ranking:</strong> Many ATS assign a match score based on relevance and
-              how well your experience aligns to the posting’s requirements.
+            <li className="rounded-xl border border-slate-200 bg-white px-5 py-4">
+              <p className="text-sm font-semibold text-slate-900">Stage 4 — Scoring, ranking, and filter rules</p>
+              <p className="mt-1 text-sm text-slate-700">
+                Each applicant gets a relevance score. Recruiters often set a threshold (e.g., top 20% only)
+                or filter by must-have criteria before reviewing any resume manually. A well-formatted resume
+                with high keyword overlap passes filters; a poorly parsed one may score near zero regardless
+                of actual experience.
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Fix: address Stage 1–3 issues first, then run the resume against the actual posting before applying.
+              </p>
             </li>
-          </ul>
-          <p className="mt-3 text-slate-700 text-sm sm:text-base">
-            Quick win: keep formatting simple, use standard section titles, and mirror the posting&apos;s
-            skills and responsibilities naturally in your summary, skills, and bullets.
+          </ol>
+
+          <p className="mt-5 text-sm text-slate-700 sm:text-base">
+            <strong className="text-slate-900">Bottom line:</strong> formatting determines whether your content
+            is visible; keyword alignment determines your score. Both matter, in that order.
           </p>
         </section>
 

@@ -116,6 +116,13 @@ export function trackPaymentClicked(params: {
   });
 }
 
+/** Razorpay checkout closed without payment. */
+export function trackBillingRazorpayCheckoutDismissed(packageId: string): void {
+  gtagEvent(ANALYTICS_EVENTS.billingRazorpayCheckoutDismissed, {
+    package_id: packageId,
+  });
+}
+
 /** Once per verified payment (payment id). */
 export function trackPurchase(params: {
   transactionId: string;

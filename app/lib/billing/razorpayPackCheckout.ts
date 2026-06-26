@@ -3,6 +3,7 @@ import { getCreditPackage, type CreditPackageId } from "@/app/lib/billing/packag
 import { logBillingEvent } from "@/app/lib/billing/billingEventsClient";
 import {
   checkoutTriggerToSurface,
+  trackBillingRazorpayCheckoutDismissed,
   trackPaymentClicked,
   trackPaymentFailed,
   trackPurchase,
@@ -230,7 +231,7 @@ export async function openRazorpayPackCheckout({
               void logBillingEvent("billing_razorpay_checkout_dismissed", {
                 package_id: packageId,
               });
-              trackPaymentFailed("dismissed");
+              trackBillingRazorpayCheckoutDismissed(packageId);
             }
             finish({ status: "dismissed" });
           },

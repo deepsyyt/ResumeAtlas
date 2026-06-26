@@ -114,13 +114,18 @@ const ROLE_KEYWORDS_SERP_TOOL_HINT: Record<RoleSlug, string> = {
   "full-stack-developer": "React, Node.js, SQL, REST APIs, full-stack delivery",
 };
 
-/** Unique SERP titles per role — avoids copy-paste `Free ATS List` cannibalization across analyst siblings. */
+/**
+ * Unique SERP titles per role — avoids copy-paste `Free ATS List` cannibalization across analyst siblings.
+ * Each override leads with the role keyword, includes the freshness year, and adds a role-specific
+ * differentiator to improve CTR over Jobscan-style generic "ATS list" titles.
+ */
 const ROLE_KEYWORDS_SERP_TITLE_OVERRIDE: Partial<Record<RoleSlug, string>> = {
   "data-analyst": `Top Data Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | ATS Skills Checklist${RESUME_ATLAS_TITLE_SUFFIX}`,
-  "business-analyst": `Business Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | Requirements, Jira & ATS Skills${RESUME_ATLAS_TITLE_SUFFIX}`,
-  "data-scientist": `Data Science Resume Keywords (${CONTENT_FRESHNESS_YEAR}) – ATS Keywords for Data Scientists${RESUME_ATLAS_TITLE_SUFFIX}`,
-  "frontend-developer": `Frontend Developer Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | ATS List${RESUME_ATLAS_TITLE_SUFFIX}`,
-  "software-engineer": `Software Engineer Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | ATS List${RESUME_ATLAS_TITLE_SUFFIX}`,
+  "business-analyst": `Business Analyst Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | Requirements, JIRA & Power BI ATS List${RESUME_ATLAS_TITLE_SUFFIX}`,
+  "data-scientist": `Data Scientist Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | ML, Python & ATS Skills Checklist${RESUME_ATLAS_TITLE_SUFFIX}`,
+  "frontend-developer": `Frontend Developer Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | React, TypeScript & ATS List${RESUME_ATLAS_TITLE_SUFFIX}`,
+  "software-engineer": `Software Engineer Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | ATS Checklist (Top 25+)${RESUME_ATLAS_TITLE_SUFFIX}`,
+  "machine-learning-engineer": `Machine Learning Engineer Resume Keywords (${CONTENT_FRESHNESS_YEAR}) | MLOps & ATS Checklist${RESUME_ATLAS_TITLE_SUFFIX}`,
 };
 
 function roleKeywordsSerpTitle(roleName: string, role: RoleSlug): string {
@@ -135,15 +140,17 @@ const ROLE_KEYWORDS_CTR_DESCRIPTION: Partial<Record<RoleSlug, string>> = {
   "data-analyst":
     "Data analyst resume keywords ATS checklist for 2026: SQL, Tableau, Excel, Looker, dbt, dashboarding, ETL, and KPI reporting. Copy-paste list, then scan your resume against the job description for missing terms.",
   "data-scientist":
-    "ATS keywords for data scientist resumes (2026): Python, SQL, machine learning, experimentation, forecasting, feature engineering. Copy-ready checklist—scan your resume against any job description.",
+    "ATS keywords for data scientist resumes (2026): Python, SQL, machine learning, experimentation, forecasting, feature engineering. Free copy-ready checklist—paste your job description to find which terms your resume is missing.",
   "devops-engineer":
-    "DevOps resume keywords for ATS: Kubernetes, Terraform, CI/CD, AWS, SRE. Free copy-ready list plus job-description scan to find missing tools and reliability terms.",
+    "DevOps resume keywords for ATS (2026): Kubernetes, Terraform, CI/CD, AWS, SRE, Prometheus, Grafana. Free copy-ready list — paste your job description to find missing infrastructure and reliability terms.",
   "machine-learning-engineer":
-    "Machine learning engineer resume keywords with MLOps and production focus. Free ATS list; compare your resume to the posting to fix weak ML keyword coverage.",
+    "Machine learning engineer resume keywords for ATS (2026): Python, PyTorch, TensorFlow, MLOps, model deployment, feature engineering, experiment tracking. Free checklist — paste your job description to find the ML terms your resume is missing.",
   "frontend-developer":
-    "Frontend developer resume keywords for ATS (2026): React, TypeScript, JavaScript, Next.js, HTML, CSS, WCAG, Core Web Vitals, Storybook, Playwright. Copy the top-25 list—then scan your resume against the job description.",
+    "Frontend developer resume keywords for ATS (2026): React, TypeScript, Next.js, HTML, CSS, WCAG, Core Web Vitals, Storybook, Playwright. Copy the top-25 list — then paste your job description to see exactly which keywords you're missing.",
   "software-engineer":
-    "Software engineer resume keywords for ATS (2026): TypeScript, JavaScript, system design, REST APIs, PostgreSQL, AWS, CI/CD, testing. Copy the top-25 list—then scan your resume against the job description.",
+    "Software engineer resume keywords for ATS (2026): TypeScript, JavaScript, system design, REST APIs, PostgreSQL, AWS, CI/CD, testing. Copy the top-25 list — then paste your job description to see which terms your resume is missing.",
+  "business-analyst":
+    "Business analyst resume keywords for ATS (2026): requirements gathering, JIRA, Power BI, BPMN, user stories, stakeholder management, process mapping. Free checklist — paste your JD to find gaps before you apply.",
 };
 
 function roleKeywordsSerpDescription(role: RoleSlug): string {

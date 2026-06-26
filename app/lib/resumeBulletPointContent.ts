@@ -2684,12 +2684,24 @@ export function defensibleBulletCountLabel(uniqueCount: number): string {
   return `${Math.max(floored, 5)}+`;
 }
 
+/**
+ * Role-specific context strings for the meta description.
+ * Replaces the previous generic "backend, frontend, full-stack" phrase that was applied to every role.
+ */
+const BULLET_HUB_DESCRIPTION_CONTEXT: Record<ResumeBulletRole, string> = {
+  "data-analyst": "SQL queries, dashboards, A/B tests, and stakeholder reporting",
+  "business-analyst": "requirements gathering, process mapping, Power BI, and stakeholder alignment",
+  "data-scientist": "ML experiments, Python models, forecasting, and research communication",
+  "software-engineer": "feature delivery, system design, testing, and engineering impact",
+  "product-manager": "roadmaps, discovery, metrics, and cross-functional launches",
+};
+
 export function buildResumeBulletHubMetaTitle(
   role: ResumeBulletRole,
   hub: ResumeBulletHubCopy = getResumeBulletHub(role)
 ): string {
   const label = defensibleBulletCountLabel(countUniqueResumeBulletHubExamples(role));
-  return `${hub.h1}: ${label} Copy-Paste Examples | ResumeAtlas`;
+  return `${hub.roleName} Resume Bullet Points (2026) — ${label} ATS-Vetted Examples | ResumeAtlas`;
 }
 
 export function buildResumeBulletHubMetaDescription(
@@ -2698,7 +2710,8 @@ export function buildResumeBulletHubMetaDescription(
 ): string {
   const label = defensibleBulletCountLabel(countUniqueResumeBulletHubExamples(role));
   const roleLower = hub.roleName.toLowerCase();
-  return `Copy-paste ${roleLower} resume bullet points for entry-level, junior, and senior roles. ${label} examples with metrics—backend, frontend, full-stack, and staff. Adapt to your stack.`;
+  const context = BULLET_HUB_DESCRIPTION_CONTEXT[role];
+  return `${label} copy-paste ${roleLower} resume bullet points for entry-level, junior, and senior roles. Covers ${context}. Each example is written to pass ATS and show measurable impact.`;
 }
 
 /**

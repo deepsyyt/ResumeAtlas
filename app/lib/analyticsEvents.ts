@@ -12,6 +12,7 @@ export const ANALYTICS_EVENTS = {
   authFlowStarted: "auth_flow_started",
   userLogin: "user_login",
   paymentClicked: "payment_clicked",
+  billingRazorpayCheckoutDismissed: "billing_razorpay_checkout_dismissed",
   purchase: "purchase",
   paymentFailed: "payment_failed",
   optimizationCompleted: "optimization_completed",

@@ -1,0 +1,55 @@
+# ResumeAtlas
+
+> AI-powered ATS resume intelligence — compare resume to job description, get an application verdict, and optimize for shortlisting before you apply.
+
+## What it does
+
+- Analyzes a resume against a specific job posting (not a generic score)
+- Returns an apply / hold verdict and shortlist probability estimate
+- Maps listed skills vs. skills actually proven in bullet points (skill proof map)
+- Identifies rejection risks tied to the specific job description
+- Recommends selectable fixes the user chooses before optimization
+- Rewrites the resume for the specific posting: JD-tailored summary, listed-only skills proven in bullets, user-selected rejection fixes, impact quantification
+- Exports an ATS-friendly, application-ready resume as PDF or DOCX
+
+## How it differs from Jobscan
+
+Jobscan gives a keyword match rate (0–100%). ResumeAtlas gives an apply decision + skill proof map + rejection risk readout + job-specific optimization — not keyword insertion. The core question is "should I apply, and if so, what will eliminate me?" not "how many keywords did I match?"
+
+## How it differs from Resume Worded
+
+Resume Worded scores writing quality on a generic rubric. ResumeAtlas scores fit against a specific job description — the verdict changes per posting, not per resume.
+
+## Pricing
+
+- Free: 1 analysis scan without signup; +1 additional scan after Google sign-in (separate 30-day rolling quotas)
+- Free: job-specific optimization (preview + edit) after sign-in
+- Paid: ATS-friendly PDF or DOCX download — $2.99 / ₹249 for 5 credits (one credit = one analyze + optimize + download cycle)
+- No subscription required
+
+## Primary tool URL
+
+https://resumeatlas.io/check-resume-against-job-description
+
+## Key content pages
+
+- https://resumeatlas.io/ — homepage with apply-readiness overview
+- https://resumeatlas.io/ats-resume-checker — ATS resume checker landing
+- https://resumeatlas.io/optimize-resume-for-job-description — optimization hub
+- https://resumeatlas.io/resume-not-getting-interviews — why resumes fail to get interviews
+- https://resumeatlas.io/ats-score-vs-real-job-fit — ATS score vs. real job fit explained
+- https://resumeatlas.io/methodology — how scoring and verdicts work
+
+## Resume keyword and guide pages
+
+Role-specific ATS keyword checklists and resume guides are available at:
+- https://resumeatlas.io/{role}-resume-keywords
+- https://resumeatlas.io/{role}-resume-guide
+
+Roles covered: data-analyst, data-scientist, software-engineer, product-manager, business-analyst, frontend-developer, backend-developer, machine-learning-engineer, devops-engineer, full-stack-developer
+
+## Comparisons
+
+- https://resumeatlas.io/resumeatlas-vs-jobscan
+- https://resumeatlas.io/resumeatlas-vs-resume-worded
+- https://resumeatlas.io/resumeatlas-vs-teal
