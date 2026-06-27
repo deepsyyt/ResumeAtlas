@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import {
+  resolveAtsKeywordsRedirect,
   resolveLegacyKeywordsRedirect,
   resolveLegacyResumeTopicRedirect,
 } from "@/app/lib/legacySeoPaths";
@@ -29,6 +30,22 @@ function normalizePathname(pathname: string): string {
  */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  const atsKeywords = resolveAtsKeywordsRedirect(pathname);
+  if (atsKeywords) {
+    const url = request.nextUrl.clone();
+    const hashIndex = atsKeywords.indexOf("#");
+    if (hashIndex >= 0) {
+      url.pathname = atsKeywords.slice(0, hashIndex);
+      url.hash = atsKeywords.slice(hashIndex + 1);
+    } else {
+      url.pathname = atsKeywords;
+      url.hash = "";
+    }
+    const response = NextResponse.redirect(url, 308);
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return response;
+  }
 
   if (pathname.startsWith("/resume-guides/")) {
     const normalized = normalizePathname(pathname);
@@ -105,6 +122,8 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/ats-keywords",
+    "/ats-keywords/:path*",
     "/seo/:path*",
     "/seo",
     "/:role/keywords",
