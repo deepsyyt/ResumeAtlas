@@ -9,6 +9,7 @@ import { INDEXED_PROBLEM_SLUGS } from "@/app/lib/problemPages";
 import { getAltRoleKeywordConfig, getIndexedAltRoleKeywordSlugs } from "@/app/lib/altRoleKeywordPages";
 import { PILOT_KEYWORD_SLUGS, getPilotKeywordConfig } from "@/app/lib/pilotKeywordPages";
 import { DATA_ENGINEER_RESUME_GUIDE_PATH } from "@/app/lib/dataEngineerResumeGuide";
+import { AI_ENGINEER_RESUME_GUIDE_PATH } from "@/app/lib/aiEngineerResumeGuide";
 import {
   RESUME_KEYWORDS_HUB_PATH,
 } from "@/app/lib/seoHubPages";
@@ -64,7 +65,10 @@ function priorityForPath(pathname: string): number {
     pathname === SKILLS_LISTED_NOT_PROVEN_PATH ||
     pathname === ALREADY_HAVE_SKILLS_PATH ||
     pathname === HOW_RECRUITERS_EVALUATE_PATH ||
-    pathname.startsWith("/resumeatlas-vs-")
+    pathname.startsWith("/resumeatlas-vs-") ||
+    pathname === "/ats-resume-checklist" ||
+    pathname === "/career-change-resume" ||
+    pathname === "/resume-with-no-experience"
   ) {
     return SITEMAP_PRIORITY.CLUSTER_SPOKE;
   }
@@ -85,7 +89,18 @@ function priorityForPath(pathname: string): number {
     pathname === "/ats-resume-template" ||
     pathname === "/resume-guides/resume-work-experience-examples" ||
     pathname === "/resume-guides/resume-skills-examples" ||
+    pathname === "/resume-guides/resume-summary-examples" ||
+    pathname === "/resume-action-verbs" ||
     pathname === "/customize-resume-without-lying" ||
+    pathname === "/entry-level-data-analyst-resume" ||
+    pathname === "/entry-level-software-engineer-resume" ||
+    pathname === "/entry-level-product-manager-resume" ||
+    pathname === "/senior-data-analyst-resume" ||
+    pathname === "/senior-software-engineer-resume" ||
+    pathname === "/senior-product-manager-resume" ||
+    pathname === "/data-analyst-resume-summary" ||
+    pathname === "/software-engineer-resume-summary" ||
+    pathname === "/product-manager-resume-summary" ||
     pathname.startsWith("/resume-examples/") ||
     pathname.startsWith("/ats-resume-template-") ||
     pathname.endsWith("-resume-guide") ||
@@ -196,6 +211,96 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     priority: priorityForPath("/resume-guides/resume-skills-examples"),
   });
   entries.push({
+    url: `${base}/resume-guides/resume-summary-examples`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/resume-guides/resume-summary-examples"),
+  });
+  entries.push({
+    url: `${base}/resume-action-verbs`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/resume-action-verbs"),
+  });
+  entries.push({
+    url: `${base}/ats-resume-checklist`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/ats-resume-checklist"),
+  });
+  entries.push({
+    url: `${base}/entry-level-data-analyst-resume`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/entry-level-data-analyst-resume"),
+  });
+  entries.push({
+    url: `${base}/entry-level-software-engineer-resume`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/entry-level-software-engineer-resume"),
+  });
+  entries.push({
+    url: `${base}/entry-level-product-manager-resume`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/entry-level-product-manager-resume"),
+  });
+  entries.push({
+    url: `${base}/career-change-resume`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/career-change-resume"),
+  });
+  entries.push({
+    url: `${base}/resume-with-no-experience`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/resume-with-no-experience"),
+  });
+  entries.push({
+    url: `${base}/senior-data-analyst-resume`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/senior-data-analyst-resume"),
+  });
+  entries.push({
+    url: `${base}/senior-software-engineer-resume`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/senior-software-engineer-resume"),
+  });
+  entries.push({
+    url: `${base}/senior-product-manager-resume`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/senior-product-manager-resume"),
+  });
+  entries.push({
+    url: `${base}/data-analyst-resume-summary`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/data-analyst-resume-summary"),
+  });
+  entries.push({
+    url: `${base}/software-engineer-resume-summary`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/software-engineer-resume-summary"),
+  });
+  entries.push({
+    url: `${base}/product-manager-resume-summary`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/product-manager-resume-summary"),
+  });
+  entries.push({
+    url: `${base}/python-developer-resume-keywords`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/python-developer-resume-keywords"),
+  });
+  entries.push({
     url: `${base}/customize-resume-without-lying`,
     lastModified: new Date("2026-04-02"),
     changeFrequency: "monthly" as const,
@@ -242,6 +347,18 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     lastModified: new Date("2026-06-20"),
     changeFrequency: "monthly" as const,
     priority: priorityForPath("/resumeatlas-vs-teal"),
+  });
+  entries.push({
+    url: `${base}/resumeatlas-vs-enhancv`,
+    lastModified: new Date("2026-06-26"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/resumeatlas-vs-enhancv"),
+  });
+  entries.push({
+    url: `${base}/resumeatlas-vs-kickresume`,
+    lastModified: new Date("2026-06-26"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath("/resumeatlas-vs-kickresume"),
   });
   entries.push({
     url: `${base}/ats-score-vs-real-job-fit`,
@@ -329,6 +446,12 @@ export function getAllSitemapEntries(): MetadataRoute.Sitemap {
     lastModified: seoHubLastMod,
     changeFrequency: "monthly" as const,
     priority: priorityForPath(DATA_ENGINEER_RESUME_GUIDE_PATH),
+  });
+  entries.push({
+    url: `${base}${AI_ENGINEER_RESUME_GUIDE_PATH}`,
+    lastModified: new Date("2026-06-27"),
+    changeFrequency: "monthly" as const,
+    priority: priorityForPath(AI_ENGINEER_RESUME_GUIDE_PATH),
   });
   entries.push({
     url: `${base}/resume-examples`,

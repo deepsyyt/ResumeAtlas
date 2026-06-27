@@ -77,6 +77,11 @@ export function CompetitorComparisonPage({ config, benchmarkDisclaimer }: Props)
   const canonicalBase = getSiteUrl().replace(/\/$/, "");
   const pageUrl = absoluteCanonicalUrl(config.path);
   const example = config.exampleAnalysis;
+  const heroCtaLabel = config.primaryCtaLabel ?? config.ctaLabel;
+  const stickyCtaLabel = config.stickyCtaLabel ?? config.ctaLabel;
+  const capabilitySubheading =
+    config.capabilitySubheading ??
+    "Both tools cover ATS scores and keywords. ResumeAtlas adds apply-readiness: verdict, rejection risks, and skill proof for one posting.";
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -154,8 +159,17 @@ export function CompetitorComparisonPage({ config, benchmarkDisclaimer }: Props)
             href={config.ctaHref}
             className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-slate-800"
           >
-            {config.ctaLabel}
+            {heroCtaLabel}
           </Link>
+          {config.trustSignals?.length ? (
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1">
+              {config.trustSignals.map((signal) => (
+                <span key={signal} className="text-xs text-slate-500">
+                  ✓ {signal}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
       </section>
 
@@ -209,8 +223,8 @@ export function CompetitorComparisonPage({ config, benchmarkDisclaimer }: Props)
         <InterviewProblemBridge competitorName={config.competitorName} />
 
         <div className="rounded-lg border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm text-slate-700">
-          Jobscan and Resume Worded users ultimately want more interviews — not just scores or writing
-          grades.{" "}
+          Most users searching for a {config.competitorName} alternative want the same outcome: more
+          interviews.{" "}
           <Link
             href={RESUME_NOT_GETTING_INTERVIEWS_PATH}
             className="font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
@@ -267,17 +281,37 @@ export function CompetitorComparisonPage({ config, benchmarkDisclaimer }: Props)
               steps={config.workflow.competitorSteps}
             />
           </div>
+          {config.workflowValueLadder || config.workflowCtaLabel ? (
+            <div className="mt-5 max-w-3xl rounded-lg border border-slate-200 bg-slate-50/80 px-4 py-3">
+              {config.workflowValueLadder ? (
+                <p className="text-sm font-medium text-slate-800">{config.workflowValueLadder}</p>
+              ) : null}
+              {config.workflowCtaLabel ? (
+                <Link
+                  href={config.ctaHref}
+                  className={`inline-flex text-sm font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950${config.workflowValueLadder ? " mt-2" : ""}`}
+                >
+                  {config.workflowCtaLabel}
+                </Link>
+              ) : null}
+            </div>
+          ) : null}
         </section>
 
         <section id="capabilities">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             Capability comparison
           </h2>
-          <p className="mt-2 max-w-3xl text-sm text-slate-600">
-            Both tools cover ATS scores and keywords. ResumeAtlas adds apply-readiness: verdict,
-            rejection risks, and skill proof for one posting.
-          </p>
+          <p className="mt-2 max-w-3xl text-sm text-slate-600">{capabilitySubheading}</p>
           <CapabilityTable rows={config.comparisonRows} competitorName={config.competitorName} />
+          {config.tableCtaLabel ? (
+            <Link
+              href={config.ctaHref}
+              className="mt-4 inline-flex text-sm font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              {config.tableCtaLabel}
+            </Link>
+          ) : null}
         </section>
 
         <section id="example-analysis" className="scroll-mt-20">
@@ -344,12 +378,21 @@ export function CompetitorComparisonPage({ config, benchmarkDisclaimer }: Props)
           <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-950">
             {example.takeaway}
           </p>
-          <Link
-            href={config.ctaHref}
-            className="mt-5 inline-flex text-sm font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
-          >
-            Run this on your resume and job description →
-          </Link>
+          {config.exampleCtaLabel ? (
+            <Link
+              href={config.ctaHref}
+              className="mt-5 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              {config.exampleCtaLabel}
+            </Link>
+          ) : (
+            <Link
+              href={config.ctaHref}
+              className="mt-5 inline-flex text-sm font-semibold text-sky-800 underline underline-offset-2 hover:text-sky-950"
+            >
+              Run this on your resume and job description →
+            </Link>
+          )}
         </section>
 
         <section id="pros-cons">
@@ -444,7 +487,7 @@ export function CompetitorComparisonPage({ config, benchmarkDisclaimer }: Props)
         </section>
       </div>
 
-      <ComparisonStickyCta href={config.ctaHref} label={config.ctaLabel} />
+      <ComparisonStickyCta href={config.ctaHref} label={stickyCtaLabel} />
 
       <script
         type="application/ld+json"

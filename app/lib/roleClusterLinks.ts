@@ -61,6 +61,10 @@ export const ROLE_KEYWORD_ADJACENCY: Readonly<Record<string, readonly RoleCluste
   ],
   [roleResumeKeywordsPath("machine-learning-engineer")]: [
     { path: roleResumeKeywordsPath("data-scientist"), label: "Data scientist resume keywords" },
+    { path: "/ai-engineer-resume-keywords", label: "AI engineer resume keywords" },
+  ],
+  "/ai-engineer-resume-keywords": [
+    { path: roleResumeKeywordsPath("machine-learning-engineer"), label: "Machine learning engineer resume keywords" },
   ],
   [roleResumeKeywordsPath("backend-developer")]: [
     { path: roleResumeKeywordsPath("software-engineer"), label: "Software engineer resume keywords" },
@@ -73,6 +77,14 @@ export const ROLE_KEYWORD_ADJACENCY: Readonly<Record<string, readonly RoleCluste
   ],
   [roleResumeKeywordsPath("full-stack-developer")]: [
     { path: roleResumeKeywordsPath("frontend-developer"), label: "Frontend developer resume keywords" },
+  ],
+  "/systems-analyst-resume-keywords": [
+    { path: "/business-analyst-resume-keywords", label: "Business analyst resume keywords" },
+    { path: "/business-intelligence-resume-keywords", label: "Business intelligence resume keywords" },
+  ],
+  "/business-analyst-resume-keywords": [
+    { path: "/systems-analyst-resume-keywords", label: "Systems analyst resume keywords" },
+    { path: "/business-intelligence-resume-keywords", label: "Business intelligence resume keywords" },
   ],
 };
 

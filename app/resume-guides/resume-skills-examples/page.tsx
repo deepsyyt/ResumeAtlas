@@ -8,6 +8,7 @@ import {
   RESUME_KEYWORD_SCANNER_FORM_HREF,
 } from "@/app/lib/internalLinks";
 import { CONTENT_FRESHNESS_YEAR, CONTENT_LAST_UPDATED_LABEL } from "@/app/lib/contentFreshness";
+import { RESUME_KEYWORDS_HUB_PATH } from "@/app/lib/seoHubPages";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 
 const PATH = "/resume-guides/resume-skills-examples" as const;
@@ -116,7 +117,7 @@ export default function ResumeSkillsExamplesPage() {
             <strong className="font-semibold">Not the same as role keyword lists.</strong> This page
             shows how to format the <em>skills section</em> on your resume. For copy-ready ATS keyword
             checklists by job title (data analyst, software engineer, etc.), open that role&apos;s{" "}
-            <Link href="/ats-keywords" className="font-semibold text-sky-800 underline underline-offset-2">
+            <Link href={RESUME_KEYWORDS_HUB_PATH} className="font-semibold text-sky-800 underline underline-offset-2">
               resume keywords hub
             </Link>
             .             To scan a specific job description, use the{" "}

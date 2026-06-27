@@ -47,6 +47,25 @@ export function AltRoleKeywordsGuidePage({ slug }: Props) {
             <p className="mx-auto mt-3 max-w-2xl rounded-lg border border-amber-200 bg-amber-50/80 px-3 py-2 text-sm text-amber-950">
               {config.scopeNote}
             </p>
+            {slug === "systems-analyst" ? (
+              <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-600">
+                Not a data analyst role?{" "}
+                <Link
+                  href="/data-analyst-resume-keywords"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  Data analyst keywords
+                </Link>{" "}
+                and{" "}
+                <Link
+                  href="/business-analyst-resume-keywords"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  business analyst keywords
+                </Link>{" "}
+                are separate checklists—use this page when the job title says systems analyst.
+              </p>
+            ) : null}
             <Link
               href={CHECK_RESUME_AGAINST_JD_FORM_HREF}
               className="mt-8 inline-flex rounded-xl bg-slate-900 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-slate-800"

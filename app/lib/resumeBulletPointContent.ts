@@ -8,6 +8,11 @@ export const RESUME_BULLET_ROLES = [
   "data-scientist",
   "software-engineer",
   "product-manager",
+  "frontend-developer",
+  "backend-developer",
+  "machine-learning-engineer",
+  "devops-engineer",
+  "full-stack-developer",
 ] as const satisfies readonly RoleSlug[];
 
 export type ResumeBulletRole = (typeof RESUME_BULLET_ROLES)[number];
@@ -727,6 +732,721 @@ const HUB: Record<ResumeBulletRole, ResumeBulletHubCopy> = {
           "5 project blocks + 10 leadership bullets",
           "RFCs, incident culture, hiring, exec visibility",
           "Built for staff/principal-style job descriptions",
+        ],
+      },
+    },
+  },
+  "frontend-developer": {
+    roleName: "Frontend Developer",
+    metaTitle: "Frontend Developer Resume Bullet Points (2026) | ResumeAtlas",
+    metaDescription:
+      "Copy-paste frontend developer resume bullet points for entry-level, junior, and senior roles. React, TypeScript, performance, accessibility, and delivery impact examples with metrics.",
+    keywords: [
+      "frontend developer resume bullet points",
+      "frontend engineer resume bullets",
+      "react developer resume bullet points",
+      "javascript developer resume bullets",
+      "entry level frontend developer resume",
+      "junior frontend developer resume",
+      "senior frontend developer resume",
+    ],
+    h1: "40+ Frontend Developer Resume Bullet Points You Can Adapt Fast",
+    heroSubheadline:
+      "Project-wise examples by level — entry, junior, and senior. Performance, accessibility, and delivery impact with real metrics you can defend.",
+    aboveFoldBullets: [
+      "Rebuilt checkout funnel in React and TypeScript; reduced LCP from 4.1s to 1.3s, improving conversion on a 2M-session/month page.",
+      "Migrated shared component library to Radix UI; cut visual regression incidents by 60% across 6 products and 12 engineers.",
+      "Instrumented client-side events end-to-end and surfaced a 14% funnel drop on mobile Safari that unblocked a shipping decision.",
+    ],
+    authorityLine:
+      "Used by candidates applying to frontend, React, and web engineering roles at product-led companies.",
+    roleKeywordDensity:
+      "Strong frontend developer resume bullet points should name your stack (React, TypeScript, Next.js), performance signals (LCP, bundle size, latency), accessibility standards, and delivery outcomes.",
+    introIntentStack:
+      "These frontend developer resume bullet points reflect what hiring teams screen for in 2026: measurable performance impact, component ownership, and ATS-friendly phrasing. Match bullets to your level—entry, junior, or senior—and to the keywords in each posting. This hub gives copy-ready examples and links to tools for keyword gaps and job-description alignment before you apply.",
+    snippetDefinition: {
+      h2: "What Are Good Frontend Developer Resume Bullet Points?",
+      line1:
+        "Good frontend developer resume bullet points name your stack (React, TypeScript, Next.js, CSS), a performance or quality signal (LCP, bundle size, test coverage), and a measurable outcome.",
+      line2:
+        "They should also reflect ATS terms from the posting: component architecture, accessibility, performance optimization, and the specific frameworks the role emphasizes.",
+    },
+    paragraphs: [
+      "Recruiters and ATS scan for stack clarity, delivery proof, and quality signals — not generic 'built UI' lines. Latency improvements, accessibility audit results, and adoption metrics give your bullets weight.",
+      "Use these as patterns, not scripts. Swap our metrics and stack names with your real work. A bullet that references LCP you did not measure will not survive a technical screen.",
+    ],
+    semanticVariation:
+      "These resume bullet points (also called resume lines or achievement statements) should prove impact through delivery, performance, and quality — not adjectives like 'pixel-perfect' or 'passionate.'",
+    previewSectionIntro:
+      "Below are grouped preview bullets across performance, component systems, accessibility, and delivery impact — then open entry-level, junior, or senior sections for full project-wise banks.",
+    previewSection: {
+      h2: "Frontend Developer Resume Bullet Point Examples (Preview)",
+      groups: [
+        {
+          label: "Performance",
+          bullets: [
+            "Reduced React bundle size by 18% via code-splitting and lazy routes; improved LCP on the signup funnel from 3.8s to 1.9s.",
+            "Optimized image pipeline with next/image and CDN cache headers; cut average page weight by 40% on a high-traffic landing page.",
+            "Profiled render bottlenecks with React DevTools and eliminated 3 unnecessary re-renders in a data-heavy dashboard component.",
+            "Implemented Service Worker caching strategy; reduced repeat-visit load time by 55% for a PWA used by 80K monthly users.",
+          ],
+        },
+        {
+          label: "Component and design system",
+          bullets: [
+            "Built a shared component library in React + Storybook used by 4 product teams; reduced duplicate UI patterns by 70%.",
+            "Migrated 40 components from class-based to functional React with hooks; cut boilerplate lines by 30% with no regressions.",
+            "Established design token system bridging Figma and CSS variables; enabled consistent theming across web and mobile surfaces.",
+            "Wrote visual regression tests with Chromatic; reduced unintentional style changes shipped to production by 80%.",
+          ],
+        },
+        {
+          label: "Accessibility and quality",
+          bullets: [
+            "Audited and closed 22 WCAG 2.1 AA violations; brought accessibility score from 61 to 94 on Lighthouse.",
+            "Added keyboard navigation and ARIA attributes across core user flows; improved screen reader compatibility for 15K assistive-technology users.",
+            "Set up Playwright E2E coverage for critical paths; caught 4 regressions before release over a 3-month window.",
+            "Introduced automated accessibility checks in CI; blocked 3 regressions before they reached staging.",
+          ],
+        },
+        {
+          label: "Delivery and business impact",
+          bullets: [
+            "Shipped a new onboarding flow in React that increased activation rate by 18% in a 4-week A/B test.",
+            "Rebuilt payment form with progressive validation; reduced form abandonment on checkout by 11% across mobile devices.",
+            "Refactored legacy jQuery dashboard to React SPA; cut page load by 60% and reduced maintenance burden for 3-engineer team.",
+            "Led frontend migration to TypeScript across 30K lines; eliminated entire class of runtime type errors in production.",
+          ],
+        },
+      ],
+    },
+    comparisonSection: {
+      title: "Why Most Frontend Resume Bullet Points Don't Work",
+      points: [
+        "Stack-only bullets: 'Used React and TypeScript' without delivery, performance, or quality signals.",
+        "Missing metrics: 'improved performance' without LCP, bundle size, or latency numbers is unverifiable.",
+        "No business outcome: shipping a feature matters; its impact on activation, retention, or conversion matters more.",
+        "Mismatched stack: backend-heavy JD with only CSS and animation bullets misses ATS keyword coverage.",
+      ],
+    },
+    faq: [
+      {
+        question: "What performance metrics should I include in frontend resume bullets?",
+        answer:
+          "LCP (Largest Contentful Paint), FID, CLS, Time to Interactive, bundle size, and page weight are the most recognized. Latency reduction percentages and before/after load times are also high-signal. Use metrics you can explain in an interview.",
+      },
+      {
+        question: "Should frontend bullets focus more on technical skills or business outcomes?",
+        answer:
+          "Both. Technical signals (React, TypeScript, performance optimization) establish fit, while business outcomes (conversion lift, activation improvement, latency reduction) prove impact. Balanced bullets perform better in both ATS and recruiter review.",
+      },
+      {
+        question: "How do I tailor frontend bullets to a job description?",
+        answer:
+          "Compare your resume against the posting using ResumeAtlas. You will see which stack terms, domain signals, and performance keywords are missing from your resume for that specific role.",
+      },
+    ],
+    relatedSearches: [
+      { label: "frontend developer resume summary examples", href: "/frontend-developer-resume-guide#summary" },
+      { label: "entry-level frontend developer resume bullet points", href: "/frontend-developer-resume-guide#bullet-points" },
+      { label: "frontend developer resume keywords", href: "/frontend-developer-resume-keywords" },
+      { label: "React developer resume keywords checklist", href: "/frontend-developer-resume-keywords" },
+    ],
+    levelCards: {
+      "entry-level": {
+        hook: "Internships, coursework, and personal projects — React, JavaScript, and first delivery wins.",
+        whatsInside: [
+          "Hands-on frontend bullets for students and early-career candidates",
+          "ATS-ready React, HTML/CSS, and accessibility wording",
+          "Examples built for internship and portfolio-only profiles",
+        ],
+      },
+      junior: {
+        hook: "Component ownership, performance fixes, and mid-level delivery across production codebases.",
+        whatsInside: [
+          "Project blocks across performance, component systems, and feature delivery",
+          "Mid-level ownership language without inflated scope",
+          "Patterns for accessibility and quality signals hiring managers scan for",
+        ],
+      },
+      senior: {
+        hook: "Architecture decisions, design systems, cross-team technical leadership, and org-wide impact.",
+        whatsInside: [
+          "Leadership-level frontend examples with measurable business outcomes",
+          "Design system and platform patterns for senior screens",
+          "Built for staff/principal frontend engineer job descriptions",
+        ],
+      },
+    },
+  },
+  "backend-developer": {
+    roleName: "Backend Developer",
+    metaTitle: "Backend Developer Resume Bullet Points (2026) | ResumeAtlas",
+    metaDescription:
+      "Copy-paste backend developer resume bullet points for entry-level, junior, and senior roles. API design, database, microservices, and reliability examples with metrics.",
+    keywords: [
+      "backend developer resume bullet points",
+      "backend engineer resume bullets",
+      "api developer resume bullet points",
+      "node.js resume bullet points",
+      "entry level backend developer resume",
+      "junior backend developer resume",
+      "senior backend developer resume",
+    ],
+    h1: "40+ Backend Developer Resume Bullet Points You Can Adapt Fast",
+    heroSubheadline:
+      "Project-wise examples by level — entry, junior, and senior. API reliability, database optimization, and service delivery with real metrics.",
+    aboveFoldBullets: [
+      "Designed REST API with idempotent billing retries; reduced failed-charge recovery tickets by 38% over two releases.",
+      "Scaled a payment processing API from 500 to 15,000 RPS via horizontal sharding and connection pooling with zero downtime.",
+      "Optimized PostgreSQL query plans across 5 core endpoints; cut average response time from 420ms to 95ms.",
+    ],
+    authorityLine:
+      "Used by candidates applying to backend, API, and platform engineering roles at product and infrastructure companies.",
+    roleKeywordDensity:
+      "Strong backend developer resume bullet points should name your stack (Node.js, Python, Go, Java), reliability signals (RPS, latency, uptime), database work, and delivery outcomes.",
+    introIntentStack:
+      "These backend developer resume bullet points reflect what hiring teams screen for in 2026: API reliability, database ownership, service delivery, and ATS-friendly phrasing. Match bullets to your level and to the keywords in each posting. This hub gives copy-ready examples and links to tools for keyword gaps and job-description alignment.",
+    snippetDefinition: {
+      h2: "What Are Good Backend Developer Resume Bullet Points?",
+      line1:
+        "Good backend developer resume bullet points name your stack (Python, Go, Node.js, Java), a reliability or performance signal (latency, RPS, uptime), and a measurable result.",
+      line2:
+        "They should reflect ATS terms from the posting: microservices, REST/gRPC APIs, databases (PostgreSQL, Redis, MongoDB), caching, and the infrastructure stack the role uses.",
+    },
+    paragraphs: [
+      "Recruiters and ATS look for evidence of reliability engineering, API ownership, database depth, and scale. Vague 'built APIs' lines get skipped; latency numbers, throughput metrics, and error-rate reductions get interviews.",
+      "Use these as templates. Replace metrics and stack names with your real work. Claims you cannot explain in a technical screen—like a latency number you did not measure—will hurt you.",
+    ],
+    semanticVariation:
+      "These resume bullet points (also called resume lines or achievement statements) should demonstrate service ownership, API reliability, and database impact — not just task completion.",
+    previewSectionIntro:
+      "Below are grouped preview bullets across API design, database optimization, service reliability, and business impact — then open entry-level, junior, or senior sections for full project-wise banks.",
+    previewSection: {
+      h2: "Backend Developer Resume Bullet Point Examples (Preview)",
+      groups: [
+        {
+          label: "API design and delivery",
+          bullets: [
+            "Designed and shipped a gRPC service for inter-service auth; reduced round-trip latency by 35% vs prior REST endpoint.",
+            "Built idempotent payment retry endpoints; decreased failed-charge recovery support tickets by 38% in two releases.",
+            "Implemented rate limiting and API key rotation across 3 public endpoints; reduced abuse incidents by 90%.",
+            "Documented API contracts with OpenAPI specs and reduced partner integration time from 2 weeks to 3 days.",
+          ],
+        },
+        {
+          label: "Database and data layer",
+          bullets: [
+            "Optimized 5 slow PostgreSQL queries using query-plan analysis and composite indexes; cut average response time from 420ms to 95ms.",
+            "Introduced Redis caching layer for read-heavy user-profile queries; reduced database load by 62% at peak.",
+            "Designed schema migration strategy with zero-downtime deploys; avoided customer-visible errors during a high-traffic window.",
+            "Implemented row-level security on multi-tenant Postgres schema; passed GDPR compliance review without data architecture changes.",
+          ],
+        },
+        {
+          label: "Microservices and reliability",
+          bullets: [
+            "Extracted a monolithic auth service into an independent microservice; reduced deploy coupling for 4 downstream teams.",
+            "Added circuit breakers and bulkhead patterns to payment provider integrations; halved timeout error rate during external outages.",
+            "Built async job queue with retry logic and dead-letter handling; reduced silent task failures from 4% to 0.2%.",
+            "Owned on-call for Tier-1 API service; reduced MTTR from 48 minutes to 11 minutes through runbook standardization.",
+          ],
+        },
+        {
+          label: "Business impact",
+          bullets: [
+            "Shipped pricing API hardening; recovered $1.1M annualized revenue from failed renewal flows.",
+            "Reduced API cold-start latency by 70% for serverless functions; eliminated timeout complaints from 3 enterprise integrators.",
+            "Built export pipeline for GDPR data-portability requests; reduced legal review cycle from 5 days to same-day automated delivery.",
+            "Scaled backend infrastructure from 10K to 200K daily active users with no SLA breaches during a viral growth period.",
+          ],
+        },
+      ],
+    },
+    comparisonSection: {
+      title: "Why Most Backend Resume Bullet Points Don't Work",
+      points: [
+        "Too generic: 'built REST APIs' without stack, scale, or reliability signals.",
+        "No metrics: 'improved performance' without RPS, latency reduction, or error rate is unverifiable.",
+        "Missing database work: backend roles often require SQL depth — bullets without it lose ATS keyword coverage.",
+        "Wrong scope for level: entry-level and senior ownership mixed together makes leveling look inconsistent.",
+      ],
+    },
+    faq: [
+      {
+        question: "What reliability metrics should backend bullets include?",
+        answer:
+          "P95/P99 latency, RPS (requests per second), MTTR (mean time to recover), error rate, and uptime percentage are the most recognized backend reliability metrics. Use ones you can explain from memory in a technical screen.",
+      },
+      {
+        question: "Should backend bullets focus on the stack or business outcomes?",
+        answer:
+          "Both. Stack signals (Python, Go, PostgreSQL, Kafka) establish fit. Business outcomes (latency reduction, throughput increase, revenue recovered) prove value. The strongest bullets have both.",
+      },
+      {
+        question: "How do I tailor backend bullets to a specific job posting?",
+        answer:
+          "Paste your resume and the job description into ResumeAtlas. You will see which stack terms, domain keywords, and reliability signals are missing from your resume for that role.",
+      },
+    ],
+    relatedSearches: [
+      { label: "backend developer resume summary examples", href: "/backend-developer-resume-guide#summary" },
+      { label: "entry-level backend developer resume bullet points", href: "/backend-developer-resume-guide#bullet-points" },
+      { label: "backend developer resume keywords", href: "/backend-developer-resume-keywords" },
+      { label: "Node.js developer resume keywords checklist", href: "/backend-developer-resume-keywords" },
+    ],
+    levelCards: {
+      "entry-level": {
+        hook: "Internships, coursework, and personal projects — APIs, databases, and first backend wins.",
+        whatsInside: [
+          "Hands-on backend bullets for students and early-career candidates",
+          "ATS-ready REST API, SQL, and Node.js/Python wording",
+          "Examples for internship and portfolio-only profiles",
+        ],
+      },
+      junior: {
+        hook: "Endpoint ownership, database optimization, and mid-level service delivery.",
+        whatsInside: [
+          "Project blocks across APIs, caching, database optimization, and reliability",
+          "Mid-level ownership language without inflated scope",
+          "Patterns for service reliability signals hiring managers scan for",
+        ],
+      },
+      senior: {
+        hook: "Architecture decisions, distributed systems, platform engineering, and org-wide reliability.",
+        whatsInside: [
+          "Leadership-level backend examples with measurable service and business outcomes",
+          "Distributed systems and microservices patterns for senior screens",
+          "Built for staff/principal backend engineer job descriptions",
+        ],
+      },
+    },
+  },
+  "machine-learning-engineer": {
+    roleName: "Machine Learning Engineer",
+    metaTitle: "Machine Learning Engineer Resume Bullet Points (2026) | ResumeAtlas",
+    metaDescription:
+      "Copy-paste ML engineer resume bullet points for entry-level, junior, and senior roles. Model training, deployment, MLOps, and LLM integration examples with metrics.",
+    keywords: [
+      "machine learning engineer resume bullet points",
+      "ml engineer resume bullets",
+      "mlops resume bullet points",
+      "python machine learning resume bullet points",
+      "entry level machine learning engineer resume",
+      "junior machine learning engineer resume",
+      "senior machine learning engineer resume",
+    ],
+    h1: "40+ Machine Learning Engineer Resume Bullet Points You Can Adapt Fast",
+    heroSubheadline:
+      "Project-wise examples by level — entry, junior, and senior. Model training, production deployment, monitoring, and LLM integration with real metrics.",
+    aboveFoldBullets: [
+      "Trained and deployed a gradient-boosted fraud classifier on 18M daily transactions; reduced false positives 22% at the chosen operating point.",
+      "Built RAG-based support agent with LangChain and Pinecone; resolved 41% of tier-1 tickets without human escalation.",
+      "Reduced model serving latency from 280ms to 60ms via model distillation and batched inference on Ray Serve.",
+    ],
+    authorityLine:
+      "Used by candidates applying to ML engineering, applied ML, and AI infrastructure roles at product and research-adjacent companies.",
+    roleKeywordDensity:
+      "Strong ML engineer resume bullet points should name tools (Python, PyTorch, LangChain, Airflow), model metrics (precision, recall, latency, F1), and deployment or MLOps outcomes.",
+    introIntentStack:
+      "These machine learning engineer resume bullet points reflect what hiring teams screen for in 2026: production model ownership, evaluation rigor, MLOps reliability, and ATS-friendly phrasing. Match bullets to your level and to the keywords in each posting. This hub gives copy-ready examples and links to tools for keyword gaps and job-description alignment.",
+    snippetDefinition: {
+      h2: "What Are Good Machine Learning Engineer Resume Bullet Points?",
+      line1:
+        "Good ML engineer resume bullet points pair model architecture and training decisions with production outcomes: latency, throughput, accuracy metrics, and business impact.",
+      line2:
+        "They should include ATS terms from the posting: model training, feature engineering, MLOps, model monitoring, A/B evaluation, and the ML stack the role emphasizes.",
+    },
+    paragraphs: [
+      "Hiring teams and ATS look for proof that you can take a model from experiment to production: training, evaluation, deployment, and monitoring. 'Built ML models' without serving latency, evaluation methodology, or business impact is not enough.",
+      "Use these as patterns. Replace our metrics with your real precision/recall numbers, latency improvements, and business outcomes. Claims you cannot explain in a technical screen will hurt you.",
+    ],
+    semanticVariation:
+      "These resume bullet points (also called achievement statements) should prove model lifecycle ownership — from feature engineering to production monitoring — not just model accuracy on a notebook.",
+    previewSectionIntro:
+      "Below are grouped preview bullets across model training, production serving, MLOps, and business impact — then open entry-level, junior, or senior sections for full project-wise banks.",
+    previewSection: {
+      h2: "Machine Learning Engineer Resume Bullet Point Examples (Preview)",
+      groups: [
+        {
+          label: "Model training and evaluation",
+          bullets: [
+            "Trained a transformer-based intent classifier on 500K labeled examples; improved macro-F1 from 0.71 to 0.86 with class-weighted loss and stratified evaluation.",
+            "Built calibration pipeline for a churn prediction model; reduced probability overconfidence by 31% against held-out test sets.",
+            "Implemented feature importance analysis with SHAP values; identified 3 features driving 80% of model lift, enabling targeted data collection.",
+            "Designed offline evaluation harness with multiple metrics (precision, recall, NDCG); prevented 2 regressions before production deployment.",
+          ],
+        },
+        {
+          label: "Production deployment and serving",
+          bullets: [
+            "Reduced model serving latency from 280ms to 60ms via distillation and batched inference; maintained 99.8% SLA across 3M daily predictions.",
+            "Deployed real-time scoring endpoint with FastAPI and Docker; scaled horizontally to handle 10× traffic spike during a product launch.",
+            "Built A/B testing framework for ML model variants; ran 4 controlled experiments that improved click-through by 8.3% cumulatively.",
+            "Containerized model serving with Docker and Kubernetes; reduced deployment time from 2 hours to 12 minutes via automated rollout pipeline.",
+          ],
+        },
+        {
+          label: "MLOps and monitoring",
+          bullets: [
+            "Set up feature store with Feast; reduced training-serving skew from 12% to under 1% across 3 production models.",
+            "Built data drift detection with PSI and KL divergence; automated retraining trigger that kept model performance within 2% of launch baseline.",
+            "Established ML experiment tracking in MLflow; reduced duplicate experiment runs by 60% and improved model reproducibility across the team.",
+            "Designed model versioning and rollback system; rolled back a degraded ranker within 8 minutes of a production alert with zero customer SLA breach.",
+          ],
+        },
+        {
+          label: "LLM integration and business impact",
+          bullets: [
+            "Built RAG pipeline with LangChain and Pinecone for customer-support triage; deflected 41% of tier-1 tickets without human escalation.",
+            "Implemented guardrails and evaluation suite for a production LLM; reduced hallucination rate by 38% on domain-specific queries.",
+            "Linked fraud model improvement to $2.1M annualized reduction in chargeback losses for a fintech payment platform.",
+            "Reduced labeling cost by 40% using active learning; maintained model quality while cutting annotation budget by $180K/year.",
+          ],
+        },
+      ],
+    },
+    comparisonSection: {
+      title: "Why Most ML Engineer Resume Bullet Points Don't Work",
+      points: [
+        "Research-only framing: 'trained a model' without deployment, serving, or production metrics.",
+        "Missing evaluation rigor: accuracy alone is not enough — recall, precision, calibration, and latency matter.",
+        "No MLOps signals: posting asks for monitoring and feature stores but resume shows only Jupyter notebooks.",
+        "Misaligned stack: posting needs PyTorch + Kubernetes but resume only mentions scikit-learn.",
+      ],
+    },
+    faq: [
+      {
+        question: "What model metrics should ML engineer bullets include?",
+        answer:
+          "Accuracy, precision, recall, F1, AUC, NDCG, RMSE, and MAPE are common. Serving latency (P95/P99), throughput (QPS), and uplift vs baseline are equally important for production roles. Use metrics you measured and can explain.",
+      },
+      {
+        question: "How are ML engineer bullets different from data scientist bullets?",
+        answer:
+          "ML engineer bullets emphasize production serving, deployment pipelines, monitoring, and reliability — not just model research. Data scientist bullets often focus on analysis, experimentation, and business insight.",
+      },
+      {
+        question: "How do I tailor ML engineer bullets to a job description?",
+        answer:
+          "Paste your resume and the job description into ResumeAtlas. You will see which ML stack terms, evaluation keywords, and deployment signals are missing for that specific role.",
+      },
+    ],
+    relatedSearches: [
+      { label: "machine learning engineer resume summary examples", href: "/machine-learning-engineer-resume-guide#summary" },
+      { label: "entry-level ML engineer resume bullet points", href: "/machine-learning-engineer-resume-guide#bullet-points" },
+      { label: "machine learning engineer resume keywords", href: "/machine-learning-engineer-resume-keywords" },
+      { label: "MLOps resume keywords checklist", href: "/machine-learning-engineer-resume-keywords" },
+    ],
+    levelCards: {
+      "entry-level": {
+        hook: "ML coursework, capstone projects, Kaggle competitions, and first model deployments.",
+        whatsInside: [
+          "Hands-on ML bullets for students and early-career engineers",
+          "ATS-ready Python, PyTorch/TF, and evaluation metric wording",
+          "Examples built for project-only and internship profiles",
+        ],
+      },
+      junior: {
+        hook: "Production model ownership, experiment tracking, and deployment pipeline delivery.",
+        whatsInside: [
+          "Project blocks across training, evaluation, serving, and MLOps",
+          "Mid-level ownership language without inflated scope",
+          "Patterns for production deployment signals hiring managers scan for",
+        ],
+      },
+      senior: {
+        hook: "ML platform, training infrastructure, cross-team model lifecycle, and LLM integration leadership.",
+        whatsInside: [
+          "Leadership-level ML examples with measurable production and business outcomes",
+          "Platform and infrastructure patterns for senior screens",
+          "Built for staff/principal ML engineer job descriptions",
+        ],
+      },
+    },
+  },
+  "devops-engineer": {
+    roleName: "DevOps Engineer",
+    metaTitle: "DevOps Engineer Resume Bullet Points (2026) | ResumeAtlas",
+    metaDescription:
+      "Copy-paste DevOps engineer resume bullet points for entry-level, junior, and senior roles. CI/CD, Kubernetes, infrastructure-as-code, and SRE examples with metrics.",
+    keywords: [
+      "devops engineer resume bullet points",
+      "devops resume bullets",
+      "site reliability engineer resume bullet points",
+      "kubernetes resume bullet points",
+      "entry level devops resume",
+      "junior devops engineer resume",
+      "senior devops engineer resume",
+    ],
+    h1: "40+ DevOps Engineer Resume Bullet Points You Can Adapt Fast",
+    heroSubheadline:
+      "Project-wise examples by level — entry, junior, and senior. CI/CD, Kubernetes, infrastructure reliability, and cost optimization with real metrics.",
+    aboveFoldBullets: [
+      "Rebuilt CI/CD pipeline with parallelized test stages; reduced average deployment time from 45 minutes to 8 minutes across 20+ services.",
+      "Reduced cloud infrastructure costs by 29% through reserved instance optimization and right-sizing; saved $140K annualized.",
+      "Led incident response framework overhaul; reduced MTTR from 4.2 hours to 38 minutes through runbook standardization and alert tuning.",
+    ],
+    authorityLine:
+      "Used by candidates applying to DevOps, SRE, platform engineering, and infrastructure roles at product and cloud-native companies.",
+    roleKeywordDensity:
+      "Strong DevOps resume bullet points should name your stack (Terraform, Kubernetes, Ansible, GitHub Actions), reliability signals (MTTR, uptime, deployment frequency), and infrastructure or cost outcomes.",
+    introIntentStack:
+      "These DevOps engineer resume bullet points reflect what hiring teams screen for in 2026: infrastructure reliability, CI/CD ownership, observability, and ATS-friendly phrasing. Match bullets to your level and to the keywords in each posting. This hub gives copy-ready examples and links to tools for keyword gaps and job-description alignment.",
+    snippetDefinition: {
+      h2: "What Are Good DevOps Engineer Resume Bullet Points?",
+      line1:
+        "Good DevOps engineer resume bullet points name your stack (Terraform, Kubernetes, GitHub Actions, Prometheus), a reliability or efficiency signal (MTTR, deployment time, cost reduction), and a measurable outcome.",
+      line2:
+        "They should reflect ATS terms from the posting: infrastructure-as-code, CI/CD, container orchestration, observability, and the cloud platform the role emphasizes.",
+    },
+    paragraphs: [
+      "Hiring teams and ATS look for reliability proof, automation scope, and infrastructure ownership. 'Maintained CI/CD pipelines' without deployment frequency, MTTR, or availability metrics is not enough.",
+      "Use these as templates. Replace our metrics with your real deployment times, MTTR improvements, and cost savings. Claims you cannot explain in a technical screen will hurt credibility.",
+    ],
+    semanticVariation:
+      "These resume bullet points (also called achievement statements) should prove infrastructure automation ownership, reliability engineering impact, and cost efficiency — not just tool familiarity.",
+    previewSectionIntro:
+      "Below are grouped preview bullets across CI/CD, infrastructure-as-code, observability, and business impact — then open entry-level, junior, or senior sections for full project-wise banks.",
+    previewSection: {
+      h2: "DevOps Engineer Resume Bullet Point Examples (Preview)",
+      groups: [
+        {
+          label: "CI/CD and automation",
+          bullets: [
+            "Rebuilt GitHub Actions pipelines with parallelized test stages and caching; reduced deployment time from 45 minutes to 8 minutes.",
+            "Implemented blue-green deployment strategy across 12 microservices; eliminated downtime during releases for a 99.99%-SLA platform.",
+            "Automated security scanning in CI with Trivy and OWASP checks; caught 3 critical CVEs before they reached staging.",
+            "Built self-service deployment portal for engineering teams; reduced infrastructure-change tickets by 60% in 6 months.",
+          ],
+        },
+        {
+          label: "Infrastructure-as-code",
+          bullets: [
+            "Modularized Terraform codebase for 3 AWS regions; reduced infrastructure drift incidents from 12/month to under 2.",
+            "Provisioned Kubernetes clusters via Helm and Flux CD; standardized deployments across dev, staging, and production environments.",
+            "Migrated manual EC2 provisioning to Ansible playbooks; cut environment setup time from 3 days to 40 minutes.",
+            "Implemented cost-tagging strategy in Terraform; enabled per-team cost visibility and reduced untagged resource spend by 95%.",
+          ],
+        },
+        {
+          label: "Observability and incident response",
+          bullets: [
+            "Built Prometheus and Grafana dashboards for error budget tracking; enabled SRE team to identify burn-rate breaches 3 hours earlier.",
+            "Implemented distributed tracing with Jaeger across 8 microservices; reduced root-cause analysis time from 45 minutes to 12 minutes.",
+            "Standardized runbooks and post-mortem templates; reduced repeat incidents by 40% over 6 months.",
+            "Tuned PagerDuty alert thresholds and eliminated 70% of low-signal noise; reduced on-call alert fatigue for 15-person team.",
+          ],
+        },
+        {
+          label: "Cost and security",
+          bullets: [
+            "Right-sized EC2 instances and introduced reserved instance planning; reduced monthly cloud spend by 29% ($140K/year).",
+            "Implemented network segmentation with VPC security groups and NACLs; passed SOC 2 infrastructure review without findings.",
+            "Set up automated backup verification and disaster recovery testing; confirmed RTO of under 2 hours for critical databases.",
+            "Reduced container image sizes by 65% using multi-stage builds; cut ECR storage costs and improved cold-start times.",
+          ],
+        },
+      ],
+    },
+    comparisonSection: {
+      title: "Why Most DevOps Resume Bullet Points Don't Work",
+      points: [
+        "Tool lists without outcomes: 'used Kubernetes and Terraform' without deployment metrics or reliability impact.",
+        "No business signal: infrastructure cost and MTTR matter to leadership — bullets should show both.",
+        "Missing observability: posting asks for Prometheus/Grafana/alerting but resume only shows CI/CD.",
+        "Scope mismatch: entry-level and senior infrastructure ownership mixed together weakens leveling.",
+      ],
+    },
+    faq: [
+      {
+        question: "What reliability metrics should DevOps bullets include?",
+        answer:
+          "MTTR (mean time to recover), MTTD (mean time to detect), deployment frequency, change failure rate, and availability percentage are the standard DORA metrics. Cost reduction (% or absolute) is also highly valued at senior levels.",
+      },
+      {
+        question: "How are DevOps and SRE resume bullets different?",
+        answer:
+          "DevOps bullets emphasize CI/CD, automation, and provisioning. SRE bullets emphasize error budgets, SLO/SLA management, on-call processes, and incident response. Many roles blend both — match the posting's emphasis.",
+      },
+      {
+        question: "How do I tailor DevOps bullets to a job description?",
+        answer:
+          "Paste your resume and the job description into ResumeAtlas to see which infrastructure stack terms, cloud platform keywords, and reliability signals are missing from your resume for that specific role.",
+      },
+    ],
+    relatedSearches: [
+      { label: "devops engineer resume summary examples", href: "/devops-engineer-resume-guide#summary" },
+      { label: "entry-level DevOps engineer resume bullet points", href: "/devops-engineer-resume-guide#bullet-points" },
+      { label: "devops engineer resume keywords", href: "/devops-engineer-resume-keywords" },
+      { label: "Kubernetes and Terraform resume keywords", href: "/devops-engineer-resume-keywords" },
+    ],
+    levelCards: {
+      "entry-level": {
+        hook: "Scripting, basic cloud provisioning, and first CI/CD pipeline contributions.",
+        whatsInside: [
+          "Hands-on DevOps bullets for students and early-career engineers",
+          "ATS-ready Bash, Docker, and GitHub Actions wording",
+          "Examples for internship and project-only profiles",
+        ],
+      },
+      junior: {
+        hook: "Pipeline ownership, infrastructure-as-code, and mid-level reliability delivery.",
+        whatsInside: [
+          "Project blocks across CI/CD, Terraform, monitoring, and incident response",
+          "Mid-level ownership language without inflated scope",
+          "Patterns for reliability and automation signals hiring managers scan for",
+        ],
+      },
+      senior: {
+        hook: "Platform engineering, SRE leadership, cost optimization, and org-wide reliability architecture.",
+        whatsInside: [
+          "Leadership-level DevOps examples with measurable reliability and cost outcomes",
+          "SRE and platform patterns for senior screens",
+          "Built for staff/principal DevOps and SRE job descriptions",
+        ],
+      },
+    },
+  },
+  "full-stack-developer": {
+    roleName: "Full-Stack Developer",
+    metaTitle: "Full-Stack Developer Resume Bullet Points (2026) | ResumeAtlas",
+    metaDescription:
+      "Copy-paste full-stack developer resume bullet points for entry-level, junior, and senior roles. End-to-end feature delivery, API, frontend, and database examples with metrics.",
+    keywords: [
+      "full stack developer resume bullet points",
+      "full stack engineer resume bullets",
+      "full stack resume bullet points",
+      "react node resume bullet points",
+      "entry level full stack developer resume",
+      "junior full stack developer resume",
+      "senior full stack developer resume",
+    ],
+    h1: "40+ Full-Stack Developer Resume Bullet Points You Can Adapt Fast",
+    heroSubheadline:
+      "Project-wise examples by level — entry, junior, and senior. End-to-end feature delivery, API ownership, and product impact with real metrics.",
+    aboveFoldBullets: [
+      "Shipped self-serve onboarding flow end-to-end in React and Node.js; increased activation rate by 22% and reduced support tickets by 18%.",
+      "Rebuilt billing system supporting 3 pricing models in TypeScript and Postgres; accelerated enterprise close rate by 30%.",
+      "Delivered checkout performance improvements across frontend and backend; reduced p95 latency from 1.2s to 290ms on mobile.",
+    ],
+    authorityLine:
+      "Used by candidates applying to full-stack, product engineering, and startup engineering roles across SaaS and consumer products.",
+    roleKeywordDensity:
+      "Strong full-stack resume bullet points should name both layers of your stack (React + Node.js, TypeScript + PostgreSQL), feature delivery outcomes, and end-to-end ownership signals.",
+    introIntentStack:
+      "These full-stack developer resume bullet points reflect what hiring teams screen for in 2026: end-to-end feature ownership, delivery outcomes, and ATS-friendly phrasing. Match bullets to your level and to the keywords in each posting. This hub gives copy-ready examples and links to tools for keyword gaps and job-description alignment.",
+    snippetDefinition: {
+      h2: "What Are Good Full-Stack Developer Resume Bullet Points?",
+      line1:
+        "Good full-stack developer resume bullet points show end-to-end ownership across frontend, backend, and often database or infrastructure layers — with a measurable delivery or performance outcome.",
+      line2:
+        "They should reflect ATS terms from the posting: both your frontend stack (React, TypeScript) and backend stack (Node.js, Python, Go, PostgreSQL), plus the product domain and delivery metrics.",
+    },
+    paragraphs: [
+      "Full-stack bullets need to prove both layers of ownership. A bullet that only shows frontend work or only backend work reads as half a stack. The strongest full-stack resume lines name the end-to-end scope and the business outcome it drove.",
+      "Use these as templates. Replace our metrics and stack names with your real work. If you owned only part of a feature end-to-end, be specific about your slice rather than claiming full-stack scope you did not have.",
+    ],
+    semanticVariation:
+      "These resume bullet points (also called achievement statements) should prove end-to-end feature delivery — from UI to API to database — with measurable product or business impact.",
+    previewSectionIntro:
+      "Below are grouped preview bullets across frontend delivery, backend and API work, database, and business impact — then open entry-level, junior, or senior sections for full project-wise banks.",
+    previewSection: {
+      h2: "Full-Stack Developer Resume Bullet Point Examples (Preview)",
+      groups: [
+        {
+          label: "End-to-end feature delivery",
+          bullets: [
+            "Built and shipped a self-serve onboarding wizard from React form to Node.js API to Postgres schema; increased activation by 22%.",
+            "Delivered real-time notification system end-to-end (WebSocket server, React UI, Postgres triggers); reduced user-reported delays by 90%.",
+            "Owned a checkout redesign across frontend React and backend Node.js; reduced p95 latency from 1.2s to 290ms on mobile.",
+            "Shipped role-based access control layer across React components and Express middleware; unblocked 3 enterprise deals with permissions requirements.",
+          ],
+        },
+        {
+          label: "API and backend",
+          bullets: [
+            "Designed REST API versioning strategy; enabled zero-breaking-change migrations for 4 enterprise API partners during a platform refactor.",
+            "Built async job queue with retry and dead-letter handling for report generation; reduced silent failures from 6% to 0.3%.",
+            "Implemented webhook delivery system with exponential backoff; improved third-party integration reliability by 95%.",
+            "Refactored ORM queries for a high-traffic feed endpoint; reduced average latency from 380ms to 95ms.",
+          ],
+        },
+        {
+          label: "Frontend and UI",
+          bullets: [
+            "Rebuilt settings dashboard in React with optimistic UI patterns; eliminated loading spinners and reduced perceived latency by 60%.",
+            "Introduced code-splitting and lazy loading across 8 routes; reduced initial bundle size by 22% on a 1.5M-session/month app.",
+            "Built reusable form component library in TypeScript; reduced duplicate form logic by 80% across 6 product features.",
+            "Implemented skeleton loading states; reduced user-reported 'blank screen' complaints by 70% post-launch.",
+          ],
+        },
+        {
+          label: "Business impact",
+          bullets: [
+            "Rebuilt billing system to support 3 pricing models; accelerated enterprise close rate by 30% and reduced billing-related churn.",
+            "Shipped pricing page A/B test infrastructure end-to-end; test results informed a plan restructure that increased ARPU by 14%.",
+            "Delivered data export feature for GDPR compliance; avoided regulatory risk and unblocked 2 EU enterprise contracts.",
+            "Led migration of legacy PHP codebase to Node.js; cut server costs by 40% and improved developer onboarding time by 3 days.",
+          ],
+        },
+      ],
+    },
+    comparisonSection: {
+      title: "Why Most Full-Stack Resume Bullet Points Don't Work",
+      points: [
+        "One-sided bullets: only frontend or only backend work does not signal full-stack scope.",
+        "No delivery metrics: 'built a feature' without activation, latency, retention, or revenue impact is weak.",
+        "Missing stack depth: posting wants React + Node + PostgreSQL but bullets only name JavaScript.",
+        "Inflated ownership: saying full-stack when you only owned one layer weakens credibility in technical screens.",
+      ],
+    },
+    faq: [
+      {
+        question: "Should full-stack bullets show both frontend and backend in every line?",
+        answer:
+          "Not every bullet needs both, but several should. The goal is to prove end-to-end ownership across the role. A mix of full-stack bullets and domain-specific bullets (one frontend, one backend) reads well without being redundant.",
+      },
+      {
+        question: "What metrics matter most for full-stack developer bullets?",
+        answer:
+          "Activation rate, conversion, latency (frontend and API), feature adoption, and delivery time. Cost savings and retention improvements matter at senior level. Use whatever you can defend as having genuinely measured.",
+      },
+      {
+        question: "How do I tailor full-stack bullets to a specific job description?",
+        answer:
+          "Paste your resume and the job description into ResumeAtlas. You will see which stack terms, domain keywords, and delivery signals are missing for that specific role.",
+      },
+    ],
+    relatedSearches: [
+      { label: "full-stack developer resume summary examples", href: "/full-stack-developer-resume-guide#summary" },
+      { label: "entry-level full-stack developer resume bullet points", href: "/full-stack-developer-resume-guide#bullet-points" },
+      { label: "full-stack developer resume keywords", href: "/full-stack-developer-resume-keywords" },
+      { label: "React Node.js developer resume keywords", href: "/full-stack-developer-resume-keywords" },
+    ],
+    levelCards: {
+      "entry-level": {
+        hook: "Personal projects, bootcamp capstones, and first production contributions across both layers.",
+        whatsInside: [
+          "Hands-on full-stack bullets for bootcamp grads and early-career developers",
+          "ATS-ready React, Node.js, and database wording",
+          "Examples built for project-only and internship profiles",
+        ],
+      },
+      junior: {
+        hook: "Feature ownership end-to-end, API delivery, and mid-level production impact.",
+        whatsInside: [
+          "Project blocks across full-stack feature delivery, API design, and frontend optimization",
+          "Mid-level ownership language without inflated scope",
+          "Patterns for end-to-end delivery signals hiring managers scan for",
+        ],
+      },
+      senior: {
+        hook: "Architecture decisions, system design, team leadership, and org-wide product impact.",
+        whatsInside: [
+          "Leadership-level full-stack examples with measurable product and business outcomes",
+          "Platform and architecture patterns for senior screens",
+          "Built for staff/lead full-stack engineer job descriptions",
         ],
       },
     },
@@ -2603,6 +3323,918 @@ function pmSenior(): ResumeBulletDetailCopy {
   };
 }
 
+// ─── Frontend Developer ───────────────────────────────────────────────────────
+
+function fdEntry(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Entry-Level Frontend Developer Resume Bullet Points (Copy & Paste) | ResumeAtlas",
+    metaDescription:
+      "20+ entry-level frontend developer resume bullet points for students, bootcamp grads, and interns. React, JavaScript, HTML/CSS, accessibility, and performance examples with metrics.",
+    keywords: [
+      "entry level frontend developer resume bullet points",
+      "junior frontend developer resume no experience",
+      "react resume bullet points entry level",
+      "frontend developer internship resume bullets",
+      "bootcamp frontend resume bullet points",
+    ],
+    h1: "Entry-Level Frontend Developer Resume Bullet Points",
+    noExperienceReassurance:
+      "No professional experience? These bullets are built around projects, bootcamp capstones, and internship contributions.",
+    intro:
+      "Entry-level frontend roles look for component work, JavaScript fundamentals, and a signal you can ship something users can interact with. Use your projects and internships — add metrics where you have them.",
+    doubtLine:
+      "Personal projects are fine for entry-level, but your bullets still need to name stack and show a result. Check your resume against each posting before you apply.",
+    aboveFoldBullets: [
+      "Built a task manager SPA in React and TypeScript as a capstone project; added unit tests with Vitest and documented the component API in a README.",
+      "Contributed a bug fix to a shared component library during a bootcamp internship; closed an accessibility issue (missing ARIA label) that failed automated audit.",
+      "Optimized image delivery on a portfolio site with lazy loading; improved Lighthouse performance score from 62 to 89 on mobile.",
+    ],
+    studentIntentBlock: {
+      h2: "Frontend Resume Bullets for Students and Bootcamp Graduates",
+      bullets: [
+        "Built a responsive landing page for a class project in HTML, CSS, and vanilla JS; matched Figma design and passed a peer accessibility review.",
+        "Completed a React Hooks refactor exercise; replaced 3 class components with functional equivalents and confirmed behavior with existing tests.",
+        "Deployed a portfolio site to Vercel with a CI workflow; first deploy passed all Lighthouse accessibility checks.",
+      ],
+    },
+    projects: [
+      {
+        groupHeading: "Bootcamp and Capstone Projects",
+        name: "React SPA — task manager",
+        bullets: [
+          "Implemented a task list with drag-and-drop reordering using React and @dnd-kit; added keyboard support to meet WCAG 2.1 AA.",
+          "Connected to a mock REST API with React Query; handled loading, error, and empty states in every screen.",
+          "Added Vitest unit tests for all custom hooks; brought branch coverage from 0% to 74% before project submission.",
+          "Wrote a component API README with prop tables; reduced onboarding questions from classmates during code review.",
+        ],
+      },
+      {
+        name: "Portfolio site (Next.js + Vercel)",
+        bullets: [
+          "Built a personal portfolio with Next.js and Tailwind CSS; deployed on Vercel with automated preview URLs per branch.",
+          "Improved Lighthouse performance score from 62 to 89 on mobile by adding lazy loading and next/image optimizations.",
+          "Added dark mode with CSS custom properties and localStorage persistence; no flash-of-wrong-theme on reload.",
+          "Implemented a contact form with server-side validation using Next.js API routes; blocked spam with a honeypot field.",
+        ],
+      },
+      {
+        groupHeading: "Internship Contributions",
+        name: "Component library bug fixes",
+        bullets: [
+          "Fixed a missing ARIA label on a dropdown component during a summer internship; closed an accessibility audit finding across 4 products that used the shared library.",
+          "Converted a class-based form component to a functional React component with hooks; removed 40 lines of boilerplate without changing external API.",
+          "Added Storybook stories for 3 new component variants; enabled designers to review states without running the full app.",
+          "Resolved a z-index stacking issue in a modal component that caused overlap in Safari; verified fix across 3 browsers.",
+        ],
+      },
+    ],
+  };
+}
+
+function fdJunior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Junior Frontend Developer Resume Bullet Points (Mid-Level Examples) | ResumeAtlas",
+    metaDescription:
+      "20+ junior frontend developer resume bullet points for mid-level roles. React, TypeScript, performance, accessibility, and component delivery examples with metrics.",
+    keywords: [
+      "junior frontend developer resume bullet points",
+      "mid level frontend developer resume bullets",
+      "react developer resume bullet points 2 years",
+      "frontend developer resume bullets with metrics",
+    ],
+    h1: "Junior Frontend Developer Resume Bullet Points",
+    intro:
+      "Junior frontend roles expect component ownership, performance awareness, and first production delivery. These bullets cover the patterns hiring managers look for at 1–3 years of experience.",
+    doubtLine:
+      "Generic React bullets will not stand out. Check each resume against the job description — stack terms and performance keywords vary by role.",
+    aboveFoldBullets: [
+      "Rebuilt a legacy class-based dashboard in React with hooks and TypeScript; reduced component re-renders by 40% using React.memo and useCallback.",
+      "Added WCAG 2.1 AA accessibility fixes to core user flows; improved Lighthouse accessibility score from 71 to 96.",
+      "Implemented infinite scroll with Intersection Observer; reduced initial page payload by 55% for a list with 10K+ items.",
+    ],
+    projects: [
+      {
+        groupHeading: "Component and Feature Delivery",
+        name: "React component refactor",
+        bullets: [
+          "Migrated 15 class components to functional React with hooks; cut boilerplate by 30% and eliminated 4 deprecated lifecycle methods.",
+          "Built a reusable date-range picker component in TypeScript; adopted across 3 feature teams and removed 2 duplicate implementations.",
+          "Added optimistic updates to a comment feature using React Query; eliminated loading spinners for the most common user action.",
+          "Implemented virtualized list rendering with react-window; reduced DOM nodes in a 5K-row table from 5,000 to 30, cutting scroll jank.",
+        ],
+      },
+      {
+        name: "Performance optimization",
+        bullets: [
+          "Profiled bundle with webpack-bundle-analyzer; removed a 120 KB unused library dependency that had been included for a single utility function.",
+          "Introduced route-based code splitting; reduced initial JS payload from 840 KB to 510 KB on the dashboard entry point.",
+          "Optimized font loading with `font-display: swap` and preload hints; eliminated layout shift (CLS 0.18 → 0.02) on the marketing homepage.",
+          "Added HTTP cache headers for static assets via Next.js config; reduced repeat-visit network transfer by 65%.",
+        ],
+      },
+      {
+        groupHeading: "Accessibility and Quality",
+        name: "Accessibility audit and remediation",
+        bullets: [
+          "Audited 8 core pages with axe-core and closed 16 WCAG 2.1 AA violations; improved Lighthouse accessibility score from 71 to 96.",
+          "Added keyboard trap prevention and focus restoration for modal dialogs; improved screen reader flow for assistive-technology users.",
+          "Set up automated accessibility checks in CI with axe-playwright; caught 2 regressions before they reached staging.",
+          "Documented component keyboard interaction patterns in Storybook; reduced accessibility-related QA feedback by 50%.",
+        ],
+      },
+    ],
+  };
+}
+
+function fdSenior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Senior Frontend Developer Resume Bullet Points (Staff / Lead Examples) | ResumeAtlas",
+    metaDescription:
+      "Senior frontend developer resume bullet points for staff and lead engineer roles. Design system ownership, architecture decisions, Core Web Vitals, and cross-team delivery examples.",
+    keywords: [
+      "senior frontend developer resume bullet points",
+      "senior frontend engineer resume bullets",
+      "staff frontend engineer resume examples",
+      "lead frontend developer resume bullet points",
+      "frontend architect resume bullets",
+    ],
+    h1: "Senior Frontend Developer Resume Bullet Points",
+    intro:
+      "Senior frontend roles expect architecture decisions, design system ownership, and org-wide performance impact. These bullets demonstrate leadership scope without fabricating seniority.",
+    doubtLine:
+      "Senior bullets must show cross-team or platform-level impact. Check your resume against the posting — staff-level JDs often have different ATS keywords than mid-level ones.",
+    aboveFoldBullets: [
+      "Architected a shared component library in React + TypeScript used by 6 product teams; reduced duplicate UI patterns by 70% and cut visual regression incidents by 60%.",
+      "Drove Core Web Vitals remediation across 4 marketing pages; brought LCP from 4.8s to 1.4s and INP from 380ms to 60ms, within Google's 'Good' thresholds.",
+      "Led frontend migration from a CRA monolith to a Next.js micro-frontend architecture; reduced build times by 68% and enabled independent team deployments.",
+    ],
+    leadershipSectionTitle: "Senior Frontend Leadership Bullet Points",
+    leadershipBullets: [
+      "Defined frontend performance budgets adopted by 3 squads; established LCP and INP thresholds in CI that blocked 4 regressions in the first quarter.",
+      "Led hiring for 3 frontend engineer positions; introduced a take-home project rubric that reduced time-to-hire by 2 weeks with better role-fit signal.",
+      "Proposed and implemented a migration from Redux to Zustand + React Query; reduced state boilerplate by 40% across a 60K-line frontend codebase.",
+      "Presented frontend platform roadmap to engineering leadership; secured headcount for a dedicated platform team based on measured developer-experience improvements.",
+      "Mentored 4 junior and mid-level frontend engineers through quarterly 1:1s; 2 received promotions within 18 months.",
+      "Drove adoption of TypeScript strict mode across the frontend monorepo; eliminated 3 production bug classes within 2 release cycles.",
+    ],
+    projects: [
+      {
+        groupHeading: "Design System and Platform",
+        name: "Component library platform",
+        bullets: [
+          "Built a design token system bridging Figma and CSS variables; enabled consistent theming across web and mobile surfaces for 6 product teams.",
+          "Introduced visual regression testing with Chromatic; reduced unintentional style changes shipped to production by 80%.",
+          "Created a contribution model with documented component API standards; reduced design-system PR review time from 5 days to 1 day.",
+          "Set up automated bundle size tracking per component; caught a 40 KB unintentional dependency addition before it reached the npm registry.",
+        ],
+      },
+      {
+        groupHeading: "Architecture and Performance",
+        name: "Core Web Vitals and architecture",
+        bullets: [
+          "Investigated and fixed render-blocking third-party scripts; improved TBT (Total Blocking Time) from 800ms to 120ms on the landing page.",
+          "Designed ISR (Incremental Static Regeneration) strategy for a Next.js content site; served 12M monthly pages with zero origin scaling required during traffic spikes.",
+          "Refactored global state management to co-located server components; eliminated 3 redundant API calls per page load.",
+          "Established A/B testing framework for frontend variants; 4 experiments shipped without requiring backend deploys.",
+        ],
+      },
+    ],
+  };
+}
+
+// ─── Backend Developer ─────────────────────────────────────────────────────────
+
+function bdEntry(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Entry-Level Backend Developer Resume Bullet Points (Copy & Paste) | ResumeAtlas",
+    metaDescription:
+      "20+ entry-level backend developer resume bullet points for students, bootcamp grads, and interns. REST APIs, SQL, Node.js, Python, and delivery examples with metrics.",
+    keywords: [
+      "entry level backend developer resume bullet points",
+      "backend developer resume no experience",
+      "node.js resume bullet points entry level",
+      "python backend resume bullet points",
+      "backend developer internship resume bullets",
+    ],
+    h1: "Entry-Level Backend Developer Resume Bullet Points",
+    noExperienceReassurance:
+      "No work experience? These bullets are designed around projects, internships, and coursework in REST APIs, databases, and server-side development.",
+    intro:
+      "Entry-level backend roles look for API fundamentals, database basics, and proof you can ship working endpoints. Use your projects — just add concrete stack names and outcome signals.",
+    doubtLine:
+      "Project bullets without metrics still need a stack, a constraint, and a result you can explain. Check your resume against each posting before you apply.",
+    aboveFoldBullets: [
+      "Built a REST API in Node.js and Express for a capstone project; implemented JWT auth, rate limiting, and wrote Supertest integration tests covering 8 endpoints.",
+      "Designed a PostgreSQL schema for a URL shortener app; added indexes on hot-path queries and documented the migration in a versioned SQL file.",
+      "Deployed a Python Flask service to Railway with a CI pipeline; first production deploy succeeded with zero manual steps.",
+    ],
+    studentIntentBlock: {
+      h2: "Backend Resume Bullets for Students and Bootcamp Graduates",
+      bullets: [
+        "Implemented a student CRUD API in Python and FastAPI for a class project; added request validation with Pydantic and returned structured error responses.",
+        "Set up a local PostgreSQL database with seed data for a group project; wrote SQL migrations teammates could run in one command.",
+        "Added basic logging with Winston to a Node.js service; identified and fixed a silent error that had been swallowing validation failures.",
+      ],
+    },
+    projects: [
+      {
+        groupHeading: "Capstone and Class Projects",
+        name: "REST API with auth",
+        bullets: [
+          "Built a JWT-authenticated REST API in Node.js + Express; covered 8 endpoints with Supertest integration tests and zero regression failures during final demo.",
+          "Implemented refresh token rotation and logout invalidation; followed OWASP session management guidelines from a security lecture.",
+          "Wrote Zod request validation middleware applied to all POST and PATCH routes; eliminated unvalidated user input reaching the database layer.",
+          "Containerized the service with Docker and documented local setup in a README; a reviewer was able to run it in under 5 minutes.",
+        ],
+      },
+      {
+        name: "Database design and SQL",
+        bullets: [
+          "Designed a normalized PostgreSQL schema (3NF) for a library management system; created ER diagram and verified with 15 test records before demo.",
+          "Added B-tree indexes on two hot-path query columns; reduced average query time from 320ms to 45ms in a local benchmark.",
+          "Wrote 5 versioned SQL migration files; teammates could apply or rollback migrations with a single npm script.",
+          "Implemented soft-delete pattern with `deleted_at` timestamps; preserved data history required by the project specification.",
+        ],
+      },
+      {
+        groupHeading: "Internship Projects",
+        name: "Backend service contribution",
+        bullets: [
+          "Fixed a race condition in a background job queue during an internship; added an optimistic lock that eliminated duplicate processing on retry.",
+          "Refactored a slow API endpoint by removing an N+1 query; reduced p95 response time from 600ms to 140ms (measured with k6).",
+          "Added structured JSON logging to an Express service; enabled the on-call team to filter errors by request ID in Datadog.",
+          "Wrote a data backfill script for a schema migration; validated row counts before and after and confirmed zero data loss.",
+        ],
+      },
+    ],
+  };
+}
+
+function bdJunior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Junior Backend Developer Resume Bullet Points (Mid-Level Examples) | ResumeAtlas",
+    metaDescription:
+      "20+ junior backend developer resume bullet points for mid-level roles. API ownership, database optimization, caching, microservices, and reliability examples with metrics.",
+    keywords: [
+      "junior backend developer resume bullet points",
+      "mid level backend developer resume bullets",
+      "backend engineer resume bullet points 2 years",
+      "node python backend resume bullets with metrics",
+    ],
+    h1: "Junior Backend Developer Resume Bullet Points",
+    intro:
+      "Junior backend roles expect endpoint ownership, database depth, and first production reliability work. These bullets cover the patterns hiring managers look for at 1–3 years of experience.",
+    doubtLine:
+      "Mid-level backend bullets must prove you own something end-to-end. Check your resume against the posting — database and caching keywords vary widely by role.",
+    aboveFoldBullets: [
+      "Optimized 4 slow PostgreSQL queries using EXPLAIN ANALYZE; reduced average latency on the user-profile endpoint from 380ms to 90ms.",
+      "Introduced a Redis caching layer for read-heavy configuration data; cut database calls per request by 75% at peak load.",
+      "Built an async task queue with Bull and Redis; reduced timeout errors on PDF export from 8% to 0.4% by moving generation off the request path.",
+    ],
+    projects: [
+      {
+        groupHeading: "API and Service Ownership",
+        name: "REST and gRPC endpoint delivery",
+        bullets: [
+          "Designed and shipped 3 new REST endpoints for a partner integration; documented with OpenAPI specs and delivered on time for a contracted go-live date.",
+          "Added idempotency keys to payment creation endpoints; eliminated duplicate charge risk on retry without requiring distributed locking.",
+          "Implemented API versioning with header-based routing; enabled zero-breaking-change migration for 4 third-party integrators.",
+          "Built a webhook delivery system with exponential backoff and dead-letter queue; improved third-party integration reliability from 87% to 99.3%.",
+        ],
+      },
+      {
+        name: "Database and caching",
+        bullets: [
+          "Ran EXPLAIN ANALYZE on 4 slow queries and added composite indexes; cut average response time on critical endpoints from 380ms to 90ms.",
+          "Introduced Redis caching for configuration and lookup data; reduced Postgres QPS by 62% during a traffic spike without schema changes.",
+          "Designed a schema migration strategy with zero-downtime column additions; avoided customer-facing errors during a high-traffic deployment window.",
+          "Implemented connection pooling with PgBouncer; reduced database connection exhaustion errors to zero during peak load.",
+        ],
+      },
+      {
+        groupHeading: "Reliability and Quality",
+        name: "Async and error handling",
+        bullets: [
+          "Built an async job queue with retry logic and dead-letter handling; reduced silent task failures from 4% to 0.2%.",
+          "Added structured error codes and problem+JSON responses to all endpoints; reduced support escalation time by giving ops teams actionable signals.",
+          "Set up contract tests between two services with Pact; caught an API breaking change before it reached staging.",
+          "Wrote a runbook for the most common on-call alert; reduced MTTR for that category from 40 minutes to 12 minutes.",
+        ],
+      },
+    ],
+  };
+}
+
+function bdSenior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Senior Backend Developer Resume Bullet Points (Staff / Lead Examples) | ResumeAtlas",
+    metaDescription:
+      "Senior backend developer resume bullet points for staff and principal engineer roles. Distributed systems, architecture decisions, platform reliability, and business impact examples.",
+    keywords: [
+      "senior backend developer resume bullet points",
+      "staff backend engineer resume bullets",
+      "backend architect resume bullet points",
+      "principal backend engineer resume examples",
+      "distributed systems resume bullet points",
+    ],
+    h1: "Senior Backend Developer Resume Bullet Points",
+    intro:
+      "Senior backend roles expect distributed systems ownership, platform decisions, and measurable reliability or revenue impact. These bullets scale from tech lead to principal.",
+    doubtLine:
+      "Senior bullets must show cross-service or platform-level scope. Check your resume against the posting — staff-level JDs emphasize system design and organizational impact differently.",
+    aboveFoldBullets: [
+      "Designed event-driven data pipeline replacing a polling architecture; reduced data freshness latency from 15 minutes to under 30 seconds at 50M events/day.",
+      "Led API gateway migration to Kong; unified auth, rate limiting, and logging across 12 microservices; reduced per-service boilerplate by 60%.",
+      "Drove incident response overhaul: runbooks, SLO dashboards, and blameless post-mortems; reduced MTTR from 4.2 hours to 38 minutes over 6 months.",
+    ],
+    leadershipSectionTitle: "Senior Backend Leadership Bullet Points",
+    leadershipBullets: [
+      "Defined service mesh architecture for a 20-service platform; presented trade-off analysis to engineering leadership and secured buy-in for a phased Istio rollout.",
+      "Led cross-team RFP for database migration from MongoDB to PostgreSQL; coordinated 4 teams across 6 months with zero customer SLA breach during cutover.",
+      "Established on-call standards and severity definitions across 3 backend teams; reduced alert fatigue by 55% through threshold calibration and runbook coverage.",
+      "Mentored 3 mid-level engineers through architecture reviews and system design mock interviews; all 3 received promotions within 12 months.",
+      "Owned platform cost review: identified $220K/year in oversized database instances; right-sized with zero performance regression.",
+      "Defined backend platform engineering roadmap; presented quarterly to CTO and secured headcount for a dedicated infrastructure reliability team.",
+    ],
+    projects: [
+      {
+        groupHeading: "Platform and Architecture",
+        name: "Event-driven architecture migration",
+        bullets: [
+          "Designed Kafka-based event pipeline to decouple 3 downstream consumers from a monolithic write path; reduced coupling incidents from monthly to zero.",
+          "Built dead-letter queue and replay tooling; enabled ops team to recover from upstream failures without engineer intervention.",
+          "Defined schema registry strategy with Avro; prevented breaking schema changes reaching consumers across 5 teams.",
+          "Documented migration guide and runbooks; 2 additional teams onboarded to the pipeline within 3 months of launch.",
+        ],
+      },
+      {
+        groupHeading: "Reliability and Scale",
+        name: "High-traffic reliability engineering",
+        bullets: [
+          "Scaled a read-heavy API from 2K to 40K RPS via horizontal sharding and caching layer; maintained p99 latency under 100ms throughout.",
+          "Implemented circuit breakers and bulkhead isolation for 3 external payment providers; halved timeout error rate during a provider outage.",
+          "Built chaos engineering harness with Gremlin; surfaced 2 single-points-of-failure that were remediated before a high-traffic campaign.",
+          "Reduced database connection pool exhaustion incidents from monthly to zero via PgBouncer tuning and connection limit enforcement.",
+        ],
+      },
+    ],
+  };
+}
+
+// ─── Machine Learning Engineer ─────────────────────────────────────────────────
+
+function mlEntry(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Entry-Level Machine Learning Engineer Resume Bullet Points (Copy & Paste) | ResumeAtlas",
+    metaDescription:
+      "20+ entry-level ML engineer resume bullet points for students, Kaggle competitors, and interns. Model training, evaluation, Python, PyTorch, and first deployment examples.",
+    keywords: [
+      "entry level machine learning engineer resume bullet points",
+      "machine learning resume bullet points no experience",
+      "ml engineer intern resume bullets",
+      "kaggle competition resume bullet points",
+      "python machine learning resume entry level",
+    ],
+    h1: "Entry-Level Machine Learning Engineer Resume Bullet Points",
+    noExperienceReassurance:
+      "No ML job experience? These bullets are designed for coursework, Kaggle, research projects, and ML internships.",
+    intro:
+      "Entry-level ML roles look for Python proficiency, model evaluation rigor, and proof you can take an experiment from data to a reproducible result. Use your coursework, competitions, and research projects.",
+    doubtLine:
+      "Accuracy alone is not enough. Mention your evaluation methodology, dataset, and the stack you used — and check each resume against the job posting before applying.",
+    aboveFoldBullets: [
+      "Trained a binary text classifier with BERT fine-tuning on a Kaggle dataset; achieved F1 0.84 (Top 12% leaderboard) with stratified 5-fold cross-validation.",
+      "Built a fraud detection baseline with XGBoost for a capstone project; evaluated with precision/recall at multiple thresholds and documented class imbalance handling.",
+      "Reproduced a research paper's LSTM sentiment model in PyTorch; matched reported accuracy within 1.2% using the same dataset split.",
+    ],
+    studentIntentBlock: {
+      h2: "ML Resume Bullets for Students and Kaggle Competitors",
+      bullets: [
+        "Completed Andrew Ng's Machine Learning Specialization; implemented linear regression, neural networks, and SVMs from scratch in Python as graded assignments.",
+        "Built a simple recommendation system for a database course project using collaborative filtering; evaluated with RMSE on a 70/30 train-test split.",
+        "Participated in a Kaggle competition (Titanic); achieved top-25% accuracy using feature engineering and ensemble of logistic regression + random forest.",
+      ],
+    },
+    projects: [
+      {
+        groupHeading: "Coursework and Research Projects",
+        name: "Text classification with BERT",
+        bullets: [
+          "Fine-tuned a BERT-base model for multi-class news classification on 20 Newsgroups dataset; achieved macro-F1 of 0.87 vs 0.71 baseline (TF-IDF + Naive Bayes).",
+          "Implemented stratified k-fold cross-validation; confirmed results were not inflated by class imbalance before reporting metrics.",
+          "Profiled GPU memory usage during training; reduced batch size and applied gradient accumulation to fit the model on a free-tier Colab GPU.",
+          "Documented experiment configuration in a YAML file and saved checkpoints to Google Drive; enabled reproducibility for a classmate reviewer.",
+        ],
+      },
+      {
+        name: "Tabular ML / competition",
+        bullets: [
+          "Built an XGBoost fraud detection model with SMOTE oversampling for a capstone; improved recall on minority class from 0.42 to 0.79 vs unbalanced baseline.",
+          "Applied SHAP feature importance analysis; identified 3 features driving 80% of model lift and documented them in the final report.",
+          "Tuned hyperparameters with Optuna across 50 trials; improved F1 by 6 points over default XGBoost configuration.",
+          "Wrote evaluation code comparing 4 thresholds (0.3, 0.4, 0.5, 0.6); selected operating point based on business constraint of <5% false positive rate.",
+        ],
+      },
+      {
+        groupHeading: "Internship ML Projects",
+        name: "Feature engineering internship",
+        bullets: [
+          "Joined an ML team internship; built 5 new features for a churn prediction model and validated statistical significance with a permutation test.",
+          "Refactored a training notebook into a modular Python script; enabled reproducible runs from CLI with configurable hyperparameters.",
+          "Automated weekly model performance report using pandas and matplotlib; replaced a manual Excel process that had been taking 3 hours per week.",
+          "Set up MLflow experiment tracking for 3 training runs; compared metrics across runs and flagged a data leakage issue in an older experiment.",
+        ],
+      },
+    ],
+  };
+}
+
+function mlJunior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Junior Machine Learning Engineer Resume Bullet Points (Mid-Level Examples) | ResumeAtlas",
+    metaDescription:
+      "20+ junior ML engineer resume bullet points for mid-level roles. Model deployment, feature pipelines, A/B testing, MLOps, and production monitoring examples with metrics.",
+    keywords: [
+      "junior machine learning engineer resume bullet points",
+      "mid level ml engineer resume bullets",
+      "mlops resume bullet points 2 years",
+      "machine learning deployment resume bullets",
+      "production ml model resume bullet points",
+    ],
+    h1: "Junior Machine Learning Engineer Resume Bullet Points",
+    intro:
+      "Junior ML roles expect you to own model serving, understand production monitoring, and improve real metrics — not just train notebooks. These bullets target the 1–3 year experience band.",
+    doubtLine:
+      "Production ML bullets must show serving, monitoring, or pipeline ownership — not just offline accuracy. Check your resume against the posting before applying.",
+    aboveFoldBullets: [
+      "Deployed a gradient-boosted ranker to production via FastAPI and Docker; served 2M daily predictions with p99 latency under 80ms.",
+      "Built data drift detection with PSI and KL divergence; automated retraining trigger that kept model performance within 2% of launch baseline for 6 months.",
+      "Reduced model training time by 40% by switching from pandas to Polars for feature engineering; enabled faster iteration cycles across the team.",
+    ],
+    projects: [
+      {
+        groupHeading: "Model Deployment and Serving",
+        name: "Production model serving",
+        bullets: [
+          "Deployed a recommendation model as a REST service with FastAPI and Docker; scaled horizontally to handle 10× traffic during a product launch without SLA breach.",
+          "Built A/B testing framework for ML model variants; ran 3 controlled experiments that improved engagement by 7.4% cumulatively.",
+          "Containerized model serving with Docker and automated deployment with GitHub Actions; reduced deployment time from 2 hours to 15 minutes.",
+          "Implemented model versioning with rollback; reverted a degraded ranker within 8 minutes of a production alert with zero customer impact.",
+        ],
+      },
+      {
+        name: "Feature pipelines and MLOps",
+        bullets: [
+          "Built a feature engineering pipeline in Airflow with daily retraining; reduced training-serving skew from 11% to under 1.5%.",
+          "Set up MLflow experiment tracking; reduced duplicate experiment runs by 55% and improved model reproducibility across a 4-person team.",
+          "Implemented data validation with Great Expectations; caught 2 upstream schema changes before they propagated to model training.",
+          "Migrated a training script from a notebook to a CLI-parameterized Python module; enabled reproducible reruns and CI integration.",
+        ],
+      },
+      {
+        groupHeading: "Monitoring and Quality",
+        name: "Model monitoring",
+        bullets: [
+          "Set up prediction distribution monitoring; identified a 12% drift in input feature distribution 3 days before model performance degraded.",
+          "Built offline evaluation harness with precision, recall, and calibration metrics; prevented 2 model regressions before production deployment.",
+          "Automated weekly model health report with Python and Slack webhooks; replaced a manual review process that had been missing drift signals.",
+          "Implemented shadow mode testing for a new model; validated 4 weeks of predictions before promoting to production with zero customer-facing risk.",
+        ],
+      },
+    ],
+  };
+}
+
+function mlSenior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Senior Machine Learning Engineer Resume Bullet Points (Staff / Lead Examples) | ResumeAtlas",
+    metaDescription:
+      "Senior ML engineer resume bullet points for staff and principal roles. ML platform, LLM integration, training infrastructure, MLOps, and business impact examples with metrics.",
+    keywords: [
+      "senior machine learning engineer resume bullet points",
+      "staff ml engineer resume bullets",
+      "principal ml engineer resume examples",
+      "ml platform resume bullet points",
+      "llm engineering resume bullet points",
+    ],
+    h1: "Senior Machine Learning Engineer Resume Bullet Points",
+    intro:
+      "Senior ML roles expect platform ownership, training infrastructure decisions, and org-wide model quality impact. These bullets target staff and principal ML engineer scope.",
+    doubtLine:
+      "Senior ML bullets must show platform or infrastructure scope — not just model accuracy improvements. Align stack and impact language with the specific JD before applying.",
+    aboveFoldBullets: [
+      "Built ML platform serving 15+ production models across 6 teams; standardized experiment tracking, model registry, and deployment in one stack, reducing time-to-production by 60%.",
+      "Designed LLM evaluation harness with 200+ test cases; reduced hallucination rate by 38% on domain-specific queries and unblocked enterprise go-live.",
+      "Led training infrastructure migration to distributed PyTorch on Kubernetes; reduced large-model training time by 55% and cut GPU cost by 30%.",
+    ],
+    leadershipSectionTitle: "Senior ML Engineering Leadership Bullet Points",
+    leadershipBullets: [
+      "Defined ML engineering standards (experiment tracking, serving, monitoring) adopted by 8 data scientists and 4 ML engineers across 2 product lines.",
+      "Led hiring for 3 ML engineer positions; introduced a take-home evaluation that tested production ML skill gaps identified in prior onboarding.",
+      "Presented ML platform roadmap to VP of Engineering; secured budget for a dedicated ML infrastructure team based on measured time-to-production improvements.",
+      "Mentored 2 junior ML engineers from model notebook work to full serving ownership; both received promotions within 15 months.",
+      "Drove LLM safety and guardrails strategy with legal and product; delivered policy-compliant AI feature without delaying product launch.",
+      "Reduced model retraining cost by 40% via active learning; maintained model quality while cutting labeling budget by $180K/year.",
+    ],
+    projects: [
+      {
+        groupHeading: "ML Platform and Infrastructure",
+        name: "ML platform engineering",
+        bullets: [
+          "Built a feature store with Feast; reduced training-serving skew from 14% to under 0.8% across 4 production models.",
+          "Designed model registry with versioning, approval workflow, and automated rollback; reduced risky production promotions from 3 per quarter to zero.",
+          "Implemented GPU auto-scaling for training workloads on Kubernetes; reduced idle GPU cost by 35% without increasing queue wait times.",
+          "Standardized model packaging with BentoML; reduced model-to-serving handoff time from 2 days to 3 hours across the team.",
+        ],
+      },
+      {
+        groupHeading: "LLM and Generative AI",
+        name: "LLM integration and safety",
+        bullets: [
+          "Built RAG pipeline with LangChain and Pinecone for enterprise document Q&A; reduced hallucination rate by 38% on domain-specific queries vs baseline.",
+          "Designed prompt evaluation harness with 200+ test cases and automated regression detection; caught 3 regressions before production deployment.",
+          "Implemented PII redaction layer before LLM context injection; passed security review for a healthcare client deployment.",
+          "Led fine-tuning of a domain-specific LLM on 50K proprietary examples; reduced generic fallback rate from 31% to 8% vs base model.",
+        ],
+      },
+    ],
+  };
+}
+
+// ─── DevOps Engineer ───────────────────────────────────────────────────────────
+
+function dvEntry(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Entry-Level DevOps Engineer Resume Bullet Points (Copy & Paste) | ResumeAtlas",
+    metaDescription:
+      "20+ entry-level DevOps engineer resume bullet points for students and interns. CI/CD, Docker, cloud basics, scripting, and first automation examples with metrics.",
+    keywords: [
+      "entry level devops engineer resume bullet points",
+      "devops resume bullet points no experience",
+      "cloud engineer intern resume bullets",
+      "docker kubernetes resume bullet points entry level",
+      "ci cd resume bullet points student",
+    ],
+    h1: "Entry-Level DevOps Engineer Resume Bullet Points",
+    noExperienceReassurance:
+      "New to DevOps? These bullets are built around personal projects, cloud labs, and first infrastructure contributions.",
+    intro:
+      "Entry-level DevOps roles look for scripting fluency, basic container skills, and evidence you can automate a repeatable task. Use your cloud lab work and personal projects — just name the tool and the result.",
+    doubtLine:
+      "Tool lists without outcomes will not pass ATS or impress a hiring manager. Include what the automation replaced or what it improved, even for small projects.",
+    aboveFoldBullets: [
+      "Built a GitHub Actions CI pipeline for a personal Node.js project; automated lint, test, and Docker build steps — reduced manual release steps from 8 to 1.",
+      "Deployed a containerized Python app to AWS EC2 with Docker Compose; wrote a setup script so any team member could launch the environment in under 5 minutes.",
+      "Wrote a Bash script to rotate log files and archive to S3 on a cron schedule; replaced a manual weekly task for a small lab environment.",
+    ],
+    studentIntentBlock: {
+      h2: "DevOps Resume Bullets for Students and Cloud Learners",
+      bullets: [
+        "Completed AWS Cloud Practitioner certification; provisioned EC2, S3, and RDS instances in a lab environment following least-privilege IAM policies.",
+        "Set up a local Kubernetes cluster with Minikube; deployed 2 containerized services and exposed them via a NodePort service.",
+        "Wrote a Docker Compose file for a 3-tier web application; documented setup steps teammates could run in one command.",
+      ],
+    },
+    projects: [
+      {
+        groupHeading: "CI/CD and Automation Projects",
+        name: "GitHub Actions pipeline",
+        bullets: [
+          "Built a GitHub Actions workflow with lint, test, Docker build, and push stages; reduced manual pre-release checklist from 8 steps to a single merge event.",
+          "Added branch protection rules requiring CI to pass before merge; caught 2 unit test regressions in the first week of use.",
+          "Set up Dependabot for automated dependency updates; kept 3 project repositories current on minor/patch versions without manual tracking.",
+          "Configured Docker layer caching in CI; reduced average build time from 4 minutes to 90 seconds.",
+        ],
+      },
+      {
+        name: "Containerization and cloud basics",
+        bullets: [
+          "Containerized a Python Flask app with a multi-stage Dockerfile; reduced final image size from 1.2 GB to 180 MB.",
+          "Deployed to AWS EC2 with Docker Compose; wrote a bootstrap script so any developer could launch the full stack in under 5 minutes.",
+          "Set up S3 bucket policies and lifecycle rules for log archiving; automated a weekly manual rotation task.",
+          "Configured a basic Nginx reverse proxy for a 2-service setup; documented the config so it could be reused as a template.",
+        ],
+      },
+      {
+        groupHeading: "Internship Contributions",
+        name: "Infrastructure support",
+        bullets: [
+          "Contributed to a Terraform module for EC2 provisioning during an internship; added variable validation that caught 2 invalid inputs before apply.",
+          "Documented a runbook for a common alert response; reduced time-to-resolution for that alert category from 30 minutes to 10 minutes.",
+          "Set up a Grafana dashboard for CPU and memory metrics on 4 services; gave the on-call team a first-look visibility panel.",
+          "Identified and removed 3 unused IAM roles in a cleanup task; reduced the attack surface flagged in a quarterly security review.",
+        ],
+      },
+    ],
+  };
+}
+
+function dvJunior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Junior DevOps Engineer Resume Bullet Points (Mid-Level Examples) | ResumeAtlas",
+    metaDescription:
+      "20+ junior DevOps engineer resume bullet points for mid-level roles. CI/CD, Kubernetes, Terraform, monitoring, and incident response examples with metrics.",
+    keywords: [
+      "junior devops engineer resume bullet points",
+      "mid level devops engineer resume bullets",
+      "terraform kubernetes resume bullet points 2 years",
+      "site reliability engineer resume bullet points junior",
+      "devops resume bullets with metrics",
+    ],
+    h1: "Junior DevOps Engineer Resume Bullet Points",
+    intro:
+      "Junior DevOps roles expect CI/CD ownership, infrastructure-as-code delivery, and basic on-call participation. These bullets cover the patterns hiring managers look for at 1–3 years of experience.",
+    doubtLine:
+      "Mid-level DevOps bullets need reliability and automation metrics — not just tool names. Check your resume against the posting before applying.",
+    aboveFoldBullets: [
+      "Rebuilt CI/CD pipeline with parallelized stages and Docker layer caching; reduced average deployment time from 28 minutes to 7 minutes across 8 services.",
+      "Converted manual EC2 provisioning to Terraform modules; reduced environment setup time from 2 days to 35 minutes with no configuration drift.",
+      "Tuned PagerDuty alert thresholds for 3 services; reduced on-call page volume by 55% without increasing missed-incident rate.",
+    ],
+    projects: [
+      {
+        groupHeading: "CI/CD and Pipeline Delivery",
+        name: "CI/CD optimization",
+        bullets: [
+          "Rebuilt a Jenkins pipeline to GitHub Actions with parallelized test stages; reduced average build time from 28 minutes to 7 minutes.",
+          "Implemented blue-green deployment for 4 microservices; eliminated downtime during releases on a 99.9%-SLA platform.",
+          "Automated security scanning with Trivy in CI; caught 2 critical container CVEs before they reached the staging environment.",
+          "Built self-service deployment pipeline for 3 teams; reduced infrastructure-change tickets to the platform team by 45%.",
+        ],
+      },
+      {
+        name: "Infrastructure-as-code",
+        bullets: [
+          "Modularized Terraform codebase; reduced code duplication by 60% and enabled consistent provisioning across dev, staging, and production.",
+          "Provisioned Kubernetes clusters with Helm and automated upgrades with Flux CD; standardized releases across 3 environments.",
+          "Implemented cost tagging in Terraform; surfaced per-team cloud spend and reduced untagged resource cost by 90%.",
+          "Added Terraform state locking with S3 + DynamoDB; eliminated 4 concurrent-apply conflicts that had previously required manual recovery.",
+        ],
+      },
+      {
+        groupHeading: "Monitoring and Incident Response",
+        name: "Observability and on-call",
+        bullets: [
+          "Built Prometheus and Grafana dashboards for 5 services; enabled the on-call team to identify error-rate spikes 3× faster.",
+          "Standardized runbooks for the top 5 alert categories; reduced average MTTR for those alerts from 38 minutes to 14 minutes.",
+          "Set up distributed tracing with OpenTelemetry; reduced root-cause analysis time from 45 minutes to 11 minutes for a cross-service latency issue.",
+          "Implemented log aggregation with Loki and Grafana; enabled structured search that replaced manual SSH-grep sessions for incident diagnosis.",
+        ],
+      },
+    ],
+  };
+}
+
+function dvSenior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Senior DevOps Engineer Resume Bullet Points (Staff / SRE Lead Examples) | ResumeAtlas",
+    metaDescription:
+      "Senior DevOps engineer resume bullet points for staff and SRE lead roles. Platform engineering, SLO management, cost optimization, security, and organizational reliability examples.",
+    keywords: [
+      "senior devops engineer resume bullet points",
+      "staff sre resume bullet points",
+      "platform engineering resume bullets",
+      "devops architect resume bullet points",
+      "senior site reliability engineer resume bullets",
+    ],
+    h1: "Senior DevOps Engineer Resume Bullet Points",
+    intro:
+      "Senior DevOps and SRE roles expect platform architecture decisions, reliability engineering ownership, and org-wide impact on deployment velocity and cost. These bullets target staff and principal DevOps scope.",
+    doubtLine:
+      "Senior DevOps bullets must show platform or SRE scope — reliability architecture, cost leadership, or team influence. Align language with the specific JD before applying.",
+    aboveFoldBullets: [
+      "Designed platform-wide SLO framework and error budget policy across 15 services; reduced SLA breach risk by standardizing reliability expectations for 4 engineering teams.",
+      "Led Kubernetes migration from EC2 autoscaling groups; reduced infrastructure cost by 34% and improved deployment frequency from weekly to daily across 8 product teams.",
+      "Built chaos engineering program with Gremlin; surfaced 3 single-points-of-failure that were remediated before a peak traffic event, preventing an estimated 4-hour outage.",
+    ],
+    leadershipSectionTitle: "Senior DevOps Leadership Bullet Points",
+    leadershipBullets: [
+      "Defined DevOps maturity model for the engineering org; used as the baseline for quarterly platform team OKRs across 3 product lines.",
+      "Led hiring for 2 platform engineer positions; introduced a systems design interview focused on reliability trade-offs that improved signal quality vs prior process.",
+      "Presented cloud cost optimization strategy to CTO; secured approval for a $280K/year savings initiative via reserved instance and architecture changes.",
+      "Mentored 3 junior DevOps engineers through on-call rotations and post-mortems; all 3 graduated to full on-call ownership within 6 months.",
+      "Drove SOC 2 Type II infrastructure evidence collection; coordinated 5 teams across 8 weeks with zero audit findings on infrastructure controls.",
+      "Established platform engineering roadmap with quarterly milestones; presented to engineering leadership and secured headcount approval for a dedicated reliability team.",
+    ],
+    projects: [
+      {
+        groupHeading: "Platform Architecture",
+        name: "Kubernetes and service mesh",
+        bullets: [
+          "Designed Kubernetes cluster architecture across 2 regions with automated failover; achieved 99.98% uptime over 12 months post-migration.",
+          "Implemented Istio service mesh; unified mTLS, traffic management, and observability across 12 microservices without per-service code changes.",
+          "Built GitOps workflow with Flux CD and policy-as-code via OPA; eliminated manual kubectl apply operations across the entire platform.",
+          "Reduced cluster cost by 28% via Karpenter node auto-provisioning; matched instance types to workload profiles rather than maintaining fixed node pools.",
+        ],
+      },
+      {
+        groupHeading: "Reliability and Security",
+        name: "SRE and compliance",
+        bullets: [
+          "Implemented SLO dashboards and error budget alerts for 15 services; enabled product teams to make data-driven reliability vs velocity trade-offs.",
+          "Led disaster recovery testing program; validated RTO of under 2 hours for 4 critical databases, meeting contractual commitments for 3 enterprise customers.",
+          "Designed secrets management migration from hardcoded environment variables to Vault; eliminated plain-text credential exposure across 8 services.",
+          "Automated CIS benchmark compliance checks in CI; blocked 6 infrastructure changes that would have introduced non-compliant configurations.",
+        ],
+      },
+    ],
+  };
+}
+
+// ─── Full-Stack Developer ──────────────────────────────────────────────────────
+
+function fsEntry(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Entry-Level Full-Stack Developer Resume Bullet Points (Copy & Paste) | ResumeAtlas",
+    metaDescription:
+      "20+ entry-level full-stack developer resume bullet points for bootcamp grads, students, and interns. React, Node.js, APIs, databases, and end-to-end delivery examples.",
+    keywords: [
+      "entry level full stack developer resume bullet points",
+      "full stack developer resume bullet points no experience",
+      "full stack bootcamp resume bullets",
+      "react node resume bullet points entry level",
+      "junior full stack developer resume no experience",
+    ],
+    h1: "Entry-Level Full-Stack Developer Resume Bullet Points",
+    noExperienceReassurance:
+      "No work experience? These bullets are designed for bootcamp capstones, personal projects, and internship contributions across frontend and backend.",
+    intro:
+      "Entry-level full-stack roles want to see you ship something end-to-end — a working frontend talking to a real backend with a database. Use your capstone projects and add concrete stack names and outcomes.",
+    doubtLine:
+      "Full-stack bullets that only show one layer (all frontend or all backend) miss the point. Show end-to-end ownership even on small projects.",
+    aboveFoldBullets: [
+      "Built a full-stack expense tracker with React, Node.js, and PostgreSQL as a bootcamp capstone; implemented JWT auth and CRUD endpoints with Supertest integration tests.",
+      "Deployed a 3-tier web app to AWS EC2 with a React frontend, Express API, and RDS Postgres database; wrote a one-command setup script for demo environments.",
+      "Shipped a feature for a bootcamp team project from Figma design through React UI to REST endpoint; delivered within a 2-week sprint with code review and merged PR.",
+    ],
+    studentIntentBlock: {
+      h2: "Full-Stack Resume Bullets for Bootcamp Grads and Students",
+      bullets: [
+        "Built a movie review app in React and Django for a web development course; added user authentication and paginated API responses.",
+        "Contributed a full-stack feature to a group project: a React form that submitted to a Node.js API and persisted to MongoDB — shipped within a 1-week sprint.",
+        "Deployed a personal project to Render with a React frontend and Node.js backend; added environment variable management so secrets were not hardcoded.",
+      ],
+    },
+    projects: [
+      {
+        groupHeading: "Capstone and Bootcamp Projects",
+        name: "Full-stack CRUD app with auth",
+        bullets: [
+          "Built a budget tracking SPA with React and Express; implemented JWT authentication, protected routes, and a PostgreSQL schema with 4 related tables.",
+          "Connected React form state to a REST API with Axios; handled loading, error, and success states in every user flow.",
+          "Added Supertest integration tests for 6 API endpoints; confirmed auth protection worked and prevented a double-submit bug found during testing.",
+          "Deployed frontend to Vercel and backend to Railway with environment variable configuration; app was shareable via a public URL for demo day.",
+        ],
+      },
+      {
+        name: "Team project (group sprint)",
+        bullets: [
+          "Shipped a search and filter feature across React UI and a Node.js API endpoint within a 2-week sprint; reviewed and merged by 2 teammates.",
+          "Implemented pagination on a list API with cursor-based navigation; reduced payload size from 2MB to 40KB per request for large datasets.",
+          "Added an input validation middleware to all POST routes; caught 3 invalid submissions that had been silently saved to the database.",
+          "Wrote a database seeding script for local development; reduced onboarding time for new contributors from 45 minutes to under 10.",
+        ],
+      },
+      {
+        groupHeading: "Internship and Personal Projects",
+        name: "Deployed personal project",
+        bullets: [
+          "Built a portfolio site with Next.js (frontend) and a Supabase backend for a contact form; deployed to Vercel with zero manual steps.",
+          "Added a simple REST API for a bookmark manager with tag-based filtering; implemented in Node.js + SQLite and accessible from a React dashboard.",
+          "Integrated Stripe (test mode) into a mock e-commerce checkout across React UI and a Node.js webhook handler; completed the happy-path purchase flow.",
+          "Wrote an end-to-end test with Playwright covering the sign-up and first action flow; caught a broken redirect in a pre-demo run.",
+        ],
+      },
+    ],
+  };
+}
+
+function fsJunior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Junior Full-Stack Developer Resume Bullet Points (Mid-Level Examples) | ResumeAtlas",
+    metaDescription:
+      "20+ junior full-stack developer resume bullet points for mid-level roles. End-to-end feature delivery, API ownership, frontend optimization, and product impact examples with metrics.",
+    keywords: [
+      "junior full stack developer resume bullet points",
+      "mid level full stack developer resume bullets",
+      "full stack engineer resume bullet points 2 years",
+      "react node full stack resume bullets with metrics",
+    ],
+    h1: "Junior Full-Stack Developer Resume Bullet Points",
+    intro:
+      "Junior full-stack roles expect end-to-end feature ownership across frontend and backend, with delivery metrics. These bullets cover the 1–3 year experience band.",
+    doubtLine:
+      "Mid-level full-stack bullets must show both layers and a product or performance outcome. Check your resume against the posting before applying.",
+    aboveFoldBullets: [
+      "Shipped a self-serve onboarding wizard end-to-end in React and Node.js; increased user activation rate by 18% in a 4-week A/B test.",
+      "Rebuilt a slow reporting API with pagination and query optimization; reduced page load from 4.2s to 0.9s on the most-used dashboard view.",
+      "Delivered a role-based permissions feature across React components and Express middleware; unblocked 2 enterprise sales deals with access control requirements.",
+    ],
+    projects: [
+      {
+        groupHeading: "End-to-End Feature Delivery",
+        name: "Onboarding and activation features",
+        bullets: [
+          "Built a multi-step onboarding flow from React UI to Node.js API to Postgres schema; activation rate improved by 18% in 4 weeks.",
+          "Shipped real-time notifications via WebSocket (socket.io); reduced user-reported delays by 85% and eliminated polling requests from the client.",
+          "Delivered a CSV export feature across frontend download trigger and streaming API response; handled files up to 50K rows without memory errors.",
+          "Added optimistic UI updates to a comment feature; eliminated loading spinners for the most common user action on the dashboard.",
+        ],
+      },
+      {
+        name: "API and backend delivery",
+        bullets: [
+          "Designed REST API versioning strategy for a public API; enabled zero-breaking-change migration for 3 third-party integrators.",
+          "Built webhook delivery with exponential backoff and dead-letter queue; improved third-party integration reliability from 88% to 99%.",
+          "Replaced an N+1 ORM query on a high-traffic feed endpoint; reduced p95 latency from 420ms to 95ms.",
+          "Implemented a background job queue for report generation; removed long-running requests from the API thread and reduced timeout errors to zero.",
+        ],
+      },
+      {
+        groupHeading: "Frontend and Performance",
+        name: "Frontend optimization and UX",
+        bullets: [
+          "Introduced route-based code splitting; reduced initial JS bundle from 920 KB to 540 KB on the dashboard entry point.",
+          "Rebuilt a settings page with React Query and optimistic updates; cut perceived latency by 70% without backend changes.",
+          "Added skeleton loading states across 6 data-heavy views; reduced user-reported 'blank page' complaints by 65% post-launch.",
+          "Implemented E2E tests for 3 critical user flows with Playwright; caught 2 regressions before release over 3 sprints.",
+        ],
+      },
+    ],
+  };
+}
+
+function fsSenior(): ResumeBulletDetailCopy {
+  return {
+    metaTitle:
+      "Senior Full-Stack Developer Resume Bullet Points (Staff / Lead Examples) | ResumeAtlas",
+    metaDescription:
+      "Senior full-stack developer resume bullet points for staff and lead engineer roles. Architecture decisions, system design, cross-team delivery, and business impact examples.",
+    keywords: [
+      "senior full stack developer resume bullet points",
+      "staff full stack engineer resume bullets",
+      "lead full stack developer resume bullet points",
+      "principal full stack engineer resume examples",
+      "full stack architect resume bullets",
+    ],
+    h1: "Senior Full-Stack Developer Resume Bullet Points",
+    intro:
+      "Senior full-stack roles expect architecture decisions across both layers, cross-team delivery leadership, and measurable product or business impact. These bullets target staff and lead engineer scope.",
+    doubtLine:
+      "Senior full-stack bullets must show cross-stack architecture scope — not just feature delivery. Align impact language with the specific JD before applying.",
+    aboveFoldBullets: [
+      "Architected a multi-tenant SaaS billing system in TypeScript and Postgres supporting 3 pricing models; accelerated enterprise close rate by 30%.",
+      "Led migration from a monolithic Rails app to a Next.js frontend and Node.js API layer; reduced deployment coupling for 3 product teams and cut TTFB by 60%.",
+      "Drove a checkout performance initiative across frontend and payment API; reduced p95 checkout latency from 2.1s to 380ms on mobile, improving conversion by 14%.",
+    ],
+    leadershipSectionTitle: "Senior Full-Stack Leadership Bullet Points",
+    leadershipBullets: [
+      "Defined frontend-to-API contract standards across 4 product teams; reduced integration regressions from 6/month to under 1 through contract testing.",
+      "Led architecture review for a 0→1 product feature spanning frontend, backend, and data layer; delivered on schedule for a board-level product launch.",
+      "Mentored 3 junior and mid-level engineers through weekly design reviews; 2 received promotions within 18 months.",
+      "Proposed and led migration from REST to GraphQL for a data-heavy dashboard; reduced over-fetching by 65% and removed 4 custom aggregation endpoints.",
+      "Presented quarterly platform health to engineering leadership; proposed and secured headcount for a frontend platform team based on measured DX improvements.",
+      "Designed multi-region data residency architecture for an EU customer requirement; unblocked €800K ARR contract without forking the codebase.",
+    ],
+    projects: [
+      {
+        groupHeading: "Architecture and System Design",
+        name: "Platform and full-stack architecture",
+        bullets: [
+          "Designed event-driven feature flag system spanning a React frontend and Node.js backend; enabled 6 simultaneous A/B tests without deployment dependencies.",
+          "Architected a real-time collaboration layer with CRDTs and WebSocket; reduced conflict resolution complexity and enabled offline-first editing for 50K users.",
+          "Built a data residency routing layer; directed API requests and database reads to correct regional infrastructure based on user org settings.",
+          "Led adoption of a GraphQL API layer; reduced data-fetching code in React by 50% and eliminated 4 redundant REST aggregation endpoints.",
+        ],
+      },
+      {
+        groupHeading: "Business Impact Delivery",
+        name: "Conversion and revenue features",
+        bullets: [
+          "Delivered a self-serve pricing upgrade flow end-to-end; increased plan upgrades by 22% in the first 30 days without a sales-assist.",
+          "Rebuilt checkout from React UI to payment API; reduced p95 checkout latency from 2.1s to 380ms on mobile and improved conversion by 14%.",
+          "Shipped GDPR data export pipeline end-to-end; reduced legal review cycle from 5 days to automated same-day delivery and unblocked 2 EU contracts.",
+          "Led multi-currency billing feature across frontend, API, and Postgres schema; unblocked expansion into 3 markets with a 60-day delivery to a contracted deadline.",
+        ],
+      },
+    ],
+  };
+}
+
 const DETAIL: Record<
   ResumeBulletRole,
   Record<ResumeBulletLevel, () => ResumeBulletDetailCopy>
@@ -2631,6 +4263,31 @@ const DETAIL: Record<
     "entry-level": pmEntry,
     junior: pmJunior,
     senior: pmSenior,
+  },
+  "frontend-developer": {
+    "entry-level": fdEntry,
+    junior: fdJunior,
+    senior: fdSenior,
+  },
+  "backend-developer": {
+    "entry-level": bdEntry,
+    junior: bdJunior,
+    senior: bdSenior,
+  },
+  "machine-learning-engineer": {
+    "entry-level": mlEntry,
+    junior: mlJunior,
+    senior: mlSenior,
+  },
+  "devops-engineer": {
+    "entry-level": dvEntry,
+    junior: dvJunior,
+    senior: dvSenior,
+  },
+  "full-stack-developer": {
+    "entry-level": fsEntry,
+    junior: fsJunior,
+    senior: fsSenior,
   },
 };
 
@@ -2694,6 +4351,11 @@ const BULLET_HUB_DESCRIPTION_CONTEXT: Record<ResumeBulletRole, string> = {
   "data-scientist": "ML experiments, Python models, forecasting, and research communication",
   "software-engineer": "feature delivery, system design, testing, and engineering impact",
   "product-manager": "roadmaps, discovery, metrics, and cross-functional launches",
+  "frontend-developer": "React components, performance optimization, accessibility, and Core Web Vitals",
+  "backend-developer": "API design, database optimization, microservices, and reliability engineering",
+  "machine-learning-engineer": "model training, serving pipelines, MLOps, and evaluation harnesses",
+  "devops-engineer": "CI/CD pipelines, infrastructure as code, Kubernetes, and incident response",
+  "full-stack-developer": "end-to-end feature delivery, API integration, and product ownership",
 };
 
 export function buildResumeBulletHubMetaTitle(

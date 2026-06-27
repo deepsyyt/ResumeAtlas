@@ -66,6 +66,20 @@ export function resolveLegacyKeywordsRedirect(pathname: string): string | null {
   return null;
 }
 
+/** Legacy `/ats-keywords` index and `/ats-keywords/{role}` → canonical keyword URLs (GSC de-dupe). */
+export function resolveAtsKeywordsRedirect(pathname: string): string | null {
+  const normalized =
+    pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+  if (normalized === "/ats-keywords") {
+    return "/resume-keywords";
+  }
+  const match = normalized.match(/^\/ats-keywords\/([a-z0-9-]+)$/);
+  if (match && ROLE_SET.has(match[1])) {
+    return roleResumeKeywordsPublicPath(match[1]);
+  }
+  return null;
+}
+
 /** Legacy `/{role}/resume/{topic}` → public resume guide anchor or bullet hub. */
 export function resolveLegacyResumeTopicRedirect(pathname: string): string | null {
   for (const role of ROLE_SLUGS_FOR_LEGACY_REDIRECTS) {

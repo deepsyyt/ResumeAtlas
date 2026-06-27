@@ -227,6 +227,13 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
               <p className="mt-3 text-sm text-slate-600 page-prose-sm">
                 Wrong role?{" "}
                 <Link
+                  href="/data-analyst-resume-keywords"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  Data analyst keywords
+                </Link>
+                ,{" "}
+                <Link
                   href="#business-systems-analyst-keywords"
                   className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
                 >
@@ -237,7 +244,7 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                   href="/systems-analyst-resume-keywords"
                   className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
                 >
-                  systems analyst keywords
+                  Systems analyst keywords
                 </Link>
                 , or{" "}
                 <Link
@@ -245,6 +252,19 @@ export default function RoleKeywordsGuidePage({ params }: { params: PageParams }
                   className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
                 >
                   business intelligence keywords
+                </Link>
+                .
+              </p>
+            ) : null}
+            {isMachineLearningEngineerPage ? (
+              <p className="mt-3 text-sm text-slate-600 page-prose-sm">
+                Searching for <strong className="font-medium text-slate-800">machine learning resume keywords</strong>
+                ? You are on the MLE page. For modeling-heavy roles without deployment ownership, see{" "}
+                <Link
+                  href="/data-scientist-resume-keywords"
+                  className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
+                >
+                  data scientist keywords
                 </Link>
                 .
               </p>

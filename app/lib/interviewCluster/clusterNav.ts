@@ -1,4 +1,6 @@
+import { ENHANCV_COMPARISON_PATH } from "@/app/lib/competitorComparison/enhancvPageContent";
 import { JOBSCAN_COMPARISON_PATH } from "@/app/lib/competitorComparison/jobscanPageContent";
+import { KICKRESUME_COMPARISON_PATH } from "@/app/lib/competitorComparison/kickresumePageContent";
 import { RESUME_WORDED_COMPARISON_PATH } from "@/app/lib/competitorComparison/resumeWordedPageContent";
 import { TEAL_COMPARISON_PATH } from "@/app/lib/competitorComparison/tealPageContent";
 import {
@@ -64,6 +66,8 @@ export const INTERVIEW_CLUSTER_COMPARISONS: ClusterNavLink[] = [
   { path: JOBSCAN_COMPARISON_PATH, label: "Jobscan alternative" },
   { path: RESUME_WORDED_COMPARISON_PATH, label: "Resume Worded alternative" },
   { path: TEAL_COMPARISON_PATH, label: "Teal alternative" },
+  { path: ENHANCV_COMPARISON_PATH, label: "Enhancv alternative" },
+  { path: KICKRESUME_COMPARISON_PATH, label: "Kickresume alternative" },
 ];
 
 export const INTERVIEW_CLUSTER_ALL_PATHS = [

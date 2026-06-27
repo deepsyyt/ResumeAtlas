@@ -20,6 +20,7 @@ import {
   CHECK_RESUME_AGAINST_JD_PATH,
   RESUME_KEYWORD_SCANNER_FORM_HREF,
 } from "@/app/lib/internalLinks";
+import { RESUME_KEYWORDS_HUB_PATH } from "@/app/lib/seoHubPages";
 
 type Props = {
   config: ToolClusterPageConfig;
@@ -471,7 +472,7 @@ export function ToolClusterLanding({
             </li>
             <li>
               <Link
-                href="/ats-keywords"
+                href={RESUME_KEYWORDS_HUB_PATH}
                 className="text-sky-700 underline underline-offset-2 hover:text-sky-900"
               >
                 Keywords for your target job

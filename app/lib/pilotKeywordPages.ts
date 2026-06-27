@@ -1,7 +1,7 @@
 import { CONTENT_FRESHNESS_YEAR } from "@/app/lib/contentFreshness";
 import { RESUME_ATLAS_TITLE_SUFFIX } from "@/app/lib/searchIntentSeo";
 
-export type PilotKeywordSlug = "data-engineer" | "sql-developer" | "power-bi";
+export type PilotKeywordSlug = "data-engineer" | "sql-developer" | "power-bi" | "ai-engineer" | "python-developer";
 
 export type KeywordCategoryBlock = {
   heading: string;
@@ -1178,6 +1178,646 @@ export const PILOT_KEYWORD_PAGES: Record<PilotKeywordSlug, PilotKeywordPageConfi
         question: "How do I find missing Power BI keywords before applying?",
         answer:
           "Paste your resume and the job description into ResumeAtlas’s free checker to see gap phrases, then add them beside bullets you can defend in a technical interview.",
+      },
+    ],
+  },
+  "ai-engineer": {
+    slug: "ai-engineer",
+    path: pathFor("ai-engineer"),
+    roleName: "AI Engineer",
+    h1: `AI Engineer Resume Keywords (${CONTENT_FRESHNESS_YEAR} ATS Guide)`,
+    title: `130+ AI Engineer Resume Keywords That Pass ATS (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
+    description:
+      "AI engineer resume keywords for ATS: LLM integration, RAG, prompt engineering, evals, vector databases, and production AI systems. Copy 130+ terms and scan your resume vs the job description free.",
+    intro:
+      "AI engineer resume keywords that match how ATS and hiring managers screen applied AI roles in 2026 — grouped by LLM integration, retrieval systems, evaluation, and infrastructure so terms appear as proof, not stuffing.",
+    roleOverview:
+      "AI engineers build production systems on top of foundation models: LLM APIs, retrieval-augmented generation (RAG) pipelines, agentic workflows, and evaluation (evals) frameworks. Recruiters filter for prompt engineering, LLM orchestration (LangChain, LlamaIndex), vector databases (Pinecone, Weaviate, pgvector), model fine-tuning, and AI observability. Titles vary widely: AI engineer, applied AI engineer, AI software engineer, LLM engineer, generative AI engineer. Your resume should show production ownership — latency, cost, accuracy, and guardrails — not only that you called an API.",
+    scopeNote:
+      "This page targets applied AI engineer, LLM engineer, and generative AI engineer titles that build on top of foundation models. For model training and MLOps-heavy roles, use machine learning engineer keywords. For data pipeline work, use data engineer keywords.",
+    keywordCategories: [
+      {
+        heading: "Core skills",
+        terms: [
+          "AI engineering",
+          "LLM integration",
+          "Generative AI",
+          "Applied AI",
+          "Retrieval-augmented generation",
+          "RAG",
+          "Prompt engineering",
+          "AI agents",
+          "Agentic workflows",
+          "Model evaluation",
+          "Evals",
+          "AI observability",
+          "AI safety",
+          "Guardrails",
+          "Context window management",
+          "Structured outputs",
+          "Function calling",
+          "AI system design",
+          "Production AI",
+          "Responsible AI",
+        ],
+      },
+      {
+        heading: "Technical skills",
+        terms: [
+          "Python",
+          "Large language models",
+          "Transformer architecture",
+          "Embeddings",
+          "Semantic search",
+          "Vector search",
+          "Fine-tuning",
+          "LoRA",
+          "RLHF",
+          "Chain-of-thought prompting",
+          "Few-shot prompting",
+          "Streaming APIs",
+          "Inference optimization",
+          "Token budget management",
+          "Latency optimization",
+          "Chunking strategies",
+          "Reranking",
+          "Hybrid search",
+          "Multimodal AI",
+          "Batch inference",
+        ],
+      },
+      {
+        heading: "Tools & frameworks",
+        terms: [
+          "LangChain",
+          "LlamaIndex",
+          "LangGraph",
+          "OpenAI API",
+          "Anthropic API",
+          "Hugging Face",
+          "FastAPI",
+          "Pinecone",
+          "Weaviate",
+          "ChromaDB",
+          "pgvector",
+          "Redis",
+          "MLflow",
+          "Weights & Biases",
+          "Arize AI",
+          "Langfuse",
+          "RAGAS",
+          "Pytest",
+          "Docker",
+          "Git",
+        ],
+      },
+      {
+        heading: "Platforms & cloud",
+        terms: [
+          "OpenAI",
+          "Anthropic Claude",
+          "Google Gemini",
+          "AWS Bedrock",
+          "Azure OpenAI",
+          "Google Vertex AI",
+          "Cohere",
+          "AWS Lambda",
+          "GCP Cloud Run",
+          "AWS ECS",
+          "Supabase",
+          "PostgreSQL",
+          "Kubernetes",
+          "GitHub Actions",
+          "Terraform",
+        ],
+      },
+      {
+        heading: "Methodologies",
+        terms: [
+          "Prompt versioning",
+          "A/B testing prompts",
+          "Human-in-the-loop",
+          "Red teaming",
+          "LLM eval frameworks",
+          "Retrieval accuracy metrics",
+          "Hallucination detection",
+          "Context faithfulness",
+          "Latency SLAs",
+          "Cost optimization",
+          "CI/CD for AI",
+          "Model registry",
+          "Shadow deployment",
+          "Feedback loops",
+          "Data flywheel",
+          "Agile",
+          "Code review",
+          "Pair programming",
+          "Documentation",
+          "On-call rotation",
+        ],
+      },
+      {
+        heading: "Certifications (when relevant)",
+        terms: [
+          "DeepLearning.AI LLM specialization",
+          "AWS Certified Machine Learning Specialty",
+          "Google Professional Machine Learning Engineer",
+          "Microsoft Azure AI Engineer Associate",
+          "Hugging Face certifications",
+          "Databricks Generative AI certification",
+        ],
+      },
+    ],
+    seniority: {
+      title: "AI engineer keywords by experience level",
+      tiers: [
+        {
+          label: "Entry-level",
+          keywords: [
+            "Python",
+            "OpenAI API",
+            "LangChain basics",
+            "Prompt engineering",
+            "RAG basics",
+            "Vector store setup",
+            "Evals basics",
+            "FastAPI",
+            "Git",
+            "Documentation",
+            "Unit tests",
+            "API integration",
+          ],
+        },
+        {
+          label: "Mid-level",
+          keywords: [
+            "Production RAG pipelines",
+            "LLM orchestration",
+            "Fine-tuning",
+            "AI observability",
+            "Latency optimization",
+            "Cost optimization",
+            "Agentic workflows",
+            "Prompt versioning",
+            "A/B testing",
+            "On-call rotation",
+            "Cross-team delivery",
+            "Reranking strategies",
+          ],
+        },
+        {
+          label: "Senior-level",
+          keywords: [
+            "AI system architecture",
+            "Eval framework design",
+            "Multi-agent systems",
+            "AI safety strategy",
+            "Platform standards",
+            "Reliability targets",
+            "Vendor evaluation",
+            "Mentoring",
+            "Roadmap input",
+            "Executive communication",
+            "Capacity planning",
+            "Responsible AI governance",
+          ],
+        },
+      ],
+    },
+    tools: [
+      "Python",
+      "LangChain",
+      "LlamaIndex",
+      "OpenAI API",
+      "Anthropic API",
+      "Pinecone",
+      "FastAPI",
+      "Docker",
+      "Kubernetes",
+      "Weights & Biases",
+    ],
+    domainVerbs: [
+      "built",
+      "deployed",
+      "optimized",
+      "evaluated",
+      "fine-tuned",
+      "integrated",
+      "instrumented",
+      "reduced",
+      "shipped",
+      "designed",
+    ],
+    topKeywords: [
+      "AI engineer",
+      "LLM integration",
+      "Retrieval-augmented generation",
+      "RAG",
+      "Prompt engineering",
+      "Generative AI",
+      "AI agents",
+      "Embeddings",
+      "Vector database",
+      "Fine-tuning",
+      "Evals",
+      "LangChain",
+      "OpenAI API",
+      "Python",
+      "AI observability",
+      "Guardrails",
+      "Semantic search",
+      "FastAPI",
+      "Pinecone",
+      "Production AI",
+    ],
+    exampleBullets: [
+      "Built a RAG pipeline with LangChain and Pinecone over a 50K-document corpus, reducing hallucination rate by 38% (measured via RAGAS faithfulness) and cutting average response latency to under 800ms.",
+      "Deployed an LLM-powered customer support agent on AWS Bedrock with guardrails for policy compliance, handling 1,200+ daily queries with a 4.4/5 CSAT from post-chat surveys.",
+      "Fine-tuned a Llama 3 model on proprietary engineering documentation using LoRA, improving domain-specific task accuracy by 29% over the base model on internal evals.",
+      "Designed prompt versioning and A/B testing infrastructure in LangGraph, enabling product teams to iterate on prompts without engineering deploys and reducing rollback incidents by 65%.",
+      "Instrumented AI observability with Langfuse on three production LLM pipelines, surfacing latency spikes and token budget overruns that reduced monthly inference cost by $18K.",
+      "Integrated semantic search using pgvector and OpenAI embeddings into the product search layer, improving relevant-result rate by 22% measured via click-through and zero-result rates.",
+      "Built an AI agent with tool use and function calling for structured data extraction, replacing a manual review queue and saving 15 analyst hours per week.",
+      "Implemented streaming responses with retry logic and fallback models across the API layer, improving p99 availability from 97.2% to 99.6% for LLM-dependent features.",
+      "Led red-teaming sessions and jailbreak testing for a consumer-facing generative AI feature, documenting 12 attack vectors and shipping mitigations before public launch.",
+      "Partnered with product and ML science on eval design for a recommendation LLM, defining retrieval accuracy, context faithfulness, and latency SLAs that became the team's standard.",
+    ],
+    keywordMistakes: [
+      "Listing OpenAI API or LangChain without showing the problem you solved, the scale, or the reliability outcome.",
+      "Claiming 'built RAG' without chunking strategy, retrieval metric (faithfulness, recall), or latency context.",
+      "Copying ML engineer model-training keywords (GPU training, Spark, distributed systems) for roles that build on top of foundation models.",
+      "Stuffing model names (GPT-4, Claude, Gemini) as skills when the JD cares about system design and reliability, not which model you picked.",
+      "Omitting evals — production AI roles universally expect evaluation frameworks, human-in-the-loop review, or at least prompt A/B testing.",
+      "Using 'prompt engineering' alone without retrieval, agents, or production proof — it reads as research, not engineering.",
+      "Ignoring latency, cost, or accuracy outcomes in bullets (token spend reduction, p95 latency, CSAT, or zero-result rate improvement).",
+      "No guardrails or safety mention for any role touching consumer-facing AI — a significant screening signal in 2026.",
+      "One generic LLM resume for all 'AI jobs' — mirror the posting's stack (AWS Bedrock vs Anthropic vs OpenAI) and focus area (RAG vs agents vs fine-tuning).",
+      "Listing vector databases without embedding model, indexing strategy, or retrieval metric that proves you understand the stack.",
+    ],
+    placementStrategy: [
+      {
+        section: "Headline",
+        guidance:
+          "Mirror the posting title (AI Engineer, Applied AI Engineer, LLM Engineer) plus one anchor stack: 'AI Engineer | LangChain · RAG · OpenAI API.'",
+      },
+      {
+        section: "Summary",
+        guidance:
+          "Two to three sentences: years of experience, primary AI domain (RAG, agents, fine-tuning), primary stack, and one reliability or accuracy metric.",
+      },
+      {
+        section: "Skills",
+        guidance:
+          "Group by LLM APIs, Orchestration, Vector DBs, Evals, and Cloud. List 15–25 terms you can explain in a technical screen.",
+      },
+      {
+        section: "Experience",
+        guidance:
+          "Each bullet: verb + system built + stack + outcome. Pair RAG with retrieval metric; agents with task completion rate; fine-tuning with accuracy delta; infra with latency or cost improvement.",
+      },
+      {
+        section: "Projects",
+        guidance:
+          "Show end-to-end AI pipelines with evals and production scale. Include a GitHub link only when the repo demonstrates the same stack the JD requires.",
+      },
+    ],
+    resumeSnippets: [
+      {
+        label: "Summary",
+        text: "AI engineer with 4+ years building production LLM systems — RAG pipelines, agentic workflows, and eval frameworks on OpenAI and Anthropic APIs. Focused on retrieval accuracy, latency SLAs, and cost-efficient inference for customer-facing features.",
+      },
+      {
+        label: "Skills line",
+        text: "Python · LangChain · LlamaIndex · OpenAI API · Anthropic API · RAG · Pinecone · pgvector · FastAPI · Evals · Langfuse · Docker · Kubernetes · AWS · Git",
+      },
+      {
+        label: "Experience opener",
+        text: "Built and owned the LLM integration layer for core product features — RAG pipelines, streaming APIs, guardrails, and observability dashboards — partnering with product and ML science on eval design and reliability targets.",
+      },
+    ],
+    howResumeAtlasScores:
+      "ResumeAtlas compares your resume to the job description for AI-specific terms (RAG, evals, LangChain, vector databases, guardrails) and system-level outcomes (latency, cost, accuracy). You get a gap list for missing keywords and weak bullets so you can add defensible proof before applying — not keyword stuffing.",
+    relatedKeywordPages: [
+      { path: "/machine-learning-engineer-resume-keywords", label: "Machine learning engineer resume keywords" },
+      { path: "/data-engineer-resume-keywords", label: "Data engineer resume keywords" },
+      { path: "/software-engineer-resume-keywords", label: "Software engineer resume keywords" },
+      { path: "/data-scientist-resume-keywords", label: "Data scientist resume keywords" },
+    ],
+    relatedGuidePages: [
+      { path: "/ai-engineer-resume-guide", label: "AI engineer resume guide" },
+      { path: "/machine-learning-engineer-resume-guide", label: "Machine learning engineer resume example" },
+    ],
+    faq: [
+      {
+        question: "Do I need to sign up to check my AI engineer resume keywords against a job description?",
+        answer:
+          "No. Paste your resume and any AI engineer job description into ResumeAtlas for a full intelligence dashboard — Application Verdict, shortlist odds, rejection risks, and keyword gaps — in one free scan with no account needed. Signing in with Google adds a second free scan and unlocks free job-specific resume optimization. You only pay ($2.99) if you want to download the ATS-ready optimized version.",
+      },
+      {
+        question: "What are the best AI engineer resume keywords for ATS?",
+        answer:
+          "Prioritize terms from the job description: LLM integration, RAG, prompt engineering, evals, vector databases (Pinecone, Weaviate, pgvector), LangChain or LlamaIndex, OpenAI or Anthropic API, and production outcomes (latency, cost, accuracy). Mirror the employer's exact tool and model names.",
+      },
+      {
+        question: "Is AI engineer a real job title in 2026?",
+        answer:
+          "Yes — it is one of the fastest-growing engineering titles in 2026. Titles vary: AI engineer, applied AI engineer, LLM engineer, generative AI engineer, AI software engineer. Use the exact title from the posting in your headline. The keyword lists on this page apply across these variants.",
+      },
+      {
+        question: "What is the difference between AI engineer and machine learning engineer resume keywords?",
+        answer:
+          "ML engineer roles emphasize model training, data pipelines, GPU infrastructure, MLOps, and deployment of custom models. AI engineer roles emphasize building on top of foundation models: LLM APIs, RAG, prompt engineering, agents, and evals. There is significant overlap at senior levels. Use this page when the posting says AI engineer or LLM engineer; use machine learning engineer keywords when the JD says model training, MLOps, or Spark-based pipelines.",
+      },
+      {
+        question: "What AI engineer keywords matter for senior-level roles?",
+        answer:
+          "Eval framework design, AI system architecture, multi-agent systems, AI safety and guardrails, reliability targets, responsible AI governance, mentoring, and cross-team leadership. Senior AI engineering JDs expect both technical depth (fine-tuning, retrieval optimization, observability) and delivery influence (platform standards, roadmap input).",
+      },
+      {
+        question: "Should I list specific AI models (GPT-4, Claude, Gemini) on my resume?",
+        answer:
+          "Only when you have production experience with them and they match the posting. JDs that name AWS Bedrock, Azure OpenAI, or Anthropic want platform-specific experience — not model name-dropping. Focus on the system you built and the outcome, not the model version.",
+      },
+      {
+        question: "How do I show AI engineering skills without production experience?",
+        answer:
+          "Build and document a complete project: a RAG pipeline with chunking, embedding, retrieval, and evals; an agent with tool use; or a fine-tuned model with before/after benchmark metrics. Publish to GitHub, add a README with architecture decisions and eval results, then cite metrics (faithfulness, latency, accuracy) in your resume bullets.",
+      },
+      {
+        question: "What AI certifications help ATS filters in 2026?",
+        answer:
+          "AWS Certified Machine Learning Specialty, Google Professional Machine Learning Engineer, Microsoft Azure AI Engineer Associate, and DeepLearning.AI specializations are recognized. Databricks Generative AI certification is gaining relevance for enterprise roles. List only earned or clearly in-progress credentials.",
+      },
+      {
+        question: "Which AI engineer tools should appear in resume bullets, not just the skills section?",
+        answer:
+          "LangChain or LlamaIndex (with outcome), Pinecone or pgvector (with retrieval metric or scale), Langfuse or Arize (with observability outcome), RAGAS or similar eval framework (with faithfulness or accuracy result), and FastAPI (with latency or RPS metric). Tools listed only in skills without bullet-level proof have lower ATS weight.",
+      },
+      {
+        question: "How do I find missing AI engineer keywords before applying?",
+        answer:
+          "Paste your resume and the job description into ResumeAtlas's free checker to see gap terms and weak bullets. AI engineer JDs vary widely in stack — always mirror the posting's specific tools (e.g., AWS Bedrock vs Anthropic API vs Azure OpenAI) rather than using a generic keyword list.",
+      },
+    ],
+  },
+
+  "python-developer": {
+    slug: "python-developer",
+    path: pathFor("python-developer"),
+    roleName: "Python Developer",
+    h1: `Python Developer Resume Keywords (${CONTENT_FRESHNESS_YEAR} ATS Guide)`,
+    title: `120+ Python Developer Resume Keywords That Pass ATS (${CONTENT_FRESHNESS_YEAR})${RESUME_ATLAS_TITLE_SUFFIX}`,
+    description:
+      "Python developer resume keywords for ATS: Django, Flask, FastAPI, pandas, SQLAlchemy, pytest, Docker, AWS. Copy 120+ terms by category, see seniority tiers, and scan your resume vs the JD free.",
+    intro:
+      "Python developer resume keywords grouped by stack, use case, and seniority — written to match how ATS tools and hiring managers parse Python engineering roles in 2026. Use these to anchor proof in bullets, not pad a skills list.",
+    roleOverview:
+      "Python developers build web APIs, data pipelines, automation scripts, ML tooling, or backend services depending on the domain. Hiring managers scan for the Python web framework (Django, Flask, FastAPI), data libraries (pandas, SQLAlchemy, Pydantic), testing approach (pytest, coverage), and infrastructure context (Docker, AWS, CI/CD). ATS keyword matching is stack-specific — a backend Python JD that says 'FastAPI' and 'PostgreSQL' will not score 'Django' or 'MySQL' as equivalent. Mirror the posting's exact tool names.",
+    scopeNote:
+      "This page targets Python developer, Python engineer, and Python backend developer titles. For data-pipeline-focused Python roles, see the data engineer keywords page. For ML model training, see the machine learning engineer keywords. For Python in analytics or visualization, see the data analyst keywords.",
+    keywordCategories: [
+      {
+        heading: "Core Python skills",
+        terms: [
+          "Python 3",
+          "Object-oriented programming",
+          "Functional programming",
+          "Type hints",
+          "Asyncio",
+          "Concurrency",
+          "Decorators",
+          "Context managers",
+          "Generators",
+          "List comprehensions",
+          "Virtual environments",
+          "pip / Poetry / uv",
+          "Module design",
+          "Package management",
+          "PEP 8",
+          "Code review",
+          "Refactoring",
+          "Performance optimization",
+          "Memory management",
+          "Profiling",
+        ],
+      },
+      {
+        heading: "Web frameworks & APIs",
+        terms: [
+          "Django",
+          "Django REST Framework",
+          "Flask",
+          "FastAPI",
+          "Pydantic",
+          "REST APIs",
+          "GraphQL",
+          "WebSockets",
+          "Authentication (OAuth2, JWT)",
+          "Middleware",
+          "Celery",
+          "Redis",
+          "WSGI / ASGI",
+          "OpenAPI / Swagger",
+          "Rate limiting",
+          "Caching",
+          "Session management",
+        ],
+      },
+      {
+        heading: "Data & databases",
+        terms: [
+          "SQLAlchemy",
+          "PostgreSQL",
+          "MySQL",
+          "SQLite",
+          "Alembic (migrations)",
+          "pandas",
+          "NumPy",
+          "Polars",
+          "MongoDB (PyMongo)",
+          "Redis (redis-py)",
+          "Elasticsearch",
+          "Database indexing",
+          "Query optimization",
+          "ORMs",
+        ],
+      },
+      {
+        heading: "Testing & quality",
+        terms: [
+          "pytest",
+          "unittest",
+          "Mocking (unittest.mock)",
+          "Test coverage",
+          "Fixtures",
+          "Parametrize",
+          "Integration tests",
+          "End-to-end tests",
+          "Code coverage (coverage.py)",
+          "mypy (type checking)",
+          "Ruff / flake8 / Black",
+          "Pre-commit hooks",
+          "TDD",
+          "Regression testing",
+        ],
+      },
+      {
+        heading: "DevOps & cloud",
+        terms: [
+          "Docker",
+          "Docker Compose",
+          "Kubernetes",
+          "GitHub Actions",
+          "CI/CD",
+          "AWS (Lambda, EC2, S3, RDS)",
+          "GCP (Cloud Run, Cloud Functions)",
+          "Terraform",
+          "Linux",
+          "Bash scripting",
+          "Environment variables",
+          "Secrets management",
+          "Logging",
+          "Observability",
+        ],
+      },
+      {
+        heading: "Architecture & patterns",
+        terms: [
+          "Microservices",
+          "API design",
+          "Event-driven architecture",
+          "Message queues (Kafka, RabbitMQ)",
+          "Design patterns (Factory, Repository)",
+          "Dependency injection",
+          "Domain-driven design",
+          "Monorepo",
+          "Twelve-factor app",
+          "Service mesh",
+          "API gateway",
+          "Background tasks",
+        ],
+      },
+    ],
+    seniority: {
+      title: "Python developer keywords by seniority",
+      tiers: [
+        {
+          label: "Junior / early-career",
+          keywords: [
+            "Python 3", "Django or Flask", "REST APIs", "PostgreSQL", "pytest",
+            "Git", "Docker (basics)", "type hints", "virtual environments", "code review",
+          ],
+        },
+        {
+          label: "Mid-level",
+          keywords: [
+            "FastAPI", "SQLAlchemy", "Celery", "Redis caching", "CI/CD pipelines",
+            "Database query optimization", "asyncio", "API authentication", "test coverage >80%", "AWS Lambda or EC2",
+          ],
+        },
+        {
+          label: "Senior / staff",
+          keywords: [
+            "System design", "microservices architecture", "Kubernetes", "observability (OpenTelemetry)",
+            "performance profiling", "API versioning strategy", "dependency injection", "platform standards",
+            "cross-team technical leadership", "infrastructure cost optimization",
+          ],
+        },
+      ],
+    },
+    tools: ["Django", "FastAPI", "Flask", "pytest", "SQLAlchemy", "pandas", "Docker", "GitHub Actions", "AWS"],
+    domainVerbs: ["implemented", "designed", "optimized", "refactored", "deployed", "integrated", "automated", "built"],
+    topKeywords: [
+      "Python", "Django", "FastAPI", "Flask", "REST API", "PostgreSQL", "SQLAlchemy",
+      "pytest", "Docker", "AWS", "Redis", "Celery", "pandas", "type hints", "asyncio",
+      "CI/CD", "GitHub Actions", "Pydantic", "microservices", "performance optimization",
+    ],
+    exampleBullets: [
+      "Built a FastAPI REST service with JWT authentication and Pydantic validation, handling 15k daily requests at P95 latency under 80ms on AWS ECS.",
+      "Refactored a Django ORM query that caused N+1 issues; reduced database calls from 200+ to 4 per request and cut page load time 65%.",
+      "Wrote pytest fixture library covering 90% of core business logic; reduced production bugs caught after release by 40% in two quarters.",
+      "Designed a Celery-based background job system for PDF generation, replacing a synchronous bottleneck that had caused 30% request timeouts.",
+      "Migrated monolithic Flask app to three FastAPI microservices with Docker Compose; reduced deployment time from 45 minutes to 8 minutes.",
+    ],
+    keywordMistakes: [
+      "Listing Python frameworks without showing scale, latency, or request volume context.",
+      "Using data-science Python keywords (scikit-learn, Jupyter) for a web backend role — ATS and hiring managers see misalignment.",
+      "Claiming 'Django expert' or 'FastAPI expert' in a skills list without a single bullet showing what you built, the scale, or an outcome.",
+      "Listing test coverage in skills without showing a real coverage number and what it prevented.",
+    ],
+    placementStrategy: [
+      {
+        section: "Skills",
+        guidance: "Group by area: core Python, frameworks, data/DB, testing, cloud. Max 5 items per group. Every item must appear in at least one bullet.",
+      },
+      {
+        section: "Experience bullets",
+        guidance: "Lead with the framework + use case + scale or outcome. 'Built FastAPI service handling 15k req/day at <80ms P95' is how ATS and hiring managers score Python depth.",
+      },
+      {
+        section: "Projects",
+        guidance: "Add GitHub link. Name the framework, the problem solved, the scale (users, requests, dataset size), and one quality signal (test coverage, latency, uptime).",
+      },
+    ],
+    resumeSnippets: [
+      {
+        label: "Mid-level Python backend bullet",
+        text: "Designed and implemented a FastAPI microservice for order processing with Celery task queue and PostgreSQL; handled 2M transactions/month with 99.9% uptime and P95 latency under 90ms.",
+      },
+      {
+        label: "Testing and quality bullet",
+        text: "Built pytest fixture library with 87% coverage of the core billing module; reduced post-release defect rate by 35% over two quarters.",
+      },
+    ],
+    howResumeAtlasScores:
+      "ResumeAtlas checks whether your Python keywords appear in bullets with outcome context — not only in the skills list. A skills-only mention of FastAPI with no bullet showing what you built scores lower than a bullet with framework + use case + latency or uptime metric. Paste your resume and the job description to see exact gap terms and selectable fixes.",
+    relatedKeywordPages: [
+      { path: "/data-engineer-resume-keywords", label: "Data engineer resume keywords" },
+      { path: "/software-engineer-resume-keywords", label: "Software engineer resume keywords" },
+    ],
+    relatedGuidePages: [
+      { path: "/software-engineer-resume-guide", label: "Software engineer resume guide" },
+    ],
+    faq: [
+      {
+        question: "Do I need to sign up to check if my Python resume matches a job description?",
+        answer:
+          "No signup needed. Paste your resume and the job description into ResumeAtlas — you get a full keyword match score, rejection risks, and selectable fixes in about 60 seconds. First scan is free with no account required.",
+      },
+      {
+        question: "What Python keywords do ATS systems look for on a Python developer resume?",
+        answer:
+          "ATS tools match exact or near-exact terms from the job description. Common required terms include the primary framework (Django, FastAPI, Flask), database (PostgreSQL, SQLAlchemy), testing approach (pytest), and cloud platform (AWS Lambda, Docker). Copy the exact tool names from each posting — 'Python web framework' does not score as 'Django'.",
+      },
+      {
+        question: "Should I list both Django and FastAPI on my Python resume?",
+        answer:
+          "List both only if you have real production experience with each. If the posting says FastAPI and your work has been Django, that's worth noting — but don't pad. ATS will match Django for Django JDs and FastAPI for FastAPI JDs. Interview screens will probe whichever you claim.",
+      },
+      {
+        question: "How do I show Python testing skills on a resume?",
+        answer:
+          "Name pytest in both Skills and a bullet. The bullet should show coverage percentage, what it protected, and a result: 'Wrote pytest fixture library with 87% coverage of billing module; reduced post-release defects 35%.' Listing 'pytest' in skills only is undifferentiated.",
+      },
+      {
+        question: "What's the difference between a Python developer and a software engineer resume?",
+        answer:
+          "A Python developer resume emphasizes Python-specific frameworks, libraries, and idioms. A software engineer resume may be language-agnostic. If the posting says 'Python developer', mirror that title and lead with Python-specific keywords. If it says 'software engineer (Python)', balance general engineering keywords with Python stack terms.",
+      },
+      {
+        question: "How do I list async Python skills on a resume?",
+        answer:
+          "Name asyncio, ASGI (if using FastAPI or Starlette), or the specific async pattern used (background tasks, WebSockets, async database clients). Add a bullet with scale: 'Refactored synchronous Flask API to async FastAPI, reducing P95 latency from 400ms to 90ms under 10k concurrent requests.'",
+      },
+      {
+        question: "Should I include Python version (3.10, 3.12) on my resume?",
+        answer:
+          "Mentioning 'Python 3' is sufficient. Don't list specific patch versions — they change frequently and signal poor judgment about what recruiters care about. If you've used specific features introduced in a version (e.g., structural pattern matching in 3.10), mention the feature, not the version.",
+      },
+      {
+        question: "How do I find which Python keywords are missing from my resume for a specific job?",
+        answer:
+          "Paste your resume and the job description into ResumeAtlas. The JD comparison shows exact missing terms — whether the posting requires Django and you have Flask, or wants 'async Python' and your bullets don't mention asyncio. Fixing specific gaps before applying takes about 60 seconds.",
       },
     ],
   },

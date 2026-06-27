@@ -107,6 +107,11 @@ export const ALT_ROLE_KEYWORD_PAGES: Record<AltRoleKeywordSlug, AltRoleKeywordPa
         answer:
           "Paste the posting and your resume into the free resume vs job description checker to see gap terms before you apply.",
       },
+      {
+        question: "Is this the same page as data analyst resume keywords?",
+        answer:
+          "No. Data analyst roles focus on SQL analytics, dashboards, and metrics. Use /data-analyst-resume-keywords only when the posting is analytics-heavy—not for systems analyst titles.",
+      },
     ],
   },
   "systems-analyst": {
@@ -123,7 +128,7 @@ export const ALT_ROLE_KEYWORD_PAGES: Record<AltRoleKeywordSlug, AltRoleKeywordPa
       "For business analyst (requirements/process) keywords, use the business analyst page. For infrastructure and SRE-heavy roles, see DevOps engineer keywords. This page targets systems analyst and IT systems analyst postings.",
     relatedKeywordPages: [
       { path: "/business-analyst-resume-keywords", label: "Business analyst resume keywords" },
-      { path: "/backend-developer-resume-keywords", label: "Backend developer resume keywords" },
+      { path: "/business-intelligence-resume-keywords", label: "Business intelligence resume keywords" },
     ],
     relatedGuidePages: [
       { path: "/business-analyst-resume-guide", label: "Business analyst resume example" },

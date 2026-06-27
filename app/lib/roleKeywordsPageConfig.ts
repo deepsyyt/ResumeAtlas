@@ -419,6 +419,16 @@ export const ROLE_KEYWORDS_FAQ: Record<RoleSlug, RoleKeywordsFaqItem[]> = {
       answer:
         "Paste the job description and your resume into the free resume vs job description checker. You get a coverage-style view of skills and phrases from the posting that are weak or absent in your draft.",
     },
+    {
+      question: "I searched for systems analyst resume keywords—am I on the right page?",
+      answer:
+        "No. Systems analyst postings skew IT applications, support, and integrations. Use /systems-analyst-resume-keywords for that title—not this data analyst checklist.",
+    },
+    {
+      question: "I searched for business analyst resume keywords—should I use this page?",
+      answer:
+        "No. Business analyst roles focus on requirements, process, and stakeholder delivery. Use /business-analyst-resume-keywords instead of this data analyst keyword list.",
+    },
   ],
   "data-scientist": [
     {

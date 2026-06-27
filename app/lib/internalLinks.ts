@@ -15,6 +15,11 @@ import {
   roleClusterInternalLinks,
 } from "@/app/lib/roleClusterLinks";
 import { roleResumeKeywordsPath, roleResumePillarPath } from "@/app/lib/searchIntentSeo";
+import {
+  ATS_SCORE_VS_JOB_FIT_PATH,
+  RESUME_NOT_GETTING_INTERVIEWS_PATH,
+  SKILLS_LISTED_NOT_PROVEN_PATH,
+} from "@/app/lib/interviewCluster/paths";
 
 export type InternalLink = { path: string; label: string };
 
@@ -63,6 +68,37 @@ export const RESUME_WORK_EXPERIENCE_GUIDE_PATH =
 /** Skills section guide: examples, ATS-safe formatting, and keyword alignment. */
 export const RESUME_SKILLS_GUIDE_PATH =
   "/resume-guides/resume-skills-examples" as const;
+
+/** Action verbs hub: 500+ verbs by role, strength tier, and ATS impact. */
+export const RESUME_ACTION_VERBS_PATH = "/resume-action-verbs" as const;
+
+/** Professional summary examples: 50+ by role, level, and career change. */
+export const RESUME_SUMMARY_GUIDE_PATH =
+  "/resume-guides/resume-summary-examples" as const;
+
+/** 30-point ATS resume checklist: format, keywords, bullets, contact, and submission check. */
+export const ATS_RESUME_CHECKLIST_PATH = "/ats-resume-checklist" as const;
+
+/** Entry-level seniority-split role resume guides. */
+export const ENTRY_LEVEL_DATA_ANALYST_RESUME_PATH = "/entry-level-data-analyst-resume" as const;
+export const ENTRY_LEVEL_SOFTWARE_ENGINEER_RESUME_PATH = "/entry-level-software-engineer-resume" as const;
+export const ENTRY_LEVEL_PRODUCT_MANAGER_RESUME_PATH = "/entry-level-product-manager-resume" as const;
+
+/** Senior seniority-split role resume guides. */
+export const SENIOR_DATA_ANALYST_RESUME_PATH = "/senior-data-analyst-resume" as const;
+export const SENIOR_SOFTWARE_ENGINEER_RESUME_PATH = "/senior-software-engineer-resume" as const;
+export const SENIOR_PRODUCT_MANAGER_RESUME_PATH = "/senior-product-manager-resume" as const;
+
+/** Career transition guide — bridges guide cluster → interview pain cluster. */
+export const CAREER_CHANGE_RESUME_PATH = "/career-change-resume" as const;
+
+/** No-experience resume guide — high-volume entry cluster. */
+export const RESUME_WITH_NO_EXPERIENCE_PATH = "/resume-with-no-experience" as const;
+
+/** Role-specific resume summary pages (long-tail role summary cluster). */
+export const DATA_ANALYST_RESUME_SUMMARY_PATH = "/data-analyst-resume-summary" as const;
+export const SOFTWARE_ENGINEER_RESUME_SUMMARY_PATH = "/software-engineer-resume-summary" as const;
+export const PRODUCT_MANAGER_RESUME_SUMMARY_PATH = "/product-manager-resume-summary" as const;
 
 /** Navbar label for the primary tool page (matches product H1 intent). */
 export const TOOL_PAGE_NAV_LABEL = "Compare resume to job description" as const;
@@ -144,6 +180,62 @@ const ARTICLE_LINKS: InternalLink[] = [
   {
     path: RESUME_SKILLS_GUIDE_PATH,
     label: "Resume skills examples & format",
+  },
+  {
+    path: RESUME_ACTION_VERBS_PATH,
+    label: "Resume action verbs",
+  },
+  {
+    path: RESUME_SUMMARY_GUIDE_PATH,
+    label: "Resume summary examples",
+  },
+  {
+    path: ATS_RESUME_CHECKLIST_PATH,
+    label: "ATS resume checklist",
+  },
+  {
+    path: ENTRY_LEVEL_DATA_ANALYST_RESUME_PATH,
+    label: "Entry level data analyst resume",
+  },
+  {
+    path: ENTRY_LEVEL_SOFTWARE_ENGINEER_RESUME_PATH,
+    label: "Entry level software engineer resume",
+  },
+  {
+    path: ENTRY_LEVEL_PRODUCT_MANAGER_RESUME_PATH,
+    label: "Entry level product manager resume",
+  },
+  {
+    path: SENIOR_DATA_ANALYST_RESUME_PATH,
+    label: "Senior data analyst resume",
+  },
+  {
+    path: SENIOR_SOFTWARE_ENGINEER_RESUME_PATH,
+    label: "Senior software engineer resume",
+  },
+  {
+    path: SENIOR_PRODUCT_MANAGER_RESUME_PATH,
+    label: "Senior product manager resume",
+  },
+  {
+    path: CAREER_CHANGE_RESUME_PATH,
+    label: "Career change resume",
+  },
+  {
+    path: RESUME_WITH_NO_EXPERIENCE_PATH,
+    label: "Resume with no experience",
+  },
+  {
+    path: DATA_ANALYST_RESUME_SUMMARY_PATH,
+    label: "Data analyst resume summary examples",
+  },
+  {
+    path: SOFTWARE_ENGINEER_RESUME_SUMMARY_PATH,
+    label: "Software engineer resume summary examples",
+  },
+  {
+    path: PRODUCT_MANAGER_RESUME_SUMMARY_PATH,
+    label: "Product manager resume summary examples",
   },
   {
     path: "/customize-resume-without-lying",
@@ -233,29 +325,51 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     CHECK_RESUME_AGAINST_JD_PATH,
     "/ats-resume-checker",
     "/resume-keywords",
-    "/data-analyst-resume-keywords",
-    "/software-engineer-resume-keywords",
-    "/product-manager-resume-keywords",
-    "/data-scientist-resume-keywords",
     "/business-analyst-resume-keywords",
+    "/systems-analyst-resume-keywords",
+    roleResumeKeywordsPath("machine-learning-engineer"),
+    "/software-engineer-resume-keywords",
+    "/data-scientist-resume-keywords",
   ],
   [ATS_RESUME_TEMPLATE_GUIDE_PATH]: [
     CHECK_RESUME_AGAINST_JD_PATH,
-    "/customize-resume-without-lying",
-    "/resume-examples",
+    ATS_RESUME_CHECKLIST_PATH,
+    RESUME_SUMMARY_GUIDE_PATH,
     RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    RESUME_ACTION_VERBS_PATH,
+    "/customize-resume-without-lying",
     roleResumePillarPath("software-engineer"),
     roleResumePillarPath("data-scientist"),
   ],
   [RESUME_WORK_EXPERIENCE_GUIDE_PATH]: [
     CHECK_RESUME_AGAINST_JD_PATH,
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    RESUME_SUMMARY_GUIDE_PATH,
     RESUME_SKILLS_GUIDE_PATH,
+    RESUME_ACTION_VERBS_PATH,
     "/resume-examples",
     roleResumePillarPath("data-analyst"),
     roleResumePillarPath("product-manager"),
-    "/customize-resume-without-lying",
-    "/ats-resume-checker",
+  ],
+  [RESUME_ACTION_VERBS_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    RESUME_SKILLS_GUIDE_PATH,
+    RESUME_SUMMARY_GUIDE_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    roleResumePillarPath("software-engineer"),
+    roleResumePillarPath("data-analyst"),
+    "/software-engineer-resume-keywords",
+  ],
+  [RESUME_SUMMARY_GUIDE_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    RESUME_SKILLS_GUIDE_PATH,
+    RESUME_ACTION_VERBS_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    roleResumePillarPath("data-analyst"),
+    "/data-analyst-resume-keywords",
+    "/software-engineer-resume-keywords",
   ],
   "/customize-resume-without-lying": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -266,7 +380,8 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
   ],
   "/data-analyst-resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,
-    "/ats-resume-checker",
+    "/business-analyst-resume-keywords",
+    "/systems-analyst-resume-keywords",
     "/power-bi-resume-keywords",
     "/data-analyst-resume-guide",
     roleResumePillarPath("data-analyst"),
@@ -276,12 +391,30 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/ats-resume-checker",
     "/sql-developer-resume-keywords",
     "/data-engineer-resume-guide",
-    "/data-engineer-resume-guide",
+    "/ai-engineer-resume-keywords",
+  ],
+  "/ai-engineer-resume-keywords": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/ats-resume-checker",
+    "/ai-engineer-resume-guide",
+    roleResumeKeywordsPath("machine-learning-engineer"),
+    "/data-engineer-resume-keywords",
+    "/software-engineer-resume-keywords",
+  ],
+  "/ai-engineer-resume-guide": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/ats-resume-checker",
+    "/ai-engineer-resume-keywords",
+    roleResumeKeywordsPath("machine-learning-engineer"),
+    "/machine-learning-engineer-resume-guide",
+    "/software-engineer-resume-guide",
   ],
   "/resume-keywords": [
     CHECK_RESUME_AGAINST_JD_PATH,
     "/ats-resume-checker",
-    "/resume-examples",
+    "/business-analyst-resume-keywords",
+    "/systems-analyst-resume-keywords",
+    roleResumeKeywordsPath("machine-learning-engineer"),
     "/data-analyst-resume-keywords",
     "/data-engineer-resume-keywords",
   ],
@@ -331,8 +464,26 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     "/systems-analyst-resume-keywords",
     "/business-intelligence-resume-keywords",
     roleResumePillarPath("business-analyst"),
+    "/resume-keywords",
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     "/resume-examples",
+  ],
+  "/systems-analyst-resume-keywords": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    "/business-analyst-resume-keywords",
+    "/business-intelligence-resume-keywords",
+    roleResumeKeywordsPath("backend-developer"),
+    "/resume-keywords",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    "/resume-examples",
+  ],
+  [roleResumeKeywordsPath("machine-learning-engineer")]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumeKeywordsPath("data-scientist"),
+    roleResumePillarPath("machine-learning-engineer"),
+    "/resume-keywords",
+    "/ats-resume-checker",
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
   ],
   "/data-scientist-resume-guide": [
     CHECK_RESUME_AGAINST_JD_PATH,
@@ -364,6 +515,194 @@ const SEMANTIC_RECOMMENDATIONS: Record<string, string[]> = {
     ATS_RESUME_TEMPLATE_GUIDE_PATH,
     roleResumePillarPath("data-analyst"),
     "/customize-resume-without-lying",
+  ],
+  "/resumeatlas-vs-enhancv": [
+    RESUME_NOT_GETTING_INTERVIEWS_PATH,
+    SKILLS_LISTED_NOT_PROVEN_PATH,
+    ATS_SCORE_VS_JOB_FIT_PATH,
+    CHECK_RESUME_AGAINST_JD_PATH,
+    ATS_RESUME_CHECKER_PATH,
+    RESUME_KEYWORD_SCANNER_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+  ],
+  "/resumeatlas-vs-kickresume": [
+    RESUME_NOT_GETTING_INTERVIEWS_PATH,
+    SKILLS_LISTED_NOT_PROVEN_PATH,
+    ATS_SCORE_VS_JOB_FIT_PATH,
+    CHECK_RESUME_AGAINST_JD_PATH,
+    ATS_RESUME_CHECKER_PATH,
+    RESUME_KEYWORD_SCANNER_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+  ],
+  "/frontend-developer-resume-bullet-points": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("frontend-developer"),
+    roleResumeKeywordsPath("frontend-developer"),
+    RESUME_ACTION_VERBS_PATH,
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    "/software-engineer-resume-bullet-points",
+    "/full-stack-developer-resume-bullet-points",
+    "/backend-developer-resume-bullet-points",
+  ],
+  "/backend-developer-resume-bullet-points": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("backend-developer"),
+    roleResumeKeywordsPath("backend-developer"),
+    RESUME_ACTION_VERBS_PATH,
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    "/software-engineer-resume-bullet-points",
+    "/frontend-developer-resume-bullet-points",
+    "/full-stack-developer-resume-bullet-points",
+  ],
+  "/machine-learning-engineer-resume-bullet-points": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("machine-learning-engineer"),
+    roleResumeKeywordsPath("machine-learning-engineer"),
+    RESUME_ACTION_VERBS_PATH,
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    "/data-scientist-resume-bullet-points",
+    "/software-engineer-resume-bullet-points",
+    roleResumePillarPath("data-scientist"),
+  ],
+  "/devops-engineer-resume-bullet-points": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("devops-engineer"),
+    roleResumeKeywordsPath("devops-engineer"),
+    RESUME_ACTION_VERBS_PATH,
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    "/software-engineer-resume-bullet-points",
+    "/backend-developer-resume-bullet-points",
+    "/machine-learning-engineer-resume-bullet-points",
+  ],
+  "/full-stack-developer-resume-bullet-points": [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("full-stack-developer"),
+    roleResumeKeywordsPath("full-stack-developer"),
+    RESUME_ACTION_VERBS_PATH,
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    "/frontend-developer-resume-bullet-points",
+    "/backend-developer-resume-bullet-points",
+    "/software-engineer-resume-bullet-points",
+  ],
+  [ATS_RESUME_CHECKLIST_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+    "/ats-resume-checker",
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    RESUME_ACTION_VERBS_PATH,
+    RESUME_SKILLS_GUIDE_PATH,
+    "/problems/ats-rejecting-my-resume",
+    RESUME_SUMMARY_GUIDE_PATH,
+  ],
+  [ENTRY_LEVEL_DATA_ANALYST_RESUME_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("data-analyst"),
+    roleResumeKeywordsPath("data-analyst"),
+    "/data-analyst-resume-bullet-points",
+    ATS_RESUME_CHECKLIST_PATH,
+    RESUME_SUMMARY_GUIDE_PATH,
+    RESUME_ACTION_VERBS_PATH,
+    ENTRY_LEVEL_SOFTWARE_ENGINEER_RESUME_PATH,
+  ],
+  [ENTRY_LEVEL_SOFTWARE_ENGINEER_RESUME_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("software-engineer"),
+    roleResumeKeywordsPath("software-engineer"),
+    "/software-engineer-resume-bullet-points",
+    ATS_RESUME_CHECKLIST_PATH,
+    RESUME_SUMMARY_GUIDE_PATH,
+    RESUME_ACTION_VERBS_PATH,
+    ENTRY_LEVEL_DATA_ANALYST_RESUME_PATH,
+  ],
+  [ENTRY_LEVEL_PRODUCT_MANAGER_RESUME_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("product-manager"),
+    roleResumeKeywordsPath("product-manager"),
+    ATS_RESUME_CHECKLIST_PATH,
+    RESUME_SUMMARY_GUIDE_PATH,
+    RESUME_ACTION_VERBS_PATH,
+    RESUME_SKILLS_GUIDE_PATH,
+    ENTRY_LEVEL_SOFTWARE_ENGINEER_RESUME_PATH,
+  ],
+  [CAREER_CHANGE_RESUME_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    ATS_RESUME_CHECKLIST_PATH,
+    RESUME_SUMMARY_GUIDE_PATH,
+    RESUME_SKILLS_GUIDE_PATH,
+    RESUME_ACTION_VERBS_PATH,
+    RESUME_NOT_GETTING_INTERVIEWS_PATH,
+    RESUME_WORK_EXPERIENCE_GUIDE_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+  ],
+  [RESUME_WITH_NO_EXPERIENCE_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    ATS_RESUME_CHECKLIST_PATH,
+    RESUME_SUMMARY_GUIDE_PATH,
+    RESUME_SKILLS_GUIDE_PATH,
+    RESUME_ACTION_VERBS_PATH,
+    ENTRY_LEVEL_DATA_ANALYST_RESUME_PATH,
+    ENTRY_LEVEL_SOFTWARE_ENGINEER_RESUME_PATH,
+    ATS_RESUME_TEMPLATE_GUIDE_PATH,
+  ],
+  [SENIOR_DATA_ANALYST_RESUME_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("data-analyst"),
+    roleResumeKeywordsPath("data-analyst"),
+    "/data-analyst-resume-bullet-points",
+    ATS_RESUME_CHECKLIST_PATH,
+    RESUME_SUMMARY_GUIDE_PATH,
+    ENTRY_LEVEL_DATA_ANALYST_RESUME_PATH,
+    DATA_ANALYST_RESUME_SUMMARY_PATH,
+  ],
+  [SENIOR_SOFTWARE_ENGINEER_RESUME_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("software-engineer"),
+    roleResumeKeywordsPath("software-engineer"),
+    "/software-engineer-resume-bullet-points",
+    ATS_RESUME_CHECKLIST_PATH,
+    RESUME_SUMMARY_GUIDE_PATH,
+    ENTRY_LEVEL_SOFTWARE_ENGINEER_RESUME_PATH,
+    SOFTWARE_ENGINEER_RESUME_SUMMARY_PATH,
+  ],
+  [SENIOR_PRODUCT_MANAGER_RESUME_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("product-manager"),
+    roleResumeKeywordsPath("product-manager"),
+    ATS_RESUME_CHECKLIST_PATH,
+    RESUME_SUMMARY_GUIDE_PATH,
+    ENTRY_LEVEL_PRODUCT_MANAGER_RESUME_PATH,
+    PRODUCT_MANAGER_RESUME_SUMMARY_PATH,
+    RESUME_ACTION_VERBS_PATH,
+  ],
+  [DATA_ANALYST_RESUME_SUMMARY_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("data-analyst"),
+    roleResumeKeywordsPath("data-analyst"),
+    RESUME_SUMMARY_GUIDE_PATH,
+    ENTRY_LEVEL_DATA_ANALYST_RESUME_PATH,
+    SENIOR_DATA_ANALYST_RESUME_PATH,
+    "/data-analyst-resume-bullet-points",
+    ATS_RESUME_CHECKLIST_PATH,
+  ],
+  [SOFTWARE_ENGINEER_RESUME_SUMMARY_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("software-engineer"),
+    roleResumeKeywordsPath("software-engineer"),
+    RESUME_SUMMARY_GUIDE_PATH,
+    ENTRY_LEVEL_SOFTWARE_ENGINEER_RESUME_PATH,
+    SENIOR_SOFTWARE_ENGINEER_RESUME_PATH,
+    "/software-engineer-resume-bullet-points",
+    ATS_RESUME_CHECKLIST_PATH,
+  ],
+  [PRODUCT_MANAGER_RESUME_SUMMARY_PATH]: [
+    CHECK_RESUME_AGAINST_JD_PATH,
+    roleResumePillarPath("product-manager"),
+    roleResumeKeywordsPath("product-manager"),
+    RESUME_SUMMARY_GUIDE_PATH,
+    ENTRY_LEVEL_PRODUCT_MANAGER_RESUME_PATH,
+    SENIOR_PRODUCT_MANAGER_RESUME_PATH,
+    ATS_RESUME_CHECKLIST_PATH,
+    RESUME_ACTION_VERBS_PATH,
   ],
 };
 

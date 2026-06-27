@@ -60,6 +60,22 @@ export type CompetitorComparisonPageConfig = {
   philosophy: PhilosophySection;
   ctaHref: string;
   ctaLabel: string;
+  /** Hero CTA override. Falls back to ctaLabel. */
+  primaryCtaLabel?: string;
+  /** Mobile sticky CTA override. Falls back to ctaLabel. */
+  stickyCtaLabel?: string;
+  /** Short trust signals rendered below the hero CTA. */
+  trustSignals?: string[];
+  /** Capability table intro override. */
+  capabilitySubheading?: string;
+  /** Micro-CTA after capability table. Omit = no CTA. */
+  tableCtaLabel?: string;
+  /** Value ladder copy after workflow comparison. */
+  workflowValueLadder?: string;
+  /** Text CTA after workflow comparison. Omit = no CTA. */
+  workflowCtaLabel?: string;
+  /** Button label after example analysis. Omit = text link fallback. */
+  exampleCtaLabel?: string;
   whoEachToolIsFor: WhoEachToolForRow[];
   workflow: WorkflowComparison;
   comparisonRows: ComparisonTableRow[];
