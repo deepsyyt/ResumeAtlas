@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -20,6 +21,7 @@ import {
   PRIMARY_TOOL_NAV_LABEL,
   PRIMARY_TOOL_NAV_LABEL_SHORT,
 } from "@/app/lib/internalLinks";
+import { BRAND_ICON_SVG_PATH } from "@/app/lib/brandAssets";
 
 type UserProfile = {
   email: string | null;
@@ -211,10 +213,15 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-[#f4f7fc]/90 text-slate-900 backdrop-blur-md supports-[backdrop-filter]:bg-[#f4f7fc]/80">
       <div className="page-shell flex h-14 items-center justify-between gap-2 sm:gap-3">
-        <Link href={HOME_MARKETING_PATH} className="flex min-w-0 items-center gap-2">
-          <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-slate-50">
-            <span className="h-3 w-3 rotate-12 border-l border-b border-slate-800" />
-          </span>
+        <Link href={HOME_MARKETING_PATH} className="flex min-w-0 items-center gap-2.5">
+          <Image
+            src={BRAND_ICON_SVG_PATH}
+            alt=""
+            width={32}
+            height={32}
+            className="h-8 w-8 shrink-0 rounded-[7px]"
+            priority
+          />
           <span className="truncate text-base font-semibold tracking-tight text-slate-900 sm:text-lg">
             ResumeAtlas
           </span>

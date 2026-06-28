@@ -7,6 +7,13 @@ import { ProblemInterviewCallout } from "@/app/components/ProblemInterviewCallou
 import Script from "next/script";
 import { GA_MEASUREMENT_ID } from "@/app/lib/gaConfig";
 import { HOME_PAGE_DESCRIPTION, HOME_PAGE_TITLE_ABSOLUTE } from "@/app/lib/homePageSeo";
+import {
+  BRAND_LOGO_HEIGHT,
+  BRAND_LOGO_PATH,
+  BRAND_LOGO_WIDTH,
+  BRAND_OG_IMAGE_PATH,
+  brandLogoAbsoluteUrl,
+} from "@/app/lib/brandAssets";
 import { getSiteUrl } from "@/app/lib/siteUrl";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -32,7 +39,12 @@ const organizationSchema = {
   "@id": `${siteUrl}/#organization`,
   name: "ResumeAtlas",
   url: siteUrl,
-  logo: `${siteUrl}/favicon.svg`,
+  logo: {
+    "@type": "ImageObject",
+    url: brandLogoAbsoluteUrl(siteUrl),
+    width: BRAND_LOGO_WIDTH,
+    height: BRAND_LOGO_HEIGHT,
+  },
   // sameAs: add LinkedIn / X / ProductHunt URLs once brand handles are created
 };
 
@@ -48,12 +60,21 @@ export const metadata: Metadata = {
     title: HOME_PAGE_TITLE_ABSOLUTE,
     description: HOME_PAGE_DESCRIPTION,
     siteName: "ResumeAtlas",
+    images: [
+      {
+        url: BRAND_OG_IMAGE_PATH,
+        width: BRAND_LOGO_WIDTH,
+        height: BRAND_LOGO_HEIGHT,
+        alt: "ResumeAtlas",
+      },
+    ],
   },
   icons: {
     icon: [
       { url: "/favicon.ico" },
       { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
     shortcut: ["/favicon.ico"],

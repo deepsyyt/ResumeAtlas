@@ -19,6 +19,11 @@ const RESUME_BULLET_ROLES = [
   "data-scientist",
   "software-engineer",
   "product-manager",
+  "frontend-developer",
+  "backend-developer",
+  "machine-learning-engineer",
+  "devops-engineer",
+  "full-stack-developer",
 ];
 
 /** Align with `ROLE_KEYWORD_INTENTS` in `app/lib/roleSeo.ts` (next.config is plain JS). */
@@ -69,8 +74,8 @@ const nextConfig = {
   distDir: process.env.NODE_ENV === "development" ? "nextbuild" : ".next",
   async rewrites() {
     return [
-      // Browsers request /favicon.ico; route to our generated raster icon endpoint.
-      { source: "/favicon.ico", destination: "/icon" },
+      // Browsers request /favicon.ico; serve generated 32px PNG.
+      { source: "/favicon.ico", destination: "/favicon-32.png" },
       // DevTools may request this chunk map; Next may not emit it — avoid 404 noise in dev logs.
       {
         source: "/_next/static/chunks/app/LayoutGroupContext.mjs.map",

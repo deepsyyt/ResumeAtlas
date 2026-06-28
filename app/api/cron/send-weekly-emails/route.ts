@@ -1,17 +1,16 @@
 /**
- * Weekly email campaign cron endpoint.
+ * Daily email campaign cron endpoint.
  *
  * HOW THE CRON WORKS
  * ------------------
- * Vercel Cron (see vercel.json) invokes this route every Friday at 09:00 UTC:
- *   schedule: "0 9 * * 5"  →  /api/cron/send-weekly-emails
+ * Vercel Cron (see vercel.json) invokes this route every day at 09:00 UTC:
+ *   schedule: "0 9 * * *"  →  /api/cron/send-weekly-emails
  *
  * On each run we:
- * 1. Load all emails from public.profiles (service role bypasses RLS)
+ * 1. Load the 100 most recent profile emails (by auth.users.created_at)
  * 2. Filter null/empty values and deduplicate (case-insensitive)
- * 3. Send via Resend Batch API in chunks of 100
- * 4. Continue to the next chunk if one batch fails
- * 5. Return { success, sent, failed } for monitoring
+ * 3. Send via Resend Batch API (single batch of up to 100)
+ * 4. Return { success, sent, failed } for monitoring
  *
  * HOW TO TEST LOCALLY
  * -------------------
@@ -44,6 +43,7 @@ import { getSupabaseAdmin } from "@/lib/supabase/admin";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
+const RECIPIENT_LIMIT = 100;
 const BATCH_SIZE = 100;
 
 function isAuthorizedCron(request: Request): boolean {
@@ -79,9 +79,10 @@ export async function GET(request: Request) {
 
   try {
     const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("email");
+    const { data, error } = await supabase.rpc(
+      "recent_profile_emails_for_campaign",
+      { recipient_limit: RECIPIENT_LIMIT }
+    );
 
     if (error) {
       console.error("[cron/send-weekly-emails] Supabase query failed:", error);
@@ -91,7 +92,9 @@ export async function GET(request: Request) {
       );
     }
 
-    const recipients = collectUniqueEmails(data);
+    const recipients = collectUniqueEmails(
+      (data ?? []).map((email: string | null) => ({ email }))
+    );
     if (recipients.length === 0) {
       console.log("[cron/send-weekly-emails] No valid recipient emails found.");
       return NextResponse.json({ success: true, sent: 0, failed: 0 });
@@ -102,7 +105,7 @@ export async function GET(request: Request) {
     const chunks = chunkArray(recipients, BATCH_SIZE);
 
     console.log(
-      `[cron/send-weekly-emails] Sending to ${recipients.length} unique recipients in ${chunks.length} batch(es).`
+      `[cron/send-weekly-emails] Sending to ${recipients.length} recent unique recipient(s) in ${chunks.length} batch(es).`
     );
 
     for (let i = 0; i < chunks.length; i++) {
