@@ -8,31 +8,35 @@ export type ProductBenefit = {
   body: string;
 };
 
-/** What the free analysis dashboard delivers. */
+/** What the free analysis dashboard delivers — order matches messaging hierarchy in ai-context/02_PRODUCT.md. */
 export const ANALYSIS_BENEFITS: readonly ProductBenefit[] = [
   {
     label: "Application verdict",
-    body: "apply now, optimize first, or skip — with estimated shortlist odds (~X% today, ~Y% after optimize).",
+    body: "Apply, Optimize First, or Skip — the apply decision for this specific posting.",
   },
   {
-    label: "Role fit for this posting",
-    body: "if you're applying for this role: fit verdict for the target title plus related roles you may also qualify for.",
+    label: "Critical rejection risks",
+    body: "top reasons recruiters would reject this application — missing proof on critical JD skills, weak scope, or misaligned seniority.",
   },
   {
-    label: "Elimination risks",
-    body: "top reasons recruiters might skip your application for this posting.",
+    label: "Shortlist odds",
+    body: "estimated odds as written vs after selected fixes — current %, projected %, and uplift for this job.",
   },
   {
     label: "Skill proof map",
-    body: "which JD skills are proven in project bullets vs listed only in your skills section.",
+    body: "which JD-critical skills are proven in project bullets vs listed only — supporting detail behind rejection risks.",
   },
   {
     label: "Keyword coverage",
-    body: "ATS keyword match score — which posting terms are matched vs missed in your resume.",
+    body: "which posting terms appear in your resume — a signal alongside proof, not the eligibility verdict on its own.",
+  },
+  {
+    label: "Experience fit for this posting",
+    body: "whether your demonstrated work matches what this JD requires — not title match alone; plus related roles where your proof is stronger.",
   },
   {
     label: "Recommended fixes",
-    body: "selectable changes tied to rejection risks — you choose what Optimize applies.",
+    body: "selectable changes to close honest proof gaps — you choose what Optimize applies.",
   },
 ] as const;
 
@@ -76,7 +80,7 @@ export const OPTIMIZATION_BENEFIT_MODAL_LINES: readonly string[] = [
 
 export const FREE_TIER_EYEBROW = "100% free scan · free optimize after sign-in";
 
-export const FREE_TIER_SCAN_TRUST = ["100% free scan", "Instant results", "No signup"] as const;
+export const FREE_TIER_SCAN_TRUST = ["No signup", "Instant results", "Pay only to download"] as const;
 
 export const FREE_TIER_OPTIMIZE_TRUST = [
   "Free optimize after sign-in",
@@ -86,7 +90,7 @@ export const FREE_TIER_OPTIMIZE_TRUST = [
 
 /** One-line product positioning for meta descriptions and bridges. */
 export const PRODUCT_VALUE_ONE_LINER =
-  "Free apply-readiness analysis, then free job-specific optimization after sign-in — pay only to download PDF or DOCX.";
+  "Know before you apply — Application Verdict, critical rejection risks, and shortlist odds for this job, then free job-specific optimization after sign-in; pay only to download PDF or DOCX.";
 
 export const PRODUCT_PIPELINE_ONE_LINER =
-  "Analyze fit → select fixes → optimize for this job → edit → download the version you send.";
+  "Verdict for this job → select fixes → prove critical JD skills → edit → download the version you send.";

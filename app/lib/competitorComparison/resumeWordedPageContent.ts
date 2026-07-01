@@ -31,19 +31,19 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
   heroCompetitorLine:
     "tells you whether your resume is written well — action verbs, impact language, and recruiter-style categories.",
   heroResumeAtlasLine:
-    "tells you whether you're ready to apply to a specific job, what may eliminate you during screening, and what to fix before you apply.",
+    "gives you an Application Verdict (Apply, Optimize First, or Skip), your Shortlist Odds for this specific job, and the rejection risks that will eliminate you during screening — then optimizes your resume for that posting, free after sign-in.",
   competitorCoreQuestion: "Is my resume written well?",
   resumeAtlasCoreQuestion:
     "Should I apply to this job? If yes — what will eliminate me, and what can I fix before applying?",
   whyAlternative: {
     intro:
-      "Many job seekers start with Resume Worded for resume writing feedback and Score My Resume grading. Users often search for a Resume Worded alternative when they need job-specific apply-readiness, not just a general writing score.",
+      "Many job seekers start with Resume Worded for Score My Resume grading and writing quality feedback. Users often search for a Resume Worded alternative when their well-scored resume is still not getting interviews — and they need to know whether the problem is the job description match, not the writing.",
     reasons: [
-      "More than writing quality — a clear answer on whether to apply to this role",
-      "Rejection risks for the posting you pasted, not generic resume categories",
-      "Fixes tied to one job description before you optimize and download",
-      "Skill proof: which JD requirements you list vs actually prove in bullets",
-      "No Pro subscription required to compare resume to a specific job description",
+      "A 72% Score My Resume grade does not tell you whether to apply — ResumeAtlas gives you an Application Verdict and Shortlist Odds for this specific posting",
+      "Resume Worded scores how your resume is written; ResumeAtlas shows which listed skills are not proven in your bullets — the gap that screens you out",
+      "No Pro subscription required — free to analyze without signup, $2.99 only when you download a tailored resume",
+      "Rejection risks for the exact posting you paste, not generic 'weak action verb' categories",
+      "Job-specific optimization after sign-in: JD-tailored summary, proven bullets, and selected rejection fixes — not generic rewrites",
     ],
   },
   philosophy: {
@@ -91,29 +91,29 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
     { capability: "Download-ready tailored resume", resumeAtlas: "Yes — $2.99/export", competitor: "Limited — templates on Pro" },
   ],
   exampleAnalysis: {
-    roleLabel: "Senior Software Engineer",
+    roleLabel: "Marketing Manager",
     resumeExcerpt:
-      "Built REST APIs in Node.js and PostgreSQL, reducing p95 latency 35%. Implemented CI/CD with GitHub Actions. Refactored React + TypeScript modules, cutting production errors 22%.",
+      "Led social media campaigns across 4 channels. Managed a $200K budget for paid acquisition. Wrote email sequences that improved open rates. Coordinated with design and product on go-to-market launches.",
     jdExcerpt:
-      "Senior Software Engineer: TypeScript, React, Node.js, AWS, CI/CD, system design, Kubernetes, observability, on-call.",
-    competitorHeadline: "72% Targeted Resume match (Pro)",
+      "Marketing Manager: performance marketing, paid social, Google Analytics, attribution modeling, A/B testing, Salesforce CRM, email automation, CAC/LTV metrics, cross-functional stakeholder management.",
+    competitorHeadline: "68% Score My Resume — strong action verbs, weak impact metrics",
     competitorDetail:
-      "Keyword panel flags Kubernetes, AWS architecture, and observability. Line-by-line suggestions focus on stronger action verbs and adding missing terms. Primary signal is writing quality + keyword overlap.",
+      "Line-by-line feedback surfaces passive construction in two bullets and suggests stronger action verbs. Keyword panel (Targeted Resume, Pro) flags attribution modeling, Salesforce, and CAC/LTV as gaps. Primary signal is writing quality and term presence.",
     resumeAtlasVerdict: "Apply with caution",
     resumeAtlasDetail:
-      "Bullets are well written for core stack work. Keyword coverage is solid for Node, React, and CI/CD. Screening risk is requirements the resume lists but does not prove — platform and ops depth.",
+      "Campaigns and budget ownership are described but not tied to business outcomes — no ROAS, CAC reduction, or revenue attribution. Salesforce CRM is required in the JD but not referenced anywhere. Attribution modeling is absent despite being a primary requirement.",
     rejectionRisks: [
-      "AWS in skills section with no supporting project bullet",
-      "Kubernetes and on-call not evidenced in experience",
-      "System design and observability language absent from measurable outcomes",
+      "No ROAS, CAC, or pipeline attribution metric on any paid campaign bullet",
+      "Salesforce CRM listed as required — not mentioned in resume",
+      "'Improved open rates' — no baseline, percentage, or impact on downstream conversion",
     ],
     recommendedFixes: [
-      "Add one bullet proving AWS on a production workload with a concrete outcome",
-      "Tie CI/CD work to reliability or incident reduction if you own on-call adjacent work",
-      "Replace skills-only claims with bullet proof recruiters can verify in 10 seconds",
+      'Rewrite paid acquisition bullet with outcome: "Managed $200K paid social budget achieving 3.1x ROAS for SaaS product launch, driving 420 trial signups"',
+      "Add one Salesforce bullet if genuine experience exists — even light CRM usage counts",
+      "Replace 'improved open rates' with a specific metric tied to a funnel outcome",
     ],
     takeaway:
-      "A resume can score well on writing quality and still fail screening for a specific posting. ResumeAtlas separates 'well written' from 'ready to apply' — and shows which gaps are worth fixing before you submit.",
+      "A resume that scores well on writing quality and action verbs can still fail screening for a performance marketing role — because recruiters are looking for attribution, CAC metrics, and CRM proof, not sentence structure. ResumeAtlas shows what your bullets are missing for this specific posting, not what they would score on a general rubric.",
   },
   strengths: {
     resumeAtlas: [
@@ -150,6 +150,11 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
       question: "Is ResumeAtlas better than Resume Worded?",
       answer:
         "For deciding whether to apply to a specific job and what might eliminate you, yes. Resume Worded is better for general resume writing quality, LinkedIn review, sample bullets, and Pro templates in a subscription. The tools answer different questions: 'Is my resume written well?' vs 'Should I apply to this job?'",
+    },
+    {
+      question: "Do I need to sign up to use ResumeAtlas?",
+      answer:
+        "No. Get the full intelligence dashboard — Application Verdict, estimated Shortlist Odds, rejection risks, keyword coverage, and recommended fixes — in one free scan with no account required. Sign in with Google for a second free scan and free job-specific resume optimization. Pay $2.99 only when you want to download the tailored, ATS-ready resume.",
     },
     {
       question: "Is ResumeAtlas a good Resume Worded alternative?",
@@ -191,6 +196,11 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
       answer:
         "Yes. ResumeAtlas offers free resume-vs-JD analysis without signup. Resume Worded offers a free partial Score My Resume preview — compare what each free tier unlocks before you commit to a Pro subscription.",
     },
+    {
+      question: "What are the best Resume Worded alternatives?",
+      answer:
+        "Alternatives depend on what you need. For ATS keyword matching: Jobscan. For job search pipeline management: Teal. For apply-readiness and JD-specific intelligence: ResumeAtlas — Application Verdict, rejection risks, skill proof, and recommended fixes for the posting you pasted, with free analysis and pay-per-export pricing ($2.99, no subscription).",
+    },
   ],
   internalLinks: [
     { path: RESUME_NOT_GETTING_INTERVIEWS_PATH, label: "Resume not getting interviews" },
@@ -201,4 +211,18 @@ export const resumeWordedComparisonPageConfig: CompetitorComparisonPageConfig = 
     { path: RESUME_KEYWORD_SCANNER_PATH, label: "Resume keyword scanner" },
     { path: ATS_RESUME_TEMPLATE_GUIDE_PATH, label: "ATS resume template guide" },
   ],
+  primaryCtaLabel: "See your rejection risks — no signup needed",
+  stickyCtaLabel: "Check apply-readiness — free",
+  trustSignals: [
+    "Free to analyze — no signup needed",
+    "Job-specific verdict + rejection risks, not generic feedback",
+    "Results in 60 seconds",
+  ],
+  capabilitySubheading:
+    "Resume Worded gives general feedback on resume quality. ResumeAtlas tells you whether you're ready to apply for a specific job — and which gaps will get you rejected before an interview.",
+  tableCtaLabel: "Get this for your specific job posting — free, no signup →",
+  workflowValueLadder:
+    "Free to analyze. Free to optimize after Google sign-in. $2.99 to download the ATS-ready resume you send.",
+  workflowCtaLabel: "Start now — paste resume and job description →",
+  exampleCtaLabel: "See your rejection risks — free, no signup",
 };

@@ -123,21 +123,21 @@ export const OPTIMIZE_ALIGN_BENEFITS = OPTIMIZATION_BENEFIT_LINES;
 export const OPTIMIZE_NUDGE_CREDIT_NOTICE =
   "1 credit applied. Next step: optimize so this resume is interview-ready for this posting.";
 
-export const DOWNLOAD_UNLOCK_EYEBROW = "Optimized for this job";
-export const DOWNLOAD_UNLOCK_TITLE = "Pay to download your resume";
+export const DOWNLOAD_UNLOCK_EYEBROW = "Your optimized resume is ready";
+export const DOWNLOAD_UNLOCK_TITLE = "Download your ATS-ready resume";
 export const DOWNLOAD_UNLOCK_BODY =
-  "Your tailored file is ready. Complete a one-time payment to download it and unlock job credits for future roles.";
-export const DOWNLOAD_UNLOCK_BENEFITS_TITLE = (price: string) => `What ${price} unlocks`;
+  "Your resume has been tailored for this posting — rejection fixes applied, bullets proven, summary rewritten. Download it now and apply with confidence.";
+export const DOWNLOAD_UNLOCK_BENEFITS_TITLE = (price: string) => `What you get for ${price}`;
 export const DOWNLOAD_UNLOCK_BENEFITS = [
-  "PDF and editable file download for current optimized resume",
-  "Plus 5 job credits included: check, optimize, and download per role",
-  "ATS-friendly export built for screening systems",
-  "Align each application instead of mass-applying with generic resume",
+  "ATS-friendly PDF and DOCX — the version that gets read, not filtered",
+  "User-selected rejection fixes applied for this specific job",
+  "5 job credits included: analyze, optimize, and download per role",
+  "Align each application to the posting — not a generic resume sent everywhere",
 ] as const;
 export const DOWNLOAD_UNLOCK_PRICE_HEADLINE = "5 aligned resumes. One price.";
 export const DOWNLOAD_UNLOCK_PRICE_SUBLINE = (price: string, credits: number) =>
   `${price} · ${credits} jobs end-to-end (scan, optimize, download)`;
-export const DOWNLOAD_UNLOCK_CTA = (price: string) => `Unlock download for ${price}`;
+export const DOWNLOAD_UNLOCK_CTA = (price: string) => `Get my resume for ${price}`;
 
 export const DOWNLOAD_SUCCESS_EYEBROW = "Payment successful";
 export const DOWNLOAD_SUCCESS_TITLE = "Your interview-ready resume is unlocked";

@@ -51,7 +51,8 @@ export const CLUSTER_JD_MATCH_TOOL_COPY = {
     "Paste your resume and the exact job description. Get an application verdict, elimination risks, skill proof map, and selectable recommended fixes — then optimize a job-specific resume: tailored summary, proven bullets, selected rejection fixes, and impact metrics. Edit in the preview and download when ready.",
   heroEyebrow: "Free · compare resume to job description",
   heroH1: "Before you apply, see what may get you rejected.",
-  heroIntro: "Paste your resume and a job description.",
+  heroIntro:
+    "Paste your resume and a job description. Get an Application Verdict (Apply, Optimize First, or Skip), your Shortlist Odds for this posting, and critical rejection risks — in 60 seconds. Free, no signup.",
   postFormOutcomesHeading: "What you'll learn in one scan",
   postFormOutcomes: [
     "Should you apply?",
@@ -95,15 +96,15 @@ export const CLUSTER_HOME_METADATA = {
 /** Missing keywords vs a pasted posting (gap list intent). */
 export const CLUSTER_KEYWORD_SCANNER_TOOL_COPY = {
   titleAbsolute:
-    `Resume Keyword Scanner | Find Missing ATS Keywords Free${RESUME_ATLAS_TITLE_SUFFIX}`,
+    `Free Resume Keyword Scanner — Find Missing ATS Keywords Instantly (2026)${RESUME_ATLAS_TITLE_SUFFIX}`,
   description:
-    "Extract keywords from a job posting and scan your resume for missing terms, weak coverage, and ATS skill gaps. Free, instant, no signup.",
+    "Paste your resume and a job description: instantly see missing ATS keywords, weak coverage, and skill gaps vs the posting. Free, no signup needed.",
   ogTitle:
-    `Resume Keyword Scanner | Find Missing ATS Keywords Free${RESUME_ATLAS_TITLE_SUFFIX}`,
+    `Free Resume Keyword Scanner — Find Missing ATS Keywords Instantly${RESUME_ATLAS_TITLE_SUFFIX}`,
   ogDescription:
-    "Extract posting keywords and find gaps in your resume: missing terms, weak coverage, and skill gaps vs the job.",
-  twitterTitle: "Resume Keyword Scanner | Find Missing ATS Keywords Free",
-  twitterDescription: "Keyword gaps vs a job posting: missing terms and weak coverage, instantly.",
+    "Find missing ATS keywords in seconds: paste resume + job description to see which posting terms your resume is missing.",
+  twitterTitle: "Free Resume Keyword Scanner — Find Missing ATS Keywords",
+  twitterDescription: "See which job posting keywords your resume is missing — free, instant, no signup.",
   h1: "Scan your resume for missing keywords",
   intro:
     "Open the free checker to paste your resume and a job posting. We extract must-have terms from the posting and show missing keywords, weak coverage, and where your resume needs stronger proof.",

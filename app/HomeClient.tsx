@@ -97,28 +97,6 @@ const HOW_IT_WORKS_STEPS = [
   },
 ] as const;
 
-const HOME_CAPABILITY_CARDS = [
-  {
-    title: "Pass ATS screening with confidence",
-    body:
-      "Stop getting filtered out. See exactly how your resume performs in real ATS systems.",
-  },
-  {
-    title: "See what's weak before you apply",
-    body:
-      "Get ATS-style feedback and clearer bullets so you know what to fix next.",
-  },
-  {
-    title: "Improve your resume without rewriting everything",
-    body:
-      "AI enhances your bullet points while preserving your actual experience.",
-  },
-  {
-    title: "Stay in control of your resume",
-    body: "Edit everything manually and export clean, job-ready PDFs.",
-  },
-] as const;
-
 const FALLBACK_ANON_USAGE: Usage = {
   type: "anon",
   creditsRemaining: 0,
@@ -1325,33 +1303,6 @@ export default function HomeClient({
               </p>
             </div>
           </div>
-
-          <section
-            className="mt-1 sm:mt-2 w-full rounded-xl bg-slate-50 px-3 py-4 sm:px-4 sm:py-4"
-            aria-labelledby="home-capabilities-heading"
-          >
-            <h2
-              id="home-capabilities-heading"
-              className="text-center text-base sm:text-xl font-semibold tracking-tight text-slate-900"
-            >
-              What you can do with ResumeAtlas
-            </h2>
-            <ul className="mt-3 m-0 grid list-none grid-cols-1 gap-2.5 p-0 sm:grid-cols-2 lg:grid-cols-4 sm:gap-3">
-              {HOME_CAPABILITY_CARDS.map((card) => (
-                <li
-                  key={card.title}
-                  className="rounded-lg bg-white p-3 text-center shadow-sm ring-1 ring-slate-900/[0.05] sm:p-3.5 sm:text-left"
-                >
-                  <h3 className="text-sm font-semibold leading-snug text-slate-900">
-                    {card.title}
-                  </h3>
-                  <p className="mt-1 text-xs leading-snug text-slate-600 sm:text-[13px]">
-                    {card.body}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </section>
 
           <section
             className="mt-4 sm:mt-5 w-full pb-5 sm:pb-6"

@@ -9,15 +9,27 @@ import {
 } from "@/app/lib/productBenefits";
 
 /** Layer 2 — product truth (analysis + optimization). */
-export const HOME_MARKETING_H1 =
-  "Analyze fit and optimize your resume before you apply";
+export const HOME_MARKETING_H1 = "Is your resume ready for this specific job?";
 
 export const HOME_MARKETING_SUBHEAD =
-  "Paste your resume and a job description. ResumeAtlas shows whether you're likely to clear first screening, what might get you rejected, and which fixes to select — then optimizes a job-specific resume you can edit and download.";
+  "Paste your resume and job description. Get a Job Application Verdict (Apply, Optimize First, or Skip), your rejection risks, and recommended fixes — in 60 seconds. Free, no signup.";
 
-/** Layer 1 bridge — search-native phrase users recognize. */
+/** Hero differentiation — not an ATS checker hook. */
+export const HOME_MARKETING_DIFFERENTIATION =
+  "Not a keyword score. A real apply decision for this specific job.";
+
+/** Above-the-fold proof points (3 max) — matches messaging hierarchy in ai-context/02_PRODUCT.md. */
+export const HOME_MARKETING_HERO_BULLETS = [
+  "Job Application Verdict — Apply, Optimize First, or Skip",
+  "Rejection risks — what will get you screened out before a human reads it",
+  "Recommended fixes — selectable, applied only to what you choose",
+] as const;
+
+export const HOME_MARKETING_HERO_EYEBROW = "Free resume check · no signup needed";
+
+/** Layer 1 bridge — below-fold SEO intent (not hero body). AI-citation-ready entity definition block. */
 export const HOME_MARKETING_SEO_BRIDGE =
-  "Free scan: ATS score, application verdict, elimination risks, skill proof map, and selectable recommended fixes. Then free optimize after sign-in — JD-tailored summary, proven bullets, and impact metrics. Pay only to download PDF or DOCX.";
+  "ResumeAtlas is a free apply-readiness tool that compares your resume against a specific job description and returns an Application Verdict (Apply, Optimize First, or Skip), Shortlist Odds (the estimated probability your resume advances to interview for that posting), and critical rejection risks — before you submit. Free job-specific optimization after sign-in. Pay only to download the ATS-ready PDF or DOCX.";
 
 export const HOME_MARKETING_TRUST_EYEBROW = FREE_TIER_EYEBROW;
 
@@ -135,12 +147,124 @@ export const HOME_HOW_IT_WORKS_STEPS = [
   },
 ] as const;
 
+// ─── Comparison vs competitors ──────────────────────────────────────────────
+
+// ─── Problem agitation ──────────────────────────────────────────────────────
+
+export const HOME_PROBLEM_HEADING = "Sending applications and hearing nothing?";
+
+export const HOME_PROBLEM_INTRO =
+  "Most resume tools tell you what keywords are missing. They don't tell you whether to apply — or why you're being screened out.";
+
+export type ProblemScenario = {
+  pain: string;
+  fix: string;
+};
+
+export const HOME_PROBLEM_SCENARIOS: readonly ProblemScenario[] = [
+  {
+    pain: "\"I have the right skills. My resume looks strong. Why is no one calling?\"",
+    fix: "Rejection risks surface what's really wrong: skills listed but not proven in bullets — the gap recruiters catch in 10 seconds.",
+  },
+  {
+    pain: "\"Jobscan says 78% match. I still got no response.\"",
+    fix: "Keyword match ≠ apply-readiness. Your Job Application Verdict shows whether your experience actually proves the role — not just whether the terms appear.",
+  },
+  {
+    pain: "\"I don't know if I should even apply to this posting.\"",
+    fix: "Apply, Optimize First, or Skip — a clear verdict with your Shortlist Odds in 60 seconds, so you spend time on applications worth submitting.",
+  },
+] as const;
+
+// ─── Comparison vs competitors ──────────────────────────────────────────────
+
+export const HOME_VS_SECTION_EYEBROW = "Apply-readiness intelligence";
+
+export const HOME_VS_SECTION_HEADING =
+  "Keyword checkers tell you what's missing. We tell you whether to apply.";
+
+export type ComparisonRow = {
+  label: string;
+  other: string;
+  us: string;
+};
+
+export const HOME_COMPARISON_ROWS: readonly ComparisonRow[] = [
+  {
+    label: "What they tell you",
+    other: "Keyword match percentage",
+    us: "Application verdict + shortlist odds",
+  },
+  {
+    label: "Why you get rejected",
+    other: "Missing keywords",
+    us: "Missing proof in your bullets",
+  },
+  {
+    label: "What they optimize",
+    other: "Keyword density, generic rewrites",
+    us: "Demonstrated experience for this posting",
+  },
+  {
+    label: "Fixes applied",
+    other: "All at once, without your consent",
+    us: "Only what you select — nothing fabricated",
+  },
+  {
+    label: "First scan cost",
+    other: "Signup required",
+    us: "Free, no signup",
+  },
+] as const;
+
+// ─── FAQ ────────────────────────────────────────────────────────────────────
+
+export type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+export const HOME_FAQ: readonly FaqItem[] = [
+  {
+    question: "Is it really free? Do I need to sign up?",
+    answer:
+      "One full scan free with no account required — complete Job Application Verdict, rejection risks, Shortlist Odds, and recommended fixes. Sign in with Google for a second free scan and free job-specific optimization. Pay $2.99 only to download the ATS-ready PDF or DOCX.",
+  },
+  {
+    question: "How is this different from Jobscan or an ATS checker?",
+    answer:
+      "ATS checkers and keyword tools tell you what's missing. ResumeAtlas tells you whether to apply, what will get you rejected before a human reads your resume, and which fixes to make before you submit — not just a keyword match percentage.",
+  },
+  {
+    question: "What is a Job Application Verdict?",
+    answer:
+      "A Job Application Verdict is ResumeAtlas's apply decision for one specific posting: Apply (your resume is competitive as-is), Optimize First (fixable gaps exist — address them before submitting), or Skip (significant proof gaps make this role a low-probability application at this time). It is based on your resume's rejection risks and estimated Shortlist Odds for that posting.",
+  },
+  {
+    question: "What does job-specific optimization do?",
+    answer:
+      "After seeing your analysis, you select the recommended fixes you want addressed. ResumeAtlas rewrites your summary and bullets to prove those specific skills for this job — not a generic rewrite. You review every change in an editable preview before downloading.",
+  },
+  {
+    question: "Do I need to upload a file?",
+    answer:
+      "No file upload required. Paste your resume text and the job description into the tool. The first scan needs no account.",
+  },
+  {
+    question: "Is my resume data safe?",
+    answer:
+      "Your resume and job description are only used to generate your analysis and optimization. We don't sell or share your data.",
+  },
+] as const;
+
+// ─── Workbench ──────────────────────────────────────────────────────────────
+
 /** Workbench hero bullets (shared with PostingFitSsrShell and JD workbench). */
 export const WORKBENCH_HERO_BULLETS = [
-  "Your application verdict & shortlist odds",
-  "Role fit if applying for this posting",
-  "Elimination risks & unproven skills",
-  "Recommended fixes",
+  "Application Verdict — Apply, Optimize First, or Skip",
+  "Critical rejection risks — why the verdict",
+  "Shortlist odds — confidence for this job",
+  "Free job-specific optimization after sign-in",
 ] as const;
 
 /** Shared pipeline line for CTAs and footers. */

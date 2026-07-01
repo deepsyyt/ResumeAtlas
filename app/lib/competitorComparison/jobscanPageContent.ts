@@ -31,19 +31,19 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
   heroCompetitorLine:
     "tells you whether the right keywords are present in your resume for a job posting.",
   heroResumeAtlasLine:
-    "tells you whether you're likely to clear screening for that posting, what may get you rejected, and what to fix before you apply.",
+    "gives you an Application Verdict (Apply, Optimize First, or Skip), your Shortlist Odds for this specific posting, and the rejection risks that will eliminate you — then shows which fixes raise your odds before you apply.",
   competitorCoreQuestion: "Does my resume contain the right keywords?",
   resumeAtlasCoreQuestion:
     "Should I apply to this job? If yes — what will eliminate me, and what can I fix before applying?",
   whyAlternative: {
     intro:
-      "Many job seekers start with Jobscan for ATS scores and keyword matching. Users often search for a Jobscan alternative or competitor when they want more than a match-rate percentage before they apply.",
+      "Many job seekers start with Jobscan for ATS keyword matching and match-rate scoring. Users often search for a Jobscan alternative when they are still not getting interviews despite high keyword match scores — and need to understand why their resume is being screened out before a human reads it.",
     reasons: [
-      "More than a keyword score — guidance on whether to apply to this specific role",
-      "Rejection risks tied to the job description, not just missing terms",
-      "Resume fixes prioritized for one posting before you hit Apply",
-      "Skill proof analysis: which requirements are listed but not proven in bullets",
-      "Help deciding what matters most before you spend time tailoring",
+      "A 78% keyword match does not tell you whether to apply — ResumeAtlas gives you an Application Verdict and the specific rejection risks for this posting",
+      "Keyword scores show missing terms; ResumeAtlas shows which listed skills are not proven in your bullets — the gap recruiters actually catch",
+      "No subscription required — free to analyze, free to optimize after sign-in, $2.99 only when you download",
+      "Skill proof analysis: which job requirements you claim in your skills section but haven't demonstrated in experience bullets",
+      "Shortlist Odds: a concrete estimated probability your resume advances to interview, not just a match percentage",
     ],
   },
   philosophy: {
@@ -91,29 +91,29 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
     { capability: "Download-ready tailored resume", resumeAtlas: "Yes — $2.99/export", competitor: "Limited" },
   ],
   exampleAnalysis: {
-    roleLabel: "Senior Software Engineer",
+    roleLabel: "Data Analyst",
     resumeExcerpt:
-      "Built REST APIs in Node.js and PostgreSQL, reducing p95 latency 35%. Implemented CI/CD with GitHub Actions. Refactored React + TypeScript modules, cutting production errors 22%.",
+      "Analyzed customer churn using Python and SQL. Built Tableau dashboards for executive review. Worked with marketing on campaign performance metrics. Listed skills: SQL, Python, Tableau, Excel, A/B testing, Snowflake.",
     jdExcerpt:
-      "Senior Software Engineer: TypeScript, React, Node.js, AWS, CI/CD, system design, Kubernetes, observability, on-call.",
-    competitorHeadline: "78% keyword match",
+      "Data Analyst: SQL, Python, dbt, Snowflake, Looker, A/B testing, product analytics, statistical modeling, stakeholder communication, presenting data-driven insights.",
+    competitorHeadline: "71% keyword match",
     competitorDetail:
-      "Hard skills panel flags Kubernetes, AWS, and observability as missing or weak. Suggestions focus on adding those terms. Match rate is the primary decision signal.",
+      "Hard skills panel flags dbt, Snowflake, Looker, and A/B testing as missing or weak. Suggestions focus on adding those terms to the resume. Match rate is the primary decision signal — no view into whether existing claims are proven in experience bullets.",
     resumeAtlasVerdict: "Apply with caution",
     resumeAtlasDetail:
-      "Strong proof for Node.js, React, TypeScript, and CI/CD in bullets. Keyword coverage is solid for core stack terms. Screening risk is not missing keywords alone — it is unproven platform and ops requirements.",
+      "SQL and Python are present but unproven — no query complexity, dataset scale, or business outcome in any bullet. dbt and Snowflake are not referenced. A/B testing appears in the skills section without a supporting experiment bullet. Keyword coverage looks adequate; proof depth does not.",
     rejectionRisks: [
-      "AWS listed in skills but not proven in any project bullet",
-      "Kubernetes and on-call experience not evidenced",
-      "Impact metrics thin on system design and observability work",
+      "SQL listed in skills with no bullet showing query type, dataset size, or business outcome — recruiters cannot verify depth",
+      "A/B testing in skills section with zero supporting experiment example",
+      "dbt and Snowflake listed as required — not present in resume at all",
     ],
     recommendedFixes: [
-      "Add a bullet proving AWS usage on a shipped service (region, scale, or cost outcome)",
-      "Quantify CI/CD impact beyond deployment frequency if you own reliability",
-      "Move proven stack terms from skills-only into experience bullets recruiters scan first",
+      'Add one SQL bullet with a concrete outcome: "Wrote 8 SQL queries in Redshift to identify $1.4M in renewal risk, presented to VP Sales"',
+      "Replace 'A/B testing' in skills with a bullet showing one experiment with a measurable result",
+      "Address the dbt/Snowflake gap honestly — note data warehouse tooling used if Snowflake is not genuine experience",
     ],
     takeaway:
-      "A 78% keyword match does not tell you whether to apply or what will eliminate you. ResumeAtlas surfaces the gap between listed skills and bullet proof — the difference between a match score and an apply decision.",
+      "A 71% keyword match score tells you which terms to add. It does not tell you that 'SQL' in your skills section and 'SQL proven in production analytics' read very differently to a recruiter — or that A/B testing listed without an experiment will stop your resume before a phone screen. ResumeAtlas surfaces the proof gap that keyword scores miss.",
   },
   strengths: {
     resumeAtlas: [
@@ -150,6 +150,11 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
       question: "Is ResumeAtlas better than Jobscan?",
       answer:
         "For deciding whether to apply to a specific job and what might eliminate you during screening, yes — that is what ResumeAtlas is built for. Jobscan is better if you want LinkedIn optimization, cover-letter scanning, a job tracker, and a familiar match-rate score in one subscription. Many job seekers use keyword tools first and switch to apply-readiness analysis before they submit.",
+    },
+    {
+      question: "Do I need to sign up to use ResumeAtlas?",
+      answer:
+        "No. Paste your resume and a job description for a full free scan — Application Verdict, estimated Shortlist Odds, rejection risks, keyword coverage, and recommended fixes — with no account required. Sign in with Google to unlock a second free scan plus free job-specific resume optimization. Pay $2.99 only when you want to download the tailored, ATS-ready resume you send.",
     },
     {
       question: "Is ResumeAtlas a good Jobscan alternative?",
@@ -206,4 +211,18 @@ export const jobscanComparisonPageConfig: CompetitorComparisonPageConfig = {
     { path: RESUME_KEYWORD_SCANNER_PATH, label: "Resume keyword scanner" },
     { path: ATS_RESUME_TEMPLATE_GUIDE_PATH, label: "ATS resume template guide" },
   ],
+  primaryCtaLabel: "Get your apply verdict — no signup needed",
+  stickyCtaLabel: "Check apply-readiness — free",
+  trustSignals: [
+    "Free to analyze — no signup needed",
+    "Application verdict + shortlist odds, not just keyword %",
+    "Results in 60 seconds",
+  ],
+  capabilitySubheading:
+    "Jobscan scores keyword match rate. ResumeAtlas answers: should you apply to this posting — and what will get you rejected before a human even reads your resume?",
+  tableCtaLabel: "Get an apply verdict for your specific job — free, no signup →",
+  workflowValueLadder:
+    "Free to analyze. Free to optimize after Google sign-in. $2.99 to download the ATS-ready resume you send.",
+  workflowCtaLabel: "Start now — paste resume and job description →",
+  exampleCtaLabel: "See your apply verdict — free, no signup",
 };

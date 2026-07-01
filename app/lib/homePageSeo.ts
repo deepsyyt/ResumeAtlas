@@ -7,14 +7,14 @@ const ogImage = () => `${siteBase()}/og-resume-checker.png`;
 
 /**
  * Layer 1 SEO — exact-match "compare resume to job description" + 2026 freshness + apply-readiness differentiator.
- * Layer 2 hero is apply-readiness + optimize (`HOME_MARKETING_H1`).
+ * Layer 2 hero is apply-readiness outcome (`HOME_MARKETING_H1` — "Know before you apply.").
  * Keep "free" and no-signup signals in description to defend CTR against Jobscan's subscription framing.
  */
 export const HOME_PAGE_TITLE_ABSOLUTE =
-  `Compare Resume to Job Description Free (2026) | Apply-Readiness + ATS Score${RESUME_ATLAS_TITLE_SUFFIX}`;
+  `Free Resume Checker — Job Application Verdict, Rejection Risks & Recommended Fixes${RESUME_ATLAS_TITLE_SUFFIX}`;
 
 export const HOME_PAGE_DESCRIPTION =
-  "Free — no signup needed. Paste your resume and job description: get an application verdict, elimination risks, skill proof map, and selectable fixes in 60 seconds. Free job-specific optimization after sign-in. Pay only to download.";
+  "Paste your resume and job description. Get a Job Application Verdict (Apply, Optimize First, or Skip), your rejection risks, and recommended fixes in 60 seconds. Free, no signup. Optimize free after sign-in. Pay only to download.";
 
 export function buildHomeMarketingMetadata(): Metadata {
   const url = siteBase();

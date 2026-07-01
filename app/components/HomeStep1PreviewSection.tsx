@@ -5,23 +5,17 @@ import {
   CHECK_RESUME_AGAINST_JD_PATH,
 } from "@/app/lib/internalLinks";
 import {
+  HOME_MARKETING_DIFFERENTIATION,
   HOME_MARKETING_H1,
-  HOME_MARKETING_OUTCOMES,
-  HOME_MARKETING_SEO_BRIDGE,
+  HOME_MARKETING_HERO_BULLETS,
+  HOME_MARKETING_HERO_EYEBROW,
   HOME_MARKETING_SUBHEAD,
-  HOME_MARKETING_TRUST_EYEBROW,
-  HOME_COMPARE_SECTION_DETAIL_LINK_ANCHOR,
-  HOME_COMPARE_SECTION_DETAIL_LINK_PREFIX,
-  HOME_COMPARE_SECTION_DETAIL_LINK_SUFFIX,
 } from "@/app/lib/homeMarketingContent";
 import { FREE_TIER_SCAN_TRUST } from "@/app/lib/productBenefits";
 
-const OUTCOME_BADGE_CLASSES = [
+const HERO_BULLET_BADGE_CLASSES = [
   "bg-indigo-100 text-indigo-800",
-  "bg-violet-100 text-violet-800",
   "bg-rose-100 text-rose-900",
-  "bg-amber-100 text-amber-900",
-  "bg-sky-100 text-sky-900",
   "bg-emerald-100 text-emerald-900",
 ] as const;
 
@@ -36,7 +30,7 @@ export function HomeStep1PreviewSection() {
         <div className="grid min-w-0 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:gap-8 xl:gap-10">
           <div className="text-center lg:text-left">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-700/90">
-              {HOME_MARKETING_TRUST_EYEBROW}
+              {HOME_MARKETING_HERO_EYEBROW}
             </p>
             <h1
               id="home-page-heading"
@@ -47,36 +41,22 @@ export function HomeStep1PreviewSection() {
             <p className="mx-auto mt-4 max-w-xl text-pretty text-sm leading-relaxed text-slate-600 sm:text-base lg:mx-0">
               {HOME_MARKETING_SUBHEAD}
             </p>
-            <p className="mx-auto mt-3 max-w-xl text-pretty text-sm font-medium leading-relaxed text-slate-700 sm:text-base lg:mx-0">
-              {HOME_MARKETING_SEO_BRIDGE}
+            <p className="mx-auto mt-3 max-w-xl text-pretty text-sm font-semibold leading-relaxed text-slate-800 sm:text-base lg:mx-0">
+              {HOME_MARKETING_DIFFERENTIATION}
             </p>
 
-            <ol className="mx-auto mt-6 max-w-md list-none space-y-3 p-0 text-left text-sm leading-relaxed text-slate-700 lg:mx-0">
-              {HOME_MARKETING_OUTCOMES.map((outcome, index) => (
-                <li key={outcome.label} className="flex gap-3">
+            <ul className="mx-auto mt-6 max-w-md list-none space-y-3 p-0 text-left text-sm leading-relaxed text-slate-700 lg:mx-0">
+              {HOME_MARKETING_HERO_BULLETS.map((bullet, index) => (
+                <li key={bullet} className="flex gap-3">
                   <span
-                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${OUTCOME_BADGE_CLASSES[index] ?? OUTCOME_BADGE_CLASSES[3]}`}
+                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${HERO_BULLET_BADGE_CLASSES[index] ?? HERO_BULLET_BADGE_CLASSES[0]}`}
                   >
                     {index + 1}
                   </span>
-                  <span>
-                    <strong className="font-semibold text-slate-900">{outcome.label}:</strong>{" "}
-                    {outcome.body}
-                  </span>
+                  <span>{bullet}</span>
                 </li>
               ))}
-            </ol>
-
-            <p className="mx-auto mt-5 max-w-lg text-pretty text-sm leading-relaxed text-slate-600 sm:text-base lg:mx-0">
-              {HOME_COMPARE_SECTION_DETAIL_LINK_PREFIX}
-              <Link
-                href={CHECK_RESUME_AGAINST_JD_PATH}
-                className="font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950"
-              >
-                {HOME_COMPARE_SECTION_DETAIL_LINK_ANCHOR}
-              </Link>
-              {HOME_COMPARE_SECTION_DETAIL_LINK_SUFFIX}
-            </p>
+            </ul>
 
             <div className="mt-7 flex flex-col items-center gap-3 lg:items-start">
               <Link
